@@ -59,19 +59,31 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-    // Get Beddha list based on Seba ID
-    public function getBeddhaBySeba($seba_id)
+    public function getSebaWithBeddha()
     {
         try {
-            $beddhas = PratihariSebaBeddhaAssign::where('status', 'active')
-                ->get();
-
+            $sebas = PratihariSeba::where('status', 'active')
+                ->with(['beddhaMaster']) // Load related beddha data
+                ->get()
+                ->map(function ($seba) {
+                    return [
+                        'id' => $seba->id,
+                        'name' => $seba->sebaMaster->name ?? null, // Fetch seba name
+                        'bedha' => $seba->beddhaMaster->map(function ($beddha) {
+                            return [
+                                'id' => $beddha->id,
+                                'name' => $beddha->name,
+                            ];
+                        })
+                    ];
+                });
+    
             return response()->json([
                 'status' => 200,
-                'message' => 'Beddhas fetched successfully',
-                'data' => $beddhas
+                'message' => 'Sebas with Beddhas fetched successfully',
+                'data' => $sebas
             ], 200);
-
+    
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
@@ -80,6 +92,7 @@ class PratihariSebaApiController extends Controller
             ], 500);
         }
     }
+    
 
     public function saveSeba(Request $request)
     {

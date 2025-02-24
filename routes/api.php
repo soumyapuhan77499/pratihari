@@ -25,5 +25,5 @@ Route::middleware('auth:sanctum')->post('/save-seba', [PratihariSebaApiControlle
 
 Route::get('/nijogas', [PratihariSebaApiController::class, 'getNijogas']);
 Route::get('/sebas/{nijoga_id}', [PratihariSebaApiController::class, 'getSebaByNijoga']);
-Route::get('/beddhas/{seba_id}', [PratihariSebaApiController::class, 'getBeddhaBySeba']);
+Route::get('/beddhas', [PratihariSebaApiController::class, 'getSebaWithBeddha']);
 
