@@ -51,17 +51,8 @@
                             <a class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
                         </nav>
                     </div>
-
                     <div class="progress-container-wrapper">
-                        @foreach([
-                            ['Personal', $profileCompletion, 'profileChart', '#4CAF50'],
-                            ['Family', $familyCompletion, 'familyChart', '#FF9800'],
-                            ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3'],
-                            ['Address', $addressCompletion, 'addressChart', '#673AB7'],
-                            ['Occupation', $occupationCompletion, 'occupationChart', '#009688'],
-                            ['Seba', $sebaCompletion, 'sebaChart', '#FF5722'],
-                            ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63']
-                        ] as $data)
+                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50'], ['Family', $familyCompletion, 'familyChart', '#FF9800'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3'], ['Address', $addressCompletion, 'addressChart', '#673AB7'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63']] as $data)
                             <div class="progress-card">
                                 <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
                                 <div class="chart-container">
@@ -70,7 +61,8 @@
                             </div>
                         @endforeach
                     </div>
-                    
+
+
                 </div>
             </div>
         </div>
@@ -433,7 +425,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <!-- Occupation Details -->
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">
@@ -441,41 +432,41 @@
                                     <h4 class="fw-bold text-primary"><i class="fas fa-briefcase"></i> Occupation Details
                                     </h4>
 
-                                    @if($occupation->isNotEmpty()) 
-                                    @foreach ($occupation as $job)
-                                        <div class="profile-item">
-                                            <i class="fas fa-user-tie"></i>
-                                            <div>
-                                                <span class="profile-text">Occupation Type:</span>
-                                                <span class="profile-value">{{ $job->occupation_type ?? 'Not Available' }}</span>
-                                            </div>
+                                    @if ($occupation)
+                                    <div class="profile-item">
+                                        <i class="fas fa-user-tie"></i>
+                                        <div>
+                                            <span class="profile-text">Occupation Type:</span>
+                                            <span class="profile-value">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
                                         </div>
+                                    </div>
                                 
-                                        <div class="profile-item">
-                                            <i class="fas fa-certificate"></i>
-                                            <div>
-                                                <span class="profile-text">Extra Activities:</span>
-                                                <div class="profile-value">
-                                                    @if (!empty($job->extra_activity))
-                                                        @foreach (explode(',', $job->extra_activity) as $activity)
-                                                            <span class="badge bg-success me-1">{{ trim($activity) }}</span>
-                                                        @endforeach
-                                                    @else
-                                                        <span class="text-muted">Not Available</span>
-                                                    @endif
-                                                </div>
+                                    <div class="profile-item">
+                                        <i class="fas fa-certificate"></i>
+                                        <div>
+                                            <span class="profile-text">Extra Activities:</span>
+                                            <div class="profile-value">
+                                                @if (!empty($occupation->extra_activity))
+                                                    @foreach (explode(',', $occupation->extra_activity) as $activity)
+                                                        <span class="badge bg-success me-1">{{ trim($activity) }}</span>
+                                                    @endforeach
+                                                @else
+                                                    <span class="text-muted">Not Available</span>
+                                                @endif
                                             </div>
                                         </div>
-                                        <hr> <!-- Separator for better UI -->
-                                    @endforeach
+                                    </div>
                                 @else
                                     <p class="text-muted">No occupation details available.</p>
                                 @endif
                                 
 
+
                                 </div>
                             </div>
                         </div>
+
+
 
                         <!-- Seba Details -->
                         <div class="tab-pane fade" id="seba">
@@ -602,40 +593,69 @@
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const charts = [
-            { id: 'profileChart', data: {{ $profileCompletion }}, color: '#4CAF50' },
-            { id: 'familyChart', data: {{ $familyCompletion }}, color: '#FF9800' },
-            { id: 'idcardChart', data: {{ $idcardCompletion }}, color: '#2196F3' },
-            { id: 'addressChart', data: {{ $addressCompletion }}, color: '#673AB7' },
-            { id: 'occupationChart', data: {{ $occupationCompletion }}, color: '#009688' },
-            { id: 'sebaChart', data: {{ $sebaCompletion }}, color: '#FF5722' },
-            { id: 'socialmediaChart', data: {{ $socialmediaCompletion }}, color: '#E91E63' }
-        ];
-    
-        charts.forEach(chart => {
-            const ctx = document.getElementById(chart.id).getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'Remaining'],
-                    datasets: [{
-                        data: [chart.data, 100 - chart.data],
-                        backgroundColor: [chart.color, '#E8E8E8']
-                    }]
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const charts = [{
+                    id: 'profileChart',
+                    data: {{ $profileCompletion }},
+                    color: '#4CAF50'
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { display: false }
-                    }
+                {
+                    id: 'familyChart',
+                    data: {{ $familyCompletion }},
+                    color: '#FF9800'
+                },
+                {
+                    id: 'idcardChart',
+                    data: {{ $idcardCompletion }},
+                    color: '#2196F3'
+                },
+                {
+                    id: 'addressChart',
+                    data: {{ $addressCompletion }},
+                    color: '#673AB7'
+                },
+                {
+                    id: 'occupationChart',
+                    data: {{ $occupationCompletion }},
+                    color: '#009688'
+                },
+                {
+                    id: 'sebaChart',
+                    data: {{ $sebaCompletion }},
+                    color: '#FF5722'
+                },
+                {
+                    id: 'socialmediaChart',
+                    data: {{ $socialmediaCompletion }},
+                    color: '#E91E63'
                 }
+            ];
+
+            charts.forEach(chart => {
+                const ctx = document.getElementById(chart.id).getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Remaining'],
+                        datasets: [{
+                            data: [chart.data, 100 - chart.data],
+                            backgroundColor: [chart.color, '#E8E8E8']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
             });
         });
-    });
     </script>
 @endsection

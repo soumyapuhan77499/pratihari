@@ -148,14 +148,14 @@ if ($request->hasFile('profile_photo')) {
     
         // Fetch Family and Children Details
         $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
-        $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get() ?? collect(); // Ensure collection
+        $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get() ?? collect(); 
     
         // Fetch ID Card Details
-        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get() ?? collect(); // Ensure collection
+        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get() ?? collect(); 
     
         // Fetch Other Details
-        $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
-        $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get() ?? collect(); // Ensure collection
+        $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get() ?? collect();
+        $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get() ?? collect(); 
         $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->first();
     
         // Completion Percentages
@@ -173,17 +173,13 @@ if ($request->hasFile('profile_photo')) {
         ])->filter(fn($field) => !empty($idcard[0]->$field))->count() / 3) * 100) : 0;
     
         $addressCompletion = $profile && $profile->address ? 100 : 0;
-        $occupationCompletion = $occupation ? 100 : 0;
+        $occupationCompletion = ($occupation && (!empty($occupation->occupation_type) || !empty($occupation->extra_activity))) ? 100 : 0;
         $sebaCompletion = $sebaDetails->count() > 0 ? 100 : 0;
         $socialmediaCompletion = $socialMedia ? 100 : 0;
     
-        return view('admin.view-pratihari-profile',compact( 'profile',
-            'family',
-            'children',
-            'idcard',
-            'occupation',
-            'sebaDetails' ,
-            'socialMedia'), [
+        return view('admin.view-pratihari-profile', compact(
+            'profile', 'family', 'children', 'idcard', 'occupation', 'sebaDetails', 'socialMedia'
+        ), [
             'profileCompletion' => $profileCompletion ?? 0,
             'familyCompletion' => $familyCompletion ?? 0,
             'idcardCompletion' => $idcardCompletion ?? 0,
@@ -192,9 +188,7 @@ if ($request->hasFile('profile_photo')) {
             'occupationCompletion' => $occupationCompletion ?? 0,
             'sebaCompletion' => $sebaCompletion ?? 0,
             'socialmediaCompletion' => $socialmediaCompletion ?? 0,
-           
         ]);
-        
     }
     
     
