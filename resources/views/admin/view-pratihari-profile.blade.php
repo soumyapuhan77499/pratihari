@@ -11,7 +11,6 @@
             box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
             padding: 20px;
         }
-
         /* Profile Image */
         .profile-image {
             position: relative;

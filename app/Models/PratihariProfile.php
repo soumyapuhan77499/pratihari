@@ -26,7 +26,6 @@ class PratihariProfile extends Model
          'healthcard_no',
          'profile_photo',
          'joining_date',
-         'joining_year',
          'date_of_birth'
     ];
 

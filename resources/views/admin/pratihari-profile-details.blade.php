@@ -351,7 +351,7 @@
                                         <input type="checkbox" id="remember_date" onchange="toggleDateField()" class="form-check-input me-2" style="height: 20px;width:20px">
                                         <label for="remember_date" class="form-check-label mt-2" style="margin-left: 5px">Remember Exact Date Of Joining?</label>
                                     </div>
-                    
+                                    
                                     <div class="col-md-3" id="yearField">
                                         <label for="joining_year">Year of Joining</label>
                                         <div class="input-group mb-2">
@@ -364,14 +364,7 @@
                                             </select>
                                         </div>
                                     </div>
-                    
-                                    <div class="col-md-3" id="dateField" style="display: none;">
-                                        <label for="joining_date">Exact Date of Joining</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fa fa-calendar" style="color: rgb(30, 0, 255)"></i></span>
-                                            <input type="date" id="joining_year" name="joining_year" class="form-control">
-                                        </div>
-                                    </div>
+                                  
                                 </div>
                             </div>
                     
@@ -395,22 +388,42 @@
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+  
+<script>
+    function toggleDateField() {
+        var checkbox = document.getElementById("remember_date");
+        var yearField = document.getElementById("yearField");
     
-    <script>
-        function toggleDateField() {
-            let checkBox = document.getElementById("remember_date");
-            let dateField = document.getElementById("dateField");
-            let yearField = document.getElementById("yearField");
-    
-            if (checkBox.checked) {
-                dateField.style.display = "block";
-                yearField.style.display = "none";
-            } else {
-                dateField.style.display = "none";
-                yearField.style.display = "block";
+        if (checkbox.checked) {
+            // Change to date input field
+            yearField.innerHTML = `
+                <label for="joining_date">Date of Joining</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
+                    <input type="date" class="form-control" id="joining_date" name="joining_date">
+                </div>
+            `;
+        } else {
+            // Change back to year dropdown
+            var currentYear = new Date().getFullYear();
+            var options = `<option value="">Select Year</option>`;
+            for (var i = currentYear; i >= 1900; i--) {
+                options += `<option value="${i}">${i}</option>`;
             }
+    
+            yearField.innerHTML = `
+                <label for="joining_year">Year of Joining</label>
+                <div class="input-group mb-2">
+                    <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
+                    <select class="form-control" id="joining_date" name="joining_date">
+                        ${options}
+                    </select>
+                </div>
+            `;
         }
+    }
     </script>
+
     <script>
         @if(session('success'))
             Swal.fire({

@@ -68,8 +68,6 @@ class PratihariProfileController extends Controller
 
             // Set the joining year
             $pratihariProfile->joining_date = $request->joining_date;
-            $pratihariProfile->joining_year = $request->joining_year;
-
             $pratihariProfile->date_of_birth = $request->date_of_birth;
 
     
