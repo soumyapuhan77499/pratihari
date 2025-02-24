@@ -1,0 +1,303 @@
+ /* profile css */
+ .custom-card {
+    background: linear-gradient(135deg, #ffcc70, #ff8e53);
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+}
+
+/* Profile Image */
+.profile-image {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.8);
+}
+
+.profile-online {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 15px;
+    height: 15px;
+    background: #28a745;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+/* Profile Info */
+.prof-details h4 {
+    font-size: 22px;
+    font-weight: bold;
+    color: #3314de;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+}
+
+.prof-details p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #090909;
+}
+
+/* Tab Menu */
+.profile-nav-line {
+display: flex;
+justify-content: center;
+gap: 15px;
+background: #ffffff;
+border-radius: 12px;
+padding: 12px;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-nav-line .nav-link {
+color: #ffffff;
+font-weight: 600;
+padding: 12px 20px;
+border-radius: 30px;
+transition: all 0.3s ease-in-out;
+background: linear-gradient(45deg, #047af9, #75f7ec);
+text-transform: uppercase;
+font-size: 14px;
+}
+
+.profile-nav-line .nav-link:hover {
+transform: translateY(-3px);
+background: linear-gradient(45deg, #ff9800, #6d016a);
+box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+color: white;
+
+}
+
+.profile-nav-line .active {
+background: linear-gradient(45deg, #f60ff2, #e9b2ec);
+color: white;
+box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
+transform: scale(1.1);
+}
+
+/* personal css   */
+.personal-details-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.personal-details-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.personal-details-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.personal-details-item i {
+    font-size: 20px;
+    color: #007bff;
+    margin-right: 15px;
+}
+
+.personal-details-item:last-child {
+    border-bottom: none;
+}
+
+.personal-details-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #0d0d0d;
+}
+
+.personal-details-value {
+    font-size: 15px;
+    color: #666;
+}
+
+/* family css */
+
+.profile-imgs {
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    display: block;
+    margin: 0 auto;
+    object-fit: cover;
+}
+
+.profile-imgs:hover {
+    transform: scale(1.5);
+}
+
+.custom-card {
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.family-section {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    margin-bottom: 20px;
+}
+
+.family-section h4 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+/* idcard css */
+.id-card {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+}
+
+.id-card:hover {
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.id-card-header {
+    background: #007bff;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+}
+
+.id-photo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    object-fit: cover;
+}
+
+.id-details p {
+    font-size: 14px;
+    margin: 5px 0;
+    color: #333;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.col-md-4 {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-section {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-section:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.profile-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.profile-item i {
+    font-size: 20px;
+    color: #007bff;
+    margin-right: 15px;
+}
+
+.profile-item:last-child {
+    border-bottom: none;
+}
+
+.profile-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.profile-value {
+    font-size: 15px;
+    color: #666;
+}
+/* Progress Bar Styling */
+.progress-container-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centers all items */
+    align-items: center; /* Aligns items vertically */
+    gap: 15px; /* Adjust spacing */
+    padding: 20px;
+    text-align: center;
+}
+
+/* Progress Card */
+.progress-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    text-align: center;
+    width: 140px; /* Consistent width */
+    height: 140px; /* Consistent height */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content */
+    justify-content: center; /* Center content */
+}
+
+/* Chart Container */
+.chart-container {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center; /* Center chart */
+    align-items: center; /* Center chart */
+}
+
+/* Canvas Styling */
+canvas {
+    max-width: 70px;
+    max-height: 70px;
+}
+
+/* Label Styling */
+label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+    text-align: center;
+}

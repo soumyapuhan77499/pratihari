@@ -25,6 +25,10 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::get('/admin/pratihari-manage-profile', 'pratihariManageProfile')->name('admin.pratihariManageProfile');
     Route::get('/get-pratihari-address','getPratihariAddress')->name('getPratihariAddress');
     Route::get('/get-profile-details/{pratihari_id}','viewProfile')->name('admin.viewProfile');
+
+    Route::post('/admin/pratihari/approve/{id}', 'approve');
+    Route::post('/admin/pratihari/reject/{id}', 'reject');
+    
 });
 
 Route::prefix('admin')->group(function() {

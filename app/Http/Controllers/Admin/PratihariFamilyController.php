@@ -34,20 +34,26 @@ class PratihariFamilyController extends Controller
 
             // Handle File Uploads
             if ($request->hasFile('father_photo')) {
-                $fatherPhotoPath = $request->file('father_photo')->store('uploads/family', 'public');
-                $family->father_photo = $fatherPhotoPath;
+                $fatherPhoto = $request->file('father_photo');
+                $fatherPhotoName = time() . '_father.' . $fatherPhoto->getClientOriginalExtension();
+                $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
+                $family->father_photo = asset('uploads/family/' . $fatherPhotoName); // Save full file path
             }
-
+            
             if ($request->hasFile('mother_photo')) {
-                $motherPhotoPath = $request->file('mother_photo')->store('uploads/family', 'public');
-                $family->mother_photo = $motherPhotoPath;
+                $motherPhoto = $request->file('mother_photo');
+                $motherPhotoName = time() . '_mother.' . $motherPhoto->getClientOriginalExtension();
+                $motherPhoto->move(public_path('uploads/family'), $motherPhotoName);
+                $family->mother_photo = asset('uploads/family/' . $motherPhotoName); // Save full file path
             }
-
+            
             if ($request->hasFile('spouse_photo')) {
-                $spousePhotoPath = $request->file('spouse_photo')->store('uploads/family', 'public');
-                $family->spouse_photo = $spousePhotoPath;
+                $spousePhoto = $request->file('spouse_photo');
+                $spousePhotoName = time() . '_spouse.' . $spousePhoto->getClientOriginalExtension();
+                $spousePhoto->move(public_path('uploads/family'), $spousePhotoName);
+                $family->spouse_photo = asset('uploads/family/' . $spousePhotoName); // Save full file path
             }
-
+            
             $family->save();
 
             // Save Children Data
@@ -60,9 +66,12 @@ class PratihariFamilyController extends Controller
                     $childData->gender = $child['gender'];
 
                     if (isset($child['photo'])) {
-                        $childPhotoPath = $child['photo']->store('uploads/children', 'public');
-                        $childData->photo = $childPhotoPath;
+                        $childPhoto = $child['photo'];
+                        $childPhotoName = time() . '_child.' . $childPhoto->getClientOriginalExtension();
+                        $childPhoto->move(public_path('uploads/children'), $childPhotoName);
+                        $childData->photo = asset('uploads/children/' . $childPhotoName); // Save full file path
                     }
+                    
 
                     $childData->save();
                 }

@@ -88,11 +88,11 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>
-                                            <img src="{{ asset('storage/' . $profile->profile_photo) }}" alt="Profile Photo" class="br-5" width="50" height="50">
+                                            <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo" class="br-5" width="50" height="50">
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}"
-                                                class="btn btn-primary btn-sm">
+                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}" style="background-color:rgb(76, 2, 82);color: white"
+                                                class="btn btn-sm">
                                                 View Profile
                                             </a>
                                         </td>
@@ -118,9 +118,16 @@
                                         <td>{{ $profile->status }}</td>
 
                                         <td>
-                                            <button class="btn btn-success btn-sm">Approve</button>
-                                            <button class="btn btn-danger btn-sm">Reject</button>
+                                            @if ($profile->pratihari_status === 'approved')
+                                                <button class="btn btn-success btn-sm" disabled>Approved</button>
+                                            @elseif ($profile->pratihari_status === 'rejected')
+                                                <button class="btn btn-danger btn-sm" disabled>Rejected</button>
+                                            @else
+                                                <button class="btn btn-success btn-sm approve-btn" data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn" data-id="{{ $profile->id }}">Reject</button>
+                                            @endif
                                         </td>
+                                        
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -180,6 +187,7 @@
     @endsection
 
     @section('scripts')
+    
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -228,6 +236,68 @@
             });
         </script>
 
+<script>
+  $(document).ready(function () {
+    $('.approve-btn').click(function () {
+        let profileId = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to approve this profile?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Approve'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/admin/pratihari/approve/' + profileId,
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function (response) {
+                        Swal.fire('Approved!', response.message, 'success').then(() => {
+                            location.reload();
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    $('.reject-btn').click(function () {
+        let profileId = $(this).data('id');
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to reject this profile?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, Reject'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/admin/pratihari/reject/' + profileId,
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function (response) {
+                        Swal.fire('Rejected!', response.message, 'error').then(() => {
+                            location.reload();
+                        });
+                    }
+                });
+            }
+        });
+    });
+});
+
+</script>
 
 
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

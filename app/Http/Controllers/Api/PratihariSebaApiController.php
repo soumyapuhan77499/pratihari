@@ -63,9 +63,7 @@ class PratihariSebaApiController extends Controller
     public function getBeddhaBySeba($seba_id)
     {
         try {
-            $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-                ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
-                ->select('master__beddha.id', 'master__beddha.beddha_name')
+            $beddhas = PratihariSebaBeddhaAssign::where('status', 'active')
                 ->get();
 
             return response()->json([

@@ -12,8 +12,8 @@ class PratihariProfile extends Model
     protected $table = 'pratihari__profile_details';
 
     protected $fillable = [
-        'pratihari_id',
-        'nijoga_id',
+         'pratihari_id',
+         'nijoga_id',
          'first_name',
          'middle_name',
          'last_name',
@@ -26,7 +26,8 @@ class PratihariProfile extends Model
          'healthcard_no',
          'profile_photo',
          'joining_date',
-         'date_of_birth'
+         'date_of_birth',
+         'pratihari_status'
     ];
 
     public function occupation()
@@ -44,4 +45,18 @@ class PratihariProfile extends Model
         return $this->hasOne(PratihariIdcard::class, 'pratihari_id', 'pratihari_id');
     }
 
+    public function getCompletionPercentage()
+    {
+        $totalFields = 16; // Total number of columns in the table
+        $filledFields = 0;
+    
+        foreach ($this->fillable as $field) {
+            if (!empty($this->$field)) {
+                $filledFields++;
+            }
+        }
+    
+        return ($filledFields / $totalFields) * 100;
+    }
+    
 }

@@ -55,16 +55,25 @@ class PratihariProfileController extends Controller
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->health_card_no;
     
-            // Handle profile photo upload if exists
-            if ($request->hasFile('profile_photo')) {
-                $profilePhoto = $request->file('profile_photo');
-                // Check if the file is an image
-                if (!$profilePhoto->isValid()) {
-                    throw new \Exception('Profile photo upload failed. Please try again.');
-                }
-                $profilePhotoPath = $profilePhoto->store('uploads/profile_photos', 'public');
-                $pratihariProfile->profile_photo = $profilePhotoPath;
-            }
+  // Handle profile photo upload if exists
+if ($request->hasFile('profile_photo')) {
+    $profilePhoto = $request->file('profile_photo');
+
+    // Check if the file is valid
+    if (!$profilePhoto->isValid()) {
+        throw new \Exception('Profile photo upload failed. Please try again.');
+    }
+
+    // Generate unique file name
+    $imageName = time() . '.' . $profilePhoto->getClientOriginalExtension();
+
+    // Move file to public/uploads/profile_photos
+    $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
+
+    // Store relative path in database
+    $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
+}
+
 
             // Set the joining year
             $pratihariProfile->joining_date = $request->joining_date;
@@ -96,6 +105,29 @@ class PratihariProfileController extends Controller
 
     }
 
+    public function approve($id)
+    {
+        $profile = PratihariProfile::findOrFail($id);
+
+        // Generate `nijoga_id` using the first 4 digits of healthcard_no + 4 random digits
+        $nijogaId = substr($profile->healthcard_no, 0, 4) . rand(1000, 9999);
+
+        $profile->update([
+            'pratihari_status' => 'approved',
+            'nijoga_id' => $nijogaId
+        ]);
+
+        return response()->json(['message' => 'Profile approved successfully!']);
+    }
+
+    public function reject($id)
+    {
+        $profile = PratihariProfile::findOrFail($id);
+        $profile->update(['pratihari_status' => 'rejected']);
+
+        return response()->json(['message' => 'Profile rejected successfully!']);
+    }
+
     public function getPratihariAddress(Request $request)
     {
         \Log::info('Fetching address for pratihari_id: ' . $request->pratihari_id); // Debugging Log
@@ -112,29 +144,58 @@ class PratihariProfileController extends Controller
     public function viewProfile($pratihari_id)
     {
         // Fetch Profile Details
-        $profile = PratihariProfile::with([ 'address'])->where('pratihari_id', $pratihari_id)->first();
-
-        // Fetch Family Details
+        $profile = PratihariProfile::with(['address.sahiDetail'])->where('pratihari_id', $pratihari_id)->first();
+    
+        // Fetch Family and Children Details
         $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
-
-        $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get();
-
-        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
-
+        $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get() ?? collect(); // Ensure collection
+    
+        // Fetch ID Card Details
+        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get() ?? collect(); // Ensure collection
+    
+        // Fetch Other Details
         $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
-
-
-        $sebaDetails = PratihariSeba::with(['beddhaMaster','sebaMaster','nijogaMaster'])->where('pratihari_id', $pratihari_id)->get();
-
+        $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get() ?? collect(); // Ensure collection
         $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->first();
-
-        // Check if profile exists
-        if (!$profile) {
-            return redirect()->back()->with('error', 'Profile not found');
-        }
-
-        return view('admin.view-pratihari-profile', compact('profile', 'family','children','idcard','occupation','sebaDetails','socialMedia'));
+    
+        // Completion Percentages
+        $profileCompletion = $profile ? $profile->getCompletionPercentage() : 0;
+    
+        $familyCompletion = $family ? round((collect([
+            'father_name', 'father_photo', 'mother_name', 'mother_photo',
+            'maritial_status', 'spouse_name', 'spouse_photo'
+        ])->filter(fn($field) => !empty($family->$field))->count() / 7) * 100) : 0;
+    
+        $childrenCompletion = $children->count() > 0 ? 100 : 0;
+    
+        $idcardCompletion = $idcard->count() > 0 && isset($idcard[0]) ? round((collect([
+            'id_type', 'id_number', 'id_photo'
+        ])->filter(fn($field) => !empty($idcard[0]->$field))->count() / 3) * 100) : 0;
+    
+        $addressCompletion = $profile && $profile->address ? 100 : 0;
+        $occupationCompletion = $occupation ? 100 : 0;
+        $sebaCompletion = $sebaDetails->count() > 0 ? 100 : 0;
+        $socialmediaCompletion = $socialMedia ? 100 : 0;
+    
+        return view('admin.view-pratihari-profile',compact( 'profile',
+            'family',
+            'children',
+            'idcard',
+            'occupation',
+            'sebaDetails' ,
+            'socialMedia'), [
+            'profileCompletion' => $profileCompletion ?? 0,
+            'familyCompletion' => $familyCompletion ?? 0,
+            'idcardCompletion' => $idcardCompletion ?? 0,
+            'childrenCompletion' => $childrenCompletion ?? 0,
+            'addressCompletion' => $addressCompletion ?? 0,
+            'occupationCompletion' => $occupationCompletion ?? 0,
+            'sebaCompletion' => $sebaCompletion ?? 0,
+            'socialmediaCompletion' => $socialmediaCompletion ?? 0,
+           
+        ]);
+        
     }
     
-
+    
 }

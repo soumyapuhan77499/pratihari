@@ -31,4 +31,15 @@ class PratihariAddress extends Model
          'per_district',
          'per_state',
          'per_country'
-    ];}
+    ];
+
+    public function sahiDetail()
+{
+    return $this->belongsTo(PratihariSahi::class, 'sahi', 'id');
+}
+
+
+}
+
+
+    

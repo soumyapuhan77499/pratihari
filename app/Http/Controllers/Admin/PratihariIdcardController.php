@@ -35,11 +35,16 @@ public function saveIdcard(Request $request)
             $idCard->id_number = $request->id_number[$key];
 
             // Handle file upload
-            if ($request->hasFile('id_photo') && $request->file('id_photo')[$key]->isValid()) {
-                $imagePath = $request->file('id_photo')[$key]->store('uploads/id_photo', 'public');
-
-                $idCard->id_photo = $imagePath; // Store path to the image in the database
+            if ($request->hasFile('id_photo') && isset($request->file('id_photo')[$key])) {
+                $idPhoto = $request->file('id_photo')[$key];
+            
+                if ($idPhoto->isValid()) {
+                    $imageName = time() . '_id.' . $idPhoto->getClientOriginalExtension();
+                    $idPhoto->move(public_path('uploads/id_photo'), $imageName);
+                    $idCard->id_photo = asset('uploads/id_photo/' . $imageName); // Save full file path
+                }
             }
+            
 
             $idCard->save();
         }

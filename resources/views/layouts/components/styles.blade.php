@@ -17,6 +17,7 @@
 
 		<!-- STYLES CSS -->
 		<link href="{{asset('assets/css/style.css')}}" rel="stylesheet">
+
 		<link href="{{asset('assets/css/style-dark.css')}}" rel="stylesheet">
 		<link href="{{asset('assets/css/style-transparent.css')}}" rel="stylesheet">
 
