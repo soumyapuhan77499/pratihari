@@ -59,29 +59,33 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-    public function getSebaWithBeddha()
+    public function getBeddha() 
     {
         try {
-            $sebas = PratihariSeba::where('status', 'active')
-                ->with(['beddhaMaster']) // Load related beddha data
+            // Fetch active records with related beddha details
+            $sebaBeddhas = PratihariSebaBeddhaAssign::where('status', 'active')
+                ->with('beddha') // Load beddha details
                 ->get()
-                ->map(function ($seba) {
-                    return [
-                        'id' => $seba->id,
-                        'name' => $seba->sebaMaster->name ?? null, // Fetch seba name
-                        'bedha' => $seba->beddhaMaster->map(function ($beddha) {
-                            return [
-                                'id' => $beddha->id,
-                                'name' => $beddha->name,
-                            ];
-                        })
-                    ];
-                });
+                ->groupBy('seba_id');
+    
+            // Format the response
+            $formattedData = $sebaBeddhas->map(function ($items, $sebaId) {
+                return [
+                    'id' => $sebaId,
+                    'name' => 'seba' . $sebaId, // Assuming seba name is not stored, modify accordingly
+                    'bedha' => $items->map(function ($item) {
+                        return [
+                            'id' => $item->beddha->id,
+                            'name' => $item->beddha->beddha_name,
+                        ];
+                    })->values(),
+                ];
+            })->values();
     
             return response()->json([
                 'status' => 200,
-                'message' => 'Sebas with Beddhas fetched successfully',
-                'data' => $sebas
+                'message' => 'Beddhas fetched successfully',
+                'data' => $formattedData
             ], 200);
     
         } catch (\Exception $e) {
