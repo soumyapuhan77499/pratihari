@@ -30,6 +30,19 @@
                                 <span class="profile-online"></span>
                             </span>
                         </div>
+
+                        <div class="card-footer py-3">
+                            <nav class="nav main-nav-line profile-nav-line">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
+                            </nav>
+                        </div>
+
                         <div class="my-md-auto mt-4 prof-details">
                             <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
                             <p><i class="fa fa-user me-2"></i> <b>Nijoga Id:</b> {{ $profile->nijoga_id }}</p>
