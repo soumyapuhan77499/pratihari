@@ -264,7 +264,8 @@
                             </div>
                     
                             <!-- Email -->
-                            <div class="col-md-3">Email ID</label>
+                            <div class="col-md-3">
+                                <label for="email">Email ID</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-envelope" style="color: blue"></i></span>
                                     <input type="email" class="form-control" id="email" name="email">

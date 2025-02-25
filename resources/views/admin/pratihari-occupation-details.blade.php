@@ -9,7 +9,6 @@
         .form-group {
             position: relative;
         }
-
         .form-group i {
             position: absolute;
             left: 10px;

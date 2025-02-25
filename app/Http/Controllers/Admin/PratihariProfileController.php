@@ -172,9 +172,19 @@ if ($request->hasFile('profile_photo')) {
             'id_type', 'id_number', 'id_photo'
         ])->filter(fn($field) => !empty($idcard[0]->$field))->count() / 3) * 100) : 0;
     
+        $occupation_chat = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
+
+        $hasOccupationData = $occupation_chat->isNotEmpty() && 
+            $occupation_chat->first(function ($item) {
+                return !empty($item->occupation_type) || !empty($item->extra_activity);
+            });
+        
+        $occupationCompletion = $hasOccupationData ? 100 : 0;
+        
         $addressCompletion = $profile && $profile->address ? 100 : 0;
-        $occupationCompletion = ($occupation && (!empty($occupation->occupation_type) || !empty($occupation->extra_activity))) ? 100 : 0;
+        
         $sebaCompletion = $sebaDetails->count() > 0 ? 100 : 0;
+        
         $socialmediaCompletion = $socialMedia ? 100 : 0;
     
         return view('admin.view-pratihari-profile', compact(

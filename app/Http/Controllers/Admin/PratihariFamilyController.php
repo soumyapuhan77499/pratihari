@@ -72,7 +72,6 @@ class PratihariFamilyController extends Controller
                         $childData->photo = asset('uploads/children/' . $childPhotoName); // Save full file path
                     }
                     
-
                     $childData->save();
                 }
             }

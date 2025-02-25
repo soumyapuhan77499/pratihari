@@ -425,49 +425,44 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <!-- Occupation Details -->
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-primary"><i class="fas fa-briefcase"></i> Occupation Details
-                                    </h4>
-
-                                    @if ($occupation)
-                                    <div class="profile-item">
-                                        <i class="fas fa-user-tie"></i>
-                                        <div>
-                                            <span class="profile-text">Occupation Type:</span>
-                                            <span class="profile-value">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="profile-item">
-                                        <i class="fas fa-certificate"></i>
-                                        <div>
-                                            <span class="profile-text">Extra Activities:</span>
-                                            <div class="profile-value">
-                                                @if (!empty($occupation->extra_activity))
-                                                    @foreach (explode(',', $occupation->extra_activity) as $activity)
-                                                        <span class="badge bg-success me-1">{{ trim($activity) }}</span>
-                                                    @endforeach
-                                                @else
-                                                    <span class="text-muted">Not Available</span>
-                                                @endif
+                                    <h4 class="fw-bold text-primary"><i class="fas fa-briefcase"></i> Occupation Details</h4>
+                        
+                                    @if ($occupation->isNotEmpty()) 
+                                        <div class="profile-item">
+                                            <i class="fas fa-user-tie"></i>
+                                            <div>
+                                                <span class="profile-text">Occupation Type:</span>
+                                                <span class="profile-value">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
                                             </div>
                                         </div>
-                                    </div>
-                                @else
-                                    <p class="text-muted">No occupation details available.</p>
-                                @endif
-                                
-
-
+                        
+                                        <div class="profile-item">
+                                            <i class="fas fa-certificate"></i>
+                                            <div>
+                                                <span class="profile-text">Extra Activities:</span>
+                                                <div class="profile-value">
+                                                    @if (!empty(optional($occupation->first())->extra_activity))
+                                                        @foreach (explode(',', optional($occupation->first())->extra_activity) as $activity)
+                                                            <span class="badge bg-success me-1">{{ trim($activity) }}</span>
+                                                        @endforeach
+                                                    @else
+                                                        <span class="text-muted">Not Available</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <p class="text-muted">No occupation details available.</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>
-
-
-
+                        
                         <!-- Seba Details -->
                         <div class="tab-pane fade" id="seba">
                             <div class="card profile-section">
