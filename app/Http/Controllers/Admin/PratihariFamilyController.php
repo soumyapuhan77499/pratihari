@@ -82,5 +82,10 @@ class PratihariFamilyController extends Controller
         }
     }
 
+    public function edit($pratihari_id)
+    {
+        $family = PratihariFamily::with('children')->where('pratihari_id', $pratihari_id)->first();
+        return view('admin.update-family-details', compact('family'));
+    }
     
 }

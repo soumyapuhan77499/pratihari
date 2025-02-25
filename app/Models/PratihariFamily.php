@@ -22,4 +22,11 @@ class PratihariFamily extends Model
          'spouse_photo',
 
     ];
+
+    // In PratihariFamily model
+public function children()
+{
+    return $this->hasMany(PratihariChildren::class, 'pratihari_id');
+}
+
 }

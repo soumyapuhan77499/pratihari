@@ -19,7 +19,6 @@
         </div>
     </div>
     <!-- /breadcrumb -->
-
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-12">
@@ -40,29 +39,26 @@
                         </div>
                     </div>
 
-                    <div class="card-footer py-3">
-                        <nav class="nav main-nav-line profile-nav-line">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
-                        </nav>
-                    </div>
                     <div class="progress-container-wrapper">
-                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50'], ['Family', $familyCompletion, 'familyChart', '#FF9800'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3'], ['Address', $addressCompletion, 'addressChart', '#673AB7'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63']] as $data)
-                            <div class="progress-card">
-                                <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
-                                <div class="chart-container">
-                                    <canvas id="{{ $data[2] }}"></canvas>
+                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], 
+                                   ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], 
+                                   ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], 
+                                   ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], 
+                                   ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], 
+                                   ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], 
+                                   ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
+                    
+                            <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}" class="progress-card-link">
+                                <div class="progress-card">
+                                    <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
+                                    <div class="chart-container">
+                                        <canvas id="{{ $data[2] }}"></canvas>
+                                    </div>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
-
-
+                    
                 </div>
             </div>
         </div>
@@ -425,7 +421,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Occupation Details -->
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">

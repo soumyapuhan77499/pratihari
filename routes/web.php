@@ -25,22 +25,25 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::get('/admin/pratihari-manage-profile', 'pratihariManageProfile')->name('admin.pratihariManageProfile');
     Route::get('/get-pratihari-address','getPratihariAddress')->name('getPratihariAddress');
     Route::get('/get-profile-details/{pratihari_id}','viewProfile')->name('admin.viewProfile');
-
     Route::post('/admin/pratihari/approve/{id}', 'approve');
     Route::post('/admin/pratihari/reject/{id}', 'reject');
-    
+    Route::get('/profile-update/{pratihari_id}','edit')->name('profile.update');
+    Route::put('/admin/pratihari-profile-update/{pratihari_id}', 'updateProfile')->name('admin.pratihari-profile.update');
+
 });
 
 Route::prefix('admin')->group(function() {
     Route::get('/pratihari-family', [PratihariFamilyController::class, 'pratihariFamily'])->name('admin.pratihariFamily');
     Route::post('/pratihari-family-save', [PratihariFamilyController::class, 'saveFamily'])->name('admin.pratihari-family.store');
+    Route::get('/family-update/{pratihari_id}', [PratihariFamilyController::class, 'edit'])->name('family.update');
+    Route::post('/pratihari-family-update/{pratihari_id}', [PratihariFamilyController::class, 'updateFamily'])->name('admin.pratihari-family.update');
 });
 
 Route::prefix('admin')->group(function() {
     Route::get('/pratihari-idcard', [PratihariIdcardController::class, 'pratihariIdcard'])->name('admin.pratihariIdcard');
     Route::post('/pratihari-idcard-save', [PratihariIdcardController::class, 'saveIdcard'])->name('admin.pratihari-idcard.store');
+    Route::get('/idcard-update/{pratihari_id}', [PratihariIdcardController::class, 'edit'])->name('idcard.update');
 });
-
 
 Route::prefix('admin')->group(function() {
     Route::get('/pratihari-address', [PratihariAddressController::class, 'pratihariAddress'])->name('admin.pratihariAddress');
@@ -50,11 +53,13 @@ Route::prefix('admin')->group(function() {
     Route::get('/manage-sahi', [PratihariAddressController::class, 'manageSahi'])->name('manageSahi');
     Route::post('/sahi/update/{id}', [PratihariAddressController::class, 'update'])->name('sahi.update');
     Route::post('/sahi/delete/{id}', [PratihariAddressController::class, 'delete'])->name('sahi.delete');
+    Route::get('/address-update/{pratihari_id}', [PratihariAddressController::class, 'edit'])->name('address.update');
 });
 
 Route::prefix('admin')->group(function() {
     Route::get('/pratihari-occupation', [PratihariOccupationController::class, 'pratihariOccupation'])->name('admin.pratihariOccupation');
     Route::post('/pratihari-occupation-save', [PratihariOccupationController::class, 'saveOccupation'])->name('admin.pratihari-occupation.store');
+    Route::get('/occupation-update/{pratihari_id}', [PratihariOccupationController::class, 'edit'])->name('occupation.update');
 });
 
 Route::prefix('admin')->group(function() {
@@ -72,9 +77,13 @@ Route::prefix('admin')->group(function() {
     Route::post('/pratihari-seba-save', [PratihariSebaController::class, 'saveSeba'])->name('admin.pratihari-seba.store');
     Route::get('/get-seba/{nijoga_id}', [PratihariSebaController::class, 'getSebaByNijoga'])->name('admin.getSebaByNijoga');
     Route::get('/get-beddha/{seba_id}', [PratihariSebaController::class, 'getBeddhaBySeba'])->name('admin.getBeddhaBySeba');
+    Route::get('/seba-update/{pratihari_id}', [PratihariSebaController::class, 'edit'])->name('seba.update');
+
 });
 
 Route::prefix('admin')->group(function() {
     Route::get('/pratihari-social-media', [PratihariSocialMediaController::class, 'pratihariSocialMedia'])->name('admin.pratihariSocialMedia');
     Route::post('/pratihari-social-media-save', [PratihariSocialMediaController::class, 'saveSocialMedia'])->name('admin.social-media.store');
+    Route::get('/social-update/{pratihari_id}', [PratihariSocialMediaController::class, 'edit'])->name('social.update');
+
 });
