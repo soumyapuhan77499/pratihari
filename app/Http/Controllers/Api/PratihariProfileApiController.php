@@ -45,16 +45,24 @@ class PratihariProfileApiController extends Controller
         $pratihariProfile->alt_phone_no = $request->alt_phone_no;
         $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-        // Handle profile photo upload
+        // Save profile photo
         if ($request->hasFile('profile_photo')) {
             $profilePhoto = $request->file('profile_photo');
-            if (!$profilePhoto->isValid()) {
-                throw new \Exception('Profile photo upload failed.');
-            }
-            $profilePhotoPath = $profilePhoto->store('uploads/profile_photos', 'public');
-            $pratihariProfile->profile_photo = $profilePhotoPath;
-        }
 
+            // Check if the file is valid
+            if (!$profilePhoto->isValid()) {
+                throw new \Exception('Profile photo upload failed. Please try again.');
+            }
+
+            // Generate unique file name
+            $imageName = time() . '.' . $profilePhoto->getClientOriginalExtension();
+
+            // Move file to public/uploads/profile_photos
+            $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
+
+            // Store relative path in database
+            $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
+        }
         // Save profile
         $pratihariProfile->save();
 

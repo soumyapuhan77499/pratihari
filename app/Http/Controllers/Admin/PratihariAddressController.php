@@ -125,4 +125,73 @@ public function delete($id)
     return response()->json(['success' => true, 'message' => 'Sahi marked as deleted!']);
 }
 
+public function updateAddress(Request $request)
+{
+    try {
+        // Find existing address for the pratihari_id, if exists
+        $address = PratihariAddress::where('pratihari_id', $request->pratihari_id)->first();
+
+        if (!$address) {
+            $address = new PratihariAddress(); // If no record exists, create new
+            $address->pratihari_id = $request->pratihari_id;
+        }
+
+        // Common fields - present & permanent both
+        $address->sahi = $request->sahi;
+        $address->landmark = $request->landmark;
+        $address->post = $request->post;
+        $address->police_station = $request->police_station;
+        $address->pincode = $request->pincode;
+        $address->district = $request->district;
+        $address->state = $request->state;
+        $address->country = $request->country;
+        $address->address = $request->address;
+
+        // Handle permanent address fields
+        if (!$request->has('differentAsPermanent')) {
+            // Same as present address
+            $address->per_address = $request->address;
+            $address->per_sahi = $request->sahi;
+            $address->per_landmark = $request->landmark;
+            $address->per_post = $request->post;
+            $address->per_police_station = $request->police_station;
+            $address->per_pincode = $request->pincode;
+            $address->per_district = $request->district;
+            $address->per_state = $request->state;
+            $address->per_country = $request->country;
+        } else {
+            // Use separate permanent address
+            $address->per_address = $request->per_address;
+            $address->per_sahi = $request->per_sahi;
+            $address->per_landmark = $request->per_landmark;
+            $address->per_post = $request->per_post;
+            $address->per_police_station = $request->per_police_station;
+            $address->per_pincode = $request->per_pincode;
+            $address->per_district = $request->per_district;
+            $address->per_state = $request->per_state;
+            $address->per_country = $request->per_country;
+        }
+
+        $address->save();
+
+        return redirect()->route('admin.viewProfile', ['pratihari_id' => $address->pratihari_id])->with('success', 'Address saved successfully');
+       
+    } catch (\Exception $e) {
+        Log::error('Error saving/updating address: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Failed to save address. Please try again.');
+    }
+}
+
+public function edit($pratihari_id)
+{
+
+    $pratihariAddress = PratihariAddress::where('pratihari_id', $pratihari_id)->first();
+    $sahiList = PratihariSahi::where('status', 'active')->get();
+
+    return view('admin.update-address-details', compact('pratihariAddress','sahiList'));
+
+}
+
+
+
 }

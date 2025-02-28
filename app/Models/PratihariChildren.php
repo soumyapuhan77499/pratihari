@@ -18,4 +18,9 @@ class PratihariChildren extends Model
          'gender',
          'photo',
     ];
+
+    public function family()
+    {
+        return $this->belongsTo(PratihariFamily::class, 'pratihari_id');
+    }
 }

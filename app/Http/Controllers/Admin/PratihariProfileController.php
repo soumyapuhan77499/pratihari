@@ -203,7 +203,7 @@ class PratihariProfileController extends Controller
     {
         $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
 
-        return view('admin.pratihari-profile-details', compact('profile', 'pratihari_id'));
+        return view('admin.update-profile-details', compact('profile', 'pratihari_id'));
 
     }
 
@@ -212,7 +212,6 @@ public function updateProfile(Request $request, $pratihari_id)
     // Validate incoming request
     $validator = Validator::make($request->all(), [
         'first_name' => 'required|string|max:255',
-        // Add other validation rules as needed
     ]);
 
     if ($validator->fails()) {
@@ -259,8 +258,7 @@ public function updateProfile(Request $request, $pratihari_id)
         // Save the updated profile
         $pratihariProfile->save();
 
-        // Redirect to a specific route with success message
-        return redirect()->route('admin.pratihariManageProfile')->with('success', 'Profile updated successfully!');
+        return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihari_id])->with('success', 'Profile updated successfully!');
 
     } catch (\Exception $e) {
         // Log the exception and display the specific error message

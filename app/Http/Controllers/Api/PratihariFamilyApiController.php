@@ -34,13 +34,24 @@ class PratihariFamilyApiController extends Controller
     
             // Handle File Uploads for Parents & Spouse
             if ($request->hasFile('father_photo')) {
-                $family->father_photo = $request->file('father_photo')->store('uploads/family', 'public');
+                $fatherPhoto = $request->file('father_photo');
+                $fatherPhotoName = time() . '_father.' . $fatherPhoto->getClientOriginalExtension();
+                $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
+                $family->father_photo = 'uploads/family/' . $fatherPhotoName;
             }
+    
             if ($request->hasFile('mother_photo')) {
-                $family->mother_photo = $request->file('mother_photo')->store('uploads/family', 'public');
+                $motherPhoto = $request->file('mother_photo');
+                $motherPhotoName = time() . '_mother.' . $motherPhoto->getClientOriginalExtension();
+                $motherPhoto->move(public_path('uploads/family'), $motherPhotoName);
+                $family->mother_photo = 'uploads/family/' . $motherPhotoName;
             }
+    
             if ($request->hasFile('spouse_photo')) {
-                $family->spouse_photo = $request->file('spouse_photo')->store('uploads/family', 'public');
+                $spousePhoto = $request->file('spouse_photo');
+                $spousePhotoName = time() . '_spouse.' . $spousePhoto->getClientOriginalExtension();
+                $spousePhoto->move(public_path('uploads/family'), $spousePhotoName);
+                $family->spouse_photo = 'uploads/family/' . $spousePhotoName;
             }
     
             $family->save();
@@ -56,9 +67,12 @@ class PratihariFamilyApiController extends Controller
                         $childData->date_of_birth = $request->children_dob[$index] ?? null;
                         $childData->gender = $request->children_gender[$index] ?? null;
     
-                        // Handle Children Photo Upload
-                        if ($request->hasFile("children_photo.$index")) {
-                            $childData->photo = $request->file("children_photo.$index")->store('uploads/children', 'public');
+                        // Handle File Uploads for Children
+                        if (isset($child['photo']) && $request->hasFile("children.{$child['id']}.photo")) {
+                            $childPhoto = $request->file("children.{$child['id']}.photo");
+                            $childPhotoName = time() . '_child.' . $childPhoto->getClientOriginalExtension();
+                            $childPhoto->move(public_path('uploads/children'), $childPhotoName);
+                            $childData->photo = 'uploads/children/' . $childPhotoName;
                         }
     
                         $childData->save();

@@ -262,47 +262,83 @@
             </ul>
 
             <div class="card-body">
-                <form action="{{ route('admin.pratihari-seba.store') }}" method="POST">
+                <form action="{{ route('admin.pratihari-seba.update', $pratihari_id) }}" method="POST">
                     @csrf
-                    <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
-            
+                    @method('PUT')
+                
+                    <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+                
                     <!-- Nijoga Selection -->
                     <div class="form-group">
                         <label for="nijoga_type" class="form-label">🛕 Nijoga Category</label>
                         <select class="form-select" id="nijoga_type" name="nijoga_type" required>
                             <option value="">Select Nijoga</option>
                             @foreach ($nijogas as $nijoga)
-                                <option value="{{ $nijoga->id }}">{{ $nijoga->nijoga_name }}</option>
+                                <option value="{{ $nijoga->id }}" {{ $nijoga->id == $selectedNijogaId ? 'selected' : '' }}>
+                                    {{ $nijoga->nijoga_name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
-            
-                    <!-- Seba and Beddha Sections (Initially Hidden) -->
-                    <div id="seba_beddha_section" class="hidden">
+                
+                    <!-- Seba and Beddha Sections (Only show if Nijoga is pre-selected) -->
+                    <div id="seba_beddha_section" class="{{ $selectedNijogaId ? '' : 'd-none' }}">
                         <!-- Available Seba List -->
                         <div class="seba-section">
                             <label class="section-title">✅ Available Sebas</label>
                             <div class="checkbox-list" id="seba_list">
-                                <!-- Seba checkboxes dynamically added -->
+                                @foreach ($sebas as $seba)
+                                    <div class="form-check me-3">
+                                        <input class="form-check-input seba-checkbox"
+                                               type="checkbox"
+                                               name="seba_id[]"
+                                               value="{{ $seba->id }}"
+                                               id="seba_{{ $seba->id }}"
+                                               data-seba-id="{{ $seba->id }}"
+                                               {{ in_array($seba->id, $assignedSebas) ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="seba_{{ $seba->id }}">{{ $seba->seba_name }}</label>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
-            
-                        <!-- Available Beddha List -->
                         <div class="beddha-section">
                             <label class="section-title">📜 Beddha List</label>
                             <div class="checkbox-list" id="beddha_list">
-                                <!-- Beddha checkboxes dynamically added -->
+                                @foreach ($assignedSebas as $sebaId)
+                                    <div class="beddha-group" id="beddha_group_{{ $sebaId }}">
+                                        <strong>{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            @foreach ($beddhas[$sebaId] ?? [] as $beddha)
+                                                <div class="form-check me-3">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="beddha_id[{{ $sebaId }}][]"
+                                                           value="{{ $beddha->id }}"
+                                                           id="beddha_{{ $sebaId }}_{{ $beddha->id }}"
+                                                           {{ isset($assignedBeddhas[$sebaId]) && in_array($beddha->id, $assignedBeddhas[$sebaId]) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="beddha_{{ $sebaId }}_{{ $beddha->id }}">
+                                                        {{ $beddha->beddha_name }}
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
+                        
+                        
+                        
                     </div>
-            
+                
                     <!-- Submit Button -->
                     <div class="col-12 text-center">
                         <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
-                            <i class="fa fa-save"></i> Submit
+                            <i class="fa fa-save"></i> Update
                         </button>
                     </div>
                 </form>
+                
             </div>
             
         </div>
@@ -315,40 +351,78 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            });
-        @endif
+   document.addEventListener("DOMContentLoaded", function () {
+    // Flash message handling (unchanged)
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
 
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: "{{ session('error') }}",
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
-            });
-        @endif
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: "{{ session('error') }}",
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    // Function to handle seba checkbox toggling (handles both adding & removing Beddha)
+    function handleSebaCheckboxToggle(checkbox) {
+        let sebaId = checkbox.dataset.sebaId;
+        let beddhaList = document.getElementById('beddha_list');
+
+        if (checkbox.checked) {
+            fetch(`/admin/get-beddha/${sebaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!document.getElementById(`beddha_group_${sebaId}`)) {
+                        let beddhaHtml = `<div class="beddha-group" id="beddha_group_${sebaId}">
+                            <strong>${checkbox.nextElementSibling.innerText}:</strong>
+                            <div class="d-flex flex-wrap gap-2 mt-2">`;
+                        data.forEach(beddha => {
+                            beddhaHtml += `
+                                <div class="form-check me-3">
+                                    <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
+                                    <label class="form-check-label" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
+                                </div>`;
+                        });
+                        beddhaHtml += `</div></div>`;
+                        beddhaList.innerHTML += beddhaHtml;
+                    }
+                });
+        } else {
+            let beddhaGroup = document.getElementById(`beddha_group_${sebaId}`);
+            if (beddhaGroup) {
+                beddhaGroup.remove();
+            }
+        }
+    }
+
+    // Attach handler to all existing seba checkboxes (in case of edit mode pre-selection)
+    document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            handleSebaCheckboxToggle(this);
+        });
     });
-</script>
 
-<script>
+    // Nijoga change handler (unchanged, but make sure newly added checkboxes also get the handler)
     document.getElementById('nijoga_type').addEventListener('change', function() {
         let nijogaId = this.value;
         let sebaList = document.getElementById('seba_list');
         let beddhaList = document.getElementById('beddha_list');
         let sebaBeddhaSection = document.getElementById('seba_beddha_section');
-    
+
         sebaList.innerHTML = '';
         beddhaList.innerHTML = '';
         sebaBeddhaSection.classList.add('d-none');
-    
+
         if (nijogaId) {
             fetch(`/admin/get-seba/${nijogaId}`)
                 .then(response => response.json())
@@ -364,41 +438,18 @@
                             </div>`;
                         sebaList.innerHTML += checkbox;
                     });
-    
+
+                    // Attach event listener to the new checkboxes as well
                     document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
                         checkbox.addEventListener('change', function() {
-                            let sebaId = this.dataset.sebaId;
-                            let beddhaGroup = document.getElementById(`beddha_group_${sebaId}`);
-    
-                            if (this.checked) {
-                                fetch(`/admin/get-beddha/${sebaId}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (!beddhaGroup) {
-                                            let beddhaHtml = `<div class="beddha-group" id="beddha_group_${sebaId}">
-                                                <strong>${this.nextElementSibling.innerText}:</strong>
-                                                <div class="d-flex flex-wrap gap-2 mt-2">`;
-                                            data.forEach(beddha => {
-                                                beddhaHtml += `
-                                                    <div class="form-check me-3">
-                                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
-                                                        <label class="form-check-label" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
-                                                    </div>`;
-                                            });
-                                            beddhaHtml += `</div></div>`;
-                                            beddhaList.innerHTML += beddhaHtml;
-                                        }
-                                    });
-                            } else {
-                                if (beddhaGroup) {
-                                    beddhaGroup.remove();
-                                }
-                            }
+                            handleSebaCheckboxToggle(this);
                         });
                     });
                 });
         }
     });
+});
+
     </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

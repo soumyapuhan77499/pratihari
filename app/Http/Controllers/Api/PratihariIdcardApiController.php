@@ -32,11 +32,16 @@ class PratihariIdcardApiController extends Controller
             $idCard->id_number = $request->id_number[$key];
 
             // Handle file upload
-            if ($request->hasFile("id_photo.$key") && $request->file("id_photo.$key")->isValid()) {
-                $imagePath = $request->file("id_photo.$key")->store('public/id_photos');
-                $idCard->id_photo = $imagePath;
+            if ($request->hasFile('id_photo') && isset($request->file('id_photo')[$key])) {
+                $idPhoto = $request->file('id_photo')[$key];
+            
+                if ($idPhoto->isValid()) {
+                    $imageName = time() . '_id.' . $idPhoto->getClientOriginalExtension();
+                    $idPhoto->move(public_path('uploads/id_photo'), $imageName);
+                    $idCard->id_photo = asset('uploads/id_photo/' . $imageName); // Save full file path
+                }
             }
-
+            
             $idCard->save();
             $savedIdCards[] = $idCard;
         }

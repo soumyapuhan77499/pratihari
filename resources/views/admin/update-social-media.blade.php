@@ -277,79 +277,80 @@
 
                 <div class="card-body">
                     
-                    <form action="{{ route('admin.social-media.store') }}" method="POST" onsubmit="return validateForm()">
+                    <form action="{{ route('admin.social-media.update', $pratihari_id) }}" method="POST" onsubmit="return validateForm()">
                         @csrf
+                        @method('PUT')
+                        <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+                    
                         <div class="row">
-                            <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
-
                             <div class="col-md-6">
                                 <div class="form-group mt-3">
-                                    <label for="facebook">Facebook</label>
+                                    <label for="facebook_url">Facebook</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-facebook" style="color: blue"></i></span>
-                                        <input type="text" name="facebook" id="facebook" class="form-control"
-                                            placeholder="Enter Facebook URL" value="{{ old('facebook') }}">
+                                        <span class="input-group-text"><i class="fab fa-facebook" style="color: blue"></i></span>
+                                        <input type="text" name="facebook_url" id="facebook_url" class="form-control"
+                                            placeholder="Enter Facebook URL" value="{{ old('facebook', $socialMedia->facebook_url ?? '') }}">
                                     </div>
                                     <small id="facebook_error" class="text-danger"></small>
                                 </div>
                             </div>
-
+                    
                             <div class="col-md-6">
                                 <div class="form-group mt-3">
-                                    <label for="twitter">Twitter</label>
+                                    <label for="twitter_url">Twitter</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-twitter" style="color: blue"></i></span>
-                                        <input type="text" name="twitter" id="twitter" class="form-control"
-                                            placeholder="Enter Twitter URL" value="{{ old('twitter') }}">
+                                        <span class="input-group-text"><i class="fab fa-twitter" style="color: blue"></i></span>
+                                        <input type="text" name="twitter_url" id="twitter_url" class="form-control"
+                                            placeholder="Enter Twitter URL" value="{{ old('twitter', $socialMedia->twitter_url ?? '') }}">
                                     </div>
                                     <small id="twitter_error" class="text-danger"></small>
                                 </div>
                             </div>
-
+                    
                             <div class="col-md-6">
                                 <div class="form-group mt-3">
-                                    <label for="instagram">Instagram</label>
+                                    <label for="instagram_url">Instagram</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-instagram" style="color: blue"></i></span>
-                                        <input type="text" name="instagram" id="instagram" class="form-control"
-                                            placeholder="Enter Instagram URL" value="{{ old('instagram') }}">
+                                        <span class="input-group-text"><i class="fab fa-instagram" style="color: blue"></i></span>
+                                        <input type="text" name="instagram_url" id="instagram_url" class="form-control"
+                                            placeholder="Enter Instagram URL" value="{{ old('instagram', $socialMedia->instagram_url ?? '') }}">
                                     </div>
                                     <small id="instagram_error" class="text-danger"></small>
                                 </div>
                             </div>
-
+                    
                             <div class="col-md-6">
                                 <div class="form-group mt-3">
-                                    <label for="linkedin">LinkedIn</label>
+                                    <label for="linkedin_url">LinkedIn</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-linkedin" style="color: blue"></i></span>
-                                        <input type="text" name="linkedin" id="linkedin" class="form-control"
-                                            placeholder="Enter LinkedIn URL" value="{{ old('linkedin') }}">
+                                        <span class="input-group-text"><i class="fab fa-linkedin" style="color: blue"></i></span>
+                                        <input type="text" name="linkedin_url" id="linkedin_url" class="form-control"
+                                            placeholder="Enter LinkedIn URL" value="{{ old('linkedin', $socialMedia->linkedin_url ?? '') }}">
                                     </div>
                                     <small id="linkedin_error" class="text-danger"></small>
                                 </div>
                             </div>
-
+                    
                             <div class="col-md-6">
                                 <div class="form-group mt-3">
-                                    <label for="youtube">YouTube</label>
+                                    <label for="youtube_url">YouTube</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-youtube" style="color: blue"></i></span>
-                                        <input type="text" name="youtube" id="youtube" class="form-control"
-                                            placeholder="Enter YouTube URL" value="{{ old('youtube') }}">
+                                        <span class="input-group-text"><i class="fab fa-youtube" style="color: blue"></i></span>
+                                        <input type="text" name="youtube_url" id="youtube_url" class="form-control"
+                                            placeholder="Enter YouTube URL" value="{{ old('youtube', $socialMedia->youtube_url ?? '') }}">
                                     </div>
                                     <small id="youtube_error" class="text-danger"></small>
                                 </div>
                             </div>
-
+                    
                             <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
-                                    style="color: white">
-                                    <i class="fa fa-save"></i> Submit
+                                <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
+                                    <i class="fa fa-save"></i> Update
                                 </button>
                             </div>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>

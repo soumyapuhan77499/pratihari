@@ -35,4 +35,32 @@ class PratihariOccupationController extends Controller
             return redirect()->back()->with('error', 'Failed to save occupation details. Please try again. ' . $e->getMessage());
         }
     }
+
+    public function edit($pratihariId)
+{
+    $occupation = PratihariOccupation::where('pratihari_id', $pratihariId)->first();
+
+    return view('admin.update-occupation-details', compact('occupation', 'pratihariId'));
+}
+    
+    public function update(Request $request, $pratihari_id)
+{
+    try {
+        $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->first();
+
+        $extraActivities = $request->extra_activity ? implode(',', array_filter($request->extra_activity)) : null;
+
+        $occupation->update([
+            'occupation_type' => $request->occupation,
+            'extra_activity' => $extraActivities,
+        ]);
+
+        return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihari_id])->with('success', 'Occupation details updated successfully');
+
+    } catch (\Exception $e) {
+        \Log::error('Error updating occupation: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Failed to update occupation details. Please try again.');
+    }
+}
+
 }

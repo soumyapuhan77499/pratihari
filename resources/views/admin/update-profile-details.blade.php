@@ -4,6 +4,10 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+
     <style>
         .form-group {
             position: relative;
@@ -162,7 +166,6 @@
 
 
 @section('content')
-  
     <!-- Profile Form -->
     <div class="row">
         <div class="col-12 mt-2">
@@ -222,83 +225,96 @@
                         </a>
                     </li>
                 </ul>
-
                 <div class="card-body">
-                    <form action="{{ route('admin.pratihari-profile.store') }}" method="POST" enctype="multipart/form-data">
+                    <form
+                        action="{{ isset($profile) ? route('admin.pratihari-profile.update', $profile->pratihari_id) : route('admin.pratihari-profile.store') }}"
+                        method="POST" enctype="multipart/form-data">
                         @csrf
+                        @if (isset($profile))
+                            @method('PUT')
+                        @endif
+
                         <div class="row">
                             <!-- First Name -->
                             <div class="col-md-3">
                                 <label for="first_name">First Name</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
-                                    <input type="text" name="first_name" id="first_name" class="form-control">
+                                    <input type="text" name="first_name" id="first_name" class="form-control"
+                                        value="{{ old('first_name', $profile->first_name ?? '') }}">
                                 </div>
                             </div>
-                    
+
                             <!-- Middle Name -->
                             <div class="col-md-3">
                                 <label for="middle_name">Middle Name</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
-                                    <input type="text" name="middle_name" id="middle_name" class="form-control">
+                                    <input type="text" name="middle_name" id="middle_name" class="form-control"
+                                        value="{{ old('middle_name', $profile->middle_name ?? '') }}">
                                 </div>
                             </div>
-                    
+
                             <!-- Last Name -->
                             <div class="col-md-3">
                                 <label for="last_name">Last Name</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
-                                    <input type="text" name="last_name" id="last_name" class="form-control">
+                                    <input type="text" name="last_name" id="last_name" class="form-control"
+                                        value="{{ old('last_name', $profile->last_name ?? '') }}">
                                 </div>
                             </div>
-                    
+
                             <!-- Alias Name -->
                             <div class="col-md-3">
                                 <label for="alias_name">Alias Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user-tag" style="color: blue"></i></span>
-                                    <input type="text" name="alias_name" id="alias_name" class="form-control">
+                                    <span class="input-group-text"><i class="fa fa-user-tag"
+                                            style="color: blue"></i></span>
+                                    <input type="text" name="alias_name" id="alias_name" class="form-control"
+                                        value="{{ old('alias_name', $profile->alias_name ?? '') }}">
                                 </div>
                             </div>
-                    
+
                             <!-- Email -->
                             <div class="col-md-3">
-                              <label for="email">  Email ID</label>
+                                <label for="email">Email ID</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-envelope" style="color: blue"></i></span>
-                                    <input type="email" class="form-control" id="email" name="email">
+                                    <span class="input-group-text"><i class="fa fa-envelope"
+                                            style="color: blue"></i></span>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{{ old('email', $profile->email ?? '') }}">
                                 </div>
                             </div>
-                    
-                            <!-- WhatsApp No -->
-                            <div class="col-md-3">
+
+                             <!-- WhatsApp No -->
+                             <div class="col-md-3">
                                 <label for="whatsapp_no">WhatsApp No</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
-                                    <input type="tel" class="form-control" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10">
+                                    <input type="tel" class="form-control"   value="{{ old('whatsapp_no', $profile->whatsapp_no ?? '') }}" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
                     
-                            <!-- Phone No -->
+                            <!-- Phone Number -->
                             <div class="col-md-3">
                                 <label for="phone_no">Phone No</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
-                                    <input type="tel" class="form-control" id="phone_no" name="phone_no" pattern="\d{10}" maxlength="10">
+                                    <input type="tel" class="form-control" id="phone_no" name="phone_no"
+                                        pattern="\d{10}" maxlength="10"
+                                        value="{{ old('phone_no', $profile->phone_no ?? '') }}">
                                 </div>
                             </div>
-                    
-                            <!-- Alternative Phone No -->
+
                             <div class="col-md-3">
                                 <label for="alt_phone_no">Alternative Phone No</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
-                                    <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no" pattern="\d{10}" maxlength="10">
+                                    <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no" value="{{ old('alt_phone_no', $profile->alt_phone_no ?? '') }}"  pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
-                    
+
                             <!-- Blood Group -->
                             <div class="col-md-3">
                                 <label for="blood_group">Blood Group</label>
@@ -306,27 +322,25 @@
                                     <span class="input-group-text"><i class="fa fa-tint" style="color: blue"></i></span>
                                     <select class="form-control" id="blood_group" name="blood_group">
                                         <option value="">Select Blood Group</option>
-                                        <option value="A+">A+</option>
-                                        <option value="A-">A-</option>
-                                        <option value="B+">B+</option>
-                                        <option value="B-">B-</option>
-                                        <option value="O+">O+</option>
-                                        <option value="O-">O-</option>
-                                        <option value="AB+">AB+</option>
-                                        <option value="AB-">AB-</option>
+                                        @foreach (['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'] as $group)
+                                            <option value="{{ $group }}"
+                                                {{ old('blood_group', $profile->blood_group ?? '') == $group ? 'selected' : '' }}>
+                                                {{ $group }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
                             </div>
-                    
-                            <!-- Health Card No -->
-                            <div class="col-md-3">
+
+                             <!-- Health Card No -->
+                             <div class="col-md-3">
                                 <label for="health_card_no">Health Card No</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
-                                    <input type="text" class="form-control" id="health_card_no" name="health_card_no">
+                                    <input type="text" class="form-control" id="health_card_no" name="health_card_no"  value="{{ old('health_card_no', $profile->health_card_no ?? '') }}" >
                                 </div>
                             </div>
-                    
+
                             <!-- Profile Photo -->
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>
@@ -334,85 +348,103 @@
                                     <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
                                     <input type="file" class="form-control" id="profile_photo" name="profile_photo">
                                 </div>
+                            
+                                @if (isset($profile) && $profile->profile_photo)
+                                    
+                                    <!-- Button to open modal -->
+                                    <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                        View Photo
+                                    </button>
+                            
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="profileModalLabel">Profile Photo</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo" class="img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
-                    
+                            
+
                             <!-- Date of Birth -->
                             <div class="col-md-3">
                                 <label for="date_of_birth">Date of Birth</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-calendar" style="color: blue"></i></span>
-                                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                                    <span class="input-group-text"><i class="fa fa-calendar"
+                                            style="color: blue"></i></span>
+                                    <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                                        value="{{ old('date_of_birth', $profile->date_of_birth ?? '') }}">
                                 </div>
                             </div>
-                    
-                            <!-- Joining Details -->
-                            <div class="col-md-12">
-                                <div class="row align-items-center">
-                                    <div class="col-md-3 d-flex align-items-center" style="margin-left: 10px">
-                                        <input type="checkbox" id="remember_date" onchange="toggleDateField()" class="form-check-input me-2" style="height: 20px;width:20px">
-                                        <label for="remember_date" class="form-check-label mt-2" style="margin-left: 5px">Remember Exact Date Of Joining?</label>
-                                    </div>
-                                    
-                                    <div class="col-md-3" id="yearField">
-                                        <label for="joining_year">Year of Joining</label>
-                                        <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
-                                            <select class="form-control" id="joining_date" name="joining_date">
-                                                <option value="">Select Year</option>
-                                                @for ($i = date('Y'); $i >= 1900; $i--)
-                                                    <option value="{{ $i }}">{{ $i }}</option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                    </div>
-                                  
+
+                            <!-- Joining Year -->
+                            <div class="col-md-3">
+                                <label for="joining_date">Year of Joining</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fa fa-calendar-alt"
+                                            style="color: blue"></i></span>
+                                    <select class="form-control" id="joining_date" name="joining_date">
+                                        <option value="">Select Year</option>
+                                        @for ($i = date('Y'); $i >= 1900; $i--)
+                                            <option value="{{ $i }}"
+                                                {{ old('joining_date', $profile->joining_date ?? '') == $i ? 'selected' : '' }}>
+                                                {{ $i }}
+                                            </option>
+                                        @endfor
+                                    </select>
                                 </div>
                             </div>
-                    
+
                             <!-- Submit Button -->
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn text-white">
-                                    <i class="fa fa-save"></i> Submit
+                                    <i class="fa fa-save"></i> {{ isset($profile) ? 'Update' : 'Submit' }}
                                 </button>
                             </div>
                         </div>
                     </form>
-                    
-                  
-                    
                 </div>
+
             </div>
         </div>
     </div>
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  
-<script>
-    function toggleDateField() {
-        var checkbox = document.getElementById("remember_date");
-        var yearField = document.getElementById("yearField");
-    
-        if (checkbox.checked) {
-            // Change to date input field
-            yearField.innerHTML = `
+
+    <script>
+        function toggleDateField() {
+            var checkbox = document.getElementById("remember_date");
+            var yearField = document.getElementById("yearField");
+
+            if (checkbox.checked) {
+                // Change to date input field
+                yearField.innerHTML = `
                 <label for="joining_date">Date of Joining</label>
                 <div class="input-group mb-2">
                     <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
                     <input type="date" class="form-control" id="joining_date" name="joining_date">
                 </div>
             `;
-        } else {
-            // Change back to year dropdown
-            var currentYear = new Date().getFullYear();
-            var options = `<option value="">Select Year</option>`;
-            for (var i = currentYear; i >= 1900; i--) {
-                options += `<option value="${i}">${i}</option>`;
-            }
-    
-            yearField.innerHTML = `
+            } else {
+                // Change back to year dropdown
+                var currentYear = new Date().getFullYear();
+                var options = `<option value="">Select Year</option>`;
+                for (var i = currentYear; i >= 1900; i--) {
+                    options += `<option value="${i}">${i}</option>`;
+                }
+
+                yearField.innerHTML = `
                 <label for="joining_year">Year of Joining</label>
                 <div class="input-group mb-2">
                     <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
@@ -421,12 +453,12 @@
                     </select>
                 </div>
             `;
+            }
         }
-    }
     </script>
 
     <script>
-        @if(session('success'))
+        @if (session('success'))
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
@@ -435,8 +467,8 @@
                 confirmButtonText: 'OK'
             });
         @endif
-    
-        @if(session('error'))
+
+        @if (session('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
@@ -446,6 +478,8 @@
             });
         @endif
     </script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 @endsection

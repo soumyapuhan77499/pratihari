@@ -4,7 +4,7 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .form-group {
             position: relative;
@@ -159,11 +159,9 @@
             box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
         }
     </style>
-
 @endsection
 
 @section('content')
-  
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card shadow-lg">
@@ -233,197 +231,175 @@
 
                 </ul>
                 <div class="card-body">
-                    <form action="{{ route('admin.pratihari-idcard.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('idcard.update', $pratihariId) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
+                        <input type="hidden" name="pratihari_id" value="{{ $pratihariId }}">
 
-                        <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
+                        <div id="id-section">
+                            @foreach ($idCards as $idCard)
+                                <div class="row id-entry mb-3 align-items-center">
+                                    <div class="col-md-3">
+                                        <label>ID Type</label>
+                                        <select class="form-control" name="id_type[]" required>
+                                            <option value="" disabled>Select ID Type</option>
+                                            @foreach (['Aadhar Card', 'Voter ID', 'Driving License', 'Passport', 'PAN Card'] as $option)
+                                                <option value="{{ $option }}"
+                                                    {{ $idCard->id_type == $option ? 'selected' : '' }}>
+                                                    {{ $option }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>ID Number</label>
+                                        <input type="text" class="form-control" name="id_number[]" required
+                                            value="{{ $idCard->id_number }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="id_photo">ID Photo Upload</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fa fa-camera"
+                                                    style="color: blue"></i></span>
+                                            <input type="file" class="form-control" name="id_photo[]">
+                                        </div>
+                                        @if (!empty($idCard->id_photo))
+                                            <div class="mt-2">
+                                                <button type="button" class="btn btn-primary btn-sm view-image"
+                                                    data-bs-toggle="modal" data-bs-target="#imageModal"
+                                                    data-image="{{ $idCard->id_photo }}">
+                                                    View
+                                                </button>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="modal fade" id="imageModal" tabindex="-1"
+                                        aria-labelledby="imageModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="imageModalLabel">ID Photo</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img id="modalImage" src="" class="img-fluid"
+                                                        alt="ID Photo">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                        <div class="row">
-                            <!-- ID Type -->
-                            <div class="col-md-3 mb-3">
-                                <label class="id_type">ID Type</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
-                                    <select class="form-control" name="id_type[]" required>
-                                        <option value="" disabled selected>Select ID Type</option>
-                                        <option value="Aadhar Card">Aadhar Card</option>
-                                        <option value="Voter ID">Voter ID</option>
-                                        <option value="Driving License">Driving License</option>
-                                        <option value="Passport">Passport</option>
-                                        <option value="PAN Card">PAN Card</option>
-                                    </select>
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-danger w-100 mt-4 remove-btn"><i
+                                                class="fas fa-minus"></i> Remove</button>
+                                    </div>
                                 </div>
-                            </div>
+                            @endforeach
+                        </div>
 
-                            <!-- ID Number -->
-                            <div class="col-md-3 mb-3">
-                                <label class="id_number">ID Number</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
-                                    <input type="text" class="form-control" name="id_number[]" required
-                                        placeholder="Enter ID Number">
-                                </div>
-                            </div>
-
-                            <!-- ID Photo Upload -->
-                            <div class="col-md-3 mb-3">
-                                <label class="id_photo">ID Photo Upload</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
-                                    <input type="file" class="form-control" name="id_photo[]" required>
-                                </div>
-                            </div>
-
-                            <!-- Add More IDs Button -->
-                            <div class="col-md-3">
-                                <button type="button" class="btn" id="add-id-btn"
-                                    style="color: white; margin-top: 26px; width: 100%; text-align: center; background: linear-gradient(90deg, #007bff, #0056b3);">
-                                    <i class="fas fa-plus"></i> Add ID
-                                </button>
-                            </div>
-
-                            <!-- Dynamic ID Section -->
-                            <div id="id-section" class="col-12"></div>
-
-                            <!-- Submit Button -->
-                            <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
-                                    style="color: white; background: linear-gradient(90deg, #007bff, #0056b3); border: none;">
-                                    <i class="fa fa-save"></i> Submit
-                                </button>
-                            </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-success mt-3" id="add-id-btn"><i
+                                    class="fas fa-plus"></i> Add ID</button>
+                            <button type="submit" class="btn btn-primary mt-3 w-50"><i class="fa fa-save"></i>
+                                Update</button>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>
     </div>
 @endsection
 
-
 @section('scripts')
-   
     <script>
-        let idOptions = ["Aadhar Card", "Voter ID", "Driving License", "Passport", "PAN Card"];
-        let selectedIDs = new Set();
-
-        function addIDEntry() {
-            // Get available ID types (excluding selected ones)
-            let availableOptions = idOptions.filter(opt => !selectedIDs.has(opt));
-
-            if (availableOptions.length === 0) {
-                alert("All ID types are already selected.");
-                return;
-            }
-
+        document.getElementById("add-id-btn").addEventListener("click", function() {
             let newIdEntry = document.createElement("div");
             newIdEntry.classList.add("row", "id-entry", "mb-3");
-
             newIdEntry.innerHTML = `
-    <div class="col-md-3">
-        <label class="id_type">ID Type</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-id-card"  style="color: blue"></i></span>
-            <select class="form-control id-type-select" name="id_type[]" required>
-                <option value="" disabled selected>Select ID Type</option>
-                ${availableOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-            </select>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <label class="id_number">ID Number</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
-            <input type="text" class="form-control" name="id_number[]" required placeholder="Enter ID Number">
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <label class="id_photo">ID Photo Upload</label>
-        <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
-            <input type="file" class="form-control" name="id_photo[]" required>
-        </div>
-    </div>
-
-    <div class="col-md-3">
-        <button type="button" class="btn remove-btn" 
-            style="color: white; margin-top: 26px; width: 100%; text-align: center; background-color: rgb(251, 51, 71);">
-            <i class="fas fa-minus" style="color: blue"></i> Remove ID
-        </button>
-    </div>
-`;
-
-
+            <div class="col-md-3">
+                <label class="id_type">ID Type</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+                    <select class="form-control id-type-select" name="id_type[]" required>
+                        <option value="" disabled selected>Select ID Type</option>
+                        <option value="Aadhar Card">Aadhar Card</option>
+                        <option value="Voter ID">Voter ID</option>
+                        <option value="Driving License">Driving License</option>
+                        <option value="Passport">Passport</option>
+                        <option value="PAN Card">PAN Card</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="id_number">ID Number</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+                    <input type="text" class="form-control" name="id_number[]" required placeholder="Enter ID Number">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="id_photo">ID Photo Upload</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                    <input type="file" class="form-control" name="id_photo[]">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="button" class="btn remove-btn" style="color: white; margin-top: 26px; width: 100%; background-color: rgb(251, 51, 71);">
+                    <i class="fas fa-minus"></i> Remove
+                </button>
+            </div>
+        `;
             document.getElementById("id-section").appendChild(newIdEntry);
-
-            let idTypeSelect = newIdEntry.querySelector(".id-type-select");
-
-            idTypeSelect.addEventListener("change", function() {
-                let previousSelection = idTypeSelect.getAttribute("data-prev") || "";
-                if (previousSelection) {
-                    selectedIDs.delete(previousSelection);
-                }
-
-                let selectedValue = this.value;
-                selectedIDs.add(selectedValue);
-                idTypeSelect.setAttribute("data-prev", selectedValue);
-                updateAllDropdowns();
-            });
-
             newIdEntry.querySelector(".remove-btn").addEventListener("click", function() {
-                let selectedValue = idTypeSelect.value;
-                if (selectedValue) {
-                    selectedIDs.delete(selectedValue);
-                }
                 newIdEntry.remove();
-                updateAllDropdowns();
             });
-
-            updateAllDropdowns();
-        }
-
-        function updateAllDropdowns() {
-            document.querySelectorAll(".id-type-select").forEach(select => {
-                let selectedValue = select.value;
-                let availableOptions = idOptions.filter(opt => !selectedIDs.has(opt) || opt === selectedValue);
-
-                select.innerHTML = `<option value="" disabled>Select ID Type</option>` +
-                    availableOptions.map(opt =>
-                        `<option value="${opt}" ${opt === selectedValue ? 'selected' : ''}>${opt}</option>`).join(
-                        '');
+        });
+        document.querySelectorAll(".remove-btn").forEach(btn => {
+            btn.addEventListener("click", function() {
+                this.closest(".id-entry").remove();
             });
-        }
-
-        document.getElementById("add-id-btn").addEventListener("click", addIDEntry);
+        });
     </script>
-   
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-   <script>
-       document.addEventListener("DOMContentLoaded", function () {
-           @if(session('success'))
-               Swal.fire({
-                   icon: 'success',
-                   title: 'Success!',
-                   text: "{{ session('success') }}",
-                   confirmButtonColor: '#3085d6',
-                   confirmButtonText: 'OK'
-               });
-           @endif
 
-           @if(session('error'))
-               Swal.fire({
-                   icon: 'error',
-                   title: 'Error!',
-                   text: "{{ session('error') }}",
-                   confirmButtonColor: '#d33',
-                   confirmButtonText: 'OK'
-               });
-           @endif
-       });
-   </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    </script>
+    <script>
+        document.querySelectorAll('.view-image').forEach(button => {
+            button.addEventListener('click', function() {
+                let imageUrl = this.getAttribute('data-image');
+                document.getElementById('modalImage').src = imageUrl;
+            });
+        });
+    </script>
+
+
+    <!-- Bootstrap JavaScript (Popper.js included) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

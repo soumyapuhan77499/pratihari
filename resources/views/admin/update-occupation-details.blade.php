@@ -1,12 +1,10 @@
 @extends('layouts.app')
 
 @section('styles')
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-
         .form-group {
             position: relative;
         }
@@ -151,7 +149,6 @@
             transform: translateY(-2px);
             box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
         }
-
     </style>
 @endsection
 
@@ -227,44 +224,62 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                            <form action="{{ route('admin.pratihari-occupation.store') }}" method="POST">
+                            <form action="{{ route('admin.pratihari-occupation.update', $pratihariId) }}" method="POST">
                                 @csrf
+                                @method('PUT')
+                        
+                                <input type="hidden" name="pratihari_id" value="{{ $pratihariId }}">
+                        
                                 <div class="row">
-                                    <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
                                     <!-- Occupation Field -->
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="occupation">Occupation</label>
                                             <div class="input-group">
-                                                <span class="input-group-text" style="width: 35px"><i
-                                                        class="fas fa-briefcase"></i></span>
+                                                <span class="input-group-text" style="width: 35px">
+                                                    <i class="fas fa-briefcase"></i>
+                                                </span>
                                                 <input type="text" name="occupation" id="occupation"
-                                                    class="form-control" placeholder="Enter Occupation">
+                                                    class="form-control"
+                                                    value="{{ old('occupation', $occupation->occupation_type ?? '') }}"
+                                                    placeholder="Enter Occupation">
                                             </div>
                                         </div>
                                     </div>
-
-                                      <!-- Extra Curriculum Activities (Multiple Add) -->
-                                      <div class="col-md-6">
+                        
+                                    <!-- Extra Curriculum Activities -->
+                                    <div class="col-md-6">
                                         <label for="extra_activity">Extra Curriculum Activity</label>
                                         <div id="extraActivityContainer">
-                                            <div class="input-group mb-2">
-                                                <span class="input-group-text"><i
-                                                    class="fas fa-briefcase" style="color: blue"></i></span>
-                                                <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
-                                                <button type="button" class="btn btn-success addMore"><i class="fas fa-plus"></i></button>
-                                            </div>
+                                            @php
+                                                $activities = $occupation->extra_activity ? explode(',', $occupation->extra_activity) : [];
+                                            @endphp
+                        
+                                            @if (count($activities) > 0)
+                                                @foreach ($activities as $activity)
+                                                    <div class="input-group mb-2">
+                                                        <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
+                                                        <input type="text" name="extra_activity[]" class="form-control" value="{{ $activity }}" placeholder="Enter Curriculum Activity">
+                                                        <button type="button" class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <div class="input-group mb-2">
+                                                    <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
+                                                    <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
+                                                    <button type="button" class="btn btn-success addMore"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
-
+                        
                                     <div class="col-12 text-center">
-                                        <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
-                                            style="color: white">
-                                            <i class="fa fa-save"></i> Submit
+                                        <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
+                                            <i class="fa fa-save"></i> Update
                                         </button>
                                     </div>
                                 </div>
-                            </form>
+                            </form>                         
                         </div>
                     </div>
                 </div>
@@ -298,12 +313,11 @@
             @endif
         });
     </script>
-    
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("extraActivityContainer");
 
-        // Add More Button Functionality
         container.addEventListener("click", function (e) {
             if (e.target.classList.contains("addMore")) {
                 const newField = document.createElement("div");
@@ -316,11 +330,22 @@
                 container.appendChild(newField);
             }
 
-            // Remove Field Functionality
             if (e.target.classList.contains("remove")) {
                 e.target.closest(".input-group").remove();
             }
         });
+
+        // If initial activities exist, make sure the first one has a plus button
+        const inputs = container.getElementsByClassName("input-group");
+        if (inputs.length > 0) {
+            const firstInput = inputs[0];
+            const btn = firstInput.querySelector(".remove");
+            if (btn) {
+                btn.classList.remove("btn-danger", "remove");
+                btn.classList.add("btn-success", "addMore");
+                btn.innerHTML = '<i class="fas fa-plus"></i>';
+            }
+        }
     });
 </script>
 

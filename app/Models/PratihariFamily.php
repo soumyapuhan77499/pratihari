@@ -20,13 +20,10 @@ class PratihariFamily extends Model
          'maritial_status',
          'spouse_name',
          'spouse_photo',
-
     ];
 
-    // In PratihariFamily model
-public function children()
-{
-    return $this->hasMany(PratihariChildren::class, 'pratihari_id');
-}
-
+    public function children()
+    {
+        return $this->hasMany(PratihariChildren::class, 'pratihari_id', 'pratihari_id');
+    }
 }

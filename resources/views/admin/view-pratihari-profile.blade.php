@@ -31,8 +31,6 @@
                             </span>
                         </div>
 
-                       
-
                         <div class="my-md-auto mt-4 prof-details">
                             <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
                             <p><i class="fa fa-user me-2"></i> <b>Nijoga Id:</b> {{ $profile->nijoga_id }}</p>
@@ -55,15 +53,9 @@
                     </div>
 
                     <div class="progress-container-wrapper">
-                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], 
-                                   ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], 
-                                   ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], 
-                                   ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], 
-                                   ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], 
-                                   ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], 
-                                   ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
-                    
-                            <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}" class="progress-card-link">
+                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
+                            <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}"
+                                class="progress-card-link">
                                 <div class="progress-card">
                                     <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
                                     <div class="chart-container">
@@ -73,7 +65,7 @@
                             </a>
                         @endforeach
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -441,17 +433,19 @@
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-primary"><i class="fas fa-briefcase"></i> Occupation Details</h4>
-                        
-                                    @if ($occupation->isNotEmpty()) 
+                                    <h4 class="fw-bold text-primary"><i class="fas fa-briefcase"></i> Occupation Details
+                                    </h4>
+
+                                    @if ($occupation->isNotEmpty())
                                         <div class="profile-item">
                                             <i class="fas fa-user-tie"></i>
                                             <div>
                                                 <span class="profile-text">Occupation Type:</span>
-                                                <span class="profile-value">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
+                                                <span
+                                                    class="profile-value">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
                                             </div>
                                         </div>
-                        
+
                                         <div class="profile-item">
                                             <i class="fas fa-certificate"></i>
                                             <div>
@@ -459,7 +453,8 @@
                                                 <div class="profile-value">
                                                     @if (!empty(optional($occupation->first())->extra_activity))
                                                         @foreach (explode(',', optional($occupation->first())->extra_activity) as $activity)
-                                                            <span class="badge bg-success me-1">{{ trim($activity) }}</span>
+                                                            <span
+                                                                class="badge bg-success me-1">{{ trim($activity) }}</span>
                                                         @endforeach
                                                     @else
                                                         <span class="text-muted">Not Available</span>
@@ -473,7 +468,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Seba Details -->
                         <div class="tab-pane fade" id="seba">
                             <div class="card profile-section">
@@ -664,4 +659,32 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    </script>
+    <!-- Include SweetAlert Library -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 @endsection
