@@ -3,9 +3,11 @@
 return [
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'super_admin',    // Set super_admin as default if desired
         'passwords' => 'users',
     ],
+
+
 
     'guards' => [
         'web' => [
@@ -15,6 +17,10 @@ return [
         'admins' => [
             'driver' => 'session',
             'provider' => 'admins',
+        ],
+        'super_admin' => [        // 👈 Add this
+            'driver' => 'session',
+            'provider' => 'super_admins',
         ],
     ],
 
@@ -27,7 +33,13 @@ return [
         'admins' => [
         'driver' => 'eloquent',
         'model' => App\Models\Admin::class, // Replace with your Admin model's namespace
-    ],
+        ],
+        
+        'super_admins' => [        // 👈 Add this
+            'driver' => 'eloquent',
+            'model' => App\Models\SuperAdmin::class,
+        ],
+    
     ],
 
     'passwords' => [

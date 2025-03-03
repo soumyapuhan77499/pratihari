@@ -80,6 +80,10 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary">Send OTP</button>
                             </form>
+
+                            <div class="main-signup-footer mt-3 text-center">
+                                <p>Super Admin Login<a href="{{ route('superadmin.login') }}">  Login</a></p>
+                            </div>
                         @endif
 
                         <!-- Hidden input for OneSignal player ID -->

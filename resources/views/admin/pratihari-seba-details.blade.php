@@ -65,7 +65,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -171,7 +171,7 @@
                     padding: 10px;
                     background: #f9f9f9;
                     border-radius: 8px;
-                    max-height: 200px;
+                    height: 100%;
                     overflow-y: auto;
                 }
                 .form-check-input {
@@ -185,7 +185,7 @@
             
                 /* Button Styling */
                 .custom-gradient-btn {
-                    background: linear-gradient(135deg, #6a11cb, #2575fc);
+                    background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
                     color: white;
                     font-size: 18px;
                     font-weight: bold;
@@ -207,10 +207,7 @@
 <div class="row">
     <div class="col-12 mt-2">
         <div class="card">
-            <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">🛕Pratihari
-                Seba</div>
-            <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
-
+            <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
                 <li class="nav-item col-12 col-sm-auto">
                     <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}"
                         role="tab" aria-controls="profile" aria-selected="true">
@@ -230,6 +227,7 @@
                         <i class="fas fa-id-card"></i> ID Card
                     </a>
                 </li>
+                
                 <li class="nav-item col-12 col-sm-auto">
                     <a class="nav-link" id="address-tab" data-toggle="tab" href="{{ route('admin.pratihariAddress') }}"
                         role="tab" aria-controls="address" aria-selected="false">
@@ -245,7 +243,7 @@
                 </li>
 
                 <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="seba-details-tab" style="background-color: rgb(49, 49, 181);color: white"
+                    <a class="nav-link" id="seba-details-tab" style="background-color: #e96a01;color: white"
                         data-toggle="tab" href="{{ route('admin.pratihariSeba') }}" role="tab"
                         aria-controls="seba-details" aria-selected="false">
                         <i class="fas fa-cogs" style="color: white"></i> Seba

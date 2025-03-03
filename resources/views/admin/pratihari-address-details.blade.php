@@ -66,7 +66,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -140,7 +140,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -165,20 +165,10 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <div class="row">
-        <div class="col-12 mt-2">
+        <div class="col-12 mt-4">
             <div class="card shadow-lg">
-                <div
-                    class="card-header bg-primary text-white d-flex align-items-center justify-content-center text-center w-100">
-                    <i class="fa fa-map-marker-alt"
-                        style="font-size: 1.8rem; margin-right: 10px; color: rgb(251, 51, 71); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-                    </i>
-                    <span
-                        style="font-size: 1.3rem; font-weight: bold; color: rgb(51, 101, 251); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-                        Pratihari Address
-                    </span>
-                </div>
-
-                <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
+              
+                <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}"
@@ -200,7 +190,7 @@
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="address-tab"  style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariAddress') }}" role="tab"
                             aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt" style="color: white"></i> Address
@@ -245,8 +235,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="sahi">Sahi</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-map-marker-alt"
-                                            style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-marker-alt"
+                                            style="color: white"></i></span>
                                     <select class="form-control" id="sahi" name="sahi">
                                         <option value="">Select Sahi</option>
                                         @foreach ($sahiList as $sahi)
@@ -261,8 +251,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="landmark">Landmark</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-location-arrow"
-                                            style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-location-arrow"
+                                            style="color: white"></i></span>
                                     <input type="text" class="form-control" id="landmark" name="landmark"
                                         placeholder="Enter your landmark">
                                 </div>
@@ -271,8 +261,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="post">Post Office</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope"
-                                            style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-envelope"
+                                            style="color: white"></i></span>
                                     <input type="text" class="form-control" id="post" name="post"
                                         placeholder="Enter your post office">
                                 </div>
@@ -281,8 +271,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="police_station">Police Station</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-shield-alt"
-                                            style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-shield-alt"
+                                            style="color: white"></i></span>
                                     <input type="text" class="form-control" id="police_station" name="police_station"
                                         placeholder="Enter your police station">
                                 </div>
@@ -291,8 +281,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="pincode">Pincode</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-map-pin"
-                                            style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-pin"
+                                            style="color: white"></i></span>
                                     <input type="text" class="form-control" id="pincode" name="pincode"
                                         placeholder="Enter your pincode">
                                 </div>
@@ -301,7 +291,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="district">District</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-city" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-city" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="district" name="district"
                                         placeholder="Enter your district">
                                 </div>
@@ -310,7 +300,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="state">State</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-map" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="state" name="state"
                                         placeholder="Enter your state">
                                 </div>
@@ -319,7 +309,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="country">Country</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-globe" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-globe" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="country" name="country"
                                         placeholder="Enter your country">
                                 </div>
@@ -328,8 +318,8 @@
                             <div class="col-md-12 mb-3">
                                 <label for="address">Address</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-address-card"
-                                            style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-address-card"
+                                            style="color: white"></i></span>
                                     <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your address"></textarea>
                                 </div>
                             </div>
@@ -352,8 +342,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_sahi">Permanent Sahi</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map-marker-alt"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-marker-alt"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_sahi" name="per_sahi"
                                                 placeholder="Enter your sahi">
                                         </div>
@@ -362,8 +352,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_landmark">Permanent Landmark</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-location-arrow"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-location-arrow"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_landmark"
                                                 name="per_landmark" placeholder="Enter your landmark">
                                         </div>
@@ -372,8 +362,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_post">Permanent Post Office</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-envelope"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-envelope"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_post" name="per_post"
                                                 placeholder="Enter your post office">
                                         </div>
@@ -382,8 +372,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_police_station">Permanent Police Station</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-shield-alt"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-shield-alt"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_police_station"
                                                 name="per_police_station" placeholder="Enter your police station">
                                         </div>
@@ -392,8 +382,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_pincode">Permanent Pincode</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map-pin"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-pin"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_pincode"
                                                 name="per_pincode" placeholder="Enter your pincode">
                                         </div>
@@ -402,8 +392,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_district">Permanent District</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-city"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-city"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_district"
                                                 name="per_district" placeholder="Enter your district">
                                         </div>
@@ -412,8 +402,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_state">Permanent State</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_state" name="per_state"
                                                 placeholder="Enter your state">
                                         </div>
@@ -422,8 +412,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_country">Permanent Country</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-globe"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-globe"
+                                                    style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_country"
                                                 name="per_country" placeholder="Enter your country">
                                         </div>
@@ -432,8 +422,8 @@
                                     <div class="col-md-12 mb-3">
                                         <label for="per_address">Permanent Address</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-address-card"
-                                                    style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-address-card"
+                                                    style="color: white"></i></span>
                                             <textarea class="form-control" id="per_address" name="per_address" rows="3" placeholder="Enter your address"></textarea>
                                         </div>
                                     </div>

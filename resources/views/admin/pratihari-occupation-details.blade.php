@@ -23,19 +23,7 @@
             padding-left: 35px;
         }
 
-        .card-header {
-            background: linear-gradient(135deg, #f8f19e, #dcf809);
-            color: rgb(51, 101, 251);
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
+      
         .btn-primary {
             background: #007bff;
             border: none;
@@ -62,7 +50,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -134,7 +122,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -159,20 +147,11 @@
     <!-- Display Success Message -->
 
     <div class="row">
-        <div class="col-12 mt-2">
+        <div class="col-12 mt-4">
             <div class="card shadow-lg">
-                <div
-                    class="card-header bg-primary text-white d-flex align-items-center justify-content-center text-center w-100">
-                    <i class="fas fa-briefcase"
-                        style="font-size: 1.8rem; margin-right: 10px; color: rgb(251, 51, 71); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-                    </i>
-                    <span
-                        style="font-size: 1.3rem; font-weight: bold; color: rgb(51, 101, 251); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-                        Pratihari Occupation
-                    </span>
-                </div>
+               
 
-                <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
+                <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}"
@@ -200,7 +179,7 @@
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="occupation-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="occupation-tab"  style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariOccupation') }}" role="tab"
                             aria-controls="occupation" aria-selected="false">
                             <i class="fas fa-briefcase" style="color: white"></i> Occupation
@@ -236,8 +215,8 @@
                                         <div class="form-group">
                                             <label for="occupation">Occupation</label>
                                             <div class="input-group">
-                                                <span class="input-group-text" style="width: 35px"><i
-                                                        class="fas fa-briefcase"></i></span>
+                                                <span class="input-group-text" style="width: 35px;background-color:  #FBAB7E"><i
+                                                        class="fas fa-briefcase" style="color: white"></i></span>
                                                 <input type="text" name="occupation" id="occupation"
                                                     class="form-control" placeholder="Enter Occupation">
                                             </div>
@@ -249,14 +228,13 @@
                                         <label for="extra_activity">Extra Curriculum Activity</label>
                                         <div id="extraActivityContainer">
                                             <div class="input-group mb-2">
-                                                <span class="input-group-text"><i
-                                                    class="fas fa-briefcase" style="color: blue"></i></span>
+                                                <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fas fa-briefcase" style="color: rgb(243, 243, 246)"></i></span>
                                                 <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
-                                                <button type="button" class="btn btn-success addMore"><i class="fas fa-plus"></i></button>
+                                                <button type="button" class="btn btn-success addMore" style="background-color: #e96a01;color: white"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
                                     </div>
-
+                                                                        
                                     <div class="col-12 text-center">
                                         <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
                                             style="color: white">
@@ -298,31 +276,30 @@
             @endif
         });
     </script>
-    
-<script>
+ 
+ <script>
     document.addEventListener("DOMContentLoaded", function () {
         const container = document.getElementById("extraActivityContainer");
 
-        // Add More Button Functionality
         container.addEventListener("click", function (e) {
-            if (e.target.classList.contains("addMore")) {
+            if (e.target.closest('.addMore')) {
                 const newField = document.createElement("div");
                 newField.classList.add("input-group", "mb-2");
                 newField.innerHTML = `
-                    <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
+                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fas fa-briefcase" style="color: white"></i></span>
                     <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
                     <button type="button" class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
                 `;
                 container.appendChild(newField);
             }
 
-            // Remove Field Functionality
-            if (e.target.classList.contains("remove")) {
+            if (e.target.closest('.remove')) {
                 e.target.closest(".input-group").remove();
             }
         });
     });
 </script>
+
 
     <!-- FontAwesome for Icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>

@@ -65,7 +65,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -139,7 +139,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -215,11 +215,6 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"><i class="fas fa-share-alt"
-                        style="font-size: 1.8rem; margin-right: 10px; color: rgb(251, 51, 71); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-
-                    </i>Pratihari Social Media</div>
-
                 <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
@@ -267,7 +262,7 @@
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="social-media-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="social-media-tab" style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariSocialMedia') }}" role="tab"
                             aria-controls="social-media" aria-selected="false">
                             <i class="fas fa-share-alt" style="margin-right: 2px;color: white"></i>Social Media
@@ -286,7 +281,7 @@
                                 <div class="form-group mt-3">
                                     <label for="facebook">Facebook</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-facebook" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="width: 35px;background-color:  #FBAB7E"><i class="fab fa-facebook" style="color: white"></i></span>
                                         <input type="text" name="facebook" id="facebook" class="form-control"
                                             placeholder="Enter Facebook URL" value="{{ old('facebook') }}">
                                     </div>
@@ -298,7 +293,7 @@
                                 <div class="form-group mt-3">
                                     <label for="twitter">Twitter</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-twitter" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="width: 35px;background-color:  #FBAB7E"><i class="fab fa-twitter" style="color: white"></i></span>
                                         <input type="text" name="twitter" id="twitter" class="form-control"
                                             placeholder="Enter Twitter URL" value="{{ old('twitter') }}">
                                     </div>
@@ -310,7 +305,7 @@
                                 <div class="form-group mt-3">
                                     <label for="instagram">Instagram</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-instagram" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="width: 35px;background-color:  #FBAB7E"><i class="fab fa-instagram" style="color: white"></i></span>
                                         <input type="text" name="instagram" id="instagram" class="form-control"
                                             placeholder="Enter Instagram URL" value="{{ old('instagram') }}">
                                     </div>
@@ -322,7 +317,7 @@
                                 <div class="form-group mt-3">
                                     <label for="linkedin">LinkedIn</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-linkedin" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="width: 35px;background-color:  #FBAB7E"><i class="fab fa-linkedin" style="color: white"></i></span>
                                         <input type="text" name="linkedin" id="linkedin" class="form-control"
                                             placeholder="Enter LinkedIn URL" value="{{ old('linkedin') }}">
                                     </div>
@@ -334,7 +329,7 @@
                                 <div class="form-group mt-3">
                                     <label for="youtube">YouTube</label>
                                     <div class="input-group">
-                                        <span class="input-group-text" style="width: 35px"><i class="fab fa-youtube" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="width: 35px;background-color:  #FBAB7E"><i class="fab fa-youtube" style="color: white"></i></span>
                                         <input type="text" name="youtube" id="youtube" class="form-control"
                                             placeholder="Enter YouTube URL" value="{{ old('youtube') }}">
                                     </div>

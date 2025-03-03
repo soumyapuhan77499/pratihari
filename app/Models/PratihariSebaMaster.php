@@ -9,7 +9,7 @@ class PratihariSebaMaster extends Model
 {
     use HasFactory;
 
-    protected $table = 'master__seba';
+    protected $table = 'super_admin';
 
     protected $fillable = [
         'seba_name',        

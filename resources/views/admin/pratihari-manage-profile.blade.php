@@ -10,9 +10,9 @@
 
     <style>
         .card-header {
-            background: linear-gradient(135deg, #f8f19e, #dcf809);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             /* Blue to Purple Gradient */
-            color: rgb(78, 51, 251);
+            color: rgb(241, 240, 248);
             font-size: 23px;
             font-weight: bold;
             text-align: center;
@@ -43,17 +43,19 @@
             text-align: center;
         }
 
-        .profile-img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            transition: transform 0.3s ease;
-            display: block;
-        }
+        .profile-photo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer; /* optional - makes it clear it's interactive */
+    }
 
-        .profile-img:hover {
-            transform: scale(4);
-        }
+    .profile-photo:hover {
+        transform: scale(3); /* Increase size */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional - add a shadow for a nice effect */
+        z-index: 100; /* Ensure it floats over other content */
+    }
     </style>
 @endsection
 @section('content')
@@ -62,7 +64,7 @@
         <div class="col-12 mt-2">
             <div class="card">
                 <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"><i class="fas fa-user-circle"
-                        style="font-size: 2rem;margin-right: 5px;color:rgb(251, 51, 64);text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"></i>Pratihari
+                        style="font-size: 2rem;margin-right: 5px;color:#e96a01;text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"></i>Pratihari
                     Manage Profile</div>
 
                 <div class="card-body">
@@ -88,7 +90,7 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>
-                                            <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo" class="br-5" width="50" height="50">
+                                            <img src="{{ asset($profile->profile_photo) }}" class="profile-photo" alt="Profile Photo" class="br-5" width="50" height="50">
                                         </td>
                                         <td>
                                             <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}" style="background-color:rgb(76, 2, 82);color: white"

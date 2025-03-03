@@ -30,9 +30,7 @@
             text-align: center;
             padding: 15px;
             border-radius: 10px 10px 0 0;
-            /* Rounded top corners */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            /* Adds a shadow effect */
             letter-spacing: 1px;
             /* Improves readability */
             text-transform: uppercase;
@@ -65,7 +63,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -139,7 +137,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -157,6 +155,7 @@
             transform: translateY(-2px);
             box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
         }
+
     </style>
 @endsection
 
@@ -165,20 +164,19 @@
   
     <!-- Profile Form -->
     <div class="row">
-        <div class="col-12 mt-2">
+        <div class="col-12 mt-4">
             <div class="card">
-                <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"><i class="fas fa-user-circle"
-                        style="font-size: 1.8rem;margin-right: 5px;color:rgb(251, 51, 64);text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"></i>Pratihari
-                    Profile</div>
-                <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
+              
+                <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="profile-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="profile-tab" style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariProfile') }}" role="tab"
                             aria-controls="profile" aria-selected="true">
                             <i class="fas fa-user" style="color: white"></i> Profile
                         </a>
                     </li>
+
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="family-tab" data-toggle="tab" href="{{ route('admin.pratihariFamily') }}"
                             role="tab" aria-controls="family" aria-selected="true">
@@ -231,7 +229,7 @@
                             <div class="col-md-3">
                                 <label for="first_name">First Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
                                     <input type="text" name="first_name" id="first_name" class="form-control">
                                 </div>
                             </div>
@@ -240,7 +238,7 @@
                             <div class="col-md-3">
                                 <label for="middle_name">Middle Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
                                     <input type="text" name="middle_name" id="middle_name" class="form-control">
                                 </div>
                             </div>
@@ -249,7 +247,7 @@
                             <div class="col-md-3">
                                 <label for="last_name">Last Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
                                     <input type="text" name="last_name" id="last_name" class="form-control">
                                 </div>
                             </div>
@@ -258,7 +256,7 @@
                             <div class="col-md-3">
                                 <label for="alias_name">Alias Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user-tag" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user-tag" style="color: white"></i></span>
                                     <input type="text" name="alias_name" id="alias_name" class="form-control">
                                 </div>
                             </div>
@@ -267,7 +265,7 @@
                             <div class="col-md-3">
                               <label for="email">  Email ID</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-envelope" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-envelope" style="color: white"></i></span>
                                     <input type="email" class="form-control" id="email" name="email">
                                 </div>
                             </div>
@@ -276,7 +274,7 @@
                             <div class="col-md-3">
                                 <label for="whatsapp_no">WhatsApp No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
                                     <input type="tel" class="form-control" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
@@ -285,7 +283,7 @@
                             <div class="col-md-3">
                                 <label for="phone_no">Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
                                     <input type="tel" class="form-control" id="phone_no" name="phone_no" pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
@@ -294,7 +292,7 @@
                             <div class="col-md-3">
                                 <label for="alt_phone_no">Alternative Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
                                     <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no" pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
@@ -303,7 +301,7 @@
                             <div class="col-md-3">
                                 <label for="blood_group">Blood Group</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-tint" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-tint" style="color: white"></i></span>
                                     <select class="form-control" id="blood_group" name="blood_group">
                                         <option value="">Select Blood Group</option>
                                         <option value="A+">A+</option>
@@ -322,7 +320,7 @@
                             <div class="col-md-3">
                                 <label for="health_card_no">Health Card No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="health_card_no" name="health_card_no">
                                 </div>
                             </div>
@@ -331,7 +329,7 @@
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
                                     <input type="file" class="form-control" id="profile_photo" name="profile_photo">
                                 </div>
                             </div>
@@ -340,7 +338,7 @@
                             <div class="col-md-3">
                                 <label for="date_of_birth">Date of Birth</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-calendar" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar" style="color: white"></i></span>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
                                 </div>
                             </div>
@@ -356,7 +354,7 @@
                                     <div class="col-md-3" id="yearField">
                                         <label for="joining_year">Year of Joining</label>
                                         <div class="input-group mb-2">
-                                            <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
+                                            <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar-alt" style="color: white"></i></span>
                                             <select class="form-control" id="joining_date" name="joining_date">
                                                 <option value="">Select Year</option>
                                                 @for ($i = date('Y'); $i >= 1900; $i--)
@@ -400,7 +398,7 @@
             yearField.innerHTML = `
                 <label for="joining_date">Date of Joining</label>
                 <div class="input-group mb-2">
-                    <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
+                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar-alt" style="color: white"></i></span>
                     <input type="date" class="form-control" id="joining_date" name="joining_date">
                 </div>
             `;
@@ -415,7 +413,7 @@
             yearField.innerHTML = `
                 <label for="joining_year">Year of Joining</label>
                 <div class="input-group mb-2">
-                    <span class="input-group-text"><i class="fa fa-calendar-alt" style="color: blue"></i></span>
+                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar-alt" style="color: white"></i></span>
                     <select class="form-control" id="joining_date" name="joining_date">
                         ${options}
                     </select>

@@ -12,7 +12,7 @@ class Admin extends Authenticatable
     protected $fillable = [
         'admin_id', 'first_name', 'last_name', 'mobile_no', 'otp', 
         'order_id', 'expiry', 'hash', 'client_id', 'client_secret', 
-        'otp_length', 'channel', 'status'
+        'otp_length', 'channel','photo', 'status'
     ];
 
     // Optionally, set the table name if different from "admins"

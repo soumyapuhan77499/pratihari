@@ -66,7 +66,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -140,8 +140,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            /* Purple to Blue Gradient */
+            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
             border: none;
             color: white;
             padding: 12px;
@@ -165,21 +164,11 @@
 @section('content')
   
     <div class="row">
-        <div class="col-12 mt-2">
+        <div class="col-12 mt-4">
             <div class="card shadow-lg">
-                <div
-                    class="card-header bg-primary text-white d-flex align-items-center justify-content-center text-center w-100">
-                    <i class="fas fa-id-card"
-                        style="font-size: 1.8rem; margin-right: 10px; color: rgb(251, 51, 71); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-                    </i>
-                    <span
-                        style="font-size: 1.3rem; font-weight: bold; color: rgb(51, 101, 251); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-                        Pratihari Id Card
-                    </span>
-                </div>
+               
 
-
-                <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
+                <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}"
@@ -195,7 +184,7 @@
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="id-card-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="id-card-tab"  style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariIdcard') }}" role="tab"
                             aria-controls="id-card" aria-selected="false">
                             <i class="fas fa-id-card" style="color: white"></i> ID Card
@@ -243,7 +232,7 @@
                             <div class="col-md-3 mb-3">
                                 <label class="id_type">ID Type</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
                                     <select class="form-control" name="id_type[]" required>
                                         <option value="" disabled selected>Select ID Type</option>
                                         <option value="Aadhar Card">Aadhar Card</option>
@@ -259,7 +248,7 @@
                             <div class="col-md-3 mb-3">
                                 <label class="id_number">ID Number</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
                                     <input type="text" class="form-control" name="id_number[]" required
                                         placeholder="Enter ID Number">
                                 </div>
@@ -269,7 +258,7 @@
                             <div class="col-md-3 mb-3">
                                 <label class="id_photo">ID Photo Upload</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
                                     <input type="file" class="form-control" name="id_photo[]" required>
                                 </div>
                             </div>
@@ -288,7 +277,7 @@
                             <!-- Submit Button -->
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
-                                    style="color: white; background: linear-gradient(90deg, #007bff, #0056b3); border: none;">
+                                    style="color: white;  border: none;">
                                     <i class="fa fa-save"></i> Submit
                                 </button>
                             </div>
@@ -324,7 +313,7 @@
     <div class="col-md-3">
         <label class="id_type">ID Type</label>
         <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-id-card"  style="color: blue"></i></span>
+            <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card"  style="color: white"></i></span>
             <select class="form-control id-type-select" name="id_type[]" required>
                 <option value="" disabled selected>Select ID Type</option>
                 ${availableOptions.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
@@ -335,7 +324,7 @@
     <div class="col-md-3">
         <label class="id_number">ID Number</label>
         <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+            <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
             <input type="text" class="form-control" name="id_number[]" required placeholder="Enter ID Number">
         </div>
     </div>
@@ -343,7 +332,7 @@
     <div class="col-md-3">
         <label class="id_photo">ID Photo Upload</label>
         <div class="input-group">
-            <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+            <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
             <input type="file" class="form-control" name="id_photo[]" required>
         </div>
     </div>

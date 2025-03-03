@@ -11,6 +11,18 @@ use App\Http\Controllers\Admin\PratihariOccupationController;
 use App\Http\Controllers\Admin\MasterNijogaSebaController;
 use App\Http\Controllers\Admin\PratihariSebaController;
 use App\Http\Controllers\Admin\PratihariSocialMediaController;
+use App\Http\Controllers\SuperAdmin\SuperAdminController;
+
+Route::prefix('super-admin')->group(function() {
+    Route::get('/login', [SuperAdminController::class, 'showLoginForm'])->name('superadmin.login');
+    Route::post('/login/submit', [SuperAdminController::class, 'loginSubmit'])->name('superadmin.login.submit');
+    Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::get('/add-admin', [SuperAdminController::class, 'addAdmin'])->name('superadmin.addAdmin');
+    Route::get('/manage-admin', [SuperAdminController::class, 'manageAdmin'])->name('superadmin.manageAdmin');
+    Route::post('/saveAdminRegister', [SuperAdminController::class, 'saveAdminRegister'])->name('superadmin.saveAdminRegister');
+    Route::post('/update/{id}', [SuperAdminController::class, 'update'])->name('admin.update');
+    Route::post('/delete/{id}', [SuperAdminController::class, 'softDelete'])->name('admin.delete');
+});
 
 Route::controller(AdminController::class)->group(function() {
     Route::get('/', 'showOtpForm')->name('admin.AdminLogin');
@@ -29,7 +41,6 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::post('/admin/pratihari/reject/{id}', 'reject');
     Route::get('/profile-update/{pratihari_id}','edit')->name('profile.update');
     Route::put('/admin/pratihari-profile-update/{pratihari_id}', 'updateProfile')->name('admin.pratihari-profile.update');
-
 });
 
 Route::prefix('admin')->group(function() {
@@ -63,7 +74,6 @@ Route::prefix('admin')->group(function() {
     Route::post('/pratihari-occupation-save', [PratihariOccupationController::class, 'saveOccupation'])->name('admin.pratihari-occupation.store');
     Route::get('/occupation-update/{pratihari_id}', [PratihariOccupationController::class, 'edit'])->name('occupation.update');
     Route::put('/pratihari-occupation/update/{id}', [PratihariOccupationController::class, 'update'])->name('admin.pratihari-occupation.update');
-
 });
 
 Route::prefix('admin')->group(function() {

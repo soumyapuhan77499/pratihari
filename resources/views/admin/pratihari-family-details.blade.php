@@ -66,7 +66,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -140,7 +140,7 @@
         }
 
         .custom-gradient-btn {
-        background: linear-gradient(135deg, #6a11cb, #2575fc); /* Purple to Blue Gradient */
+        background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
         border: none;
         color: white;
         padding: 12px;
@@ -164,18 +164,10 @@
 
     <!-- Profile Form -->
     <div class="row">
-        <div class="col-12 mt-2">
+        <div class="col-12 mt-4">
             <div class="card shadow-lg">
-                <div
-                    class="card-header bg-primary text-white d-flex align-items-center justify-content-center text-center w-100">
-                    <i class="fas fa-users"
-                        style="font-size: 1.8rem; margin-right: 10px;color:rgb(253, 52, 52);text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"></i>
-                    <span
-                        style="font-size: 1.3rem; font-weight: bold;color:rgb(51, 101, 251);text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">Pratihari
-                        Family</span>
-                </div>
-
-                <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
+                
+                <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}" role="tab" aria-controls="profile" aria-selected="true">
@@ -183,7 +175,7 @@
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="family-tab"  style="background-color: rgb(49, 49, 181);color: white"  data-toggle="tab" href="{{ route('admin.pratihariFamily') }}" role="tab" aria-controls="family" aria-selected="true">
+                        <a class="nav-link" id="family-tab"  style="background-color: #e96a01;color: white"  data-toggle="tab" href="{{ route('admin.pratihariFamily') }}" role="tab" aria-controls="family" aria-selected="true">
                             <i class="fas fa-users" style="color: white"></i> Family
                         </a>
                     </li>
@@ -228,7 +220,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="father_name">Father Name</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text"  style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
                                     <input type="text" class="form-control" name="father_name" required placeholder="Enter Father's Name">
                                 </div>
                             </div>
@@ -237,7 +229,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="father_photo">Father Photo</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <span class="input-group-text"  style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
                                     <input type="file" class="form-control" name="father_photo" required>
                                 </div>
                             </div>
@@ -246,7 +238,7 @@
                             <div class="col-md-6 mb-3">
                                 <label for="mother_name">Mother Name</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
                                     <input type="text" class="form-control" name="mother_name" required placeholder="Enter Mother's Name">
                                 </div>
                             </div>
@@ -255,14 +247,14 @@
                             <div class="col-md-6 mb-3">
                                 <label for="mother_photo">Mother Photo</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
                                     <input type="file" class="form-control" name="mother_photo">
                                 </div>
                             </div>
                 
                             <!-- Marital Status -->
                             <div class="col-md-6 mb-3">
-                                <label class="form-label"><i class="fa fa-heart" style="color: blue"></i> Marital Status</label>
+                                <label class="form-label"><i class="fa fa-heart" style="color: #e96a01"></i> Marital Status</label>
                                 <div class="form-check form-check-inline">
                                     <input type="radio" id="married" name="marital_status" value="married" class="form-check-input">
                                     <label for="married" class="form-check-label">Married</label>
@@ -278,7 +270,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="spouse_name">Spouse Name</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
                                         <input type="text" class="form-control" name="spouse_name" placeholder="Enter Spouse's Name">
                                     </div>
                                 </div>
@@ -286,7 +278,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="spouse_photo">Spouse Photo</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                        <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
                                         <input type="file" class="form-control" name="spouse_photo">
                                     </div>
                                 </div>
@@ -294,7 +286,7 @@
                 
                             <!-- Children Section -->
                             <div class="col-12"  id="spouseDetail" style="display: none;">
-                                <h5 class="mt-3"><i class="fas fa-child" style="color: blue"></i> Children Details</h5>
+                                <h5 class="mt-3"><i class="fas fa-child" style="color: #e96a01"></i> Children Details</h5>
                                 <button type="button" class="btn btn-sm btn-success" id="addChild">
                                     <i class="fa fa-plus-circle"></i> Add Child
                                 </button>
@@ -338,22 +330,22 @@
                 let childHtml = `
                 <div class="row child-row mt-3 border p-3 rounded bg-light">
                     <div class="col-md-4">
-                        <label class="form-label"><i class="fa fa-user"></i> Child Name</label>
+                        <label class="form-label"><i class="fa fa-user" style="color: #e96a01"></i> Child Name</label>
                         <input type="text" class="form-control" name="children[${childIndex}][name]" placeholder="Enter Child's Name">
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label"><i class="fa fa-calendar"></i> Date of Birth</label>
+                        <label class="form-label"><i class="fa fa-calendar" style="color: #e96a01"></i> Date of Birth</label>
                         <input type="date" class="form-control" name="children[${childIndex}][dob]">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label"><i class="fa fa-venus-mars"></i> Gender</label>
+                        <label class="form-label"><i class="fa fa-venus-mars" style="color: #e96a01"></i> Gender</label>
                         <select class="form-control" name="children[${childIndex}][gender]">
                             <option value="male">Male</option>
                             <option value="female">Female</option>
                         </select>
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label"><i class="fa fa-camera"></i> Photo</label>
+                        <label class="form-label"><i class="fa fa-camera" style="color: #e96a01"></i> Photo</label>
                         <input type="file" class="form-control" name="children[${childIndex}][photo]">
                     </div>
                     <div class="col-md-1 d-flex align-items-end">
