@@ -15,9 +15,9 @@ class SuperAdminController extends Controller
 {
     public function showLoginForm()
     {
-
         return view('super_admin.super-admin-login');
     }
+
     public function loginSubmit(Request $request)
     {
         $request->validate([
@@ -118,13 +118,16 @@ class SuperAdminController extends Controller
     }
 
     public function softDelete($id)
-{
-    $admin = Admin::findOrFail($id);
-    $admin->status = 'deleted';
-    $admin->save();
-
-    return response()->json(['success' => true, 'message' => 'Admin marked as deleted']);
-}
+    {
+        \Log::info('Soft delete called for admin ID: ' . $id);
+    
+        $admin = Admin::findOrFail($id);
+        $admin->status = 'deleted';
+        $admin->save();
+    
+        return response()->json(['success' => true, 'message' => 'Admin marked as deleted']);
+    }
+    
 
 
 }

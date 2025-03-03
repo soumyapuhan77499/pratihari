@@ -1,186 +1,169 @@
 @extends('layouts.app')
 
 @section('styles')
-    <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<!-- Add SweetAlert CSS if needed -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.2/dist/sweetalert2.min.css">
 @endsection
 
 @section('content')
-    <div class="breadcrumb-header d-flex justify-content-between align-items-center">
-        <div class="left-content">
-            <span class="main-content-title mg-b-0 mg-b-lg-1">MANAGE ADMIN</span>
-        </div>
-        <div class="d-flex align-items-center">
-            <a href="{{ route('superadmin.addAdmin') }}" class="btn btn-primary me-3">
-                <i class="fa fa-plus"></i> Add Admin
-            </a>
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="#">Admin</a></li>
-                <li class="breadcrumb-item active">Manage Admin</li>
-            </ol>
-        </div>
+<!-- Breadcrumb -->
+<div class="breadcrumb-header d-flex justify-content-between align-items-center">
+    <div class="left-content">
+        <span class="main-content-title mg-b-0 mg-b-lg-1">MANAGE ADMIN</span>
     </div>
 
-    <div class="container mt-4">
-        <div class="contact-card">
-            <h5 class="mb-3"><i class="fas fa-map-marker-alt"></i> Admin List</h5>
-            <div class="table-responsive export-table">
-                <table id="file-datatable" class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Photo</th>
-                            <th>Admin Name</th>
-                            <th>Phone</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($admins as $index => $admin)
-                            <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td><img src="{{ asset($admin->photo) }}" class="rounded-circle" width="50"></td>
-                                <td>{{ $admin->first_name }} {{ $admin->last_name }}</td>
-                                <td>{{ $admin->mobile_no }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-info edit-btn" data-id="{{ $admin->id }}"
-                                        data-first_name="{{ $admin->first_name }}"
-                                        data-last_name="{{ $admin->last_name }}" data-mobile_no="{{ $admin->mobile_no }}"
-                                        data-photo="{{ asset($admin->photo) }}">
-                                        <i class="fa-solid fa-edit"></i>
-                                    </button>
+    <div class="d-flex align-items-center">
+        <a href="{{ route('superadmin.addAdmin') }}" class="btn btn-primary me-3">
+            <i class="fa fa-plus"></i> Add Admin
+        </a>
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="javascript:void(0);">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Manage Admin</li>
+        </ol>
+    </div>
+</div>
 
-                                    <button class="btn btn-sm btn-danger delete-btn" data-id="{{ $admin->id }}">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center">No Admins available</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+<div class="container mt-4">
+    <div class="contact-card">
+        <div class="table-responsive export-table">
+            <table id="file-datatable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Photo</th>
+                        <th>Admin Name</th>
+                        <th>Mobile No</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($admins as $index => $admin)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td><img src="{{ asset($admin->photo) }}" width="50" height="50"></td>
+                        <td>{{ $admin->first_name }} {{ $admin->last_name }}</td>
+                        <td>{{ $admin->mobile_no }}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm" onclick="editAdmin({{ $admin }})">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAdmin({{ $admin->id }})">Delete</button>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="text-center">No Admins available</td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editAdminModal" tabindex="-1" aria-hidden="true">
-
-        <div class="modal-dialog">
+<!-- Edit Admin Modal -->
+<div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editAdminForm">
+            @csrf
+            <input type="hidden" id="admin_id">
             <div class="modal-content">
-                <form id="editAdminForm" enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" id="edit_admin_id">
-
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Admin</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label>First Name</label>
+                        <input type="text" id="first_name" class="form-control" required>
                     </div>
-
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label>First Name</label>
-                            <input type="text" class="form-control" id="edit_first_name" name="first_name">
-                        </div>
-                        <div class="mb-3">
-                            <label>Last Name</label>
-                            <input type="text" class="form-control" id="edit_last_name" name="last_name">
-                        </div>
-                        <div class="mb-3">
-                            <label>Mobile No</label>
-                            <input type="text" class="form-control" id="edit_mobile_no" name="mobile_no">
-                        </div>
-                        <div class="mb-3">
-                            <label>Photo</label>
-                            <input type="file" class="form-control" name="photo">
-                            <img id="current_photo" class="mt-2" width="50">
-                        </div>
+                    <div class="mb-3">
+                        <label>Last Name</label>
+                        <input type="text" id="last_name" class="form-control" required>
                     </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                    <div class="mb-3">
+                        <label>Mobile No</label>
+                        <input type="text" id="mobile_no" class="form-control" required>
                     </div>
-                </form>
+                    <div class="mb-3">
+                        <label>Photo</label>
+                        <input type="file" id="photo" class="form-control">
+                        <img id="currentPhoto" src="" width="50" height="50" class="mt-2">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateAdmin()">Update</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
+</div>
+
 @endsection
 
 @section('scripts')
-    <script>
-$.ajaxSetup({
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-    }
-});
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.2/dist/sweetalert2.all.min.js"></script>
+<script>
+    function editAdmin(admin) {
+        $('#admin_id').val(admin.id);
+        $('#first_name').val(admin.first_name);
+        $('#last_name').val(admin.last_name);
+        $('#mobile_no').val(admin.mobile_no);
+        $('#currentPhoto').attr('src', '{{ asset('/') }}' + admin.photo);
 
-$(document).ready(function() {
-    $('.edit-btn').on('click', function() {
-        let id = $(this).data('id');
-        $('#edit_admin_id').val(id);
-        $('#edit_first_name').val($(this).data('first_name'));
-        $('#edit_last_name').val($(this).data('last_name'));
-        $('#edit_mobile_no').val($(this).data('mobile_no'));
-        $('#current_photo').attr('src', $(this).data('photo'));
         $('#editAdminModal').modal('show');
-    });
+    }
 
-    $('#editAdminForm').on('submit', function(e) {
-        e.preventDefault();
+    function updateAdmin() {
+        let formData = new FormData();
+        formData.append('_token', '{{ csrf_token() }}');
+        formData.append('first_name', $('#first_name').val());
+        formData.append('last_name', $('#last_name').val());
+        formData.append('mobile_no', $('#mobile_no').val());
+        if ($('#photo')[0].files.length > 0) {
+            formData.append('photo', $('#photo')[0].files[0]);
+        }
 
-        let id = $('#edit_admin_id').val();
-        let formData = new FormData(this);
-
+        let adminId = $('#admin_id').val();
         $.ajax({
-            url: `/super-admin/update/${id}`,
+            url: '{{ url("super-admin/update") }}/' + adminId,
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function(response) {
-                Swal.fire('Updated!', response.message, 'success').then(() => location.reload());
+                Swal.fire('Success', response.message, 'success')
+                    .then(() => location.reload());
             },
             error: function(xhr) {
-                Swal.fire('Error!', 'Failed to update admin', 'error');
+                Swal.fire('Error', xhr.responseJSON.message, 'error');
             }
         });
-    });
+    }
 
-    $('.delete-btn').on('click', function() {
-        let id = $(this).data('id');
-
+    function deleteAdmin(adminId) {
         Swal.fire({
             title: 'Are you sure?',
-            text: 'This will mark the admin as deleted.',
+            text: 'This admin will be soft deleted!',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, delete it!'
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/super-admin/delete/${id}`,
+                    url: '{{ url("super-admin/delete") }}/' + adminId,
                     type: 'POST',
-                    data: {
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
+                    data: { _token: '{{ csrf_token() }}' },
                     success: function(response) {
-                        Swal.fire('Deleted!', response.message, 'success').then(() => location.reload());
+                        Swal.fire('Deleted!', response.message, 'success')
+                            .then(() => location.reload());
                     },
-                    error: function() {
-                        Swal.fire('Error!', 'Failed to delete admin', 'error');
+                    error: function(xhr) {
+                        Swal.fire('Error', xhr.responseJSON.message, 'error');
                     }
                 });
             }
         });
-    });
-});
-
-    </script>
+    }
+</script>
 @endsection
