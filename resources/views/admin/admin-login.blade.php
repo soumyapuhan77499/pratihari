@@ -5,8 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.9.0/sweetalert2.min.css">
 <style>
     .bg-primary {
-        background: linear-gradient(to right, #6a11cb, #2575fc);
-    }
+        background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);    }
 
     .card-sigin-main {
         background: white;
@@ -59,7 +58,6 @@
                                     <label>Mobile Number</label>
                                     <div class="d-flex align-items-center">
                                         <input type="text" id="phone" class="form-control me-2" name="phone" value="{{ session('otp_phone') }}" readonly>
-                                        <span class="edit-btn" onclick="enablePhoneEdit()">Edit</span>
                                     </div>
                                 </div>
                                 <input type="hidden" name="order_id" value="{{ session('otp_order_id') }}">
@@ -67,7 +65,7 @@
                                     <label>Enter OTP</label>
                                     <input type="text" class="form-control" name="otp" placeholder="Enter OTP" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Verify OTP</button>
+                                <button type="submit" class="btn" style="background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);width: 100%;color: white;font-weight: bold">Verify OTP</button>
                             </form>
 
                         @else
@@ -78,7 +76,7 @@
                                     <label>Enter Your Phone Number</label>
                                     <input type="text" class="form-control" name="phone" placeholder="Enter your phone number" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary">Send OTP</button>
+                                <button type="submit" class="btn" style="background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);width: 100%;color: white;font-weight: bold">Send OTP</button>
                             </form>
 
                             <div class="main-signup-footer mt-3 text-center">

@@ -48,21 +48,35 @@
 												</div>
 											</form>
 										</li>
+
 										<li class="dropdown main-profile-menu nav nav-item nav-link ps-lg-2">
-											<a class="new nav-link profile-user d-flex" href="" data-bs-toggle="dropdown"><img alt="" src="{{asset('assets/img/faces/2.jpg')}}" class=""></a>
+											<a class="new nav-link profile-user d-flex" href="#" data-bs-toggle="dropdown">
+												<img alt="profile" src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}" class="profile-img">
+											</a>
 											<div class="dropdown-menu">
 												<div class="menu-header-content p-3 border-bottom">
 													<div class="d-flex wd-100p">
-														<div class="main-img-user"><img alt="" src="{{asset('assets/img/faces/2.jpg')}}" class=""></div>
+														<div class="main-img-user">
+															<img alt="profile" src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}" class="profile-img">
+														</div>
 														<div class="ms-3 my-auto">
-															<h6 class="tx-15 font-weight-semibold mb-0"></h6><span class="dropdown-title-text subtext op-6  tx-12">Premium Member</span>
+															<h6 class="tx-15 font-weight-semibold mb-0">
+																{{ Auth::guard('admins')->user()->first_name ?? '' }} {{ Auth::guard('admins')->user()->last_name ?? '' }}
+															</h6>
+															<span class="dropdown-title-text subtext op-6 tx-12">Premium Member</span>
 														</div>
 													</div>
 												</div>
-												<a class="dropdown-item" href="{{url('/admin/pratihari-profile')}}"><i class="far fa-user-circle"></i>Profile</a>
-												<a class="dropdown-item" href="{{url('signup')}}"><i class="far fa-arrow-alt-circle-left"></i> Sign Out</a>
+												<a class="dropdown-item" href="{{url('/admin/pratihari-profile')}}"><i class="far fa-user-circle"></i> Profile</a>
+
+												<!-- Use a POST form for logout to follow Laravel standards -->
+												<form method="POST" action="{{ route('admin.logout') }}" class="d-inline">
+													@csrf
+													<button type="submit" class="dropdown-item"><i class="far fa-arrow-alt-circle-left"></i> Sign Out</button>
+												</form>
 											</div>
 										</li>
+
 									</ul>
 								</div>
                                 <!--place for switcher icon-->

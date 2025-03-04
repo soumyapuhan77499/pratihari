@@ -22,7 +22,7 @@
 								</li>
 
 								<li class="slide">
-									<a class="side-menu__item" href="{{url('admin/pratihari-manage-profile')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/manage.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Pratihari Manage Profile</span></a>
+									<a class="side-menu__item" href="{{url('admin/pratihari-manage-profile')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/resume.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Pratihari Manage Profile</span></a>
 								</li>
 
 								<li class="slide">
@@ -30,7 +30,7 @@
 								</li>
 
 								<li class="slide">
-									<a class="side-menu__item" href="{{url('admin/pratihari-seba-beddha')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/monk.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Pratihari Beddha Assign</span></a>
+									<a class="side-menu__item" href="{{url('admin/pratihari-seba-beddha')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/manage.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Pratihari Beddha Assign</span></a>
 								</li>
 
 								<li class="slide">

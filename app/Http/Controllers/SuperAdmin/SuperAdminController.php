@@ -69,7 +69,7 @@ class SuperAdminController extends Controller
             $admin->admin_id = 'ADMIN' . rand(1000, 9999);  // Or any other logic for admin_id
             $admin->first_name = $request->first_name;
             $admin->last_name = $request->last_name;
-            $admin->mobile_no = $request->phonenumber;
+            $admin->mobile_no = '+91' . ltrim($request->phonenumber, '0');
 
             if ($request->hasFile('photo')) {
                 $adminPhoto = $request->file('photo');

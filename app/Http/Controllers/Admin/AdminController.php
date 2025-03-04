@@ -120,6 +120,13 @@ class AdminController extends Controller
             return redirect()->back()->with('message', 'Failed to verify OTP due to an error.');
         }
     }
+
+    public function logout()
+    {
+        Auth::guard('admins')->logout();
+
+        return redirect()->route('admin.AdminLogin');
+    }
     
 
 }

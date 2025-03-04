@@ -5,8 +5,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.9.0/sweetalert2.min.css">
 <style>
     .bg-primary {
-        background: linear-gradient(to right, #6a11cb, #2575fc);
-    }
+        background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);
+        }
 
     .card-sigin-main {
         background: white;
@@ -75,7 +75,7 @@
                                 </div>
                             </div>
 
-                                <button type="submit" class="btn btn-primary">Verify OTP</button>
+                                <button type="submit" class="btn" style="background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);width: 100%;color: white;font-weight: bold">Verify OTP</button>
                             </form>
 
                             

@@ -84,7 +84,7 @@
                                                         placeholder="Enter your password" name="password" type="password">
                                                 </div>
                                                 <!-- <a href="{{ url('signin') }}" class="btn btn-primary btn-block">Create Account</a> -->
-                                                <input type="submit" class="btn btn-primary" value="Create Account">
+                                                <input type="submit" class="btn" style="background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);" value="Create Account">
 
                                             </form>
                                             <div class="main-signup-footer mt-3 text-center">

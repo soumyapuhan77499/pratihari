@@ -29,6 +29,8 @@ Route::controller(AdminController::class)->group(function() {
     Route::post('/send-otp',  'sendOtp')->name('admin.sendOtp');
     Route::post('/verify-otp',  'verifyOtp')->name('admin.verifyOtp'); 
     Route::get('/dashboard', 'dashboard')->name('admin.dashboard');
+    Route::post('/logout',  'logout')->name('admin.logout');
+
 });
 
 Route::controller(PratihariProfileController::class)->group(function() {
