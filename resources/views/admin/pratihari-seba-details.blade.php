@@ -393,7 +393,7 @@
                                                 <div class="d-flex flex-wrap gap-2 mt-2">`;
                                                 data.forEach(beddha => {
                                                     beddhaHtml += `
-                                                    <div class="checkbox-list d-flex overflow-auto" style="gap: 1rem; white-space: nowrap;">
+                                                    <div class="checkbox-list d-flex overflow-auto mt-2" style="gap: 1rem; white-space: nowrap;">
                                                         <div class="form-check d-flex align-items-center gap-1">
                                                             <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
                                                             <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
