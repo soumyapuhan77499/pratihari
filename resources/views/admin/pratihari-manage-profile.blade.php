@@ -10,7 +10,7 @@
 
     <style>
         .card-header {
-            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Blue to Purple Gradient */
             color: rgb(241, 240, 248);
             font-size: 23px;
@@ -44,18 +44,22 @@
         }
 
         .profile-photo {
-        width: 60px;
-        height: 60px;
-        border-radius: 50px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        cursor: pointer; /* optional - makes it clear it's interactive */
-    }
+            width: 60px;
+            height: 60px;
+            border-radius: 50px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            /* optional - makes it clear it's interactive */
+        }
 
-    .profile-photo:hover {
-        transform: scale(3); /* Increase size */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Optional - add a shadow for a nice effect */
-        z-index: 100; /* Ensure it floats over other content */
-    }
+        .profile-photo:hover {
+            transform: scale(3);
+            /* Increase size */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            /* Optional - add a shadow for a nice effect */
+            z-index: 100;
+            /* Ensure it floats over other content */
+        }
     </style>
 @endsection
 @section('content')
@@ -90,11 +94,14 @@
                                     <tr>
                                         <td>{{ $index + 1 }}</td>
                                         <td>
-                                            <img src="{{ asset($profile->profile_photo) }}" class="profile-photo" alt="Profile Photo" class="br-5" width="50" height="50">
+                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}">
+                                                <img src="{{ asset($profile->profile_photo) }}" class="profile-photo"
+                                                    alt="Profile Photo" class="br-5" width="50" height="50">
+                                            </a>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}" style="background-color:rgb(76, 2, 82);color: white"
-                                                class="btn btn-sm">
+                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}"
+                                                style="background-color:rgb(76, 2, 82);color: white" class="btn btn-sm">
                                                 View Profile
                                             </a>
                                         </td>
@@ -125,11 +132,13 @@
                                             @elseif ($profile->pratihari_status === 'rejected')
                                                 <button class="btn btn-danger btn-sm" disabled>Rejected</button>
                                             @else
-                                                <button class="btn btn-success btn-sm approve-btn" data-id="{{ $profile->id }}">Approve</button>
-                                                <button class="btn btn-danger btn-sm reject-btn" data-id="{{ $profile->id }}">Reject</button>
+                                                <button class="btn btn-success btn-sm approve-btn"
+                                                    data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn"
+                                                    data-id="{{ $profile->id }}">Reject</button>
                                             @endif
                                         </td>
-                                        
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -186,126 +195,126 @@
             </div>
         </div>
     </div>
-    @endsection
+@endsection
 
-    @section('scripts')
-    
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                @if (session('success'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: "{{ session('success') }}",
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'OK'
-                    });
-                @endif
+@section('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            @endif
 
-                @if (session('error'))
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: "{{ session('error') }}",
-                        confirmButtonColor: '#d33',
-                        confirmButtonText: 'OK'
-                    });
-                @endif
-            });
-        </script>
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    </script>
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                document.querySelectorAll(".view-address").forEach(button => {
-                    button.addEventListener("click", function() {
-                        document.getElementById("modal-address").textContent = this.getAttribute(
-                            "data-address");
-                        document.getElementById("modal-district").textContent = this.getAttribute(
-                            "data-district");
-                        document.getElementById("modal-state").textContent = this.getAttribute(
-                            "data-state");
-                        document.getElementById("modal-country").textContent = this.getAttribute(
-                            "data-country");
-                        document.getElementById("modal-pincode").textContent = this.getAttribute(
-                            "data-pincode");
-                        document.getElementById("modal-landmark").textContent = this.getAttribute(
-                            "data-landmark");
-                        document.getElementById("modal-police-station").textContent = this.getAttribute(
-                            "data-police-station");
-                    });
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".view-address").forEach(button => {
+                button.addEventListener("click", function() {
+                    document.getElementById("modal-address").textContent = this.getAttribute(
+                        "data-address");
+                    document.getElementById("modal-district").textContent = this.getAttribute(
+                        "data-district");
+                    document.getElementById("modal-state").textContent = this.getAttribute(
+                        "data-state");
+                    document.getElementById("modal-country").textContent = this.getAttribute(
+                        "data-country");
+                    document.getElementById("modal-pincode").textContent = this.getAttribute(
+                        "data-pincode");
+                    document.getElementById("modal-landmark").textContent = this.getAttribute(
+                        "data-landmark");
+                    document.getElementById("modal-police-station").textContent = this.getAttribute(
+                        "data-police-station");
                 });
             });
-        </script>
+        });
+    </script>
 
-<script>
-  $(document).ready(function () {
-    $('.approve-btn').click(function () {
-        let profileId = $(this).data('id');
+    <script>
+        $(document).ready(function() {
+            $('.approve-btn').click(function() {
+                let profileId = $(this).data('id');
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to approve this profile?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Approve'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/admin/pratihari/approve/' + profileId,
-                    type: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function (response) {
-                        Swal.fire('Approved!', response.message, 'success').then(() => {
-                            location.reload();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to approve this profile?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Approve'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/pratihari/approve/' + profileId,
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire('Approved!', response.message, 'success')
+                                    .then(() => {
+                                        location.reload();
+                                    });
+                            }
                         });
                     }
                 });
-            }
-        });
-    });
+            });
 
-    $('.reject-btn').click(function () {
-        let profileId = $(this).data('id');
+            $('.reject-btn').click(function() {
+                let profileId = $(this).data('id');
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "Do you want to reject this profile?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, Reject'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '/admin/pratihari/reject/' + profileId,
-                    type: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function (response) {
-                        Swal.fire('Rejected!', response.message, 'error').then(() => {
-                            location.reload();
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to reject this profile?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, Reject'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/pratihari/reject/' + profileId,
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire('Rejected!', response.message, 'error').then(
+                                () => {
+                                    location.reload();
+                                });
+                            }
                         });
                     }
                 });
-            }
+            });
         });
-    });
-});
-
-</script>
+    </script>
 
 
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-        <!-- Bootstrap JS (for modal) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @endsection
+    <!-- Bootstrap JS (for modal) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+@endsection

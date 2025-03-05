@@ -281,7 +281,7 @@
                     
                             <!-- Phone No -->
                             <div class="col-md-3">
-                                <label for="phone_no">Phone No</label>
+                                <label for="phone_no">Primary Phone No</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
                                     <input type="tel" class="form-control" id="phone_no" name="phone_no" pattern="\d{10}" maxlength="10">

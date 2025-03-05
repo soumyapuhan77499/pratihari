@@ -229,7 +229,7 @@
 
                         <div class="row">
                             <!-- ID Type -->
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="id_type">ID Type</label>
                                 <div class="input-group">
                                     <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
@@ -240,22 +240,13 @@
                                         <option value="Driving License">Driving License</option>
                                         <option value="Passport">Passport</option>
                                         <option value="PAN Card">PAN Card</option>
+                                        <option value="PAN Card">Health Card</option>
                                     </select>
                                 </div>
                             </div>
-
-                            <!-- ID Number -->
-                            <div class="col-md-3 mb-3">
-                                <label class="id_number">ID Number</label>
-                                <div class="input-group">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
-                                    <input type="text" class="form-control" name="id_number[]" required
-                                        placeholder="Enter ID Number">
-                                </div>
-                            </div>
-
+                           
                             <!-- ID Photo Upload -->
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="id_photo">ID Photo Upload</label>
                                 <div class="input-group">
                                     <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
@@ -264,7 +255,7 @@
                             </div>
 
                             <!-- Add More IDs Button -->
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <button type="button" class="btn" id="add-id-btn"
                                     style="color: white; margin-top: 26px; width: 100%; text-align: center; background: linear-gradient(90deg, #007bff, #0056b3);">
                                     <i class="fas fa-plus"></i> Add ID
@@ -310,7 +301,7 @@
             newIdEntry.classList.add("row", "id-entry", "mb-3");
 
             newIdEntry.innerHTML = `
-    <div class="col-md-3">
+    <div class="col-md-4">
         <label class="id_type">ID Type</label>
         <div class="input-group">
             <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card"  style="color: white"></i></span>
@@ -321,15 +312,9 @@
         </div>
     </div>
 
-    <div class="col-md-3">
-        <label class="id_number">ID Number</label>
-        <div class="input-group">
-            <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
-            <input type="text" class="form-control" name="id_number[]" required placeholder="Enter ID Number">
-        </div>
-    </div>
+  
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <label class="id_photo">ID Photo Upload</label>
         <div class="input-group">
             <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
@@ -337,10 +322,10 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <button type="button" class="btn remove-btn" 
             style="color: white; margin-top: 26px; width: 100%; text-align: center; background-color: rgb(251, 51, 71);">
-            <i class="fas fa-minus" style="color: blue"></i> Remove ID
+            <i class="fas fa-minus" style="color: white"></i> Remove ID
         </button>
     </div>
 `;

@@ -14,7 +14,6 @@ class PratihariIdcard extends Model
     protected $fillable = [
         'pratihari_id',
         'id_type',
-         'id_number',
          'id_photo',
     ];
     

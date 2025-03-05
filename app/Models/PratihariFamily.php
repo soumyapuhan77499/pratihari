@@ -20,6 +20,11 @@ class PratihariFamily extends Model
          'maritial_status',
          'spouse_name',
          'spouse_photo',
+         'spouse_father_name',
+         'spouse_mother_name',
+         'spouse_father_photo',
+         'spouse_mother_photo',
+
     ];
 
     public function children()

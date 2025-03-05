@@ -120,19 +120,21 @@
                 <form action="{{ route('admin.storeBeddha') }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label for="beddha_name"><i class="fas fa-tag"></i> Beddha Name</label>
-                            <input type="text" class="form-control" id="beddha_name" name="beddha_name" required placeholder="Enter Beddha Name">
+                       
+                        <div class="mb-3">
+                            <label for="beddha_count" class="form-label">Number of Beddhas</label>
+                            <input type="number" name="beddha_count" class="form-control" id="beddha_count" min="1" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-success">Save Beddha</button>
+                        <button type="submit" class="btn btn-success">Save Beddhas</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    
 
 @endsection
 
@@ -150,26 +152,29 @@
     <!--Internal  Form-elements js-->
     <script src="{{ asset('assets/js/advanced-form-elements.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
-    <script>
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            });
-        @endif
-    
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: "{{ session('error') }}",
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
-            });
-        @endif
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   <!-- Your page content -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: "{{ session('success') }}",
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    @endif
+
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: "{{ session('error') }}",
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'OK'
+        });
+    @endif
+</script>
+
 @endsection

@@ -21,7 +21,6 @@ public function saveIdcard(Request $request)
         // Validate the incoming data
         $request->validate([
             'id_type' => 'required|array',
-            'id_number' => 'required|array',
             'id_photo' => 'required|array',
             'id_photo.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Validating image files
         ]);
@@ -31,7 +30,6 @@ public function saveIdcard(Request $request)
             $idCard = new PratihariIdcard();
             $idCard->pratihari_id = $request->pratihari_id;
             $idCard->id_type = $request->id_type[$key];
-            $idCard->id_number = $request->id_number[$key];
 
             // Handle file upload
             if ($request->hasFile('id_photo') && isset($request->file('id_photo')[$key])) {

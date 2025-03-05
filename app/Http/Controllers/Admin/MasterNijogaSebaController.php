@@ -77,19 +77,35 @@ class MasterNijogaSebaController extends Controller
 
         return view('admin.master-seba-beddha-assign', compact('beddhas','sebas'));
     }
-
+    
     public function storeBeddha(Request $request)
     {
         $request->validate([
-            'beddha_name' => 'required|string|max:255',
+            'beddha_count' => 'required|integer|min:1|max:100',
         ]);
-
-        PratihariBeddhaMaster::create([
-            'beddha_name' => $request->beddha_name,
-        ]);
-
-        return redirect()->back()->with('success', 'Beddha added successfully!');
+    
+        $count = $request->beddha_count;
+        $addedCount = 0; // To track how many were actually added
+    
+        for ($i = 1; $i <= $count; $i++) {
+            // Check if this beddha_name already exists
+            $exists = PratihariBeddhaMaster::where('beddha_name', $i)->exists();
+    
+            if (!$exists) {
+                PratihariBeddhaMaster::create([
+                    'beddha_name' => $i,
+                ]);
+                $addedCount++;
+            }
+        }
+    
+        if ($addedCount > 0) {
+            return redirect()->back()->with('success', "$addedCount Beddhas added successfully!");
+        } else {
+            return redirect()->back()->with('error', 'All selected Beddhas already exist. No new entries were added.');
+        }
     }
+    
 
     public function saveSebaBeddha(Request $request)
     {

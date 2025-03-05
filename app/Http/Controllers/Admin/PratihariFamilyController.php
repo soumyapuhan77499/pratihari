@@ -12,7 +12,11 @@ class PratihariFamilyController extends Controller
 {
     public function pratihariFamily()
     {
-        return view('admin.pratihari-family-details');
+
+        $familyDetails = PratihariFamily::where('status', 'active')->get();
+
+        return view('admin.pratihari-family-details', compact('familyDetails'));
+
     }
     
     public function saveFamily(Request $request)
@@ -21,37 +25,70 @@ class PratihariFamilyController extends Controller
 
             $pratihariId = $request->input('pratihari_id');
 
-            if (!$pratihariId) {
-                throw new \Exception('Pratihari ID is missing.');
-            }
             // Save Family Data
             $family = new PratihariFamily();
             $family->pratihari_id = $pratihariId;
             $family->father_name = $request->father_name;
             $family->mother_name = $request->mother_name;
+            // Father Name Handling
+if ($request->father_id === 'other') {
+    $family->father_name = $request->father_name;
+
+    if ($request->hasFile('father_photo')) {
+        $fatherPhoto = $request->file('father_photo');
+        $fatherPhotoName = time() . '_father.' . $fatherPhoto->getClientOriginalExtension();
+        $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
+        $family->father_photo = asset('uploads/family/' . $fatherPhotoName); // Save full file path
+    }
+    
+} else {
+    $selectedFather = PratihariFamily::find($request->father_id);
+    $family->father_name = $selectedFather ? $selectedFather->father_name : null;
+    $family->father_photo = $selectedFather ? $selectedFather->father_photo : null;
+}
+
+// Mother Name Handling
+if ($request->mother_id === 'other') {
+    $family->mother_name = $request->mother_name;
+
+    if ($request->hasFile('mother_photo')) {
+        $motherPhoto = $request->file('mother_photo');
+        $motherPhotoName = time() . '_mother.' . $motherPhoto->getClientOriginalExtension();
+        $motherPhoto->move(public_path('uploads/family'), $motherPhotoName);
+        $family->mother_photo = asset('uploads/family/' . $motherPhotoName); // Save full file path
+    }
+} else {
+    $selectedMother = PratihariFamily::find($request->mother_id);
+    $family->mother_name = $selectedMother ? $selectedMother->mother_name : null;
+    $family->mother_photo = $selectedMother ? $selectedMother->mother_photo : null;
+}
             $family->maritial_status = $request->marital_status;
             $family->spouse_name = $request->spouse_name;
+            $family->spouse_father_name = $request->spouse_father_name;
+            $family->spouse_mother_name = $request->spouse_mother_name;
 
-            // Handle File Uploads
-            if ($request->hasFile('father_photo')) {
-                $fatherPhoto = $request->file('father_photo');
-                $fatherPhotoName = time() . '_father.' . $fatherPhoto->getClientOriginalExtension();
-                $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
-                $family->father_photo = asset('uploads/family/' . $fatherPhotoName); // Save full file path
-            }
-            
-            if ($request->hasFile('mother_photo')) {
-                $motherPhoto = $request->file('mother_photo');
-                $motherPhotoName = time() . '_mother.' . $motherPhoto->getClientOriginalExtension();
-                $motherPhoto->move(public_path('uploads/family'), $motherPhotoName);
-                $family->mother_photo = asset('uploads/family/' . $motherPhotoName); // Save full file path
-            }
+
+
             
             if ($request->hasFile('spouse_photo')) {
                 $spousePhoto = $request->file('spouse_photo');
                 $spousePhotoName = time() . '_spouse.' . $spousePhoto->getClientOriginalExtension();
                 $spousePhoto->move(public_path('uploads/family'), $spousePhotoName);
                 $family->spouse_photo = asset('uploads/family/' . $spousePhotoName); // Save full file path
+            }
+
+            if ($request->hasFile('spouse_father_photo')) {
+                $spouseFatherPhoto = $request->file('spouse_father_photo');
+                $spouseFatherPhotoName = time() . '_spouse.' . $spouseFatherPhoto->getClientOriginalExtension();
+                $spouseFatherPhoto->move(public_path('uploads/family'), $spouseFatherPhotoName);
+                $family->spouse_father_photo = asset('uploads/family/' . $spouseFatherPhotoName); // Save full file path
+            }
+
+            if ($request->hasFile('spouse_mother_photo')) {
+                $spouseMotherPhoto = $request->file('spouse_mother_photo');
+                $spouseMotherPhotoName = time() . '_spouse.' . $spouseMotherPhoto->getClientOriginalExtension();
+                $spouseMotherPhoto->move(public_path('uploads/family'), $spouseMotherPhotoName);
+                $family->spouse_mother_photo = asset('uploads/family/' . $spouseMotherPhotoName); // Save full file path
             }
             
             $family->save();
