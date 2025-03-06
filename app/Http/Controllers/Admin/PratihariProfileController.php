@@ -54,24 +54,12 @@ class PratihariProfileController extends Controller
             $pratihariProfile->alt_phone_no = $request->alt_phone_no;
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->health_card_no;
-    
-            // Handle profile photo upload if exists
-            if ($request->hasFile('profile_photo')) {
-                $profilePhoto = $request->file('profile_photo');
-
-                // Check if the file is valid
-                if (!$profilePhoto->isValid()) {
-                    throw new \Exception('Profile photo upload failed. Please try again.');
-                }
-
-                // Generate unique file name
-                $imageName = time() . '.' . $profilePhoto->getClientOriginalExtension();
-
-                // Move file to public/uploads/profile_photos
-                $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
-
-                // Store relative path in database
-                $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
+             
+            if ($request->hasFile('original_photo')) {
+                $file = $request->file('original_photo');
+                $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/profile_photos'), $filename);
+                $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
             }
 
             // Set the joining year

@@ -40,6 +40,7 @@ if ($request->father_id === 'other') {
         $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
         $family->father_photo = asset('uploads/family/' . $fatherPhotoName); // Save full file path
     }
+
     
 } else {
     $selectedFather = PratihariFamily::find($request->father_id);

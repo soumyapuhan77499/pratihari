@@ -6,6 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Cropper CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
 
 
     <style>
@@ -265,12 +267,8 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
-
                                     </div>
                                 </div>
-
-
 
                                 <!-- New Father Name (Hidden Initially) -->
                                 <div class="mb-3" id="father_name_input_div" style="display: none;">
@@ -300,7 +298,9 @@
                                         <span class="input-group-text" style="background-color: #FBAB7E">
                                             <i class="fa fa-camera" style="color: white"></i>
                                         </span>
-                                        <input type="file" class="form-control" name="father_photo">
+                                        <input type="file" class="form-control" name="father_photo"
+                                            id="father_photo">
+                                        <input type="hidden" name="cropped_father_photo" id="cropped_father_photo">
                                     </div>
                                 </div>
                             </div>
@@ -328,8 +328,6 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
-
                                     </div>
                                 </div>
 
@@ -340,8 +338,7 @@
                                         <span class="input-group-text" style="background-color: #FBAB7E">
                                             <i class="fa fa-user" style="color: white"></i>
                                         </span>
-                                        <input type="text" class="form-control" name="mother_name"
-                                            placeholder="Enter Mother's Name">
+                                        <input type="text" class="form-control" name="mother_name" placeholder="Enter Mother's Name">
                                     </div>
                                 </div>
 
@@ -361,7 +358,9 @@
                                         <span class="input-group-text" style="background-color: #FBAB7E">
                                             <i class="fa fa-camera" style="color: white"></i>
                                         </span>
-                                        <input type="file" class="form-control" name="mother_photo">
+                                        <input type="file" class="form-control" name="mother_photo"
+                                            id="mother_photo">
+                                        <input type="hidden" name="cropped_mother_photo" id="cropped_mother_photo">
                                     </div>
                                 </div>
                             </div>
@@ -463,6 +462,28 @@
                             </div>
                         </div>
                     </form>
+                    
+                    <!-- Modal for Cropping -->
+                    <div class="modal fade" id="cropperModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Crop Photo</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img id="cropperImage" style="max-width: 100%; max-height: 400px;">
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="cropImageBtn">Save and
+                                        Continue</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -523,8 +544,6 @@
             });
         });
     </script>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -601,4 +620,94 @@
     <!-- Cropper JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- CropperJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script>
+        let cropper;
+        let activePhotoType = ''; // To track whether it's father or mother photo being uploaded
+
+        // Generic function to handle both photos
+        function handlePhotoChange(inputId, photoType) {
+            activePhotoType = photoType; // Track which photo is being uploaded (father or mother)
+
+            const fileInput = document.getElementById(inputId);
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const image = document.getElementById('cropperImage');
+                    image.src = event.target.result;
+
+                    const cropperModal = new bootstrap.Modal(document.getElementById('cropperModal'));
+                    cropperModal.show();
+
+                    cropperModal._element.addEventListener('shown.bs.modal', function() {
+                        if (cropper) cropper.destroy();
+                        cropper = new Cropper(image, {
+                            aspectRatio: 1,
+                            viewMode: 2,
+                            autoCropArea: 1,
+                        });
+                    }, {
+                        once: true
+                    });
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Event listeners for both file inputs
+        document.getElementById('father_photo').addEventListener('change', function() {
+            handlePhotoChange('father_photo', 'father');
+        });
+
+        document.getElementById('mother_photo').addEventListener('change', function() {
+            handlePhotoChange('mother_photo', 'mother');
+        });
+
+        document.getElementById('spouse_photo').addEventListener('change', function() {
+            handlePhotoChange('spouse_photo', 'spouse');
+        });
+
+        document.getElementById('spouse_father_photo').addEventListener('change', function() {
+            handlePhotoChange('spouse_father_photo', 'spouse_father');
+        });
+
+        document.getElementById('spouse_mother_photo').addEventListener('change', function() {
+            handlePhotoChange('spouse_mother_photo', 'spouse_mother');
+        });
+
+        document.getElementById('spouse_mother_photo').addEventListener('change', function() {
+            handlePhotoChange('spouse_mother_photo', 'spouse_mother');
+        });
+
+        // Cropping and saving logic (same for both)
+        document.getElementById('cropImageBtn').addEventListener('click', function() {
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300,
+            });
+
+            croppedCanvas.toBlob(function(blob) {
+                const fileName = `${activePhotoType}_photo.jpg`;
+                const file = new File([blob], fileName, {
+                    type: 'image/jpeg'
+                });
+
+                const fileInput = document.getElementById(`${activePhotoType}_photo`);
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+
+                const base64 = croppedCanvas.toDataURL('image/jpeg');
+                document.getElementById(`cropped_${activePhotoType}_photo`).value = base64;
+
+                bootstrap.Modal.getInstance(document.getElementById('cropperModal')).hide();
+            }, 'image/jpeg');
+        });
+    </script>
+
 @endsection

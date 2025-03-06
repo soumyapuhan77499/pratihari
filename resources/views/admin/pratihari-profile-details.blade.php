@@ -3,7 +3,10 @@
 @section('styles')
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+
     <style>
         .form-group {
             position: relative;
@@ -137,7 +140,7 @@
         }
 
         .custom-gradient-btn {
-            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -155,18 +158,16 @@
             transform: translateY(-2px);
             box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
         }
-
     </style>
 @endsection
 
 
 @section('content')
-  
     <!-- Profile Form -->
     <div class="row">
         <div class="col-12 mt-4">
             <div class="card">
-              
+
                 <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
@@ -222,86 +223,101 @@
                 </ul>
 
                 <div class="card-body">
-                    <form action="{{ route('admin.pratihari-profile.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.pratihari-profile.store') }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
+                        <input type="hidden" name="cropped_profile_photo" id="cropped_profile_photo">
+
                         <div class="row">
                             <!-- First Name -->
                             <div class="col-md-3">
                                 <label for="first_name">First Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user"
+                                            style="color: white"></i></span>
                                     <input type="text" name="first_name" id="first_name" class="form-control">
                                 </div>
                             </div>
-                    
+
                             <!-- Middle Name -->
                             <div class="col-md-3">
                                 <label for="middle_name">Middle Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user"
+                                            style="color: white"></i></span>
                                     <input type="text" name="middle_name" id="middle_name" class="form-control">
                                 </div>
                             </div>
-                    
+
                             <!-- Last Name -->
                             <div class="col-md-3">
                                 <label for="last_name">Last Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-user" style="color: white"></i></span>
                                     <input type="text" name="last_name" id="last_name" class="form-control">
                                 </div>
                             </div>
-                    
+
                             <!-- Alias Name -->
                             <div class="col-md-3">
                                 <label for="alias_name">Alias Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-user-tag" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-user-tag" style="color: white"></i></span>
                                     <input type="text" name="alias_name" id="alias_name" class="form-control">
                                 </div>
                             </div>
-                    
+
                             <!-- Email -->
                             <div class="col-md-3">
-                              <label for="email">  Email ID</label>
+                                <label for="email"> Email ID</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-envelope" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-envelope" style="color: white"></i></span>
                                     <input type="email" class="form-control" id="email" name="email">
                                 </div>
                             </div>
-                    
+
                             <!-- WhatsApp No -->
                             <div class="col-md-3">
                                 <label for="whatsapp_no">WhatsApp No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
-                                    <input type="tel" class="form-control" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10">
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-phone" style="color: white"></i></span>
+                                    <input type="tel" class="form-control" id="whatsapp_no" name="whatsapp_no"
+                                        pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
-                    
+
                             <!-- Phone No -->
                             <div class="col-md-3">
                                 <label for="phone_no">Primary Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
-                                    <input type="tel" class="form-control" id="phone_no" name="phone_no" pattern="\d{10}" maxlength="10">
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-phone" style="color: white"></i></span>
+                                    <input type="tel" class="form-control" id="phone_no" name="phone_no"
+                                        pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
-                    
+
                             <!-- Alternative Phone No -->
                             <div class="col-md-3">
                                 <label for="alt_phone_no">Alternative Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-phone" style="color: white"></i></span>
-                                    <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no" pattern="\d{10}" maxlength="10">
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-phone" style="color: white"></i></span>
+                                    <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no"
+                                        pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
-                    
+
                             <!-- Blood Group -->
                             <div class="col-md-3">
                                 <label for="blood_group">Blood Group</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-tint" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-tint" style="color: white"></i></span>
                                     <select class="form-control" id="blood_group" name="blood_group">
                                         <option value="">Select Blood Group</option>
                                         <option value="A+">A+</option>
@@ -315,46 +331,73 @@
                                     </select>
                                 </div>
                             </div>
-                    
+
                             <!-- Health Card No -->
                             <div class="col-md-3">
                                 <label for="health_card_no">Health Card No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-id-card" style="color: white"></i></span>
-                                    <input type="text" class="form-control" id="health_card_no" name="health_card_no">
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-id-card" style="color: white"></i></span>
+                                    <input type="text" class="form-control" id="health_card_no"
+                                        name="health_card_no">
                                 </div>
                             </div>
-                    
-                            <!-- Profile Photo -->
+
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-camera" style="color: white"></i></span>
-                                    <input type="file" class="form-control" id="profile_photo" name="profile_photo">
+                                    <span class="input-group-text" style="background-color: #FBAB7E">
+                                        <i class="fa fa-camera" style="color: white"></i>
+                                    </span>
+                                    <input type="file" class="form-control" id="profile_photo" name="original_photo" accept="image/*">
+                                    <input type="hidden" name="cropped_profile_photo" id="cropped_profile_photo">
                                 </div>
                             </div>
-                    
+                            
+                            <!-- Modal for Cropping -->
+                            <div class="modal fade" id="cropperModal" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Crop Profile Photo</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img id="cropperImage" style="max-width: 100%; max-height: 400px;">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="button" class="btn btn-primary" id="cropImageBtn">Save and Continue</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <!-- Date of Birth -->
                             <div class="col-md-3">
                                 <label for="date_of_birth">Date of Birth</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                            class="fa fa-calendar" style="color: white"></i></span>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
                                 </div>
                             </div>
-                    
+
                             <!-- Joining Details -->
                             <div class="col-md-12">
                                 <div class="row align-items-center">
                                     <div class="col-md-3 d-flex align-items-center" style="margin-left: 10px">
-                                        <input type="checkbox" id="remember_date" onchange="toggleDateField()" class="form-check-input me-2" style="height: 20px;width:20px">
-                                        <label for="remember_date" class="form-check-label mt-2" style="margin-left: 5px">Remember Exact Date Of Joining?</label>
+                                        <input type="checkbox" id="remember_date" onchange="toggleDateField()"
+                                            class="form-check-input me-2" style="height: 20px;width:20px">
+                                        <label for="remember_date" class="form-check-label mt-2"
+                                            style="margin-left: 5px">Remember Exact Date Of Joining?</label>
                                     </div>
-                                    
+
                                     <div class="col-md-3" id="yearField">
                                         <label for="joining_year">Year of Joining</label>
                                         <div class="input-group mb-2">
-                                            <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar-alt" style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color: #FBAB7E"><i
+                                                    class="fa fa-calendar-alt" style="color: white"></i></span>
                                             <select class="form-control" id="joining_date" name="joining_date">
                                                 <option value="">Select Year</option>
                                                 @for ($i = date('Y'); $i >= 1900; $i--)
@@ -363,10 +406,10 @@
                                             </select>
                                         </div>
                                     </div>
-                                  
+
                                 </div>
                             </div>
-                    
+
                             <!-- Submit Button -->
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn text-white">
@@ -375,9 +418,9 @@
                             </div>
                         </div>
                     </form>
-                    
-                  
-                    
+
+
+
                 </div>
             </div>
         </div>
@@ -385,32 +428,32 @@
 @endsection
 
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  
-<script>
-    function toggleDateField() {
-        var checkbox = document.getElementById("remember_date");
-        var yearField = document.getElementById("yearField");
-    
-        if (checkbox.checked) {
-            // Change to date input field
-            yearField.innerHTML = `
+
+    <script>
+        function toggleDateField() {
+            var checkbox = document.getElementById("remember_date");
+            var yearField = document.getElementById("yearField");
+
+            if (checkbox.checked) {
+                // Change to date input field
+                yearField.innerHTML = `
                 <label for="joining_date">Date of Joining</label>
                 <div class="input-group mb-2">
                     <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar-alt" style="color: white"></i></span>
                     <input type="date" class="form-control" id="joining_date" name="joining_date">
                 </div>
             `;
-        } else {
-            // Change back to year dropdown
-            var currentYear = new Date().getFullYear();
-            var options = `<option value="">Select Year</option>`;
-            for (var i = currentYear; i >= 1900; i--) {
-                options += `<option value="${i}">${i}</option>`;
-            }
-    
-            yearField.innerHTML = `
+            } else {
+                // Change back to year dropdown
+                var currentYear = new Date().getFullYear();
+                var options = `<option value="">Select Year</option>`;
+                for (var i = currentYear; i >= 1900; i--) {
+                    options += `<option value="${i}">${i}</option>`;
+                }
+
+                yearField.innerHTML = `
                 <label for="joining_year">Year of Joining</label>
                 <div class="input-group mb-2">
                     <span class="input-group-text" style="background-color: #FBAB7E"><i class="fa fa-calendar-alt" style="color: white"></i></span>
@@ -419,12 +462,12 @@
                     </select>
                 </div>
             `;
+            }
         }
-    }
     </script>
 
     <script>
-        @if(session('success'))
+        @if (session('success'))
             Swal.fire({
                 icon: 'success',
                 title: 'Success!',
@@ -433,8 +476,8 @@
                 confirmButtonText: 'OK'
             });
         @endif
-    
-        @if(session('error'))
+
+        @if (session('error'))
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
@@ -444,6 +487,60 @@
             });
         @endif
     </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script>
+    let cropper;
+    
+    document.getElementById('profile_photo').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const image = document.getElementById('cropperImage');
+                image.src = event.target.result;
+    
+                const cropperModal = new bootstrap.Modal(document.getElementById('cropperModal'));
+                cropperModal.show();
+    
+                cropperModal._element.addEventListener('shown.bs.modal', function() {
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1,
+                        viewMode: 2,
+                        autoCropArea: 1,
+                    });
+                }, { once: true });
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    document.getElementById('cropImageBtn').addEventListener('click', function() {
+        const croppedCanvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 300,
+        });
+    
+        croppedCanvas.toBlob(function(blob) {
+            const file = new File([blob], 'profile_photo.jpg', { type: 'image/jpeg' });
+    
+            // Create a temporary DataTransfer object to replace the file input (optional approach if you want)
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+    
+            const fileInput = document.getElementById('profile_photo');
+            fileInput.files = dataTransfer.files;
+    
+            // OR convert cropped image to base64 if you want to stick to base64 flow
+            const base64 = croppedCanvas.toDataURL('image/jpeg');
+            document.getElementById('cropped_profile_photo').value = base64;
+    
+            // Close the modal
+            bootstrap.Modal.getInstance(document.getElementById('cropperModal')).hide();
+        }, 'image/jpeg');
+    });
+    </script>
+
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

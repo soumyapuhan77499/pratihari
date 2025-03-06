@@ -44,3 +44,6 @@
 
 		<!-- exported JS -->
 		<script src="{{asset('assets/js/exported.js')}}"></script>
+
+		<script src="{{asset('assets/js/family.js')}}"></script>
+
