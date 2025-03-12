@@ -291,7 +291,7 @@
                         <div id="seba_beddha_section" class="hidden">
                             <!-- Available Seba List -->
                             <div class="seba-section">
-                                <label class="section-title">✅ Available Sebas</label>
+                                <label class="section-title">Pratihari Type</label>
                                 <div class="checkbox-list" id="seba_list">
                                     <!-- Seba checkboxes dynamically added -->
                                 </div>
