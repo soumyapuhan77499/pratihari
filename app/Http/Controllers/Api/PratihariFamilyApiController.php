@@ -8,14 +8,13 @@ use App\Models\PratihariFamily;
 use App\Models\PratihariChildren;
 use Illuminate\Support\Facades\Auth;    
 
-
 class PratihariFamilyApiController extends Controller
 {
     public function saveFamily(Request $request)
     {
         try {
             $user = Auth::user();
-            
+
             $pratihariId = $user->pratihari_id;
     
             if (!$pratihariId) {

@@ -30,4 +30,4 @@ Route::get('/sebas/{nijoga_id}', [PratihariSebaApiController::class, 'getSebaByN
 Route::get('/beddhas', [PratihariSebaApiController::class, 'getBeddha']);
 
 
-Route::get('/pratihari/status', [StatusController::class, 'checkCompletionStatus']);
+Route::middleware('auth:sanctum')->get('/pratihari/status', [StatusController::class, 'checkCompletionStatus']);
