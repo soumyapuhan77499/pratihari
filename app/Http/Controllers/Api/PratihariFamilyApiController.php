@@ -15,6 +15,7 @@ class PratihariFamilyApiController extends Controller
     {
         try {
             $user = Auth::user();
+            
             $pratihariId = $user->pratihari_id;
     
             if (!$pratihariId) {

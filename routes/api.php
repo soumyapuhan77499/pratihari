@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\PratihariAddressApiController;
 use App\Http\Controllers\Api\PratihariOccupationApiController;
 use App\Http\Controllers\Api\PratihariSocialMediaApiController;
 use App\Http\Controllers\Api\PratihariSebaApiController;
+use App\Http\Controllers\Api\StatusController;
+
 
 Route::post('/send-otp', [OtpController::class, 'sendOtp'])->withoutMiddleware('auth');
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('admin.verifyOtp');
@@ -27,3 +29,5 @@ Route::get('/nijogas', [PratihariSebaApiController::class, 'getNijogas']);
 Route::get('/sebas/{nijoga_id}', [PratihariSebaApiController::class, 'getSebaByNijoga']);
 Route::get('/beddhas', [PratihariSebaApiController::class, 'getBeddha']);
 
+
+Route::get('/pratihari/status', [StatusController::class, 'checkCompletionStatus']);

@@ -18,6 +18,5 @@ class PratihariSocialMedia extends Model
         'youtube_url',        
         'twitter_url',        
         'linkedin_url',        
-
     ];
 }

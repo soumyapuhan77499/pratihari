@@ -10,7 +10,7 @@ class PratihariAddress extends Model
     use HasFactory;
 
     protected $table = 'pratihari__address_details';
-
+    
     protected $fillable = [
         'pratihari_id',
         'address',
