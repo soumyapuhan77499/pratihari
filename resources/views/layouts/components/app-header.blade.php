@@ -4,8 +4,8 @@
 						<div class="main-header-left ">
 							<div class="responsive-logo">
 								<a href="{{url('index')}}" class="header-logo">
-									<img src="{{asset('assets/img/brand/logo.png')}}" class="mobile-logo logo-1" alt="logo">
-									<img src="{{asset('assets/img/brand/logo-white.png')}}" class="mobile-logo dark-logo-1" alt="logo">
+									<span style="color: #fab876; font-size: 52px; font-weight: bold;" class="mobile-logo logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
+									<span style="color: #fab876; font-size: 52px; font-weight: bold;"  class="mobile-logo dark-logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
 								</a>
 							</div>
 							<div class="app-sidebar__toggle" data-bs-toggle="sidebar">
@@ -14,11 +14,10 @@
 							</div>
 							<div class="logo-horizontal">
 								<a href="{{url('index')}}" class="header-logo">
-									<img src="{{asset('assets/img/brand/logo.png')}}" class="mobile-logo logo-1" alt="logo">
-									<img src="{{asset('assets/img/brand/logo-white.png')}}" class="mobile-logo dark-logo-1" alt="logo">
+									<span style="color: #fab876; font-size: 52px; font-weight: bold;" class="mobile-logo logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
+									<span style="color: #fab876; font-size: 52px; font-weight: bold;"  class="mobile-logo dark-logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
 								</a>
 							</div>
-							
 						</div>
 						<div class="main-header-right">
 							<button class="navbar-toggler navresponsive-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
