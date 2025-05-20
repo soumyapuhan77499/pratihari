@@ -45,10 +45,10 @@
             <div class="col-lg-5 col-md-8 col-sm-10 mx-auto my-auto">
                 <div class="card-sigin-main">
                     <div class="text-center">
-                        <a href="#"><img src="{{ asset('assets/img/brand/logo.jpg') }}" class="" style = "height: 170px;width: 200px" alt="logo"></a>
+                        <span style="color: #fab876; font-size: 40px; font-weight: bold;">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
                     </div>
                     <div class="main-signup-header">
-                        <h3 class="text-center mb-3">Admin Login</h3>
+                        <h3 class="text-center mb-3"></h3>
 
                         @if (session('otp_sent'))
                             <!-- OTP Verification Form -->
