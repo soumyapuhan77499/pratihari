@@ -280,7 +280,6 @@
                         <div class="form-group">
                             <label for="nijoga_type" class="form-label">🛕 Nijoga Category</label>
                             <select class="form-select" id="nijoga_type" name="nijoga_type" required>
-                                <option value="">Select Nijoga</option>
                                 @foreach ($nijogas as $nijoga)
                                     <option value="{{ $nijoga->id }}">{{ $nijoga->nijoga_name }}</option>
                                 @endforeach

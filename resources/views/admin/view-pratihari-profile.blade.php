@@ -125,36 +125,36 @@
                         <!-- Family Information -->
                         <div class="main-content-body tab-pane border-top-0" id="family">
                             <div class="card p-4 shadow-lg">
-                                <h4 class="fw-bold text-center mb-4" style="color: rgb(1, 1, 66)">Family Details</h4>
+                                <h3 class="fw-bold text-center mb-4" style="color: rgb(1, 1, 66)">Family Details</h3>
 
                                 <!-- Parent Details Section -->
-                                <div class="family-section">
-                                    <h4 class="fw-bold" style="color:rgb(1, 1, 66)"><i class="fas fa-users"
-                                            style="color:rgb(85, 1, 15)"></i> Parents</h4>
-                                    <div class="row text-center">
-                                        <div class="col-md-3">
-                                            <div class="card custom-card border shadow-sm p-3">
+                                <div class="family-section mb-5">
+                                    <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
+                                        <i class="fas fa-users me-2" style="color:rgb(85, 1, 15)"></i> Parents
+                                    </h4>
+                                    <div class="row g-4 text-center">
+                                        <!-- Father -->
+                                        <div class="col-md-4">
+                                            <div class="card border shadow-sm p-3 h-100">
                                                 <div class="card-body">
-                                                    <div class="family-photo-container">
-                                                        <img alt="Father" class="profile-imgs"
-                                                            style="height: 100px;width:100px"
-                                                            src="{{ $family->father_photo }}">
-                                                    </div>
-                                                    <h5 class="mt-3 text-dark fw-semibold">
+                                                    <img class="profile-imgs rounded-circle mb-3"
+                                                        style="height: 100px; width: 100px; object-fit: cover;"
+                                                        src="{{ $family->father_photo ?? '' }}" alt="Father">
+                                                    <h5 class="fw-semibold text-dark">
                                                         {{ $family->father_name ?? 'Not Available' }}</h5>
                                                     <span class="text-muted">Father</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="card custom-card border shadow-sm p-3">
+
+                                        <!-- Mother -->
+                                        <div class="col-md-4">
+                                            <div class="card border shadow-sm p-3 h-100">
                                                 <div class="card-body">
-                                                    <div class="family-photo-container">
-                                                        <img alt="Mother" class="profile-imgs"
-                                                            style="height: 100px;width:100px"
-                                                            src="{{ $family->mother_photo }}">
-                                                    </div>
-                                                    <h5 class="mt-3 text-dark fw-semibold">
+                                                    <img class="profile-imgs rounded-circle mb-3"
+                                                        style="height: 100px; width: 100px; object-fit: cover;"
+                                                        src="{{ $family->mother_photo ?? '' }}" alt="Mother">
+                                                    <h5 class="fw-semibold text-dark">
                                                         {{ $family->mother_name ?? 'Not Available' }}</h5>
                                                     <span class="text-muted">Mother</span>
                                                 </div>
@@ -164,21 +164,54 @@
                                 </div>
 
                                 <!-- Spouse Details Section -->
-                                @if ($family->maritial_status == 'married')
-                                    <div class="family-section">
-                                        <h4 class="fw-bold" style="color:rgb(1, 1, 66)"><i class="fas fa-heart "
-                                                style="color:rgb(85, 1, 15)"></i> Spouse</h4>
-                                        <div class="text-center">
-                                            <div class="card custom-card border shadow-sm p-3 d-inline-block">
-                                                <div class="card-body">
-                                                    <div class="family-photo-container">
-                                                        <img alt="Spouse" class="profile-imgs"
-                                                            style="height: 100px;width: 100px"
-                                                            src="{{ $family->spouse_photo }}">
+                                @if ($family && $family->maritial_status == 'married')
+                                    <div class="family-section mb-5">
+                                        <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
+                                            <i class="fas fa-heart me-2" style="color:rgb(85, 1, 15)"></i> Spouse &
+                                            In-Laws
+                                        </h4>
+                                        <div class="row g-4 text-center">
+                                            <!-- Spouse -->
+                                            <div class="col-md-4">
+                                                <div class="card border shadow-sm p-3 h-100">
+                                                    <div class="card-body">
+                                                        <img class="profile-imgs rounded-circle mb-3"
+                                                            style="height: 100px; width: 100px; object-fit: cover;"
+                                                            src="{{ $family->spouse_photo ?? '' }}" alt="Spouse">
+                                                        <h5 class="fw-semibold text-dark">
+                                                            {{ $family->spouse_name ?? 'Not Available' }}</h5>
+                                                        <span class="text-muted">Spouse</span>
                                                     </div>
-                                                    <h5 class="mt-3 text-dark fw-semibold">
-                                                        {{ $family->spouse_name ?? 'Not Available' }}</h5>
-                                                    <span class="text-muted">Spouse</span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Spouse's Father -->
+                                            <div class="col-md-4">
+                                                <div class="card border shadow-sm p-3 h-100">
+                                                    <div class="card-body">
+                                                        <img class="profile-imgs rounded-circle mb-3"
+                                                            style="height: 100px; width: 100px; object-fit: cover;"
+                                                            src="{{ $family->spouse_father_photo ?? '' }}"
+                                                            alt="Spouse Father">
+                                                        <h5 class="fw-semibold text-dark">
+                                                            {{ $family->spouse_father_name ?? 'Not Available' }}</h5>
+                                                        <span class="text-muted">Spouse's Father</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Spouse's Mother -->
+                                            <div class="col-md-4">
+                                                <div class="card border shadow-sm p-3 h-100">
+                                                    <div class="card-body">
+                                                        <img class="profile-imgs rounded-circle mb-3"
+                                                            style="height: 100px; width: 100px; object-fit: cover;"
+                                                            src="{{ $family->spouse_mother_photo ?? '' }}"
+                                                            alt="Spouse Mother">
+                                                        <h5 class="fw-semibold text-dark">
+                                                            {{ $family->spouse_mother_name ?? 'Not Available' }}</h5>
+                                                        <span class="text-muted">Spouse's Mother</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -187,21 +220,19 @@
 
                                 <!-- Children Details Section -->
                                 <div class="family-section">
-                                    <h4 class="fw-bold" style="color:rgb(1, 1, 66)"><i class="fas fa-child"
-                                            style="color:rgb(85, 1, 15)"></i> Children</h4>
-                                    <div class="row">
+                                    <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
+                                        <i class="fas fa-child me-2" style="color:rgb(85, 1, 15)"></i> Children
+                                    </h4>
+                                    <div class="row g-4">
                                         @forelse ($children as $child)
                                             <div class="col-md-4">
-                                                <div class="card custom-card border shadow-sm p-3 text-center">
+                                                <div class="card border shadow-sm p-3 text-center h-100">
                                                     <div class="card-body">
-                                                        <div class="family-photo-container">
-                                                            <img alt="Child" class="profile-imgs"
-                                                                style="width: 150px;height: 150px"
-                                                                src="{{ $child->photo }}">
-                                                        </div>
-                                                        <h5 class="mt-3 text-dark fw-semibold">{{ $child->children_name }}
-                                                        </h5>
-                                                        <span class="text-muted">{{ $child->gender }} - DOB:
+                                                        <img alt="Child" class="profile-imgs rounded-circle mb-3"
+                                                            style="width: 120px; height: 120px; object-fit: cover;"
+                                                            src="{{ $child->photo }}">
+                                                        <h5 class="fw-semibold text-dark">{{ $child->children_name }}</h5>
+                                                        <span class="text-muted">{{ $child->gender }} | DOB:
                                                             {{ date('d M Y', strtotime($child->date_of_birth)) }}</span>
                                                     </div>
                                                 </div>
@@ -214,217 +245,105 @@
                             </div>
                         </div>
 
-                        <!-- ID Card Details -->
+                        <!-- ID Card Section -->
                         <div class="tab-pane fade" id="idcard">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold" style="color:rgb(1, 1, 66)"><i class="fas fa-id-card"></i> ID
-                                        Card
-                                        Details</h4>
+                                    <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
+                                        <i class="fas fa-id-card"></i> ID Card Details
+                                    </h4>
 
-                                    <div class="row">
-                                        @foreach ($idcard as $card)
-                                            <div class="col-md-4"> <!-- 3 ID cards per row -->
-                                                <div class="id-card {{ strtolower($card->id_type ?? '') }}">
-                                                    <div class="id-card-header">
-                                                        <h5>{{ strtoupper($card->id_type ?? 'ID CARD') }}</h5>
+                                    <div class="row g-4">
+                                        @foreach ($idcard as $index => $card)
+                                            <div class="col-md-4">
+                                                <div class="card shadow-sm p-3 border rounded id-card-box h-100">
+                                                    <div class="text-center border-bottom pb-2 mb-2">
+                                                        <h5 class="text-uppercase fw-bold mb-0">
+                                                            {{ $card->id_type ?? 'ID CARD' }}
+                                                        </h5>
                                                     </div>
-                                                    <div class="id-card-body">
-                                                        <div class="id-photo text-center">
-                                                            <img src="{{ $card->id_photo }}" alt="ID Photo">
-                                                        </div>
-                                                        <div class="id-details text-center">
-                                                            <p><strong>ID Type:</strong>
-                                                                {{ $card->id_type ?? 'Not Available' }}</p>
-                                                            <p><strong>ID Number:</strong>
-                                                                {{ $card->id_number ?? 'Not Available' }}</p>
-                                                        </div>
+                                                    <div class="text-center">
+                                                        <a href="{{ $card->id_photo }}" target="_blank">
+                                                            <img src="{{ $card->id_photo }}" alt="ID Photo"
+                                                                class="img-fluid rounded mb-3"
+                                                                style="height: 160px; object-fit: cover; cursor: pointer;">
+                                                        </a>
+                                                    </div>
+                                                    <div class="text-center">
+                                                        <p class="mb-1"><strong>ID Type:</strong>
+                                                            {{ $card->id_type ?? 'Not Available' }}</p>
+                                                        <p class="mb-0"><strong>ID Number:</strong>
+                                                            {{ $card->id_number ?? 'Not Available' }}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
 
+
                                 </div>
                             </div>
                         </div>
-
+                        
                         <!-- Address Details -->
                         <div class="tab-pane fade" id="address">
-                            <div class="card profile-section">
+                            <div class="card profile-section shadow-lg border-0">
                                 <div class="card-body">
-                                    <h4 class="fw-bold" style="color:rgb(1, 1, 66)"><i class="fas fa-map-marker-alt"></i>
-                                        Address Details
+                                    <h4 class="fw-bold text-center mb-4" style="color:#001a33">
+                                        <i class="fas fa-map-marker-alt me-2 text-primary"></i> Address Details
                                     </h4>
 
                                     <!-- Current Address -->
-                                    <div class="profile-item">
-                                        <i class="fas fa-map-marked-alt text-primary"></i>
-                                        <div>
-                                            <span class="profile-text">Current Address:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->address ?? 'Not Available' }}</span>
-                                        </div>
+                                    <h5 class="fw-semibold mb-3 text-dark">
+                                        <i class="fas fa-map-pin me-2 text-success"></i>Current Address
+                                    </h5>
+                                    <div class="row g-3 mb-4">
+                                        <x-address-item icon="fa-map-marked-alt" color="primary" label="Current Address"
+                                            :value="$profile->address->address ?? 'Not Available'" />
+                                        <x-address-item icon="fa-map-signs" color="success" label="Sahi"
+                                            :value="$profile->address->sahiDetail->sahi_name ?? 'Not Available'" />
+                                        <x-address-item icon="fa-thumbtack" color="danger" label="Landmark"
+                                            :value="$profile->address->landmark ?? 'Not Available'" />
+                                        <x-address-item icon="fa-envelope" color="info" label="Pincode"
+                                            :value="$profile->address->pincode ?? 'Not Available'" />
+                                        <x-address-item icon="fa-mail-bulk" color="primary" label="Post"
+                                            :value="$profile->address->post ?? 'Not Available'" />
+                                        <x-address-item icon="fa-user-shield" color="warning" label="Police Station"
+                                            :value="$profile->address->police_station ?? 'Not Available'" />
+                                        <x-address-item icon="fa-city" color="secondary" label="District"
+                                            :value="$profile->address->district ?? 'Not Available'" />
+                                        <x-address-item icon="fa-map" color="success" label="State"
+                                            :value="$profile->address->state ?? 'Not Available'" />
+                                        <x-address-item icon="fa-flag" color="danger" label="Country"
+                                            :value="$profile->address->country ?? 'Not Available'" />
                                     </div>
 
-                                    <div class="profile-item">
-                                        <i class="fas fa-map-signs text-success"></i>
-                                        <div>
-                                            <span class="profile-text">Sahi:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->sahiDetail->sahi_name ?? 'Not Available' }}</span>
+                                    <hr class="my-4">
 
-                                        </div>
+                                    <!-- Permanent Address -->
+                                    <h5 class="fw-semibold mb-3 text-dark">
+                                        <i class="fas fa-home me-2 text-info"></i>Permanent Address
+                                    </h5>
+                                    <div class="row g-3">
+                                        <x-address-item icon="fa-map-marked" color="primary" label="Permanent Address"
+                                            :value="$profile->address->per_address ?? 'Not Available'" />
+                                        <x-address-item icon="fa-map-signs" color="success" label="Sahi"
+                                            :value="$profile->address->per_sahi ?? 'Not Available'" />
+                                        <x-address-item icon="fa-thumbtack" color="danger" label="Landmark"
+                                            :value="$profile->address->per_landmark ?? 'Not Available'" />
+                                        <x-address-item icon="fa-envelope" color="info" label="Pincode"
+                                            :value="$profile->address->per_pincode ?? 'Not Available'" />
+                                        <x-address-item icon="fa-mail-bulk" color="primary" label="Post"
+                                            :value="$profile->address->per_post ?? 'Not Available'" />
+                                        <x-address-item icon="fa-user-shield" color="warning" label="Police Station"
+                                            :value="$profile->address->per_police_station ?? 'Not Available'" />
+                                        <x-address-item icon="fa-city" color="secondary" label="District"
+                                            :value="$profile->address->per_district ?? 'Not Available'" />
+                                        <x-address-item icon="fa-map" color="success" label="State"
+                                            :value="$profile->address->per_state ?? 'Not Available'" />
+                                        <x-address-item icon="fa-flag" color="danger" label="Country"
+                                            :value="$profile->address->per_country ?? 'Not Available'" />
                                     </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-thumbtack text-danger"></i>
-                                        <div>
-                                            <span class="profile-text">Landmark:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->landmark ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-envelope text-info"></i>
-                                        <div>
-                                            <span class="profile-text">Pincode:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->pincode ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-mail-bulk text-primary"></i>
-                                        <div>
-                                            <span class="profile-text">Post:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->post ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-user-shield text-warning"></i>
-                                        <div>
-                                            <span class="profile-text">Police Station:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->police_station ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-city text-secondary"></i>
-                                        <div>
-                                            <span class="profile-text">District:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->district ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-map text-success"></i>
-                                        <div>
-                                            <span class="profile-text">State:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->state ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-flag text-danger"></i>
-                                        <div>
-                                            <span class="profile-text">Country:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->country ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <hr class="my-3">
-
-                                    <h5 class="fw-bold text-info"><i class="fas fa-home"></i> Permanent Address</h5>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-map-marked text-primary"></i>
-                                        <div>
-                                            <span class="profile-text">Permanent Address:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_address ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-map-signs text-success"></i>
-                                        <div>
-                                            <span class="profile-text">Sahi:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_sahi ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-thumbtack text-danger"></i>
-                                        <div>
-                                            <span class="profile-text">Landmark:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_landmark ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-envelope text-info"></i>
-                                        <div>
-                                            <span class="profile-text">Pincode:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_pincode ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-mail-bulk text-primary"></i>
-                                        <div>
-                                            <span class="profile-text">Post:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_post ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-user-shield text-warning"></i>
-                                        <div>
-                                            <span class="profile-text">Police Station:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_police_station ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-city text-secondary"></i>
-                                        <div>
-                                            <span class="profile-text">District:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_district ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-map text-success"></i>
-                                        <div>
-                                            <span class="profile-text">State:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_state ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="profile-item">
-                                        <i class="fas fa-flag text-danger"></i>
-                                        <div>
-                                            <span class="profile-text">Country:</span>
-                                            <span
-                                                class="profile-value">{{ $profile->address->per_country ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
@@ -684,7 +603,5 @@
         });
     </script>
     <!-- Include SweetAlert Library -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
