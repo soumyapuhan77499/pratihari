@@ -42,5 +42,4 @@ class StatusController extends Controller
             'empty_tables' => $emptyTables,
         ], 200);
     }
-    
 }
