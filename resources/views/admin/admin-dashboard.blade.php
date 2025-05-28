@@ -47,7 +47,7 @@
                         <p><strong>Filled:</strong> {{ implode(', ', $profileStatus['filled']) }}</p>
                         <p><strong>Missing:</strong> {{ implode(', ', $profileStatus['empty']) }}</p>
                     @else
-                        <p>Please log in to view.</p>
+                        <p>No update</p>
                     @endif
                 </div>
             </div>
