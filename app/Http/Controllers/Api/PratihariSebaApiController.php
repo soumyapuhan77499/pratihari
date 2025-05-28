@@ -74,16 +74,17 @@ class PratihariSebaApiController extends Controller
             // Fetch seba_name for this sebaId
             $seba = PratihariSebaMaster::find($sebaId);
 
-            return [
-                'id' => $sebaId,
-                'name' => $seba ? $seba->seba_name : 'Unknown Seba',
-                'bedha' => $items->map(function ($item) {
-                    return [
-                        'id' => $item->beddha->id,
-                        'name' => $item->beddha->beddha_name,
-                    ];
-                })->values(),
-            ];
+          return [
+    'id' => $sebaId,
+    'name' => $seba ? $seba->seba_name : 'Unknown Seba',
+    'bedha' => $items->map(function ($item) use ($sebaId) {
+        return [
+            'id' => $sebaId . '_' . $item->beddha->id,  // concatenated id here
+            'name' => $item->beddha->beddha_name,
+        ];
+    })->values(),
+];
+
         })->values();
 
         return response()->json([
