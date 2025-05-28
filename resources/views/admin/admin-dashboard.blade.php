@@ -20,7 +20,7 @@
 
         <!-- Incomplete Profiles -->
         <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3">
+            <div class="card text-black bg-warning mb-3">
                 <div class="card-header">Incomplete Profiles</div>
                 <div class="card-body">
                     <h5 class="card-title">{{ $incompleteProfiles }}</h5>
@@ -30,7 +30,7 @@
 
         <!-- Total Active Users -->
         <div class="col-md-3">
-            <div class="card text-white bg-success mb-3">
+            <div class="card text-black bg-success mb-3">
                 <div class="card-header">Active Users</div>
                 <div class="card-body">
                     <h5 class="card-title">{{ $totalActiveUsers }}</h5>
@@ -40,7 +40,7 @@
 
         <!-- My Profile Completion -->
         <div class="col-md-3">
-            <div class="card text-white bg-danger mb-3">
+            <div class="card text-black bg-danger mb-3">
                 <div class="card-header">My Profile Completion</div>
                 <div class="card-body">
                     @if(!empty($profileStatus))
