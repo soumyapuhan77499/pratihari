@@ -150,7 +150,6 @@
         <div class="col-12 mt-4">
             <div class="card shadow-lg">
                
-
                 <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
@@ -159,6 +158,7 @@
                             <i class="fas fa-user"></i> Profile
                         </a>
                     </li>
+
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="family-tab" data-toggle="tab" href="{{ route('admin.pratihariFamily') }}"
                             role="tab" aria-controls="family" aria-selected="true">
