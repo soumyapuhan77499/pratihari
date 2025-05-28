@@ -16,7 +16,7 @@ class PratihariSebaController extends Controller
    // Controller methods
 public function pratihariSeba()
 {
-    $nijogaId = 1;
+    $nijogaId = 4;
 
     $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijogaId)
         ->join('master__seba', 'master__nijoga_seba_assign.seba_id', '=', 'master__seba.id')
