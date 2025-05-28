@@ -45,12 +45,17 @@ class PratihariProfileApiController extends Controller
         $pratihariProfile->alt_phone_no = $request->alt_phone_no;
         $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-         if ($request->hasFile('profile_photo')) {
-                $file = $request->file('profile_photo');
-                $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/profile_photos'), $filename);
-                $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
-            }
+       if ($request->hasFile('profile_photo')) {
+    $file = $request->file('profile_photo');
+    $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
+    $destinationPath = public_path('uploads/profile_photos');
+    // Create directory if not exists
+    if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0755, true);
+    }
+    $file->move($destinationPath, $filename);
+    $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
+}
 
         // Save profile
         $pratihariProfile->save();
