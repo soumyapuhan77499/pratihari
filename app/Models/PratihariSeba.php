@@ -41,6 +41,14 @@ class PratihariSeba extends Model
         );
     }
 
+    
+    // Instead of hasManyThrough, define a method to fetch related beddhas
+    public function beddhas()
+    {
+        // $this->beddha_id is now an array because of accessor
+        return PratihariBeddhaMaster::whereIn('id', $this->beddha_id)->get();
+    }
+
     // Accessor to handle comma-separated beddha_id values
     public function getBeddhaIdAttribute($value)
     {

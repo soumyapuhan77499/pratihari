@@ -42,7 +42,8 @@
 
                     <div class="card-footer py-3">
                         <nav class="nav main-nav-line profile-nav-line">
-                            <a style="color: white" class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
+                            <a style="color: white" class="nav-link active" data-bs-toggle="tab"
+                                href="#personal">Personal</a>
                             <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
                             <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
                             <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
@@ -284,7 +285,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Address Details -->
                         <div class="tab-pane fade" id="address">
                             <div class="card profile-section shadow-lg border-0">
@@ -417,13 +418,18 @@
                                         </div>
 
                                         <!-- Beddha Assigned Section -->
+                                        <!-- Beddha Assigned Section -->
                                         <div class="profile-item d-flex align-items-center">
                                             <i class="fas fa-link text-danger me-2"></i>
                                             <div>
                                                 <span class="profile-text fw-bold">Beddha Assigned:</span>
                                                 <div class="profile-value mt-1">
-                                                    @if ($seba->beddhaMaster->isNotEmpty())
-                                                        @foreach ($seba->beddhaMaster as $beddha)
+                                                    @php
+                                                        $beddhas = $seba->beddhas();
+                                                    @endphp
+
+                                                    @if ($beddhas->isNotEmpty())
+                                                        @foreach ($beddhas as $beddha)
                                                             <span
                                                                 class="badge bg-success me-1">{{ $beddha->beddha_name }}</span>
                                                         @endforeach
