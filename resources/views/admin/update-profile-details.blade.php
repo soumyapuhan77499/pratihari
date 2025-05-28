@@ -337,7 +337,7 @@
                                 <label for="health_card_no">Health Card No</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
-                                    <input type="text" class="form-control" id="health_card_no" name="health_card_no"  value="{{ old('health_card_no', $profile->health_card_no ?? '') }}" >
+                                    <input type="text" class="form-control" id="healthcard_no" name="healthcard_no"  value="{{ old('health_card_no', $profile->healthcard_no ?? '') }}" >
                                 </div>
                             </div>
 

@@ -338,8 +338,8 @@
                                 <div class="input-group mb-2">
                                     <span class="input-group-text" style="background-color: #FBAB7E"><i
                                             class="fa fa-id-card" style="color: white"></i></span>
-                                    <input type="text" class="form-control" id="health_card_no"
-                                        name="health_card_no">
+                                    <input type="text" class="form-control" id="healthcard_no"
+                                        name="healthcard_no">
                                 </div>
                             </div>
 
