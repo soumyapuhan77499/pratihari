@@ -24,7 +24,7 @@
     }
 
     .card-title {
-        font-size: 20px;
+        font-size: 25px;
         font-weight: bold;
         color: white;
     }
@@ -112,7 +112,7 @@
             <div class="card-header">
                 <i class="bi bi-person-check-fill me-2"></i>My Profile Completion
             </div>
-            <div class="card-body">
+            <div class="card-body" style="font-size: 25px;">
                 @if(!empty($profileStatus))
                     <p><strong>Filled:</strong> {{ implode(', ', $profileStatus['filled']) }}</p>
                     <p><strong>Missing:</strong> {{ implode(', ', $profileStatus['empty']) }}</p>
