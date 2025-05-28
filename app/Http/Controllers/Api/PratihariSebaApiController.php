@@ -126,7 +126,7 @@ class PratihariSebaApiController extends Controller
                 $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
                 $seba = PratihariSeba::create([
-                    'pratihari_id' => $user->id, // Assuming `pratihari_id` refers to the authenticated user
+                    'pratihari_id' => $user->pratihari_id, // Assuming `pratihari_id` refers to the authenticated user
                     'nijoga_id' => $nijogaId,
                     'seba_id' => $sebaId,
                     'beddha_id' => $beddhaIdsString,

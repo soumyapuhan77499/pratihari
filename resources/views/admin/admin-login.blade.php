@@ -88,7 +88,7 @@
                                     </form>
 
                                     <div class="main-signup-footer mt-3 text-center">
-                                        <p>Super Admin Login<a href="{{ route('superadmin.login') }}"> Login</a></p>
+                                        <p>Super Admin<a href="{{ route('superadmin.login') }}"> Login</a></p>
                                     </div>
                                 @endif
 
