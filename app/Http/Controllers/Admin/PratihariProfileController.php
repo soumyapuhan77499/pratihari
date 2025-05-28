@@ -195,66 +195,66 @@ class PratihariProfileController extends Controller
 
     }
 
-public function updateProfile(Request $request, $pratihari_id)
-{
-    // Validate incoming request
-    $validator = Validator::make($request->all(), [
-        'first_name' => 'required|string|max:255',
-    ]);
+    public function updateProfile(Request $request, $pratihari_id)
+    {
+        // Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required|string|max:255',
+        ]);
 
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    try {
-        // Find the existing profile by ID
-        $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihari_id)->firstOrFail();
-
-        // Update the profile data
-        $pratihariProfile->first_name = $request->first_name;
-        $pratihariProfile->middle_name = $request->middle_name;
-        $pratihariProfile->last_name = $request->last_name;
-        $pratihariProfile->alias_name = $request->alias_name;
-        $pratihariProfile->email = $request->email;
-        $pratihariProfile->whatsapp_no = $request->whatsapp_no;
-        $pratihariProfile->phone_no = $request->phone_no;
-        $pratihariProfile->alt_phone_no = $request->alt_phone_no;
-        $pratihariProfile->blood_group = $request->blood_group;
-        $pratihariProfile->healthcard_no = $request->health_card_no;
-        $pratihariProfile->joining_date = $request->joining_date;
-        $pratihariProfile->date_of_birth = $request->date_of_birth;
-
-        // Handle profile photo upload if exists
-        if ($request->hasFile('profile_photo')) {
-            $profilePhoto = $request->file('profile_photo');
-
-            // Check if the file is valid
-            if (!$profilePhoto->isValid()) {
-                throw new \Exception('Profile photo upload failed. Please try again.');
-            }
-
-            // Generate unique file name
-            $imageName = time() . '.' . $profilePhoto->getClientOriginalExtension();
-
-            // Move file to public/uploads/profile_photos
-            $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
-
-            // Store relative path in database
-            $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        // Save the updated profile
-        $pratihariProfile->save();
+        try {
+            // Find the existing profile by ID
+            $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihari_id)->firstOrFail();
 
-        return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihari_id])->with('success', 'Profile updated successfully!');
+            // Update the profile data
+            $pratihariProfile->first_name = $request->first_name;
+            $pratihariProfile->middle_name = $request->middle_name;
+            $pratihariProfile->last_name = $request->last_name;
+            $pratihariProfile->alias_name = $request->alias_name;
+            $pratihariProfile->email = $request->email;
+            $pratihariProfile->whatsapp_no = $request->whatsapp_no;
+            $pratihariProfile->phone_no = $request->phone_no;
+            $pratihariProfile->alt_phone_no = $request->alt_phone_no;
+            $pratihariProfile->blood_group = $request->blood_group;
+            $pratihariProfile->healthcard_no = $request->health_card_no;
+            $pratihariProfile->joining_date = $request->joining_date;
+            $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-    } catch (\Exception $e) {
-        // Log the exception and display the specific error message
-        \Log::error('Error in Pratihari Profile Update: ' . $e->getMessage());
+            // Handle profile photo upload if exists
+            if ($request->hasFile('profile_photo')) {
+                $profilePhoto = $request->file('profile_photo');
 
-        // Return a detailed error message
-        return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+                // Check if the file is valid
+                if (!$profilePhoto->isValid()) {
+                    throw new \Exception('Profile photo upload failed. Please try again.');
+                }
+
+                // Generate unique file name
+                $imageName = time() . '.' . $profilePhoto->getClientOriginalExtension();
+
+                // Move file to public/uploads/profile_photos
+                $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
+
+                // Store relative path in database
+                $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
+            }
+
+            // Save the updated profile
+            $pratihariProfile->save();
+
+            return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihari_id])->with('success', 'Profile updated successfully!');
+
+        } catch (\Exception $e) {
+            // Log the exception and display the specific error message
+            \Log::error('Error in Pratihari Profile Update: ' . $e->getMessage());
+
+            // Return a detailed error message
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        }
     }
-}
 
 }
