@@ -50,8 +50,8 @@
                 <div class="col-lg-5 col-md-8 col-sm-10 mx-auto my-auto">
                     <div class="card-sigin-main">
                         <div class="text-center">
-                            <a href="#"><img src="{{ asset('assets/img/brand/logo.jpg') }}" class=""
-                                    style = "height: 170px;width: 200px" alt="logo"></a>
+                            <a href="#"><img src="{{ asset('assets/img/brand/nijoga-logo.jpg') }}" class=""
+                                    style = "height: 170px;width: 280px" alt="logo"></a>
                         </div>
                         <div class="main-signup-header">
                             <h3 class="text-center mb-3">Super admin login</h3>
