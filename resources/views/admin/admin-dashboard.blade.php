@@ -24,8 +24,9 @@
     }
 
     .card-title {
-        font-size: 2rem;
+        font-size: 20px;
         font-weight: bold;
+        color: white;
     }
 
     .card-body p {
