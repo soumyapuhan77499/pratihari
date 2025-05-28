@@ -71,7 +71,7 @@
    <div class="row">
     <!-- Today Registrations -->
     <div class="col-md-3">
-        <div class="card text-black bg-primary mb-3">
+        <div class="card text-dark bg-primary mb-3">
             <div class="card-header">
                 <i class="bi bi-person-plus-fill me-2"></i>Today's Registrations
             </div>
@@ -83,7 +83,7 @@
 
     <!-- Incomplete Profiles -->
     <div class="col-md-3">
-        <div class="card text-black bg-warning mb-3">
+        <div class="card text-dark bg-warning mb-3">
             <div class="card-header">
                 <i class="bi bi-exclamation-circle-fill me-2"></i>Incomplete Profiles
             </div>
@@ -95,7 +95,7 @@
 
     <!-- Total Active Users -->
     <div class="col-md-3">
-        <div class="card text-balck bg-success mb-3">
+        <div class="card text-dark bg-success mb-3">
             <div class="card-header">
                 <i class="bi bi-people-fill me-2"></i>Active Users
             </div>
@@ -107,7 +107,7 @@
 
     <!-- My Profile Completion -->
     <div class="col-md-3">
-        <div class="card text-black bg-danger mb-3">
+        <div class="card text-dark bg-danger mb-3">
             <div class="card-header">
                 <i class="bi bi-person-check-fill me-2"></i>My Profile Completion
             </div>
