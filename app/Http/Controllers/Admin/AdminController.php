@@ -43,7 +43,7 @@ public function dashboard()
               ->orWhereNull('blood_group');
     })->count();
 
-    $totalActiveUsers = PratihariProfile::where('pratihari_status', 'active')->count();
+    $totalActiveUsers = PratihariProfile::where('status', 'active')->count();
 
     // Logged-in user's profile completion
     $user = Auth::user();
