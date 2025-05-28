@@ -298,7 +298,7 @@
 
                             <!-- Available Beddha List -->
                             <div class="beddha-section">
-                                <label class="section-title">📜 Beddha List</label>
+                                <label class="section-title">📜 Bheddha List</label>
                                 <div id="beddha_list">
 
                                     <!-- Beddha checkboxes dynamically added here -->
