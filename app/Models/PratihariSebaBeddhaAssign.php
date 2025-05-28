@@ -20,4 +20,5 @@ class PratihariSebaBeddhaAssign extends Model
     {
         return $this->belongsTo(PratihariBeddhaMaster::class, 'beddha_id');
     }
+    
 }
