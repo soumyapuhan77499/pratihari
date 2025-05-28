@@ -216,9 +216,6 @@
             font-weight: 600;
             font-size: 1.1rem;
             color: #2c3e50;
-            /* dark blue-gray */
-            border-bottom: 2px solid #3498db;
-            /* blue underline */
             padding-bottom: 6px;
             margin-bottom: 12px;
             letter-spacing: 0.03em;
@@ -289,8 +286,6 @@
                         <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
                         <input type="hidden" name="nijoga_type" value="{{ $nijogaId }}">
 
-                        <!-- Display Nijoga name -->
-                        <h5 class="mb-3">🛕 Nijoga Category: <strong>{{ $nijogaName }}</strong></h5>
 
                         <h6 class="seba-header mb-3">📝 Seba Type</h6>
 
