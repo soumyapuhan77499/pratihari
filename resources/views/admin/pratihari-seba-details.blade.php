@@ -280,6 +280,7 @@
                         <div class="form-group">
                             <label for="nijoga_type" class="form-label">🛕 Nijoga Category</label>
                             <select class="form-select" id="nijoga_type" name="nijoga_type" required>
+                                <option value="" selected disabled>Select Nijoga</option>
                                 @foreach ($nijogas as $nijoga)
                                     <option value="{{ $nijoga->id }}">{{ $nijoga->nijoga_name }}</option>
                                 @endforeach
@@ -287,9 +288,9 @@
                         </div>
 
                         <!-- Seba and Beddha Sections (Initially Hidden) -->
-                        <div id="seba_beddha_section" class="hidden">
+                        <div id="seba_beddha_section" class="d-none">
                             <!-- Available Seba List -->
-                            <div class="seba-section">
+                            <div class="seba-section mt-3">
                                 <label class="section-title">Pratihari Type</label>
                                 <div class="checkbox-list" id="seba_list">
                                     <!-- Seba checkboxes dynamically added -->
@@ -297,25 +298,23 @@
                             </div>
 
                             <!-- Available Beddha List -->
-                            <div class="beddha-section">
+                            <div class="beddha-section mt-3">
                                 <label class="section-title">📜 Bheddha List</label>
                                 <div id="beddha_list">
-
                                     <!-- Beddha checkboxes dynamically added here -->
                                 </div>
                             </div>
-
-
-
                         </div>
+
                         <!-- Submit Button -->
-                        <div class="col-12 text-center">
-                            <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-lg w-50 custom-gradient-btn" style="color: white">
                                 <i class="fa fa-save"></i> Submit
                             </button>
                         </div>
                     </form>
                 </div>
+
 
             </div>
         </div>
@@ -350,68 +349,95 @@
     </script>
 
     <script>
-        document.getElementById('nijoga_type').addEventListener('change', function() {
-            let nijogaId = this.value;
-            let sebaList = document.getElementById('seba_list');
-            let beddhaList = document.getElementById('beddha_list');
-            let sebaBeddhaSection = document.getElementById('seba_beddha_section');
+        document.addEventListener('DOMContentLoaded', function() {
+            const nijogaSelect = document.getElementById('nijoga_type');
+            const sebaList = document.getElementById('seba_list');
+            const beddhaList = document.getElementById('beddha_list');
+            const sebaBeddhaSection = document.getElementById('seba_beddha_section');
 
-            sebaList.innerHTML = '';
-            beddhaList.innerHTML = '';
-            sebaBeddhaSection.classList.add('d-none');
+            nijogaSelect.addEventListener('change', function() {
+                const nijogaId = this.value;
 
-            if (nijogaId) {
-                fetch(`/admin/get-seba/${nijogaId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length > 0) {
-                            sebaBeddhaSection.classList.remove('d-none');
-                        }
-                        data.forEach(seba => {
-                            let checkbox = `
-                            <div class="form-check me-3">
-                                <input class="form-check-input seba-checkbox" type="checkbox" name="seba_id[]" value="${seba.id}" id="seba_${seba.id}" data-seba-id="${seba.id}">
-                                <label class="form-check-label" for="seba_${seba.id}">${seba.seba_name}</label>
-                            </div>`;
-                            sebaList.innerHTML += checkbox;
-                        });
+                // Clear previous data
+                sebaList.innerHTML = '';
+                beddhaList.innerHTML = '';
+                sebaBeddhaSection.classList.add('d-none');
 
-                        document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
-                            checkbox.addEventListener('change', function() {
-                                let sebaId = this.dataset.sebaId;
-                                let beddhaGroup = document.getElementById(
-                                    `beddha_group_${sebaId}`);
+                if (nijogaId) {
+                    fetch(`/admin/get-seba/${nijogaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                sebaBeddhaSection.classList.remove('d-none');
+                            }
 
-                                if (this.checked) {
-                                    fetch(`/admin/get-beddha/${sebaId}`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (!beddhaGroup) {
-                                                let beddhaHtml = `<div class="beddha-group" id="beddha_group_${sebaId}">
-                                                <strong>${this.nextElementSibling.innerText}:</strong>
-                                                <div class="d-flex flex-wrap gap-2 mt-2">`;
-                                                data.forEach(beddha => {
-                                                    beddhaHtml += `
-                                                    <div class="checkbox-list d-flex overflow-auto" style="gap: 1rem; white-space: nowrap;">
-                                                        <div class="form-check d-flex align-items-center gap-1">
-                                                            <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
-                                                            <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
-                                                        </div>
-                                                    </div>`;
-                                                });
-                                                beddhaHtml += `</div></div>`;
-                                                beddhaList.innerHTML += beddhaHtml;
-                                            }
-                                        });
-                                } else {
-                                    if (beddhaGroup) {
-                                        beddhaGroup.remove();
-                                    }
-                                }
+                            data.forEach(seba => {
+                                const checkbox = document.createElement('div');
+                                checkbox.classList.add('form-check', 'me-3');
+
+                                checkbox.innerHTML = `
+                            <input class="form-check-input seba-checkbox" type="checkbox" name="seba_id[]" value="${seba.id}" id="seba_${seba.id}" data-seba-id="${seba.id}">
+                            <label class="form-check-label" for="seba_${seba.id}">${seba.seba_name}</label>
+                        `;
+
+                                sebaList.appendChild(checkbox);
                             });
+
+                            // Add change listeners to all newly created seba checkboxes
+                            document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
+                                checkbox.addEventListener('change', function() {
+                                    const sebaId = this.dataset.sebaId;
+                                    const beddhaGroupId = `beddha_group_${sebaId}`;
+                                    let beddhaGroup = document.getElementById(
+                                        beddhaGroupId);
+
+                                    if (this.checked) {
+                                        // Fetch beddha only if not already added
+                                        if (!beddhaGroup) {
+                                            fetch(`/admin/get-beddha/${sebaId}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    // Create beddha group container
+                                                    beddhaGroup = document
+                                                        .createElement('div');
+                                                    beddhaGroup.classList.add(
+                                                        'beddha-group', 'mb-3');
+                                                    beddhaGroup.id = beddhaGroupId;
+
+                                                    let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
+                                                <div class="d-flex flex-wrap gap-2 mt-2">`;
+
+                                                    data.forEach(beddha => {
+                                                        innerHtml += `
+                                                    <div class="form-check d-flex align-items-center gap-1">
+                                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
+                                                        <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
+                                                    </div>`;
+                                                    });
+
+                                                    innerHtml += '</div>';
+
+                                                    beddhaGroup.innerHTML =
+                                                        innerHtml;
+                                                    beddhaList.appendChild(
+                                                        beddhaGroup);
+                                                });
+                                        }
+                                    } else {
+                                        // Remove beddha group if seba unchecked
+                                        if (beddhaGroup) {
+                                            beddhaGroup.remove();
+                                        }
+                                    }
+                                });
+                            });
+                        })
+                        .catch(err => {
+                            console.error('Failed to fetch Seba:', err);
+                            sebaBeddhaSection.classList.add('d-none');
                         });
-                    }); 
-            }
+                }
+            });
         });
     </script>
 
