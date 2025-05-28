@@ -301,7 +301,7 @@
                                         <x-address-item icon="fa-map-marked-alt" color="primary" label="Current Address"
                                             :value="$profile->address->address ?? 'Not Available'" />
                                         <x-address-item icon="fa-map-signs" color="success" label="Sahi"
-                                            :value="$profile->address->sahiDetail->sahi_name ?? 'Not Available'" />
+                                            :value="$profile->address->sahi ?? 'Not Available'" />
                                         <x-address-item icon="fa-thumbtack" color="danger" label="Landmark"
                                             :value="$profile->address->landmark ?? 'Not Available'" />
                                         <x-address-item icon="fa-envelope" color="info" label="Pincode"
