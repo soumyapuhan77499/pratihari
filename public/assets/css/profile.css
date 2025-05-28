@@ -78,7 +78,7 @@ color: white;
 }
 
 .profile-nav-line .active {
-background: linear-gradient(45deg, #f60ff2, #e9b2ec);
+background: linear-gradient(45deg, #051b65, #e9b2ec);
 color: white;
 box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
 transform: scale(1.1);
