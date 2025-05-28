@@ -166,7 +166,7 @@
     <!-- Profile Form -->
     <div class="row">
         <div class="col-12 mt-4">
-            <div class="card">
+            <div class="card shadow-lg">
 
                 <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
