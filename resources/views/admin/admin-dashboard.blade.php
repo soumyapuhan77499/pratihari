@@ -2,14 +2,15 @@
 
 @section('styles')
     
-@endsectio
+@endsection
+
 @section('content')
     <div class="container">
     <h2 class="mb-4">Pratihari Admin Dashboard</h2>
     <div class="row">
         <!-- Today Registrations -->
         <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3">
+            <div class="card text-black bg-primary mb-3">
                 <div class="card-header">Today's Registrations</div>
                 <div class="card-body">
                     <h5 class="card-title">{{ $todayCount }}</h5>
