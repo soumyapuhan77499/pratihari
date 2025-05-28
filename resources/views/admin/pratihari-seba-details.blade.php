@@ -275,28 +275,35 @@
                     <form action="{{ route('admin.pratihari-seba.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
-                        <input type="hidden" name="nijoga_type" value="1"> <!-- fixed nijoga_id -->
 
-                        <!-- Seba Section (always visible) -->
-                        <div class="seba-section mt-3">
-                            <label class="section-title">Pratihari Type</label>
-                            <div class="checkbox-list" id="seba_list">
-                                @foreach ($sebas as $seba)
-                                    <div class="form-check me-3">
-                                        <input class="form-check-input seba-checkbox" type="checkbox" name="seba_id[]"
-                                            value="{{ $seba->id }}" id="seba_{{ $seba->id }}"
-                                            data-seba-id="{{ $seba->id }}">
-                                        <label class="form-check-label"
-                                            for="seba_{{ $seba->id }}">{{ $seba->seba_name }}</label>
-                                    </div>
+                        <!-- Nijoga Selection -->
+                        <div class="form-group">
+                            <label for="nijoga_type" class="form-label">🛕 Nijoga Category</label>
+                            <select class="form-select" id="nijoga_type" name="nijoga_type" required>
+                                <option value="" selected disabled>Select Nijoga</option>
+                                @foreach ($nijogas as $nijoga)
+                                    <option value="{{ $nijoga->id }}">{{ $nijoga->nijoga_name }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                         </div>
 
-                        <!-- Beddha Section (initially hidden, will show when any seba checked) -->
-                        <div class="beddha-section mt-3 d-none" id="beddha_section">
-                            <label class="section-title">📜 Bheddha List</label>
-                            <div id="beddha_list"></div>
+                        <!-- Seba and Beddha Sections (Initially Hidden) -->
+                        <div id="seba_beddha_section" class="d-none">
+                            <!-- Available Seba List -->
+                            <div class="seba-section mt-3">
+                                <label class="section-title">Pratihari Type</label>
+                                <div class="checkbox-list" id="seba_list">
+                                    <!-- Seba checkboxes dynamically added -->
+                                </div>
+                            </div>
+
+                            <!-- Available Beddha List -->
+                            <div class="beddha-section mt-3">
+                                <label class="section-title">📜 Bheddha List</label>
+                                <div id="beddha_list">
+                                    <!-- Beddha checkboxes dynamically added here -->
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Submit Button -->
@@ -307,6 +314,7 @@
                         </div>
                     </form>
                 </div>
+
 
             </div>
         </div>
