@@ -71,7 +71,7 @@ font-size: 14px;
 
 .profile-nav-line .nav-link:hover {
 transform: translateY(-3px);
-background: linear-gradient(45deg, #ff9800, #6d016a);
+background: linear-gradient(45deg, #051b65, #6d016a);
 box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 color: white;
 
