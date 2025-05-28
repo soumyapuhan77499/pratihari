@@ -274,7 +274,6 @@
                 <div class="card-body">
                     <form action="{{ route('admin.pratihari-seba.store') }}" method="POST">
                         @csrf
-                        
                         <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
 
                         <!-- Nijoga Selection -->
