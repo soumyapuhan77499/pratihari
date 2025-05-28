@@ -42,13 +42,13 @@
 
                     <div class="card-footer py-3">
                         <nav class="nav main-nav-line profile-nav-line">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
-                            <a class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
+                            <a style="color: white" class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
+                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
+                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
+                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
+                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
+                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
+                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
                         </nav>
                     </div>
 
