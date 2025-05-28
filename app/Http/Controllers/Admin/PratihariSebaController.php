@@ -14,21 +14,21 @@ use App\Models\PratihariBeddhaMaster;
 class PratihariSebaController extends Controller
 {
    // Controller methods
-
 public function pratihariSeba()
 {
-    // Pass nothing or pass nijoga id = 1 if needed, but no dropdown here
-    return view('admin.pratihari-seba-details');
-}
+    $nijogaId = 1;
 
-public function getSebaByNijoga($nijoga_id)
-{
-    $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijoga_id)
+    $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijogaId)
         ->join('master__seba', 'master__nijoga_seba_assign.seba_id', '=', 'master__seba.id')
         ->select('master__seba.id', 'master__seba.seba_name')
         ->get();
-    return response()->json($sebas);
+
+    // Optionally get the Nijoga name as well to display
+    $nijogaName = \App\Models\PratihariNijogaMaster::find($nijogaId)->nijoga_name ?? 'Nijoga 1';
+
+    return view('admin.pratihari-seba-details', compact('sebas', 'nijogaName', 'nijogaId'));
 }
+
 
 public function getBeddhaBySeba($seba_id)
 {
