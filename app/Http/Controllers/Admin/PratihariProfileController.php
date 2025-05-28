@@ -55,12 +55,14 @@ class PratihariProfileController extends Controller
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->health_card_no;
              
-            if ($request->hasFile('original_photo')) {
-                $file = $request->file('original_photo');
+            if ($request->hasFile('profile_photo')) {
+                $file = $request->file('profile_photo');
                 $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile_photos'), $filename);
                 $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
             }
+
+           
 
             // Set the joining year
             $pratihariProfile->joining_date = $request->joining_date;
