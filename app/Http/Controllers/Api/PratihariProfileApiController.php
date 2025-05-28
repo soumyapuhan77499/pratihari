@@ -81,4 +81,27 @@ class PratihariProfileApiController extends Controller
     }
 }
 
+public function getProfile(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $pratihari_id = $user->pratihari_id;
+
+        // Fetch profile by pratihari_id
+        $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
+
+        if (!$profile) {
+            return response()->json(['error' => 'Profile not found'], 404);
+        }
+
+        return response()->json([
+            'pratihari_id' => $pratihari_id,
+            'profile' => $profile,
+        ]);
+    }
+
 }

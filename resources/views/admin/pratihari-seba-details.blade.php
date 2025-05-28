@@ -286,7 +286,6 @@
                         <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
                         <input type="hidden" name="nijoga_type" value="{{ $nijogaId }}">
 
-
                         <h6 class="seba-header mb-3">📝 Seba Type</h6>
 
                         <!-- Render Seba checkboxes directly -->
