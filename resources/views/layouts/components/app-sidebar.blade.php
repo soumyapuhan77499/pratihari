@@ -3,7 +3,7 @@
 					<aside class="app-sidebar">
 						<div class="main-sidebar-header active">
 							<a class="header-logo active" href="{{url('index')}}">
-								<span style="color: #fab876; font-size: 29px; font-weight: bold;margin-top: -15px;">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
+								<img src="{{asset('assets/img/brand/logo.jpg')}}" class="" style="height: 70px;width: 150px;margin-left: 30px;margin-top: -15px;" alt="logo">
 								<img src="{{asset('assets/img/brand/logo-white.png')}}" class="main-logo  desktop-dark" alt="logo">
 								<img src="{{asset('assets/img/brand/favicon.png')}}" class="main-logo  mobile-logo" alt="logo">
 								<img src="{{asset('assets/img/brand/favicon-white.png')}}" class="main-logo  mobile-dark" alt="logo">
