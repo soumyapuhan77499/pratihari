@@ -39,7 +39,7 @@ class PratihariProfileApiController extends Controller
         $pratihariProfile->whatsapp_no = $request->whatsapp_no;
         $pratihariProfile->phone_no = $request->phone_no;
         $pratihariProfile->blood_group = $request->blood_group;
-        $pratihariProfile->healthcard_no = $request->health_card_no;
+        $pratihariProfile->healthcard_no = $request->healthcard_no;
         $pratihariProfile->joining_date = $request->joining_date;
         $pratihariProfile->joining_year = $request->joining_year;
         $pratihariProfile->alt_phone_no = $request->alt_phone_no;

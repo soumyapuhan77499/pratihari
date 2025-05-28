@@ -31,7 +31,7 @@ class PratihariFamilyApiController extends Controller
             $family->mother_name = $request->mother_name;
             $family->maritial_status = $request->marital_status;
             $family->spouse_name = $request->spouse_name;
-    
+
             // Handle File Uploads for Parents & Spouse
             if ($request->hasFile('father_photo')) {
                 $fatherPhoto = $request->file('father_photo');
