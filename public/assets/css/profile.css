@@ -7,6 +7,7 @@
     padding: 20px;
 }
 
+
 /* Profile Image */
 .profile-image {
     position: relative;
@@ -61,9 +62,9 @@ box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 color: #ffffff;
 font-weight: 600;
 padding: 12px 20px;
-border-radius: 30px;
+border-radius: 10px;
 transition: all 0.3s ease-in-out;
-background: linear-gradient(45deg, #047af9, #75f7ec);
+background: linear-gradient(45deg, #0c1a48, #051b65);
 text-transform: uppercase;
 font-size: 14px;
 }
