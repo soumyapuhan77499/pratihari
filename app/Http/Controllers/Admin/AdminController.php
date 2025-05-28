@@ -40,7 +40,6 @@ public function dashboard()
     $incompleteProfiles = PratihariProfile::where(function ($query) {
         $query->whereNull('email')
               ->orWhereNull('phone_no')
-              ->orWhereNull('address_id') // Replace with your actual foreign key if needed
               ->orWhereNull('blood_group');
     })->count();
 

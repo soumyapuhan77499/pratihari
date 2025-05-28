@@ -2,8 +2,7 @@
 
 @section('styles')
     
-@endsection
-
+@endsectio
 @section('content')
     <div class="container">
     <h2 class="mb-4">Pratihari Admin Dashboard</h2>
