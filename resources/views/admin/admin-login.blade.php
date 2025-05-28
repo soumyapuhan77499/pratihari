@@ -47,7 +47,7 @@
                         <div class="card-sigin-main">
                             <div class="text-center">
                                 <div class="text-center">
-                                    <a href="#"><img src="{{ asset('assets/img/brand/nijoga-logo.jpg') }}" style = "height: 170px;width: 200px" alt="logo"></a>
+                                    <a href="#"><img src="{{ asset('assets/img/brand/nijoga-logo.jpg') }}" style = "height: 170px;width: 280px" alt="logo"></a>
                                 </div>
                             </div>
                             <div class="main-signup-header">
