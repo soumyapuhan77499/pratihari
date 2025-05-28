@@ -62,8 +62,6 @@ class PratihariProfileController extends Controller
                 $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
             }
 
-           
-
             // Set the joining year
             $pratihariProfile->joining_date = $request->joining_date;
             $pratihariProfile->date_of_birth = $request->date_of_birth;
