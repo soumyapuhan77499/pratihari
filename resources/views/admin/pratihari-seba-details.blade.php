@@ -277,12 +277,9 @@
                         <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
                         <input type="hidden" name="nijoga_type" value="1"> <!-- fixed Nijoga ID -->
 
-                        <!-- Seba Section (Initially empty, will be filled by JS) -->
-                        <div class="seba-section mt-3">
-                            <label class="section-title">Pratihari Type</label>
-                            <div class="checkbox-list" id="seba_list">
-                                <!-- Seba checkboxes dynamically added here -->
-                            </div>
+                        <!-- Direct Seba checkboxes without extra label -->
+                        <div id="seba_list" class="checkbox-list mt-3">
+                            <!-- Seba checkboxes will be dynamically added here -->
                         </div>
 
                         <!-- Beddha Section (Initially hidden) -->
@@ -299,6 +296,7 @@
                         </div>
                     </form>
                 </div>
+
 
 
             </div>
@@ -341,7 +339,6 @@
             const beddhaList = document.getElementById('beddha_list');
             const beddhaSection = document.getElementById('beddha_section');
 
-            // Function to toggle beddha section visibility
             function updateBeddhaVisibility() {
                 const anyChecked = [...document.querySelectorAll('.seba-checkbox')].some(cb => cb.checked);
                 if (anyChecked) {
@@ -352,7 +349,6 @@
                 }
             }
 
-            // Load Seba for Nijoga ID=1 on page load
             fetch(`/admin/get-seba/${nijogaId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -367,7 +363,6 @@
                         sebaList.appendChild(div);
                     });
 
-                    // Add event listeners to Seba checkboxes
                     document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
                         checkbox.addEventListener('change', function() {
                             const sebaId = this.dataset.sebaId;
