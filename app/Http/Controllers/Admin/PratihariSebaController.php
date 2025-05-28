@@ -13,31 +13,32 @@ use App\Models\PratihariBeddhaMaster;
 
 class PratihariSebaController extends Controller
 {
+   // Controller methods
 
-    public function pratihariSeba()
-    {
-        $nijogas = PratihariNijogaMaster::all(); // Fetch all Nijoga names
+public function pratihariSeba()
+{
+    // Pass nothing or pass nijoga id = 1 if needed, but no dropdown here
+    return view('admin.pratihari-seba-details');
+}
 
-        return view('admin.pratihari-seba-details', compact('nijogas'));
-    }
-
-    public function getSebaByNijoga($nijoga_id)
-    {
-        $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijoga_id)
+public function getSebaByNijoga($nijoga_id)
+{
+    $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijoga_id)
         ->join('master__seba', 'master__nijoga_seba_assign.seba_id', '=', 'master__seba.id')
         ->select('master__seba.id', 'master__seba.seba_name')
         ->get();
-        return response()->json($sebas);
-    }
+    return response()->json($sebas);
+}
 
-    public function getBeddhaBySeba($seba_id)
-    {
-        $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-                ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
-                ->select('master__beddha.id', 'master__beddha.beddha_name')
-                ->get();
-        return response()->json($beddhas);
-    }
+public function getBeddhaBySeba($seba_id)
+{
+    $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+        ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
+        ->select('master__beddha.id', 'master__beddha.beddha_name')
+        ->get();
+    return response()->json($beddhas);
+}
+
 
     public function saveSeba(Request $request)
     {
