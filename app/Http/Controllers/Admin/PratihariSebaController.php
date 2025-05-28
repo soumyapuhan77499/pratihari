@@ -18,23 +18,24 @@ class PratihariSebaController extends Controller
     {
         $nijogas = PratihariNijogaMaster::all(); // Fetch all Nijoga names
 
-        $nijogaId = 1; // Fixed Nijoga ID
+        return view('admin.pratihari-seba-details', compact('nijogas'));
+    }
 
-        $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijogaId)
+    public function getSebaByNijoga($nijoga_id)
+    {
+        $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijoga_id)
         ->join('master__seba', 'master__nijoga_seba_assign.seba_id', '=', 'master__seba.id')
         ->select('master__seba.id', 'master__seba.seba_name')
         ->get();
-
-        return view('admin.pratihari-seba-details', compact('nijogas','sebas'));
+        return response()->json($sebas);
     }
-
 
     public function getBeddhaBySeba($seba_id)
     {
         $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-        ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
-        ->select('master__beddha.id', 'master__beddha.beddha_name')
-        ->get();
+                ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
+                ->select('master__beddha.id', 'master__beddha.beddha_name')
+                ->get();
         return response()->json($beddhas);
     }
 

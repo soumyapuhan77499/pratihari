@@ -342,65 +342,94 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const sebaCheckboxes = document.querySelectorAll('.seba-checkbox');
+            const nijogaSelect = document.getElementById('nijoga_type');
+            const sebaList = document.getElementById('seba_list');
             const beddhaList = document.getElementById('beddha_list');
-            const beddhaSection = document.getElementById('beddha_section');
+            const sebaBeddhaSection = document.getElementById('seba_beddha_section');
 
-            function updateBeddhaSectionVisibility() {
-                // Show beddha section if at least one seba is checked
-                const anyChecked = Array.from(sebaCheckboxes).some(cb => cb.checked);
-                if (anyChecked) {
-                    beddhaSection.classList.remove('d-none');
-                } else {
-                    beddhaSection.classList.add('d-none');
-                    beddhaList.innerHTML = ''; // clear beddha checkboxes if none seba selected
-                }
-            }
+            nijogaSelect.addEventListener('change', function() {
+                const nijogaId = this.value;
 
-            sebaCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const sebaId = this.dataset.sebaId;
-                    const beddhaGroupId = `beddha_group_${sebaId}`;
-                    let beddhaGroup = document.getElementById(beddhaGroupId);
+                // Clear previous data
+                sebaList.innerHTML = '';
+                beddhaList.innerHTML = '';
+                sebaBeddhaSection.classList.add('d-none');
 
-                    if (this.checked) {
-                        if (!beddhaGroup) {
-                            fetch(`/admin/get-beddha/${sebaId}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    beddhaGroup = document.createElement('div');
-                                    beddhaGroup.classList.add('beddha-group', 'mb-3');
-                                    beddhaGroup.id = beddhaGroupId;
+                if (nijogaId) {
+                    fetch(`/admin/get-seba/${nijogaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                sebaBeddhaSection.classList.remove('d-none');
+                            }
 
-                                    let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
-                                <div class="d-flex flex-wrap gap-2 mt-2">`;
+                            data.forEach(seba => {
+                                const checkbox = document.createElement('div');
+                                checkbox.classList.add('form-check', 'me-3');
 
-                                    data.forEach(beddha => {
-                                        innerHtml += `
-                                    <div class="form-check d-flex align-items-center gap-1">
-                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
-                                        <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
-                                    </div>`;
-                                    });
+                                checkbox.innerHTML = `
+                            <input class="form-check-input seba-checkbox" type="checkbox" name="seba_id[]" value="${seba.id}" id="seba_${seba.id}" data-seba-id="${seba.id}">
+                            <label class="form-check-label" for="seba_${seba.id}">${seba.seba_name}</label>
+                        `;
 
-                                    innerHtml += '</div>';
+                                sebaList.appendChild(checkbox);
+                            });
 
-                                    beddhaGroup.innerHTML = innerHtml;
-                                    beddhaList.appendChild(beddhaGroup);
+                            // Add change listeners to all newly created seba checkboxes
+                            document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
+                                checkbox.addEventListener('change', function() {
+                                    const sebaId = this.dataset.sebaId;
+                                    const beddhaGroupId = `beddha_group_${sebaId}`;
+                                    let beddhaGroup = document.getElementById(
+                                        beddhaGroupId);
 
-                                    updateBeddhaSectionVisibility();
+                                    if (this.checked) {
+                                        // Fetch beddha only if not already added
+                                        if (!beddhaGroup) {
+                                            fetch(`/admin/get-beddha/${sebaId}`)
+                                                .then(response => response.json())
+                                                .then(data => {
+                                                    // Create beddha group container
+                                                    beddhaGroup = document
+                                                        .createElement('div');
+                                                    beddhaGroup.classList.add(
+                                                        'beddha-group', 'mb-3');
+                                                    beddhaGroup.id = beddhaGroupId;
+
+                                                    let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
+                                                <div class="d-flex flex-wrap gap-2 mt-2">`;
+
+                                                    data.forEach(beddha => {
+                                                        innerHtml += `
+                                                    <div class="form-check d-flex align-items-center gap-1">
+                                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
+                                                        <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
+                                                    </div>`;
+                                                    });
+
+                                                    innerHtml += '</div>';
+
+                                                    beddhaGroup.innerHTML =
+                                                        innerHtml;
+                                                    beddhaList.appendChild(
+                                                        beddhaGroup);
+                                                });
+                                        }
+                                    } else {
+                                        // Remove beddha group if seba unchecked
+                                        if (beddhaGroup) {
+                                            beddhaGroup.remove();
+                                        }
+                                    }
                                 });
-                        }
-                    } else {
-                        if (beddhaGroup) {
-                            beddhaGroup.remove();
-                        }
-                        updateBeddhaSectionVisibility();
-                    }
-                });
+                            });
+                        })
+                        .catch(err => {
+                            console.error('Failed to fetch Seba:', err);
+                            sebaBeddhaSection.classList.add('d-none');
+                        });
+                }
             });
-
-            updateBeddhaSectionVisibility(); // Initialize visibility on page load
         });
     </script>
 
