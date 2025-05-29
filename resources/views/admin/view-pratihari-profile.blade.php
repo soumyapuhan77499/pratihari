@@ -140,7 +140,7 @@
                                                 <div class="card-body">
                                                     <img class="profile-imgs rounded-circle mb-3"
                                                         style="height: 100px; width: 100px; object-fit: cover;"
-                                                        src="{{asset($family->father_photo) }}" alt="Father">
+                                                        src="{{asset($family->father_photo ?? '') }}" alt="Father">
                                                     <h5 class="fw-semibold text-dark">
                                                         {{ $family->father_name ?? 'Not Available' }}</h5>
                                                     <span class="text-muted">Father</span>
@@ -154,7 +154,7 @@
                                                 <div class="card-body">
                                                     <img class="profile-imgs rounded-circle mb-3"
                                                         style="height: 100px; width: 100px; object-fit: cover;"
-                                                        src="{{ asset($family->mother_photo) }}" alt="Mother">
+                                                        src="{{ asset($family->mother_photo ?? '') }}" alt="Mother">
                                                     <h5 class="fw-semibold text-dark">
                                                         {{ $family->mother_name ?? 'Not Available' }}</h5>
                                                     <span class="text-muted">Mother</span>
@@ -178,7 +178,7 @@
                                                     <div class="card-body">
                                                         <img class="profile-imgs rounded-circle mb-3"
                                                             style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{ asset($family->spouse_photo )}}" alt="Spouse">
+                                                            src="{{ asset($family->spouse_photo ?? '' )}}" alt="Spouse">
                                                         <h5 class="fw-semibold text-dark">
                                                             {{ $family->spouse_name ?? 'Not Available' }}</h5>
                                                         <span class="text-muted">Spouse</span>
@@ -192,7 +192,7 @@
                                                     <div class="card-body">
                                                         <img class="profile-imgs rounded-circle mb-3"
                                                             style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{  asset($family->spouse_father_photo) }}"
+                                                            src="{{  asset($family->spouse_father_photo ?? '') }}"
                                                             alt="Spouse Father">
                                                         <h5 class="fw-semibold text-dark">
                                                             {{ $family->spouse_father_name ?? 'Not Available' }}</h5>
@@ -207,7 +207,7 @@
                                                     <div class="card-body">
                                                         <img class="profile-imgs rounded-circle mb-3"
                                                             style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{  asset($family->spouse_mother_photo) }}"
+                                                            src="{{  asset($family->spouse_mother_photo ?? '') }}"
                                                             alt="Spouse Mother">
                                                         <h5 class="fw-semibold text-dark">
                                                             {{ $family->spouse_mother_name ?? 'Not Available' }}</h5>
@@ -231,7 +231,7 @@
                                                     <div class="card-body">
                                                         <img alt="Child" class="profile-imgs rounded-circle mb-3"
                                                             style="width: 120px; height: 120px; object-fit: cover;"
-                                                            src="{{  asset($child->photo) }}">
+                                                            src="{{  asset($child->photo ?? '') }}">
                                                         <h5 class="fw-semibold text-dark">{{ $child->children_name }}</h5>
                                                         <span class="text-muted">{{ $child->gender }} | DOB:
                                                             {{ date('d M Y', strtotime($child->date_of_birth)) }}</span>
