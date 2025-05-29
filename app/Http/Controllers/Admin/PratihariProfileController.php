@@ -53,7 +53,7 @@ class PratihariProfileController extends Controller
             $pratihariProfile->phone_no = $request->phone_no;
             $pratihariProfile->alt_phone_no = $request->alt_phone_no;
             $pratihariProfile->blood_group = $request->blood_group;
-            $pratihariProfile->healthcard_no = $request->health_card_no;
+            $pratihariProfile->healthcard_no = $request->healthcard_no;
              
             if ($request->hasFile('original_photo')) {
                 $file = $request->file('original_photo');
