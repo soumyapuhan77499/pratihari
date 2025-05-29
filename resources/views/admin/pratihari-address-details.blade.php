@@ -241,7 +241,7 @@
                                     <select class="form-control" id="sahi" name="sahi">
                                         <option value="">Select Sahi</option>
                                         @foreach ($sahiList as $sahi)
-                                            <option value="{{ $sahi->id }}">{{ $sahi->sahi_name }}</option>
+                                            <option value="{{ $sahi->sahi_name }}">{{ $sahi->sahi_name }}</option>
                                         @endforeach
                                     </select>
                                   
