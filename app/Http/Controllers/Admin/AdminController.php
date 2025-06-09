@@ -75,46 +75,42 @@ class AdminController extends Controller
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
-    
-public function sendOtp(Request $request) 
-{
-    $phoneNumber = '+91' . $request->input('phone');
-    $admin = Admin::where('mobile_no', $phoneNumber)->first();
 
-    if (!$admin) {
-        return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
-    }
+    public function sendOtp(Request $request)
+    {
+        $phoneNumber = '+91' . $request->input('phone');
+        $admin = Admin::where('mobile_no', $phoneNumber)->first();
 
-    try {
-        $client = new Client();
-        $response = $client->post("{$this->apiUrl}/auth/otp/v1/send", [
-            'headers' => [
-                'Content-Type'  => 'application/json',
-                'clientId'      => $this->clientId,
-                'clientSecret'  => $this->clientSecret,
-            ],
-            'json' => [
-                'phoneNumber' => $phoneNumber,
-                'channel' => 'sms'  // <-- Force SMS here
-            ],
-        ]);
-
-        $body = json_decode($response->getBody(), true);
-
-        if (!isset($body['orderId'])) {
-            return back()->with('message', 'Failed to send OTP. No Order ID received.');
+        if (!$admin) {
+            return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
         }
 
-        // Store phone number and order ID in session
-        Session::put('otp_phone', $phoneNumber);
-        Session::put('otp_order_id', $body['orderId']);
+        try {
+            $client = new Client();
+            $response = $client->post("{$this->apiUrl}/auth/otp/v1/send", [
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'clientId'      => $this->clientId,
+                    'clientSecret'  => $this->clientSecret,
+                ],
+                'json' => ['phoneNumber' => $phoneNumber],
+            ]);
 
-        return back()->with(['otp_sent' => true, 'message' => 'OTP sent successfully via SMS.']);
-    } catch (RequestException $e) {
-        return back()->with('message', 'Failed to send OTP due to an error.');
+            $body = json_decode($response->getBody(), true);
+
+            if (!isset($body['orderId'])) {
+                return back()->with('message', 'Failed to send OTP. No Order ID received.');
+            }
+
+            // Store phone number and order ID in session
+            Session::put('otp_phone', $phoneNumber);
+            Session::put('otp_order_id', $body['orderId']);
+
+            return back()->with(['otp_sent' => true, 'message' => 'OTP sent successfully.']);
+        } catch (RequestException $e) {
+            return back()->with('message', 'Failed to send OTP due to an error.');
+        }
     }
-}
-
 
     public function verifyOtp(Request $request)
     {
