@@ -64,7 +64,7 @@ class PratihariProfileController extends Controller
                 $pratihariProfile->joining_date = $request->joining_date; // format: YYYY-MM-DD
             } elseif ($request->filled('joining_year')) {
                 // only year selected - store as YYYY-01-01 (or change column type to year or string as needed)
-                $pratihariProfile->joining_date = $request->joining_year . '-01-01';
+                $pratihariProfile->joining_date = $request->joining_year;
             } else {
                 // no date selected
                 $pratihariProfile->joining_date = null;
