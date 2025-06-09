@@ -31,86 +31,90 @@ class AdminController extends Controller
     {
         return view('admin.admin-login');
     }
+    
+    public function dashboard()
+    {
+        $todayCount = PratihariProfile::whereDate('created_at', Carbon::today())->count();
 
-   
-public function dashboard()
-{
-    $todayCount = PratihariProfile::whereDate('created_at', Carbon::today())->count();
+        $incompleteProfiles = PratihariProfile::where(function ($query) {
+            $query->whereNull('email')
+                ->orWhereNull('phone_no')
+                ->orWhereNull('blood_group');
+        })->count();
 
-    $incompleteProfiles = PratihariProfile::where(function ($query) {
-        $query->whereNull('email')
-              ->orWhereNull('phone_no')
-              ->orWhereNull('blood_group');
-    })->count();
+        $totalActiveUsers = PratihariProfile::where('status', 'active')->count();
 
-    $totalActiveUsers = PratihariProfile::where('status', 'active')->count();
+        // Logged-in user's profile completion
+        $user = Auth::user();
+        $profileStatus = [];
+        if ($user) {
+            $pratihari_id = $user->pratihari_id;
+            $tables = [
+                'profile' => PratihariProfile::where('pratihari_id', $pratihari_id)->exists(),
+                'family' => PratihariFamily::where('pratihari_id', $pratihari_id)->exists(),
+                'id_card' => PratihariIdcard::where('pratihari_id', $pratihari_id)->exists(),
+                'address' => PratihariAddress::where('pratihari_id', $pratihari_id)->exists(),
+                'seba' => PratihariSeba::where('pratihari_id', $pratihari_id)->exists(),
+                'social_media' => PratihariSocialMedia::where('pratihari_id', $pratihari_id)->exists(),
+            ];
 
-    // Logged-in user's profile completion
-    $user = Auth::user();
-    $profileStatus = [];
-    if ($user) {
-        $pratihari_id = $user->pratihari_id;
-        $tables = [
-            'profile' => PratihariProfile::where('pratihari_id', $pratihari_id)->exists(),
-            'family' => PratihariFamily::where('pratihari_id', $pratihari_id)->exists(),
-            'id_card' => PratihariIdcard::where('pratihari_id', $pratihari_id)->exists(),
-            'address' => PratihariAddress::where('pratihari_id', $pratihari_id)->exists(),
-            'seba' => PratihariSeba::where('pratihari_id', $pratihari_id)->exists(),
-            'social_media' => PratihariSocialMedia::where('pratihari_id', $pratihari_id)->exists(),
-        ];
+            $profileStatus['filled'] = array_keys(array_filter($tables));
+            $profileStatus['empty'] = array_keys(array_filter($tables, fn($filled) => !$filled));
+        }
 
-        $profileStatus['filled'] = array_keys(array_filter($tables));
-        $profileStatus['empty'] = array_keys(array_filter($tables, fn($filled) => !$filled));
+        return view('admin.admin-dashboard', compact(
+            'todayCount',
+            'incompleteProfiles',
+            'totalActiveUsers',
+            'profileStatus'
+        ));
     }
 
-    return view('admin.admin-dashboard', compact(
-        'todayCount',
-        'incompleteProfiles',
-        'totalActiveUsers',
-        'profileStatus'
-    ));
-}
     public function pratihariManageProfile()
     {
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
+    
+public function sendOtp(Request $request) 
+{
+    $phoneNumber = '+91' . $request->input('phone');
+    $admin = Admin::where('mobile_no', $phoneNumber)->first();
 
-    public function sendOtp(Request $request)
-    {
-        $phoneNumber = '+91' . $request->input('phone');
-        $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-        if (!$admin) {
-            return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
-        }
-
-        try {
-            $client = new Client();
-            $response = $client->post("{$this->apiUrl}/auth/otp/v1/send", [
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'clientId'      => $this->clientId,
-                    'clientSecret'  => $this->clientSecret,
-                ],
-                'json' => ['phoneNumber' => $phoneNumber],
-            ]);
-
-            $body = json_decode($response->getBody(), true);
-
-            if (!isset($body['orderId'])) {
-                return back()->with('message', 'Failed to send OTP. No Order ID received.');
-            }
-
-            // Store phone number and order ID in session
-            Session::put('otp_phone', $phoneNumber);
-            Session::put('otp_order_id', $body['orderId']);
-
-            return back()->with(['otp_sent' => true, 'message' => 'OTP sent successfully.']);
-        } catch (RequestException $e) {
-            return back()->with('message', 'Failed to send OTP due to an error.');
-        }
+    if (!$admin) {
+        return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
     }
+
+    try {
+        $client = new Client();
+        $response = $client->post("{$this->apiUrl}/auth/otp/v1/send", [
+            'headers' => [
+                'Content-Type'  => 'application/json',
+                'clientId'      => $this->clientId,
+                'clientSecret'  => $this->clientSecret,
+            ],
+            'json' => [
+                'phoneNumber' => $phoneNumber,
+                'channel' => 'sms'  // <-- Force SMS here
+            ],
+        ]);
+
+        $body = json_decode($response->getBody(), true);
+
+        if (!isset($body['orderId'])) {
+            return back()->with('message', 'Failed to send OTP. No Order ID received.');
+        }
+
+        // Store phone number and order ID in session
+        Session::put('otp_phone', $phoneNumber);
+        Session::put('otp_order_id', $body['orderId']);
+
+        return back()->with(['otp_sent' => true, 'message' => 'OTP sent successfully via SMS.']);
+    } catch (RequestException $e) {
+        return back()->with('message', 'Failed to send OTP due to an error.');
+    }
+}
+
 
     public function verifyOtp(Request $request)
     {
