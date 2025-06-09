@@ -26,24 +26,20 @@ class PratihariProfileController extends Controller
 
     public function saveProfile(Request $request)
     {
-        // Validate incoming request
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string|max:255',
+            // add more validation as needed
         ]);
-    
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-    
+
         try {
-
-            // Create new PratihariProfile object
             $pratihariProfile = new PratihariProfile();
-    
-            $pratihariId = 'PRATIHARI' . rand(10000, 99999);
 
-            // Set the profile data
-            $pratihariProfile->pratihari_id = $pratihariId; // Add the generated pratihari_id
+            $pratihariId = 'PRATIHARI' . rand(10000, 99999);
+            $pratihariProfile->pratihari_id = $pratihariId;
             $pratihariProfile->first_name = $request->first_name;
             $pratihariProfile->middle_name = $request->middle_name;
             $pratihariProfile->last_name = $request->last_name;
@@ -54,29 +50,33 @@ class PratihariProfileController extends Controller
             $pratihariProfile->alt_phone_no = $request->alt_phone_no;
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->healthcard_no;
-             
+
             if ($request->hasFile('original_photo')) {
                 $file = $request->file('original_photo');
                 $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/profile_photos'), $filename);
                 $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
             }
-            
-            // Set the joining year
-            $pratihariProfile->joining_date = $request->joining_date;
+
+            // Handle joining date/year separately:
+            if ($request->filled('joining_date')) {
+                // exact date selected
+                $pratihariProfile->joining_date = $request->joining_date; // format: YYYY-MM-DD
+            } elseif ($request->filled('joining_year')) {
+                // only year selected - store as YYYY-01-01 (or change column type to year or string as needed)
+                $pratihariProfile->joining_date = $request->joining_year . '-01-01';
+            } else {
+                // no date selected
+                $pratihariProfile->joining_date = null;
+            }
+
             $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-            // Save the profile
             $pratihariProfile->save();
-            
-        // After saving the profile
-         return redirect()->route('admin.pratihariFamily', ['pratihari_id' => $pratihariProfile->pratihari_id])->with('success', 'User added successfully!');
-    
+
+            return redirect()->route('admin.pratihariFamily', ['pratihari_id' => $pratihariProfile->pratihari_id])->with('success', 'User added successfully!');
         } catch (\Exception $e) {
-            // Log the exception and display the specific error message
             \Log::error('Error in Pratihari Profile Store: ' . $e->getMessage());
-    
-            // Return a detailed error message
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
