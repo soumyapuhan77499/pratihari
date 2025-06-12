@@ -97,33 +97,13 @@
                                         <div class="personal-details-item d-flex align-items-center">
                                             <i class="fas fa-image me-2"></i>
                                             <span class="personal-details-text me-2">Health Card Photo:</span>
-                                            <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo"
-                                                id="healthCardThumbnail"
-                                                class="img-thumbnail"
-                                                style="max-width: 100px; cursor: pointer;" />
+                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
+                                                rel="noopener noreferrer">
+                                                <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo"
+                                                    class="img-thumbnail" style="max-width: 100px; cursor: pointer;" />
+                                            </a>
                                         </div>
                                     @endif
-
-                                    <!-- Put this modal OUTSIDE the container above, preferably at the end of the page -->
-                                    <div class="modal fade" id="healthCardModal" tabindex="-1"
-                                        aria-labelledby="healthCardModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body text-center">
-                                                    <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo"
-                                                        class="img-fluid rounded shadow" id="healthCardModalImage">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-birthday-cake"></i>
@@ -641,17 +621,6 @@
             @endif
         });
     </script>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var healthCardThumbnail = document.getElementById('healthCardThumbnail');
-        var healthCardModal = new bootstrap.Modal(document.getElementById('healthCardModal'));
-
-        healthCardThumbnail.addEventListener('click', function () {
-            healthCardModal.show();
-        });
-    });
-</script>
 
     <!-- Include SweetAlert Library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
