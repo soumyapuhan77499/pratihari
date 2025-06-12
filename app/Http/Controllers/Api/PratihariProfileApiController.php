@@ -5,6 +5,15 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PratihariProfile;
+use App\Models\PratihariFamily;
+use App\Models\PratihariIdcard;
+use App\Models\PratihariOccupation;
+use App\Models\PratihariSeba;
+use App\Models\PratihariSocialMedia;
+use App\Models\PratihariAddress;
+use App\Models\PratihariChildren;
+use App\Models\MasterNijogaSeba;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
