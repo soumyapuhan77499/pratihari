@@ -92,34 +92,35 @@
                                                 class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
                                         </div>
                                     </div>
-
-                                    <!-- Health Card Photo Button & Modal -->
-                                    @if(!empty($profile->health_card_photo))
-                                        <div class="personal-details-item">
-                                            <i class="fas fa-image"></i>
-                                            <div>
-                                                <span class="personal-details-text">Health Card Photo:</span>
-                                                <button type="button" class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#healthCardModal">
-                                                    View Photo
-                                                </button>
-                                            </div>
+                                    @if (!empty($profile->health_card_photo))
+                                        <div class="personal-details-item d-flex align-items-center">
+                                            <i class="fas fa-image me-2"></i>
+                                            <span class="personal-details-text me-2">Health Card Photo:</span>
+                                            <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo"
+                                                class="img-thumbnail" style="max-width: 100px; cursor: pointer;"
+                                                data-bs-toggle="modal" data-bs-target="#healthCardModal" />
                                         </div>
 
                                         <!-- Modal -->
-                                        <div class="modal fade" id="healthCardModal" tabindex="-1" aria-labelledby="healthCardModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal fade" id="healthCardModal" tabindex="-1"
+                                            aria-labelledby="healthCardModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        <h5 class="modal-title" id="healthCardModalLabel">Health Card
+                                                            Photo</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body text-center">
-                                                        <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo" class="img-fluid rounded shadow">
+                                                        <img src="{{ asset($profile->health_card_photo) }}"
+                                                            alt="Health Card Photo" class="img-fluid rounded shadow">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     @endif
+
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-birthday-cake"></i>
@@ -168,7 +169,7 @@
                                                 <div class="card-body">
                                                     <img class="profile-imgs rounded-circle mb-3"
                                                         style="height: 100px; width: 100px; object-fit: cover;"
-                                                        src="{{asset($family->father_photo ?? '') }}" alt="Father">
+                                                        src="{{ asset($family->father_photo ?? '') }}" alt="Father">
                                                     <h5 class="fw-semibold text-dark">
                                                         {{ $family->father_name ?? 'Not Available' }}</h5>
                                                     <span class="text-muted">Father</span>
@@ -206,7 +207,8 @@
                                                     <div class="card-body">
                                                         <img class="profile-imgs rounded-circle mb-3"
                                                             style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{ asset($family->spouse_photo ?? '' )}}" alt="Spouse">
+                                                            src="{{ asset($family->spouse_photo ?? '') }}"
+                                                            alt="Spouse">
                                                         <h5 class="fw-semibold text-dark">
                                                             {{ $family->spouse_name ?? 'Not Available' }}</h5>
                                                         <span class="text-muted">Spouse</span>
@@ -220,7 +222,7 @@
                                                     <div class="card-body">
                                                         <img class="profile-imgs rounded-circle mb-3"
                                                             style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{  asset($family->spouse_father_photo ?? '') }}"
+                                                            src="{{ asset($family->spouse_father_photo ?? '') }}"
                                                             alt="Spouse Father">
                                                         <h5 class="fw-semibold text-dark">
                                                             {{ $family->spouse_father_name ?? 'Not Available' }}</h5>
@@ -235,7 +237,7 @@
                                                     <div class="card-body">
                                                         <img class="profile-imgs rounded-circle mb-3"
                                                             style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{  asset($family->spouse_mother_photo ?? '') }}"
+                                                            src="{{ asset($family->spouse_mother_photo ?? '') }}"
                                                             alt="Spouse Mother">
                                                         <h5 class="fw-semibold text-dark">
                                                             {{ $family->spouse_mother_name ?? 'Not Available' }}</h5>
@@ -259,7 +261,7 @@
                                                     <div class="card-body">
                                                         <img alt="Child" class="profile-imgs rounded-circle mb-3"
                                                             style="width: 120px; height: 120px; object-fit: cover;"
-                                                            src="{{  asset($child->photo ?? '') }}">
+                                                            src="{{ asset($child->photo ?? '') }}">
                                                         <h5 class="fw-semibold text-dark">{{ $child->children_name }}</h5>
                                                         <span class="text-muted">{{ $child->gender }} | DOB:
                                                             {{ date('d M Y', strtotime($child->date_of_birth)) }}</span>
