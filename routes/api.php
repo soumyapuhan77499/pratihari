@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->post('/save-idcard', [PratihariIdcardApiContr
 Route::middleware('auth:sanctum')->post('/save-address', [PratihariAddressApiController::class, 'saveAddress']);
 Route::middleware('auth:sanctum')->post('/save-occupation', [PratihariOccupationApiController::class, 'saveOccupation']);
 Route::middleware('auth:sanctum')->post('/save-socialmedia', [PratihariSocialMediaApiController::class, 'saveSocialMedia']);
+Route::middleware('auth:sanctum')->get('/get-socialmedia', [PratihariSocialMediaApiController::class, 'getSocialMedia']);
 Route::middleware('auth:sanctum')->post('/save-seba', [PratihariSebaApiController::class, 'saveSeba']);
 
 Route::get('/nijogas', [PratihariSebaApiController::class, 'getNijogas']);

@@ -52,4 +52,42 @@ class PratihariSocialMediaApiController extends Controller
     }
 }
 
+public function getSocialMedia(Request $request)
+{
+    try {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized. Please log in.',
+            ], 401);
+        }
+
+        $pratihariId = $user->pratihari_id;
+        
+        $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihariId)->first();
+
+        if (!$socialMedia) {
+            return response()->json([
+                'status' => 404,
+                'message' => 'Social media details not found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Pratihari Social Media details fetched successfully',
+            'data' => $socialMedia
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 500,
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
