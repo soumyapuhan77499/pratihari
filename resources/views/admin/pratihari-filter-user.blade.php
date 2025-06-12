@@ -134,6 +134,38 @@
                                                 <button class="btn btn-warning btn-sm" disabled>Pending</button>
                                             @endif
                                         </td>
+
+                                        <td>
+                                            <!-- Reject Reason Button -->
+                                            @if ($profile->pratihari_status === 'rejected' && !empty($profile->reject_reason))
+                                                <button type="button" class="btn btn-danger btn-sm show-reject-reason"
+                                                    data-bs-toggle="modal" data-bs-target="#rejectReasonModal"
+                                                    data-reason="{{ $profile->reject_reason }}">
+                                                    <i class="fas fa-info-circle"></i> Reject Reason
+                                                </button>
+                                            @endif
+
+                                            <!-- Reject Reason Modal (only once per page) -->
+                                            @if ($loop->first)
+                                                <div class="modal fade" id="rejectReasonModal" tabindex="-1"
+                                                    aria-labelledby="rejectReasonModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="rejectReasonModalLabel"><i
+                                                                        class="fas fa-exclamation-triangle text-danger"></i>
+                                                                    Reject Reason</h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body" id="reject-reason-text">
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -243,6 +275,17 @@
                         "data-landmark");
                     document.getElementById("modal-police-station").textContent = this.getAttribute(
                         "data-police-station");
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.show-reject-reason').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    document.getElementById('reject-reason-text').textContent = this.getAttribute(
+                        'data-reason');
                 });
             });
         });
