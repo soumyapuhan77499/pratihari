@@ -105,3 +105,9 @@ Route::prefix('admin')->group(function() {
     Route::get('/social-update/{pratihari_id}', [PratihariSocialMediaController::class, 'edit'])->name('social.update');
     Route::put('/social-media/{pratihari_id}', [PratihariSocialMediaController::class, 'update'])->name('admin.social-media.update');
 });
+
+
+Route::prefix('admin')->group(function() {
+    Route::get('/add-notice', [PratihariNoticeController::class, 'addNotice'])->name('admin.addNotice');
+});
+
