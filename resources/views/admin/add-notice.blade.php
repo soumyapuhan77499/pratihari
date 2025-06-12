@@ -76,43 +76,46 @@
                     <form action="{{ route('saveNotice') }}" method="POST">
                         @csrf
                         <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="notice_name"><i class="fas fa-map-marker-alt"></i> Notice Name</label>
+                                        <input type="text" class="form-control" id="notice_name" name="notice_name"
+                                            required placeholder="Enter Notice Name">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="from_date"><i class="fas fa-calendar-alt"></i> From Date</label>
+                                        <input type="date" class="form-control" id="from_date" name="from_date" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="form-group">
+                                        <label for="to_date"><i class="fas fa-calendar-alt"></i> To Date</label>
+                                        <input type="date" class="form-control" id="to_date" name="to_date" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <div class="form-group">
+                                    <label for="description"><i class="fas fa-align-left"></i> Description</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description"></textarea>
+                                </div>
+                            </div>
 
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="notice_name"><i class="fas fa-map-marker-alt"></i> Notice Name</label>
-                                <input type="text" class="form-control" id="notice_name" name="notice_name" required placeholder="Enter Notice Name">
+                            <div class="col-12 text-center">
+                                <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
+                                    style="color: white">
+                                    <i class="fa fa-save"></i> Submit
+                                </button>
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="from_date"><i class="fas fa-calendar-alt"></i> From Date</label>
-                                <input type="date" class="form-control" id="from_date" name="from_date" required>
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <div class="form-group">
-                                <label for="to_date"><i class="fas fa-calendar-alt"></i> To Date</label>
-                                <input type="date" class="form-control" id="to_date" name="to_date" required>
-                            </div>
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <div class="form-group">
-                                <label for="description"><i class="fas fa-align-left"></i> Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description"></textarea>
-                            </div>
-                        </div>
+                    </form>
 
-                        <div class="col-12 text-center">
-                            <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
-                                <i class="fa fa-save"></i> Submit
-                            </button>
-                        </div>
                 </div>
-                </form>
-
             </div>
         </div>
-    </div>
     </div>
 @endsection
 
