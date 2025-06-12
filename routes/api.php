@@ -14,7 +14,6 @@ use App\Http\Controllers\Api\PratihariNoticeController;
 
 use App\Http\Controllers\Api\StatusController;
 
-
 Route::post('/send-otp', [OtpController::class, 'sendOtp'])->withoutMiddleware('auth');
 Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('admin.verifyOtp');
 

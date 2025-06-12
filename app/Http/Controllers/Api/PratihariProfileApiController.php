@@ -123,6 +123,7 @@ public function getProfile(Request $request)
 
 public function getAllData(Request $request)
 {
+    dd('getAllData called');
     try {
         $user = Auth::user();
 
