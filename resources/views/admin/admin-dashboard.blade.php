@@ -94,9 +94,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Total Active Users -->
-    <div class="col-md-3">
+<!-- Active Users -->
+<div class="col-md-3">
+    <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}" style="text-decoration:none;">
         <div class="card text-dark bg-success mb-3">
             <div class="card-header">
                 <i class="bi bi-people-fill me-2"></i>Active Users
@@ -105,10 +105,12 @@
                 <h5 class="card-title">{{ $totalActiveUsers }}</h5>
             </div>
         </div>
-    </div>
-        
-    <!-- Rejected Users -->
-    <div class="col-md-3">
+    </a>
+</div>
+
+<!-- Rejected Users -->
+<div class="col-md-3">
+    <a href="{{ route('admin.pratihari.filterUsers', 'rejected') }}" style="text-decoration:none;">
         <div class="card text-dark bg-danger mb-3">
             <div class="card-header">
                 <i class="bi bi-person-x-fill me-2"></i>Rejected Users
@@ -117,7 +119,9 @@
                 <h5 class="card-title">{{ $rejectedUsers }}</h5>
             </div>
         </div>
-    </div>
+    </a>
+</div>
+
 
 </div>
 

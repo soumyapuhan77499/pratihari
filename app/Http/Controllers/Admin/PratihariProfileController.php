@@ -90,7 +90,7 @@ class PratihariProfileController extends Controller
 
     public function pratihariManageProfile()
     {
-        $profiles = PratihariProfile::with(['occupation', 'address'])->get();
+        $profiles = PratihariProfile::with(['occupation', 'address'])->where('pratihari_status','pending')->get();
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
@@ -289,5 +289,19 @@ class PratihariProfileController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
+    public function filterUsers($status)
+{
+    // Validate status input
+    if (!in_array($status, ['approved', 'rejected'])) {
+        abort(404);
+    }
+
+    // Fetch profiles by pratihari_status
+    $profiles = PratihariProfile::where('pratihari_status', $status)->get();
+
+    return view('admin.pratihari-filter-user', compact('profiles', 'status'));
+}
+
 
 }
