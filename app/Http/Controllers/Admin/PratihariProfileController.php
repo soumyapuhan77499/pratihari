@@ -299,7 +299,7 @@ public function filterUsers($filter)
     } elseif ($filter === 'today') {
         $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
     } elseif ($filter === 'incomplete') {
-         $profiles = PratihariProfile::where(function ($query) {
+         $profiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
             $query->whereNull('email')
                 ->orWhereNull('phone_no')
                 ->orWhereNull('blood_group');

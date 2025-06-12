@@ -36,7 +36,7 @@ class AdminController extends Controller
     {
         $todayCount = PratihariProfile::whereDate('created_at', Carbon::today())->count();
 
-        $incompleteProfiles = PratihariProfile::where(function ($query) {
+        $incompleteProfiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
             $query->whereNull('email')
                 ->orWhereNull('phone_no')
                 ->orWhereNull('blood_group');
