@@ -43,7 +43,7 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::post('/admin/pratihari/reject/{id}', 'reject');
     Route::get('/profile-update/{pratihari_id}','edit')->name('profile.update');
     Route::put('/admin/pratihari-profile-update/{pratihari_id}', 'updateProfile')->name('admin.pratihari-profile.update');
-    Route::get('/admin/pratihari/users/{status}', [AdminController::class, 'filterUsers'])->name('admin.pratihari.filterUsers');
+    Route::get('/admin/pratihari/users/{status}','filterUsers')->name('admin.pratihari.filterUsers');
 
 });
 
