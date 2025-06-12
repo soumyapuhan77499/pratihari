@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\PratihariOccupationController;
 use App\Http\Controllers\Admin\MasterNijogaSebaController;
 use App\Http\Controllers\Admin\PratihariSebaController;
 use App\Http\Controllers\Admin\PratihariSocialMediaController;
+use App\Http\Controllers\Admin\PratihariNoticeController;
+
 use App\Http\Controllers\SuperAdmin\SuperAdminController;
 
 Route::prefix('super-admin')->group(function() {
