@@ -22,6 +22,8 @@ Route::middleware('auth:sanctum')->post('/userLogout', [OtpController::class, 'u
 
 Route::middleware('auth:sanctum')->post('/save-profile', [PratihariProfileApiController::class, 'saveProfile']);
 Route::middleware('auth:sanctum')->get('/pratihari-profile', [PratihariProfileApiController::class, 'getProfile']);
+Route::middleware('auth:sanctum')->get('/get-all-pratihari-profile', [PratihariProfileApiController::class, 'getAllData']);
+
 
 Route::middleware('auth:sanctum')->post('/save-family', [PratihariFamilyApiController::class, 'saveFamily']);
 Route::middleware('auth:sanctum')->post('/save-idcard', [PratihariIdcardApiController::class, 'saveIdcard']);

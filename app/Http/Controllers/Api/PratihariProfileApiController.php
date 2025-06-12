@@ -121,4 +121,73 @@ public function getProfile(Request $request)
     ]);
 }
 
+public function getAllData(Request $request)
+{
+    try {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $pratihari_id = $user->pratihari_id;
+
+        $photoBaseUrl = config('app.photo_url');
+
+        // Fetch all related data for the authenticated user's pratihari_id
+        $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->get();
+        $family = PratihariFamily::where('pratihari_id', $pratihari_id)->get();
+        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
+        $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
+        $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get();
+        $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->get();
+
+         $profile->transform(function ($item) use ($photoBaseUrl) {
+            $item->profile_photo_url = !empty($item->profile_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->profile_photo, '/') : null;
+            $item->health_card_photo_url = !empty($item->health_card_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->health_card_photo, '/') : null;
+            return $item;
+        });
+
+          $family->transform(function ($item) use ($photoBaseUrl) {
+            $item->father_photo_url = !empty($item->father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->father_photo, '/') : null;
+            $item->mother_photo_url = !empty($item->mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->mother_photo, '/') : null;
+            $item->spouse_photo_url = !empty($item->spouse_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->spouse_photo, '/') : null;
+            $item->spouse_father_photo_url = !empty($item->spouse_father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->spouse_father_photo, '/') : null;
+            $item->spouse_mother_photo_url = !empty($item->spouse_mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->spouse_mother_photo, '/') : null;
+            return $item;
+        });
+
+        $idcard->transform(function ($item) use ($photoBaseUrl) {
+            $item->id_photo_url = !empty($item->id_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->id_photo, '/') : null;
+            return $item;
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data retrieved successfully',
+            'pratihari_id' => $pratihari_id,
+            'data' => [
+                'profile' => $profile,
+                'family' => $family,
+                'children' => $children,
+                'idcard' => $idcard,
+                'occupation' => $occupation,
+                'sebaDetails' => $sebaDetails,
+                'socialMedia' => $socialMedia,
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        // Log the error if you want
+        \Log::error('Error fetching data for pratihari_id ' . ($user->pratihari_id ?? 'unknown') . ': ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while fetching data',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
 }

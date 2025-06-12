@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\LoginRegisterController;
@@ -32,7 +33,6 @@ Route::controller(AdminController::class)->group(function() {
     Route::post('/verify-otp',  'verifyOtp')->name('admin.verifyOtp'); 
     Route::get('/dashboard', 'dashboard')->name('admin.dashboard');
     Route::post('/logout',  'logout')->name('admin.logout');
-
 });
 
 Route::controller(PratihariProfileController::class)->group(function() {
@@ -46,7 +46,6 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::get('/profile-update/{pratihari_id}','edit')->name('profile.update');
     Route::put('/admin/pratihari-profile-update/{pratihari_id}', 'updateProfile')->name('admin.pratihari-profile.update');
     Route::get('/admin/pratihari/users/{status}','filterUsers')->name('admin.pratihari.filterUsers');
-
 });
 
 Route::prefix('admin')->group(function() {
@@ -107,7 +106,6 @@ Route::prefix('admin')->group(function() {
     Route::get('/social-update/{pratihari_id}', [PratihariSocialMediaController::class, 'edit'])->name('social.update');
     Route::put('/social-media/{pratihari_id}', [PratihariSocialMediaController::class, 'update'])->name('admin.social-media.update');
 });
-
 
 Route::prefix('admin')->group(function() {
     Route::get('/add-notice', [PratihariNoticeController::class, 'showNoticeForm'])->name('admin.addNotice');
