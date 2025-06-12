@@ -289,18 +289,23 @@ class PratihariProfileController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-
-    public function filterUsers($status)
+public function filterUsers($filter)
 {
-    // Validate status input
-    if (!in_array($status, ['approved', 'rejected'])) {
+    if ($filter === 'approved' || $filter === 'rejected') {
+        $profiles = PratihariProfile::where('pratihari_status', $filter)->get();
+    } elseif ($filter === 'today') {
+        $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
+    } elseif ($filter === 'incomplete') {
+        $profiles = PratihariProfile::where(function ($query) {
+            $query->whereNull('email')
+                  ->orWhereNull('phone_no')
+                  ->orWhereNull('blood_group');
+        })->get();
+    } else {
         abort(404);
     }
 
-    // Fetch profiles by pratihari_status
-    $profiles = PratihariProfile::where('pratihari_status', $status)->get();
-
-    return view('admin.pratihari-filter-user', compact('profiles', 'status'));
+    return view('admin.pratihari-filter-user', compact('profiles', 'filter'));
 }
 
 
