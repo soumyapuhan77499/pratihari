@@ -94,7 +94,7 @@
                                     </div>
 
                                     <!-- Health Card Photo Button & Modal -->
-                                    @if(!empty($profile->healthcard_photo))
+                                    @if(!empty($profile->health_card_photo))
                                         <div class="personal-details-item">
                                             <i class="fas fa-image"></i>
                                             <div>
@@ -114,7 +114,7 @@
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body text-center">
-                                                        <img src="{{ asset($profile->healthcard_photo) }}" alt="Health Card Photo" class="img-fluid rounded shadow">
+                                                        <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo" class="img-fluid rounded shadow">
                                                     </div>
                                                 </div>
                                             </div>
