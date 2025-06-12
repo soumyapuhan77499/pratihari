@@ -10,6 +10,8 @@ use App\Http\Controllers\Api\PratihariAddressApiController;
 use App\Http\Controllers\Api\PratihariOccupationApiController;
 use App\Http\Controllers\Api\PratihariSocialMediaApiController;
 use App\Http\Controllers\Api\PratihariSebaApiController;
+use App\Http\Controllers\Api\PratihariNoticeController;
+
 use App\Http\Controllers\Api\StatusController;
 
 
@@ -29,9 +31,12 @@ Route::middleware('auth:sanctum')->post('/save-socialmedia', [PratihariSocialMed
 Route::middleware('auth:sanctum')->get('/get-socialmedia', [PratihariSocialMediaApiController::class, 'getSocialMedia']);
 Route::middleware('auth:sanctum')->post('/save-seba', [PratihariSebaApiController::class, 'saveSeba']);
 
+
 Route::get('/nijogas', [PratihariSebaApiController::class, 'getNijogas']);
 Route::get('/sebas/{nijoga_id}', [PratihariSebaApiController::class, 'getSebaByNijoga']);
 Route::get('/beddhas', [PratihariSebaApiController::class, 'getBeddha']);
 
 
 Route::middleware('auth:sanctum')->get('/pratihari/status', [StatusController::class, 'checkCompletionStatus']);
+
+Route::get('/pratihari-notice', [PratihariNoticeController::class, 'getNotice']);
