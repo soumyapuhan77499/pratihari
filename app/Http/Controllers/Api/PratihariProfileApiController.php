@@ -123,7 +123,6 @@ public function getProfile(Request $request)
 
 public function getAllData(Request $request)
 {
-    dd('getAllData called');
     try {
         $user = Auth::user();
 
@@ -170,7 +169,6 @@ public function getAllData(Request $request)
             'data' => [
                 'profile' => $profile,
                 'family' => $family,
-                'children' => $children,
                 'idcard' => $idcard,
                 'occupation' => $occupation,
                 'sebaDetails' => $sebaDetails,
