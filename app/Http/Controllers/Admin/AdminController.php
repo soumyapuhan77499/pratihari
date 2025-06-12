@@ -40,8 +40,35 @@ class AdminController extends Controller
             $query->whereNull('email')
                 ->orWhereNull('phone_no')
                 ->orWhereNull('blood_group');
-        })->count();
-
+        })
+        // OR profiles with missing family info
+        ->orWhereDoesntHave('family', function ($query) {
+            $query->whereNotNull('father_name')
+                ->whereNotNull('mother_name')
+                ->whereNotNull('maritial_status'); // add more checks if needed
+        })
+        // OR profiles with no children records
+        ->orWhereDoesntHave('children')
+        // OR profiles with missing id card details
+        ->orWhereDoesntHave('idcard', function ($query) {
+            $query->whereNotNull('id_type')
+                ->whereNotNull('id_number')
+                ->whereNotNull('id_photo');
+        })
+        // OR profiles with missing occupation details
+        ->orWhereDoesntHave('occupation', function ($query) {
+            $query->where(function ($q) {
+                $q->whereNotNull('occupation_type')
+                  ->orWhereNotNull('extra_activity');
+            });
+        })
+        // OR profiles with missing address
+        ->orWhereDoesntHave('address')
+        // OR profiles with missing seba details
+        ->orWhereDoesntHave('seba')
+        // OR profiles with missing social media
+        ->orWhereDoesntHave('socialMedia')
+        ->count();
         $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->count();
 
         $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
