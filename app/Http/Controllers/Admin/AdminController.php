@@ -42,7 +42,7 @@ class AdminController extends Controller
                 ->orWhereNull('blood_group');
         })->count();
 
-        $totalActiveUsers = PratihariProfile::where('status', 'active')->count();
+        $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->count();
 
         $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
 
