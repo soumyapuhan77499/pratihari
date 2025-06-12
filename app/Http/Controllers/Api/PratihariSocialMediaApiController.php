@@ -65,14 +65,14 @@ public function getSocialMedia(Request $request)
         }
 
         $pratihariId = $user->pratihari_id;
-        
+
         $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihariId)->first();
 
         if (!$socialMedia) {
             return response()->json([
-                'status' => 404,
+                'status' => true,
                 'message' => 'Social media details not found.',
-            ], 404);
+            ], 200);
         }
 
         return response()->json([
