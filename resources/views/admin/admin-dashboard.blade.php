@@ -106,23 +106,19 @@
             </div>
         </div>
     </div>
-
-    <!-- My Profile Completion -->
+        
+    <!-- Rejected Users -->
     <div class="col-md-3">
         <div class="card text-dark bg-danger mb-3">
             <div class="card-header">
-                <i class="bi bi-person-check-fill me-2"></i>My Profile Completion
+                <i class="bi bi-person-x-fill me-2"></i>Rejected Users
             </div>
             <div class="card-body">
-                @if(!empty($profileStatus))
-                    <p><strong>Filled:</strong> {{ implode(', ', $profileStatus['filled']) }}</p>
-                    <p><strong>Missing:</strong> {{ implode(', ', $profileStatus['empty']) }}</p>
-                @else
-                    <p>No update</p>
-                @endif
+                <h5 class="card-title">{{ $rejectedUsers }}</h5>
             </div>
         </div>
     </div>
+
 </div>
 
 </div>

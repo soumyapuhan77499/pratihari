@@ -44,6 +44,8 @@ class AdminController extends Controller
 
         $totalActiveUsers = PratihariProfile::where('status', 'active')->count();
 
+        $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
+
         // Logged-in user's profile completion
         $user = Auth::user();
         $profileStatus = [];
@@ -58,15 +60,14 @@ class AdminController extends Controller
                 'social_media' => PratihariSocialMedia::where('pratihari_id', $pratihari_id)->exists(),
             ];
 
-            $profileStatus['filled'] = array_keys(array_filter($tables));
-            $profileStatus['empty'] = array_keys(array_filter($tables, fn($filled) => !$filled));
+        
         }
 
         return view('admin.admin-dashboard', compact(
             'todayCount',
             'incompleteProfiles',
             'totalActiveUsers',
-            'profileStatus'
+            'rejectedUsers'
         ));
     }
 
