@@ -93,6 +93,34 @@
                                         </div>
                                     </div>
 
+                                    <!-- Health Card Photo Button & Modal -->
+                                    @if(!empty($profile->healthcard_photo))
+                                        <div class="personal-details-item">
+                                            <i class="fas fa-image"></i>
+                                            <div>
+                                                <span class="personal-details-text">Health Card Photo:</span>
+                                                <button type="button" class="btn btn-sm btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#healthCardModal">
+                                                    View Photo
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="healthCardModal" tabindex="-1" aria-labelledby="healthCardModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="{{ asset($profile->healthcard_photo) }}" alt="Health Card Photo" class="img-fluid rounded shadow">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+
                                     <div class="personal-details-item">
                                         <i class="fas fa-birthday-cake"></i>
                                         <div>
