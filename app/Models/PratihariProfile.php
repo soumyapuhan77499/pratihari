@@ -43,11 +43,6 @@ class PratihariProfile extends Model
         return $this->hasOne(PratihariAddress::class, 'pratihari_id', 'pratihari_id');
     }
 
-    public function idcard()
-    {
-        return $this->hasOne(PratihariIdcard::class, 'pratihari_id', 'pratihari_id');
-    }
-
     public function getCompletionPercentage()
     {
         $totalFields = 16; // Total number of columns in the table
@@ -61,5 +56,31 @@ class PratihariProfile extends Model
     
         return ($filledFields / $totalFields) * 100;
     }
+
+    public function family()
+    {
+        return $this->hasOne(PratihariFamily::class, 'pratihari_id', 'pratihari_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(PratihariChildren::class, 'pratihari_id', 'pratihari_id');
+    }
+
+    public function idcard()
+    {
+        return $this->hasMany(PratihariIdcard::class, 'pratihari_id', 'pratihari_id');
+    }
+
+    public function seba()
+    {
+        return $this->hasMany(PratihariSeba::class, 'pratihari_id', 'pratihari_id');
+    }
+
+    public function socialMedia()
+    {
+        return $this->hasOne(PratihariSocialMedia::class, 'pratihari_id', 'pratihari_id');
+    }
+
     
 }

@@ -290,6 +290,8 @@ class PratihariProfileController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
+
 public function filterUsers($filter)
 {
     if ($filter === 'approved' || $filter === 'rejected') {
@@ -297,11 +299,39 @@ public function filterUsers($filter)
     } elseif ($filter === 'today') {
         $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
     } elseif ($filter === 'incomplete') {
-        $profiles = PratihariProfile::where(function ($query) {
+         $profiles = PratihariProfile::where(function ($query) {
             $query->whereNull('email')
-                  ->orWhereNull('phone_no')
-                  ->orWhereNull('blood_group');
-        })->get();
+                ->orWhereNull('phone_no')
+                ->orWhereNull('blood_group');
+        })
+        // OR profiles with missing family info
+        ->orWhereDoesntHave('family', function ($query) {
+            $query->whereNotNull('father_name')
+                ->whereNotNull('mother_name')
+                ->whereNotNull('maritial_status'); // add more checks if needed
+        })
+        // OR profiles with no children records
+        ->orWhereDoesntHave('children')
+        // OR profiles with missing id card details
+        ->orWhereDoesntHave('idcard', function ($query) {
+            $query->whereNotNull('id_type')
+                ->whereNotNull('id_number')
+                ->whereNotNull('id_photo');
+        })
+        // OR profiles with missing occupation details
+        ->orWhereDoesntHave('occupation', function ($query) {
+            $query->where(function ($q) {
+                $q->whereNotNull('occupation_type')
+                  ->orWhereNotNull('extra_activity');
+            });
+        })
+        // OR profiles with missing address
+        ->orWhereDoesntHave('address')
+        // OR profiles with missing seba details
+        ->orWhereDoesntHave('seba')
+        // OR profiles with missing social media
+        ->orWhereDoesntHave('socialMedia')
+        ->get();
     } else {
         abort(404);
     }
