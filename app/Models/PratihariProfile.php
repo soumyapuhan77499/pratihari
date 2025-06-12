@@ -24,11 +24,13 @@ class PratihariProfile extends Model
          'alt_phone_no',
          'blood_group',
          'healthcard_no',
+         'health_card_photo',
          'profile_photo',
          'joining_date',
          'joining_year',
          'date_of_birth',
-         'pratihari_status'
+         'pratihari_status',
+         'reject_reason'
     ];
 
     public function occupation()

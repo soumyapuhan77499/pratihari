@@ -11,25 +11,26 @@ use Illuminate\Support\Facades\Storage;
 
 class PratihariProfileApiController extends Controller
 {
-    public function saveProfile(Request $request)
+
+public function saveProfile(Request $request)
 {
-  
+    $validator = Validator::make($request->all(), [
+        'first_name' => 'required|string|max:255',
+        'joining_date' => 'nullable|date',
+        'joining_year' => 'nullable|integer|min:1900|max:' . date('Y'),
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => 422,
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
     try {
-          // Authenticate user
-          $user = Auth::user(); 
-
-          if (!$user) {
-              return response()->json([
-                  'status' => 401,
-                  'message' => 'Unauthorized. Please log in.',
-              ], 401);
-          }
-
-        // Generate pratihari_id if not exists
-        $pratihariId = $user->pratihari_id;
-
-        // Create new profile object
         $pratihariProfile = new PratihariProfile();
+
+        $pratihariId = 'PRATIHARI' . rand(10000, 99999);
         $pratihariProfile->pratihari_id = $pratihariId;
         $pratihariProfile->first_name = $request->first_name;
         $pratihariProfile->middle_name = $request->middle_name;
@@ -38,33 +39,46 @@ class PratihariProfileApiController extends Controller
         $pratihariProfile->email = $request->email;
         $pratihariProfile->whatsapp_no = $request->whatsapp_no;
         $pratihariProfile->phone_no = $request->phone_no;
+        $pratihariProfile->alt_phone_no = $request->alt_phone_no;
         $pratihariProfile->blood_group = $request->blood_group;
         $pratihariProfile->healthcard_no = $request->healthcard_no;
-        $pratihariProfile->joining_date = $request->joining_date;
-        $pratihariProfile->joining_year = $request->joining_year;
-        $pratihariProfile->alt_phone_no = $request->alt_phone_no;
+
+        if ($request->hasFile('healthcard_photo')) {
+            $file = $request->file('healthcard_photo');
+            $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/healthcard_photos'), $filename);
+            $pratihariProfile->healthcard_photo = 'uploads/healthcard_photos/' . $filename;
+        }
+
+        if ($request->hasFile('original_photo')) {
+            $file = $request->file('original_photo');
+            $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profile_photos'), $filename);
+            $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
+        }
+
+        // Save joining date or year in separate fields (adjusted as per your model)
+        if ($request->filled('joining_date')) {
+            $pratihariProfile->joining_date = $request->joining_date;
+            $pratihariProfile->joining_year = null;
+        } elseif ($request->filled('joining_year')) {
+            $pratihariProfile->joining_year = $request->joining_year;
+            $pratihariProfile->joining_date = null;
+        } else {
+            $pratihariProfile->joining_date = null;
+            $pratihariProfile->joining_year = null;
+        }
+
         $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-       if ($request->hasFile('profile_photo')) {
-    $file = $request->file('profile_photo');
-    $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
-    $destinationPath = public_path('uploads/profile_photos');
-    // Create directory if not exists
-    if (!file_exists($destinationPath)) {
-        mkdir($destinationPath, 0755, true);
-    }
-    $file->move($destinationPath, $filename);
-    $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
-}
-
-        // Save profile
         $pratihariProfile->save();
 
         return response()->json([
             'status' => 200,
             'message' => 'User profile created successfully.',
-            'data' => $pratihariProfile
+            'data' => $pratihariProfile,
         ], 200);
+
     } catch (\Exception $e) {
         \Log::error('Error in saving profile: ' . $e->getMessage());
 
@@ -106,4 +120,5 @@ public function getProfile(Request $request)
         'profile' => $profile,
     ]);
 }
+
 }

@@ -113,6 +113,7 @@
                                                 data-bs-target="#addressModal"
                                                 data-address="{{ $profile->address->address ?? 'N/A' }}"
                                                 data-district="{{ $profile->address->district ?? 'N/A' }}"
+                                                data-sahi="{{ $profile->address->sahi ?? 'N/A' }}"
                                                 data-state="{{ $profile->address->state ?? 'N/A' }}"
                                                 data-country="{{ $profile->address->country ?? 'N/A' }}"
                                                 data-pincode="{{ $profile->address->pincode ?? 'N/A' }}"
@@ -165,16 +166,8 @@
                                     <td id="modal-address">N/A</td>
                                 </tr>
                                 <tr>
-                                    <th><i class="fas fa-city"></i> District</th>
-                                    <td id="modal-district">N/A</td>
-                                </tr>
-                                <tr>
-                                    <th><i class="fas fa-flag"></i> State</th>
-                                    <td id="modal-state">N/A</td>
-                                </tr>
-                                <tr>
-                                    <th><i class="fas fa-globe"></i> Country</th>
-                                    <td id="modal-country">N/A</td>
+                                    <th><i class="fas fa-city"></i> Sahi</th>
+                                    <td id="modal-sahi">N/A</td>
                                 </tr>
                                 <tr>
                                     <th><i class="fas fa-map-pin"></i> Pincode</th>
@@ -188,6 +181,19 @@
                                     <th><i class="fas fa-building"></i> Police Station</th>
                                     <td id="modal-police-station">N/A</td>
                                 </tr>
+                                <tr>
+                                    <th><i class="fas fa-city"></i> District</th>
+                                    <td id="modal-district">N/A</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-flag"></i> State</th>
+                                    <td id="modal-state">N/A</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-globe"></i> Country</th>
+                                    <td id="modal-country">N/A</td>
+                                </tr>
+
                             </tbody>
                         </table>
                     </div>
@@ -231,6 +237,8 @@
                         "data-address");
                     document.getElementById("modal-district").textContent = this.getAttribute(
                         "data-district");
+                    document.getElementById("modal-sahi").textContent = this.getAttribute(
+                        "data-sahi");
                     document.getElementById("modal-state").textContent = this.getAttribute(
                         "data-state");
                     document.getElementById("modal-country").textContent = this.getAttribute(
@@ -282,20 +290,32 @@
                 let profileId = $(this).data('id');
 
                 Swal.fire({
-                    title: 'Are you sure?',
-                    text: "Do you want to reject this profile?",
-                    icon: 'warning',
+                    title: 'Reject Profile',
+                    input: 'textarea',
+                    inputLabel: 'Reason for rejection',
+                    inputPlaceholder: 'Type your reason here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your reason here'
+                    },
                     showCancelButton: true,
                     confirmButtonColor: '#d33',
                     cancelButtonColor: '#3085d6',
-                    confirmButtonText: 'Yes, Reject'
+                    confirmButtonText: 'Reject',
+                    preConfirm: (reason) => {
+                        if (!reason) {
+                            Swal.showValidationMessage('Reject reason is required');
+                        }
+                        return reason;
+                    }
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        // Send AJAX with reason
                         $.ajax({
                             url: '/admin/pratihari/reject/' + profileId,
                             type: 'POST',
                             data: {
-                                _token: "{{ csrf_token() }}"
+                                _token: "{{ csrf_token() }}",
+                                reason: result.value
                             },
                             success: function(response) {
                                 Swal.fire('Rejected!', response.message, 'error').then(
@@ -307,6 +327,7 @@
                     }
                 });
             });
+
         });
     </script>
 

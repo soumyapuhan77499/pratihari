@@ -342,6 +342,17 @@
                                 </div>
                             </div>
 
+                            <!-- Health Card Photo -->
+                            <div class="col-md-3">
+                                <label for="health_card_photo">Health Card Photo</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text" style="background-color: #FBAB7E">
+                                        <i class="fa fa-image" style="color: white"></i>
+                                    </span>
+                                    <input type="file" class="form-control" id="health_card_photo" name="health_card_photo" accept="image/*">
+                                </div>
+                            </div>
+
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>
                                 <div class="input-group mb-2">

@@ -341,6 +341,37 @@
                                 </div>
                             </div>
 
+                            <!-- Health Card Photo -->
+                            <div class="col-md-3">
+                                <label for="health_card_photo">Health Card Photo</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <input type="file" class="form-control" id="health_card_photo" name="health_card_photo">
+                                </div>
+
+                                @if (isset($profile) && $profile->health_card_photo)
+                                    <!-- Button to open modal -->
+                                    <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#healthCardModal">
+                                        View Photo
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="healthCardModal" tabindex="-1" aria-labelledby="healthCardModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo" class="img-fluid">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
                             <!-- Profile Photo -->
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>

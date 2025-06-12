@@ -66,7 +66,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -140,7 +140,7 @@
         }
 
         .custom-gradient-btn {
-            background-image: linear-gradient(170deg,#F7CE68  0%, #FBAB7E 100%);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -162,12 +162,12 @@
 @endsection
 
 @section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <div class="row">
         <div class="col-12 mt-4">
             <div class="card shadow-lg">
-              
+
                 <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
@@ -190,7 +190,7 @@
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab"  style="background-color: #e96a01;color: white"
+                        <a class="nav-link" id="address-tab" style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariAddress') }}" role="tab"
                             aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt" style="color: white"></i> Address
@@ -221,7 +221,7 @@
                     </li>
 
                 </ul>
-                
+
                 <div class="card-body">
                     <form action="{{ route('admin.pratihari-address.store') }}" method="POST"
                         enctype="multipart/form-data">
@@ -236,24 +236,24 @@
                             <div class="col-md-3 mb-3">
                                 <label for="sahi">Sahi</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-marker-alt"
-                                            style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-map-marker-alt" style="color: white"></i></span>
                                     <select class="form-control" id="sahi" name="sahi">
                                         <option value="">Select Sahi</option>
                                         @foreach ($sahiList as $sahi)
                                             <option value="{{ $sahi->sahi_name }}">{{ $sahi->sahi_name }}</option>
                                         @endforeach
                                     </select>
-                                  
+
                                 </div>
                             </div>
 
-                        
+
                             <div class="col-md-3 mb-3">
                                 <label for="landmark">Landmark</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-location-arrow"
-                                            style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-location-arrow" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="landmark" name="landmark"
                                         placeholder="Enter your landmark">
                                 </div>
@@ -262,8 +262,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="post">Post Office</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-envelope"
-                                            style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-envelope" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="post" name="post"
                                         placeholder="Enter your post office">
                                 </div>
@@ -272,8 +272,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="police_station">Police Station</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-shield-alt"
-                                            style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-shield-alt" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="police_station" name="police_station"
                                         placeholder="Enter your police station">
                                 </div>
@@ -282,8 +282,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="pincode">Pincode</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-pin"
-                                            style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-map-pin" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="pincode" name="pincode"
                                         placeholder="Enter your pincode">
                                 </div>
@@ -292,7 +292,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="district">District</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-city" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-city" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="district" name="district"
                                         placeholder="Enter your district">
                                 </div>
@@ -301,7 +302,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="state">State</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-map" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="state" name="state"
                                         placeholder="Enter your state">
                                 </div>
@@ -310,7 +312,8 @@
                             <div class="col-md-3 mb-3">
                                 <label for="country">Country</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-globe" style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-globe" style="color: white"></i></span>
                                     <input type="text" class="form-control" id="country" name="country"
                                         placeholder="Enter your country">
                                 </div>
@@ -319,8 +322,8 @@
                             <div class="col-md-12 mb-3">
                                 <label for="address">Address</label>
                                 <div class="input-group">
-                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-address-card"
-                                            style="color: white"></i></span>
+                                    <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                            class="fa fa-address-card" style="color: white"></i></span>
                                     <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your address"></textarea>
                                 </div>
                             </div>
@@ -336,25 +339,30 @@
                             </div>
 
                             <!-- Permanent Address Section (Initially Hidden) -->
-                            <!-- Permanent Address Section (Initially Hidden) -->
                             <div id="permanent-address-section" style="display: none;">
                                 <h4 class="col-12">Permanent Address</h4>
                                 <div class="row">
+
                                     <div class="col-md-3 mb-3">
                                         <label for="per_sahi">Permanent Sahi</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-marker-alt"
-                                                    style="color: white"></i></span>
-                                            <input type="text" class="form-control" id="per_sahi" name="per_sahi"
-                                                placeholder="Enter your sahi">
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-map-marker-alt" style="color: white"></i></span>
+                                            <select class="form-control" id="per_sahi" name="per_sahi">
+                                                <option value="">Select Sahi</option>
+                                                @foreach ($sahiList as $sahi)
+                                                    <option value="{{ $sahi->sahi_name }}">{{ $sahi->sahi_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="col-md-3 mb-3">
                                         <label for="per_landmark">Permanent Landmark</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-location-arrow"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-location-arrow" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_landmark"
                                                 name="per_landmark" placeholder="Enter your landmark">
                                         </div>
@@ -363,8 +371,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_post">Permanent Post Office</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-envelope"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-envelope" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_post" name="per_post"
                                                 placeholder="Enter your post office">
                                         </div>
@@ -373,8 +381,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_police_station">Permanent Police Station</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-shield-alt"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-shield-alt" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_police_station"
                                                 name="per_police_station" placeholder="Enter your police station">
                                         </div>
@@ -383,8 +391,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_pincode">Permanent Pincode</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map-pin"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-map-pin" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_pincode"
                                                 name="per_pincode" placeholder="Enter your pincode">
                                         </div>
@@ -393,8 +401,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_district">Permanent District</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-city"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-city" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_district"
                                                 name="per_district" placeholder="Enter your district">
                                         </div>
@@ -403,8 +411,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_state">Permanent State</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-map"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-map" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_state" name="per_state"
                                                 placeholder="Enter your state">
                                         </div>
@@ -413,8 +421,8 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_country">Permanent Country</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-globe"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-globe" style="color: white"></i></span>
                                             <input type="text" class="form-control" id="per_country"
                                                 name="per_country" placeholder="Enter your country">
                                         </div>
@@ -423,8 +431,8 @@
                                     <div class="col-md-12 mb-3">
                                         <label for="per_address">Permanent Address</label>
                                         <div class="input-group">
-                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i class="fa fa-address-card"
-                                                    style="color: white"></i></span>
+                                            <span class="input-group-text" style="background-color:  #FBAB7E"><i
+                                                    class="fa fa-address-card" style="color: white"></i></span>
                                             <textarea class="form-control" id="per_address" name="per_address" rows="3" placeholder="Enter your address"></textarea>
                                         </div>
                                     </div>
@@ -450,39 +458,37 @@
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: "{{ session('success') }}",
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            });
-        @endif
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: "{{ session('error') }}",
-                confirmButtonColor: '#d33',
-                confirmButtonText: 'OK'
-            });
-        @endif
-    });
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+        });
+    </script>
     <script>
         document.getElementById('differentAsPermanent').addEventListener('change', function() {
             var permanentSection = document.getElementById('permanent-address-section');
             permanentSection.style.display = this.checked ? 'block' : 'none';
         });
     </script>
-
-
 @endsection

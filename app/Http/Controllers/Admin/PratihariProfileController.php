@@ -51,6 +51,13 @@ class PratihariProfileController extends Controller
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->healthcard_no;
 
+            if ($request->hasFile('health_card_photo')) {
+                $file = $request->file('health_card_photo');
+                $filename = 'health_card_photo_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/health_card_photo'), $filename);
+                $pratihariProfile->health_card_photo = 'uploads/health_card_photo/' . $filename;
+            }
+
             if ($request->hasFile('original_photo')) {
                 $file = $request->file('original_photo');
                 $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
@@ -102,11 +109,18 @@ class PratihariProfileController extends Controller
 
         return response()->json(['message' => 'Profile approved successfully!']);
     }
-
-    public function reject($id)
+        
+    public function reject(Request $request, $id)
     {
+        $request->validate([
+            'reason' => 'required|string',
+        ]);
+
         $profile = PratihariProfile::findOrFail($id);
-        $profile->update(['pratihari_status' => 'rejected']);
+        $profile->update([
+            'pratihari_status' => 'rejected',
+            'reject_reason' => $request->input('reason'), // make sure this field exists in your table
+        ]);
 
         return response()->json(['message' => 'Profile rejected successfully!']);
     }
@@ -223,6 +237,25 @@ class PratihariProfileController extends Controller
             $pratihariProfile->healthcard_no = $request->health_card_no;
             $pratihariProfile->joining_date = $request->joining_date;
             $pratihariProfile->date_of_birth = $request->date_of_birth;
+            
+            // Handle health card photo upload if exists
+            if ($request->hasFile('health_card_photo')) {
+                $healthCardPhoto = $request->file('health_card_photo');
+
+                // Check if the file is valid
+                if (!$healthCardPhoto->isValid()) {
+                    throw new \Exception('Health card photo upload failed. Please try again.');
+                }
+
+                // Generate unique file name
+                $healthCardImageName = 'health_card_photo_' . time() . '.' . $healthCardPhoto->getClientOriginalExtension();
+
+                // Move file to public/uploads/health_card_photo
+                $healthCardPhoto->move(public_path('uploads/health_card_photo'), $healthCardImageName);
+
+                // Store relative path in database
+                $pratihariProfile->health_card_photo = 'uploads/health_card_photo/' . $healthCardImageName;
+            }
 
             // Handle profile photo upload if exists
             if ($request->hasFile('profile_photo')) {
