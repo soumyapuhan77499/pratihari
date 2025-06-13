@@ -144,8 +144,8 @@ public function getAllData(Request $request)
         $photoBaseUrl = config('app.photo_url');
 
         // Fetch all related data for the authenticated user's pratihari_id
-        $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->get();
-        $family = PratihariFamily::where('pratihari_id', $pratihari_id)->get();
+        $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
+        $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
         $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
         $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
         $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get();
