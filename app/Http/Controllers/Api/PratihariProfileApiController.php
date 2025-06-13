@@ -129,7 +129,6 @@ public function getProfile(Request $request)
         'profile' => $profile,
     ]);
 }
-
 public function getAllData(Request $request)
 {
     try {
@@ -140,7 +139,6 @@ public function getAllData(Request $request)
         }
 
         $pratihari_id = $user->pratihari_id;
-
         $photoBaseUrl = config('app.photo_url');
 
         // Fetch all related data for the authenticated user's pratihari_id
@@ -151,21 +149,22 @@ public function getAllData(Request $request)
         $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get();
         $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->get();
 
-         $profile->transform(function ($item) use ($photoBaseUrl) {
-            $item->profile_photo_url = !empty($item->profile_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->profile_photo, '/') : null;
-            $item->health_card_photo_url = !empty($item->health_card_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->health_card_photo, '/') : null;
-            return $item;
-        });
+        // Append full URLs to photos in profile object
+        if ($profile) {
+            $profile->profile_photo_url = !empty($profile->profile_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->profile_photo, '/') : null;
+            $profile->health_card_photo_url = !empty($profile->health_card_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->health_card_photo, '/') : null;
+        }
 
-          $family->transform(function ($item) use ($photoBaseUrl) {
-            $item->father_photo_url = !empty($item->father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->father_photo, '/') : null;
-            $item->mother_photo_url = !empty($item->mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->mother_photo, '/') : null;
-            $item->spouse_photo_url = !empty($item->spouse_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->spouse_photo, '/') : null;
-            $item->spouse_father_photo_url = !empty($item->spouse_father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->spouse_father_photo, '/') : null;
-            $item->spouse_mother_photo_url = !empty($item->spouse_mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->spouse_mother_photo, '/') : null;
-            return $item;
-        });
+        // Append full URLs to photos in family object
+        if ($family) {
+            $family->father_photo_url = !empty($family->father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->father_photo, '/') : null;
+            $family->mother_photo_url = !empty($family->mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->mother_photo, '/') : null;
+            $family->spouse_photo_url = !empty($family->spouse_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_photo, '/') : null;
+            $family->spouse_father_photo_url = !empty($family->spouse_father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_father_photo, '/') : null;
+            $family->spouse_mother_photo_url = !empty($family->spouse_mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_mother_photo, '/') : null;
+        }
 
+        // Append full URLs to photos in idcard collection
         $idcard->transform(function ($item) use ($photoBaseUrl) {
             $item->id_photo_url = !empty($item->id_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->id_photo, '/') : null;
             return $item;
@@ -186,7 +185,7 @@ public function getAllData(Request $request)
         ], 200);
 
     } catch (\Exception $e) {
-        // Log the error if you want
+        // Log the error
         \Log::error('Error fetching data for pratihari_id ' . ($user->pratihari_id ?? 'unknown') . ': ' . $e->getMessage());
 
         return response()->json([

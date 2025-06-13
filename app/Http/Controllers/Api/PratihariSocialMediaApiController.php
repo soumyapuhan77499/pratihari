@@ -76,14 +76,14 @@ public function getSocialMedia(Request $request)
         }
 
         return response()->json([
-            'status' => 200,
+            'status' => true,
             'message' => 'Pratihari Social Media details fetched successfully',
             'data' => $socialMedia
         ], 200);
 
     } catch (\Exception $e) {
         return response()->json([
-            'status' => 500,
+            'status' => true,
             'message' => 'Something went wrong',
             'error' => $e->getMessage()
         ], 500);
