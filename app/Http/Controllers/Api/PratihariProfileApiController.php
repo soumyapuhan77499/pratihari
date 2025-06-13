@@ -144,6 +144,7 @@ public function getAllData(Request $request)
         // Fetch all related data for the authenticated user's pratihari_id
         $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
         $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
+        $address = PratihariAddress::where('pratihari_id', $pratihari_id)->first();
         $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
         $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
         $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get();
@@ -177,6 +178,7 @@ public function getAllData(Request $request)
             'data' => [
                 'profile' => $profile,
                 'family' => $family,
+                'address' => $address,
                 'idcard' => $idcard,
                 'occupation' => $occupation,
                 'sebaDetails' => $sebaDetails,
