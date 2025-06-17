@@ -17,4 +17,9 @@ class PratihariDesignation extends Model
         'designation',
     ];
 
+    public function pratihariProfile()
+    {
+        return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
+    }
+
 }

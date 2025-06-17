@@ -370,4 +370,11 @@ class PratihariProfileController extends Controller
 
     }
 
+    public function manageDesignation()
+    {
+        $designations = PratihariDesignation::with('pratihariProfile')->get();
+
+        return view('admin.manage-designation', compact('designations'));
+    }
+
 }
