@@ -109,7 +109,7 @@ Route::prefix('admin')->group(function() {
 
 Route::prefix('admin')->group(function() {
     Route::get('/add-notice', [PratihariNoticeController::class, 'showNoticeForm'])->name('admin.addNotice');
-    Route::get('/save-notice', [PratihariNoticeController::class, 'saveNotice'])->name('saveNotice');
+    Route::post('/save-notice', [PratihariNoticeController::class, 'saveNotice'])->name('saveNotice');
     Route::get('/manage-notice', [PratihariNoticeController::class, 'manageNotice'])->name('manageNotice');
 
 });
