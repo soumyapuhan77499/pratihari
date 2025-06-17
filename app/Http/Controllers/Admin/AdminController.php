@@ -71,6 +71,8 @@ class AdminController extends Controller
         ->count();
         $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->count();
 
+        $updatedProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->count();
+
         $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
 
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
@@ -95,6 +97,7 @@ class AdminController extends Controller
             'incompleteProfiles',
             'totalActiveUsers',
             'rejectedUsers',
+            'updatedProfile',
             'profiles',
         ));
     }

@@ -238,6 +238,10 @@ class PratihariProfileController extends Controller
             $pratihariProfile->healthcard_no = $request->health_card_no;
             $pratihariProfile->joining_date = $request->joining_date;
             $pratihariProfile->date_of_birth = $request->date_of_birth;
+
+            if ($pratihariProfile->pratihari_status === 'rejected') {
+              $pratihariProfile->pratihari_status = 'updated';
+            }
             
             // Handle health card photo upload if exists
             if ($request->hasFile('health_card_photo')) {
@@ -291,53 +295,51 @@ class PratihariProfileController extends Controller
         }
     }
 
+    public function filterUsers($filter)
+    {
+        if ($filter === 'approved' || $filter === 'rejected' || $filter === 'updated') {
+            $profiles = PratihariProfile::where('pratihari_status', $filter)->get();
+        } elseif ($filter === 'today') {
+            $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
+        } elseif ($filter === 'incomplete') {
+            $profiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
+                $query->whereNull('email')
+                    ->orWhereNull('phone_no')
+                    ->orWhereNull('blood_group');
+            })
+            // OR profiles with missing family info
+            ->orWhereDoesntHave('family', function ($query) {
+                $query->whereNotNull('father_name')
+                    ->whereNotNull('mother_name')
+                    ->whereNotNull('maritial_status'); // add more checks if needed
+            })
+            // OR profiles with no children records
+            ->orWhereDoesntHave('children')
+            // OR profiles with missing id card details
+            ->orWhereDoesntHave('idcard', function ($query) {
+                $query->whereNotNull('id_type')
+                    ->whereNotNull('id_number')
+                    ->whereNotNull('id_photo');
+            })
+            // OR profiles with missing occupation details
+            ->orWhereDoesntHave('occupation', function ($query) {
+                $query->where(function ($q) {
+                    $q->whereNotNull('occupation_type')
+                    ->orWhereNotNull('extra_activity');
+                });
+            })
+            // OR profiles with missing address
+            ->orWhereDoesntHave('address')
+            // OR profiles with missing seba details
+            ->orWhereDoesntHave('seba')
+            // OR profiles with missing social media
+            ->orWhereDoesntHave('socialMedia')
+            ->get();
+        } else {
+            abort(404);
+        }
 
-public function filterUsers($filter)
-{
-    if ($filter === 'approved' || $filter === 'rejected') {
-        $profiles = PratihariProfile::where('pratihari_status', $filter)->get();
-    } elseif ($filter === 'today') {
-        $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
-    } elseif ($filter === 'incomplete') {
-         $profiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
-            $query->whereNull('email')
-                ->orWhereNull('phone_no')
-                ->orWhereNull('blood_group');
-        })
-        // OR profiles with missing family info
-        ->orWhereDoesntHave('family', function ($query) {
-            $query->whereNotNull('father_name')
-                ->whereNotNull('mother_name')
-                ->whereNotNull('maritial_status'); // add more checks if needed
-        })
-        // OR profiles with no children records
-        ->orWhereDoesntHave('children')
-        // OR profiles with missing id card details
-        ->orWhereDoesntHave('idcard', function ($query) {
-            $query->whereNotNull('id_type')
-                ->whereNotNull('id_number')
-                ->whereNotNull('id_photo');
-        })
-        // OR profiles with missing occupation details
-        ->orWhereDoesntHave('occupation', function ($query) {
-            $query->where(function ($q) {
-                $q->whereNotNull('occupation_type')
-                  ->orWhereNotNull('extra_activity');
-            });
-        })
-        // OR profiles with missing address
-        ->orWhereDoesntHave('address')
-        // OR profiles with missing seba details
-        ->orWhereDoesntHave('seba')
-        // OR profiles with missing social media
-        ->orWhereDoesntHave('socialMedia')
-        ->get();
-    } else {
-        abort(404);
+        return view('admin.pratihari-filter-user', compact('profiles', 'filter'));
     }
-
-    return view('admin.pratihari-filter-user', compact('profiles', 'filter'));
-}
-
 
 }

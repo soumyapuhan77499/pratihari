@@ -91,13 +91,13 @@
 
             <!-- Incomplete Profiles -->
             <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}" style="text-decoration:none;">
+                <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}" style="text-decoration:none;">
                     <div class="card text-dark bg-warning mb-3">
                         <div class="card-header">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i>Incomplete Profiles
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>Updated Profiles
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">{{ $incompleteProfiles }}</h5>
+                            <h5 class="card-title">{{ $updatedProfile }}</h5>
                         </div>
                     </div>
                 </a>
@@ -191,11 +191,12 @@
                                                 <button class="btn btn-success btn-sm" disabled>Approved</button>
                                             @elseif ($profile->pratihari_status === 'rejected')
                                                 <button class="btn btn-danger btn-sm" disabled>Rejected</button>
-                                            @else
-                                                <button class="btn btn-success btn-sm approve-btn"
-                                                    data-id="{{ $profile->id }}">Approve</button>
-                                                <button class="btn btn-danger btn-sm reject-btn"
-                                                    data-id="{{ $profile->id }}">Reject</button>
+                                            @elseif ($profile->pratihari_status === 'updated')
+                                                <button class="btn btn-success btn-sm approve-btn" data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn"  data-id="{{ $profile->id }}">Reject</button>
+                                            @elseif ($profile->pratihari_status === 'updated')
+                                                <button class="btn btn-success btn-sm approve-btn"  data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn"  data-id="{{ $profile->id }}">Reject</button>
                                             @endif
                                         </td>
 
@@ -212,7 +213,6 @@
 @endsection
 
 @section('scripts')
-
    <!-- Internal Data tables -->
     <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.js') }}"></script>
