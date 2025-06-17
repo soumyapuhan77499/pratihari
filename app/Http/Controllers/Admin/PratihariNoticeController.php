@@ -34,5 +34,13 @@ class PratihariNoticeController extends Controller
         // Redirect back with success message
         return redirect()->back()->with('success', 'Notice saved successfully!');
     }
+
+    public function manageNotice()
+    {
+        $notices = PratihariNotice::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return view('admin.manage-notice', compact('notices'));
+    }
     
 }
