@@ -89,20 +89,7 @@
                 </a>
             </div>
 
-            <!-- Incomplete Profiles -->
-            <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-warning mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i>Updated Profiles
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $updatedProfile }}</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
+          
             <!-- Active Users -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}" style="text-decoration:none;">
@@ -130,6 +117,20 @@
                     </div>
                 </a>
             </div>
+
+              <div class="col-md-3">
+                <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}" style="text-decoration:none;">
+                    <div class="card text-dark bg-warning mb-3">
+                        <div class="card-header">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>Updated Profiles
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $updatedProfile }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
         </div>
 
         <div class="col-lg-12 mb-3">
