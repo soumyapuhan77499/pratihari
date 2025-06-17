@@ -7,6 +7,7 @@
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <!-- INTERNAL Select2 css -->
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -56,7 +57,6 @@
                                                 data-description="{{ $notice->description }}">
                                                 <i class="fa fa-edit"></i>
                                             </button>
-
                                             <form id="delete-form-{{ $notice->id }}"
                                                 action="{{ route('deleteNotice', $notice->id) }}" method="POST"
                                                 style="display:inline;">
@@ -71,7 +71,7 @@
                                     </tr>
                                 @endforeach
 
-                                <!-- Edit Modal -->
+                                <!-- Modal -->
                                 <div class="modal fade" id="editNoticeModal" tabindex="-1"
                                     aria-labelledby="editNoticeModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -85,25 +85,25 @@
                                                         data-dismiss="modal">&times;</button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <input type="hidden" name="id" id="notice-id">
+                                                    <input type="hidden" id="notice-id">
                                                     <div class="form-group">
                                                         <label>Notice Name</label>
                                                         <input type="text" name="notice_name" class="form-control"
-                                                            id="notice-name">
+                                                            id="notice-name" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>From Date</label>
                                                         <input type="date" name="from_date" class="form-control"
-                                                            id="notice-from">
+                                                            id="notice-from" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>To Date</label>
                                                         <input type="date" name="to_date" class="form-control"
-                                                            id="notice-to">
+                                                            id="notice-to" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Description</label>
-                                                        <textarea name="description" class="form-control" id="notice-description"></textarea>
+                                                        <textarea name="description" class="form-control" id="notice-description" rows="3"></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
@@ -113,6 +113,7 @@
                                         </form>
                                     </div>
                                 </div>
+
 
                             </tbody>
                         </table>
@@ -161,18 +162,22 @@
             });
         }
     </script>
-
     <script>
-        $('#editNoticeModal').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget);
-            $('#editNoticeForm').attr('action', '/admin/update-notice/' + button.data('id'));
-            $('#notice-id').val(button.data('id'));
-            $('#notice-name').val(button.data('name'));
-            $('#notice-from').val(button.data('from'));
-            $('#notice-to').val(button.data('to'));
-            $('#notice-description').val(button.data('description'));
+        $(document).ready(function() {
+            $('#editNoticeModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+
+                $('#editNoticeForm').attr('action', '/admin/update-notice/' + id);
+                $('#notice-id').val(id);
+                $('#notice-name').val(button.data('name'));
+                $('#notice-from').val(button.data('from'));
+                $('#notice-to').val(button.data('to'));
+                $('#notice-description').val(button.data('description'));
+            });
         });
     </script>
+
 
 
     <script>
@@ -181,4 +186,8 @@
             document.getElementById('Message').style.display = 'none';
         }, 3000);
     </script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
 @endsection
