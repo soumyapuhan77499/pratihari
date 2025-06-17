@@ -47,21 +47,73 @@
                                         <td>{{ $notice->notice_name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($notice->from_date)->format('d-m-Y') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($notice->to_date)->format('d-m-Y') }}</td>
-                                        <td>{{ $notice->description }}</td> 
+                                        <td>{{ $notice->description }}</td>
                                         <td style="color:#B7070A;font-size: 15px">
-                                            <a class="btn btn-success cursor-pointer" href="{{ url('admin/edit-notice/' . $notice->id) }}">
+                                            <button class="btn btn-success" data-toggle="modal"
+                                                data-target="#editNoticeModal" data-id="{{ $notice->id }}"
+                                                data-name="{{ $notice->notice_name }}"
+                                                data-from="{{ $notice->from_date }}" data-to="{{ $notice->to_date }}"
+                                                data-description="{{ $notice->description }}">
                                                 <i class="fa fa-edit"></i>
-                                            </a>
-                                            <form id="delete-form-{{ $notice->id }}" action="{{ route('deleteNotice', $notice->id) }}" method="POST" style="display:inline;">
+                                            </button>
+
+                                            <form id="delete-form-{{ $notice->id }}"
+                                                action="{{ route('deleteNotice', $notice->id) }}" method="POST"
+                                                style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $notice->id }})">
+                                                <button type="button" class="btn btn-danger"
+                                                    onclick="confirmDelete({{ $notice->id }})">
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
                                     </tr>
                                 @endforeach
+
+                                <!-- Edit Modal -->
+                                <div class="modal fade" id="editNoticeModal" tabindex="-1"
+                                    aria-labelledby="editNoticeModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form method="POST" id="editNoticeForm">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Edit Notice</h5>
+                                                    <button type="button" class="close"
+                                                        data-dismiss="modal">&times;</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" id="notice-id">
+                                                    <div class="form-group">
+                                                        <label>Notice Name</label>
+                                                        <input type="text" name="notice_name" class="form-control"
+                                                            id="notice-name">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>From Date</label>
+                                                        <input type="date" name="from_date" class="form-control"
+                                                            id="notice-from">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>To Date</label>
+                                                        <input type="date" name="to_date" class="form-control"
+                                                            id="notice-to">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Description</label>
+                                                        <textarea name="description" class="form-control" id="notice-description"></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-primary">Update Notice</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
                             </tbody>
                         </table>
                     </div>
@@ -109,10 +161,23 @@
             });
         }
     </script>
-    
-<script>
+
+    <script>
+        $('#editNoticeModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            $('#editNoticeForm').attr('action', '/admin/update-notice/' + button.data('id'));
+            $('#notice-id').val(button.data('id'));
+            $('#notice-name').val(button.data('name'));
+            $('#notice-from').val(button.data('from'));
+            $('#notice-to').val(button.data('to'));
+            $('#notice-description').val(button.data('description'));
+        });
+    </script>
+
+
+    <script>
         // Hide success/error message after 3 seconds
-        setTimeout(function(){
+        setTimeout(function() {
             document.getElementById('Message').style.display = 'none';
         }, 3000);
     </script>

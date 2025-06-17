@@ -42,5 +42,19 @@ class PratihariNoticeController extends Controller
             ->get();
         return view('admin.manage-notice', compact('notices'));
     }
+
+    public function updateNotice(Request $request, $id)
+{
+
+    $notice = PratihariNotice::findOrFail($id);
+    $notice->notice_name = $request->notice_name;
+    $notice->from_date = $request->from_date;
+    $notice->to_date = $request->to_date;
+    $notice->description = $request->description;
+    $notice->save();
+
+    return redirect()->back()->with('success', 'Notice updated successfully.');
+}
+
     
 }
