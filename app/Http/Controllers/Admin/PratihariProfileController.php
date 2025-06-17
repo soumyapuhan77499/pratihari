@@ -15,6 +15,7 @@ use App\Models\PratihariIdcard;
 use App\Models\PratihariSeba;
 use App\Models\PratihariOccupation;
 use App\Models\PratihariSocialMedia;
+use App\Models\PratihariDesignation;
 use Carbon\Carbon;
 
 
