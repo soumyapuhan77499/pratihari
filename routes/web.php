@@ -111,6 +111,6 @@ Route::prefix('admin')->group(function() {
     Route::get('/add-notice', [PratihariNoticeController::class, 'showNoticeForm'])->name('admin.addNotice');
     Route::post('/save-notice', [PratihariNoticeController::class, 'saveNotice'])->name('saveNotice');
     Route::get('/manage-notice', [PratihariNoticeController::class, 'manageNotice'])->name('manageNotice');
-    Route::get('/delete-notice', [PratihariNoticeController::class, 'deleteNotice'])->name('deleteNotice');
-    Route::get('/update-notice', [PratihariNoticeController::class, 'updateNotice'])->name('updateNotice');
+    Route::post('/delete-notice', [PratihariNoticeController::class, 'deleteNotice'])->name('deleteNotice');
+    Route::post('/update-notice', [PratihariNoticeController::class, 'updateNotice'])->name('updateNotice');
 });

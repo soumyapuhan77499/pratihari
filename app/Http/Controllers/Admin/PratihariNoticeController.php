@@ -56,5 +56,14 @@ class PratihariNoticeController extends Controller
     return redirect()->back()->with('success', 'Notice updated successfully.');
 }
 
+    public function deleteNotice($id)
+    {
+        $notice = PratihariNotice::findOrFail($id);
+        $notice->status = 'deleted'; // Soft delete
+        $notice->save();
+
+        return redirect()->back()->with('success', 'Notice deleted successfully.');
+    }
+
     
 }
