@@ -1,4 +1,4 @@
-@extends('templeuser.layouts.app')
+@extends('layouts.app')
 
 @section('styles')
     <!-- Data table css -->
