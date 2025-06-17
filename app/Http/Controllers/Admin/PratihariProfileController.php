@@ -348,7 +348,7 @@ class PratihariProfileController extends Controller
         // Validation
         $request->validate([
             'year' => 'required|integer',
-            'pratihari_id' => 'required|exists:pratihari__profile_details,id',
+            'pratihari_id' => 'required|exists:pratihari__profile_details,pratihari_id',
             'designation' => 'required|string|max:255',
         ]);
 
