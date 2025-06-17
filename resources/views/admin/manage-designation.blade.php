@@ -45,10 +45,12 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $designation->year }}</td>
-                                        <td>{{ $designation->pratihariProfile->pratihari_name }}</td>
+                                        <td>
+                                            {{ ($profile->first_name ?? '') . ' ' . ($profile->middle_name ?? '') . ' ' . ($profile->last_name ?? '') }}
+                                        </td>
                                         <td>{{ $designation->designation }}</td>
                                         <td style="color:#B7070A;font-size: 15px">
-                                        
+
                                             <form id="delete-form-{{ $designation->id }}"
                                                 action="{{ route('deleteDesignation', $designation->id) }}" method="POST"
                                                 style="display:inline;">
@@ -109,7 +111,7 @@
             });
         }
     </script>
-   
+
     <script>
         // Hide success/error message after 3 seconds
         setTimeout(function() {
