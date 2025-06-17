@@ -130,8 +130,18 @@
                     </div>
                 </a>
             </div>
+        </div>
 
-
+        <div class="col-lg-12 mb-3">
+            <div class="card custom-card" style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #fff;">
+                <div class="card-body d-flex align-items-center">
+                    <i class="bi bi-table me-3" style="font-size: 2rem;"></i>
+                    <div>
+                        <h4 class="mb-0" style="font-weight: bold;">User Profiles List</h4>
+                        <small>Below is the list of all registered Pratihari users with their details and actions.</small>
+                    </div>
+                </div>
+            </div>
         </div>
 
          <div class="col-lg-12">
