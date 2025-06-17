@@ -342,4 +342,31 @@ class PratihariProfileController extends Controller
         return view('admin.pratihari-filter-user', compact('profiles', 'filter'));
     }
 
+     public function saveDesignation(Request $request)
+    {
+        // Validation
+        $request->validate([
+            'year' => 'required|integer',
+            'pratihari_id' => 'required|exists:pratihari__profile_details,id',
+            'designation' => 'required|string|max:255',
+        ]);
+
+        // Create the designation
+        PratihariDesignation::create([
+            'pratihari_id' => $request->pratihari_id,
+            'year' => $request->year,
+            'designation' => $request->designation,
+        ]);
+
+        return redirect()->back()->with('success', 'Designation added successfully.');
+    }
+
+    public function addDesignation(Request $request)
+    {
+            $profiles = PratihariProfile::where('status','active')->get();
+
+            return view('admin.add-designation', compact('profiles'));
+
+    }
+
 }
