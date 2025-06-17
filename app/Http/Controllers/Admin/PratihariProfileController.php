@@ -377,4 +377,12 @@ class PratihariProfileController extends Controller
         return view('admin.manage-designation', compact('designations'));
     }
 
+    public function deleteDesignation($id)
+    {
+        $designation = PratihariDesignation::findOrFail($id);
+        $designation->delete();
+
+        return redirect()->back()->with('success', 'Designation deleted successfully.');
+    }
+
 }
