@@ -3,6 +3,10 @@
 @section('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+     <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
+
     <style>
         .card {
             border: none;
@@ -130,8 +134,88 @@
 
         </div>
 
+         <div class="col-lg-12">
+            <div class="card custom-card overflow-hidden">
+                <div class="card-body">
+                    <div class="table-responsive export-table">
+                        <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
+                             <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Photo</th>
+                                    <th>View</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Occupation</th>
+                                    <th>Health Card No</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($profiles as $index => $profile)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>
+                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}">
+                                                <img src="{{ asset($profile->profile_photo) }}" class="profile-photo"
+                                                    alt="Profile Photo" class="br-5" width="50" height="50">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}"
+                                                style="background-color:rgb(76, 2, 82);color: white" class="btn btn-sm">
+                                                View Profile
+                                            </a>
+                                        </td>
+                                        <td>{{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
+                                        </td>
+                                        <td>{{ $profile->phone_no }}</td>
+                                    
+                                        <td>{{ $profile->occupation->occupation_type ?? 'N/A' }}</td>
+                                        <td>{{ $profile->healthcard_no }}</td>
+                                        <td>{{ $profile->status }}</td>
+
+                                        <td>
+                                            @if ($profile->pratihari_status === 'approved')
+                                                <button class="btn btn-success btn-sm" disabled>Approved</button>
+                                            @elseif ($profile->pratihari_status === 'rejected')
+                                                <button class="btn btn-danger btn-sm" disabled>Rejected</button>
+                                            @else
+                                                <button class="btn btn-success btn-sm approve-btn"
+                                                    data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn"
+                                                    data-id="{{ $profile->id }}">Reject</button>
+                                            @endif
+                                        </td>
+
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
 @section('scripts')
+
+   <!-- Internal Data tables -->
+    <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/jszip.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/js/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/datatable/responsive.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/table-data.js') }}"></script>
+    <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
 @endsection

@@ -73,6 +73,8 @@ class AdminController extends Controller
 
         $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
 
+        $profiles = PratihariProfile::with(['occupation', 'address'])->where('pratihari_status','pending')->get();
+
         // Logged-in user's profile completion
         $user = Auth::user();
         $profileStatus = [];
@@ -94,7 +96,8 @@ class AdminController extends Controller
             'todayCount',
             'incompleteProfiles',
             'totalActiveUsers',
-            'rejectedUsers'
+            'rejectedUsers',
+            'profiles',
         ));
     }
 
