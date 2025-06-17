@@ -73,7 +73,7 @@ class AdminController extends Controller
 
         $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
 
-        $profiles = PratihariProfile::with(['occupation', 'address'])->where('pratihari_status','pending')->get();
+        $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
 
         // Logged-in user's profile completion
         $user = Auth::user();
@@ -88,8 +88,6 @@ class AdminController extends Controller
                 'seba' => PratihariSeba::where('pratihari_id', $pratihari_id)->exists(),
                 'social_media' => PratihariSocialMedia::where('pratihari_id', $pratihari_id)->exists(),
             ];
-
-        
         }
 
         return view('admin.admin-dashboard', compact(
