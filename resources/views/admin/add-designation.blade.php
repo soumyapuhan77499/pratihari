@@ -59,8 +59,8 @@
                                     id="pratihari_id" name="pratihari_id" required>
                                     <option value="">Select Pratihari</option>
                                     @foreach ($profiles as $pratihari)
-                                        <option value="{{ $pratihari->id }}"
-                                            {{ old('pratihari_id') == $pratihari->id ? 'selected' : '' }}>
+                                        <option value="{{ $pratihari->pratihari_id }}"
+                                            {{ old('pratihari_id') == $pratihari->pratihari_id ? 'selected' : '' }}>
                                             {{ $pratihari->first_name . ' ' . ($pratihari->middle_name ?? '') . ' ' . $pratihari->last_name }}
                                         </option>
                                     @endforeach
