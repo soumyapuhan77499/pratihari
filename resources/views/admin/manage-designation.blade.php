@@ -46,6 +46,9 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $designation->year }}</td>
                                         <td>
+                                            @php
+                                                $profile = $designation->pratihariProfile;
+                                            @endphp
                                             {{ ($profile->first_name ?? '') . ' ' . ($profile->middle_name ?? '') . ' ' . ($profile->last_name ?? '') }}
                                         </td>
                                         <td>{{ $designation->designation }}</td>
