@@ -47,7 +47,7 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::put('/admin/pratihari-profile-update/{pratihari_id}', 'updateProfile')->name('admin.pratihari-profile.update');
     Route::get('/admin/pratihari/users/{status}','filterUsers')->name('admin.pratihari.filterUsers');
     Route::post('/admin/designation/store', 'saveDesignation')->name('admin.designation.store');
-    Route::post('/admin/add-designation', 'addDesignation')->name('admin.designation.add');
+    Route::get('/admin/add-designation', 'addDesignation')->name('admin.designation.add');
 
 });
 
