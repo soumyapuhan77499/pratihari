@@ -69,9 +69,8 @@
                                             </form>
                                         </td>
                                     </tr>
-                                @endforeach
 
-                                <!-- Modal -->
+                                     <!-- Modal -->
                                 <div class="modal fade" id="editNoticeModal" tabindex="-1"
                                     aria-labelledby="editNoticeModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -115,6 +114,9 @@
                                 </div>
 
 
+                                @endforeach
+
+                               
                             </tbody>
                         </table>
                     </div>
