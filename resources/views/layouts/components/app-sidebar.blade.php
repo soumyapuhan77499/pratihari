@@ -34,7 +34,7 @@
 								</li>
 
 								<li class="slide">
-									<a class="side-menu__item" href="{{url('admin/manage-sahi')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/sahi.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Sahi</span></a>
+									<a class="side-menu__item" href="{{url('admin/manage-notice')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/sahi.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Notice</span></a>
 								</li>
 								
 								@if (Auth::guard('super_admin')->check() && Auth::guard('super_admin')->user()->role === 'super_admin')
