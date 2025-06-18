@@ -92,11 +92,11 @@
              <!-- Rejected Users -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-danger mb-3">
+                    <div class="card text-dark mb-3">
                         <div class="card-header">
                             <i class="bi bi-person-x-fill me-2"></i>Pending Users
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="background-color: #35dc3b">
                             <h5 class="card-title">{{ $pendingProfile }}</h5>
                         </div>
                     </div>
