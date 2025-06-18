@@ -117,5 +117,5 @@ Route::prefix('admin')->group(function() {
     Route::post('/save-notice', [PratihariNoticeController::class, 'saveNotice'])->name('saveNotice');
     Route::get('/manage-notice', [PratihariNoticeController::class, 'manageNotice'])->name('manageNotice');
     Route::delete('/delete-notice/{id}', [PratihariNoticeController::class, 'deleteNotice'])->name('deleteNotice');
-    Route::post('/update-notice', [PratihariNoticeController::class, 'updateNotice'])->name('updateNotice');
+    Route::put('/notice/update/{id}', [PratihariNoticeController::class, 'updateNotice'])->name('notice.update');
 });

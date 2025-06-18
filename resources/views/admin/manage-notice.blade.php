@@ -7,6 +7,7 @@
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <!-- INTERNAL Select2 css -->
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
+    <!-- Bootstrap 4 CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
 @endsection
 
@@ -74,49 +75,51 @@
                                 @endforeach
 
                             </tbody>
-                            <!-- Modal -->
-                            <div class="modal fade" id="editNoticeModal" tabindex="-1"
-                                aria-labelledby="editNoticeModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <form method="POST" id="editNoticeForm">
-                                        @csrf
-                                        @method('PUT')
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Edit Notice</h5>
-                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                        </table>
+
+                        <!-- Edit Notice Modal -->
+                        <div class="modal fade" id="editNoticeModal" tabindex="-1" aria-labelledby="editNoticeModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form method="POST" id="editNoticeForm">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Edit Notice</h5>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" id="notice-id">
+                                            <div class="form-group">
+                                                <label>Notice Name</label>
+                                                <input type="text" name="notice_name" class="form-control"
+                                                    id="notice-name" required>
                                             </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" id="notice-id">
-                                                <div class="form-group">
-                                                    <label>Notice Name</label>
-                                                    <input type="text" name="notice_name" class="form-control"
-                                                        id="notice-name" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>From Date</label>
-                                                    <input type="date" name="from_date" class="form-control"
-                                                        id="notice-from" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>To Date</label>
-                                                    <input type="date" name="to_date" class="form-control" id="notice-to"
-                                                        required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label>Description</label>
-                                                    <textarea name="description" class="form-control" id="notice-description" rows="3"></textarea>
-                                                </div>
+                                            <div class="form-group">
+                                                <label>From Date</label>
+                                                <input type="date" name="from_date" class="form-control" id="notice-from"
+                                                    required>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary">Update
-                                                    Notice</button>
+                                            <div class="form-group">
+                                                <label>To Date</label>
+                                                <input type="date" name="to_date" class="form-control" id="notice-to"
+                                                    required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <textarea name="description" class="form-control" id="notice-description" rows="3"></textarea>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Update Notice</button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                        </table>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -162,22 +165,21 @@
             });
         }
     </script>
+
     <script>
-        $(document).ready(function() {
-            $('#editNoticeModal').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var id = button.data('id');
-                $('#editNoticeForm').attr('action', '/admin/update-notice/' + id);
-                $('#notice-id').val(id);
-                $('#notice-name').val(button.data('name'));
-                $('#notice-from').val(button.data('from'));
-                $('#notice-to').val(button.data('to'));
-                $('#notice-description').val(button.data('description'));
-            });
-
+    $(document).ready(function () {
+        $('#editNoticeModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            $('#editNoticeForm').attr('action', '/admin/notice/update/' + id); // must match route
+            $('#notice-id').val(id);
+            $('#notice-name').val(button.data('name'));
+            $('#notice-from').val(button.data('from'));
+            $('#notice-to').val(button.data('to'));
+            $('#notice-description').val(button.data('description'));
         });
-    </script>
-
+    });
+</script>
 
 
     <script>
@@ -187,7 +189,7 @@
         }, 3000);
     </script>
 
-    <!-- jQuery & Bootstrap JS FIRST -->
+    <!-- jQuery and Bootstrap 4 JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
 @endsection
