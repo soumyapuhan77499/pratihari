@@ -9,8 +9,7 @@
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -45,10 +44,23 @@
                             </thead>
                             <tbody>
                                 @foreach ($applications as $application)
+                                    @php
+                                        $profile = $application->profile;
+                                        $fullName = trim(
+                                            ($profile->first_name ?? '') .
+                                                ' ' .
+                                                ($profile->middle_name ?? '') .
+                                                ' ' .
+                                                ($profile->last_name ?? ''),
+                                        );
+                                    @endphp
+
+                                    <td>{{ $fullName ?: 'Unknown' }}</td>
+
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $application->created_at->format('d-m-Y') }}</td>
-                                        <td>{{ $application->pratihari_name }}</td>
+                                        <td>{{ $fullName ?: 'Unknown' }}</td>
                                         <td>
                                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#viewBodyModal" data-body="{{ $application->body }}">
@@ -252,6 +264,4 @@
             $('#modal-photo-img').attr('src', fullPhotoUrl);
         });
     </script>
-
-
 @endsection

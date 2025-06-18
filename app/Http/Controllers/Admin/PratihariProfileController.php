@@ -384,4 +384,11 @@ class PratihariProfileController extends Controller
         return redirect()->back()->with('success', 'Designation deleted successfully.');
     }
 
+    public function manageApplication()
+    {
+        $applications = PratihariApplication::with('profile')->where('status','active')->get();
+
+        return view('admin.manage-application', compact('applications'));
+    }
+
 }

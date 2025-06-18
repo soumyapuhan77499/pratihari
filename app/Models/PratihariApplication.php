@@ -18,5 +18,12 @@ class PratihariApplication extends Model
         'body',
         'photo'
     ];
+
+    
+    public function profile()
+    {
+        return $this->hasOne(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
+    }
+
     
 }

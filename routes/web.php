@@ -50,6 +50,8 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::get('/admin/add-designation', 'addDesignation')->name('admin.designation.add');
     Route::get('/admin/manage-designation', 'manageDesignation')->name('admin.designation.manage');
     Route::delete('/delete-designation/{id}', 'deleteDesignation')->name('deleteDesignation');
+    Route::get('/admin/manage-application', 'manageApplication')->name('manageApplication');
+
 });
 
 Route::prefix('admin')->group(function() {
