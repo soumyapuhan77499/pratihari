@@ -16,7 +16,8 @@ class PratihariApplication extends Model
         'date',
         'header',
         'body',
-        'photo'
+        'photo',
+        'status',
     ];
 
     
