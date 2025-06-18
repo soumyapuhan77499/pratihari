@@ -7,7 +7,7 @@
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <!-- INTERNAL Select2 css -->
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
-    <!-- Bootstrap 4 CSS -->
+    <!-- Replace Bootstrap 5 CSS with Bootstrap 4 -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
 @endsection
 
@@ -51,8 +51,8 @@
                                         <td>{{ \Carbon\Carbon::parse($notice->to_date)->format('d-m-Y') }}</td>
                                         <td>{{ $notice->description }}</td>
                                         <td style="color:#B7070A;font-size: 15px">
-                                            <button class="btn btn-success" data-toggle="modal"
-                                                data-target="#editNoticeModal" data-id="{{ $notice->id }}"
+                                            <button class="btn btn-success" data-bs-toggle="modal"
+                                                data-bs-target="#editNoticeModal" data-id="{{ $notice->id }}"
                                                 data-name="{{ $notice->notice_name }}"
                                                 data-from="{{ $notice->from_date }}" data-to="{{ $notice->to_date }}"
                                                 data-description="{{ $notice->description }}">
@@ -78,7 +78,6 @@
 
                         </table>
 
-                        <!-- Edit Notice Modal -->
                         <div class="modal fade" id="editNoticeModal" tabindex="-1" aria-labelledby="editNoticeModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog">
@@ -88,7 +87,8 @@
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title">Edit Notice</h5>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <input type="hidden" id="notice-id">
@@ -119,6 +119,7 @@
                                 </form>
                             </div>
                         </div>
+
 
                     </div>
                 </div>
@@ -167,19 +168,19 @@
     </script>
 
     <script>
-    $(document).ready(function () {
-        $('#editNoticeModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var id = button.data('id');
-            $('#editNoticeForm').attr('action', '/admin/notice/update/' + id); // must match route
-            $('#notice-id').val(id);
-            $('#notice-name').val(button.data('name'));
-            $('#notice-from').val(button.data('from'));
-            $('#notice-to').val(button.data('to'));
-            $('#notice-description').val(button.data('description'));
+        $(document).ready(function() {
+            $('#editNoticeModal').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var id = button.data('id');
+                $('#editNoticeForm').attr('action', '/admin/notice/update/' + id); // must match route
+                $('#notice-id').val(id);
+                $('#notice-name').val(button.data('name'));
+                $('#notice-from').val(button.data('from'));
+                $('#notice-to').val(button.data('to'));
+                $('#notice-description').val(button.data('description'));
+            });
         });
-    });
-</script>
+    </script>
 
 
     <script>
@@ -192,4 +193,5 @@
     <!-- jQuery and Bootstrap 4 JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
