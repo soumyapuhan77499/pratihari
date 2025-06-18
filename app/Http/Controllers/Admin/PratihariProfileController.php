@@ -392,6 +392,13 @@ class PratihariProfileController extends Controller
         return view('admin.manage-application', compact('applications'));
     }
 
+    public function filterApplication()
+    {
+        $applications = PratihariApplication::with('profile')->where('status','active')->whereDate('created_at', Carbon::today())->get();
+
+        return view('admin.manage-application', compact('applications'));
+    }
+
     public function updateApplication(Request $request, $id)
 {
     try {

@@ -157,6 +157,18 @@
                 </a>
             </div>
 
+            <div class="col-md-3">
+                <a href="{{ route('today.application.filterUsers') }}" style="text-decoration:none;">
+                    <div class="card text-dark mb-3" >
+                        <div class="card-header">
+                             <i class="bi bi-exclamation-circle-fill me-2"></i>Todays Applications
+                        </div>
+                        <div class="card-body" style="background-color: #38075e">
+                            <h5 class="card-title">{{ $todayApplication }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
 
         <div class="col-lg-12 mb-3">
@@ -208,11 +220,9 @@
                                         <td>{{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
                                         </td>
                                         <td>{{ $profile->phone_no }}</td>
-                                    
                                         <td>{{ $profile->occupation->occupation_type ?? 'N/A' }}</td>
                                         <td>{{ $profile->healthcard_no }}</td>
                                         <td>{{ $profile->status }}</td>
-
                                         <td>
                                             @if ($profile->pratihari_status === 'approved')
                                                 <button class="btn btn-success btn-sm" disabled>Approved</button>

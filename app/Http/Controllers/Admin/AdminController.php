@@ -79,6 +79,11 @@ class AdminController extends Controller
 
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
 
+        $todayApplication = PratihariApplication::whereDate('created_at', Carbon::today())
+    ->where('status', 'active')
+    ->count();
+
+
         $user = Auth::user();
 
         $profileStatus = [];
@@ -101,6 +106,7 @@ class AdminController extends Controller
             'rejectedUsers',
             'updatedProfile',
             'pendingProfile',
+            'todayApplication',
             'profiles',
         ));
     }

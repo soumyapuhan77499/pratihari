@@ -51,6 +51,7 @@ Route::controller(PratihariProfileController::class)->group(function() {
     Route::get('/admin/manage-designation', 'manageDesignation')->name('admin.designation.manage');
     Route::delete('/delete-designation/{id}', 'deleteDesignation')->name('deleteDesignation');
     Route::get('/admin/manage-application', 'manageApplication')->name('manageApplication');
+    Route::get('/admin/today-application', 'filterApplication')->name('today.application.filterUsers');
     Route::delete('/admin/delete-application', 'deleteApplication')->name('deleteApplication');
     Route::put('/admin/application/update/{id}','updateApplication')->name('admin.application.update');
 });
