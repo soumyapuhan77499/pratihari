@@ -133,11 +133,11 @@
              <!-- Today's Registrations -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'today') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3" style="background-color: #6aefeb">
+                    <div class="card text-dark mb-3">
                         <div class="card-header">
                             <i class="bi bi-person-plus-fill me-2"></i>Today's Registrations
                         </div>
-                        <div class="card-body">
+                        <div class="card-body"  style="background-color: #6aefeb">
                             <h5 class="card-title">{{ $todayCount }}</h5>
                         </div>
                     </div>
@@ -146,11 +146,11 @@
 
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3" style="background-color: #efb86a">
+                    <div class="card text-dark mb-3" >
                         <div class="card-header">
                             <i class="bi bi-person-plus-fill me-2"></i>Incomplete Profiles
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="background-color: #efb86a">
                             <h5 class="card-title">{{ $incompleteProfiles }}</h5>
                         </div>
                     </div>
