@@ -78,7 +78,7 @@
                                                 data-bs-target="#editApplicationModal" data-id="{{ $application->id }}"
                                                 data-header="{{ $application->header }}"
                                                 data-body="{{ $application->body }}">
-                                                Edit
+                                                 <i class="fa fa-edit"></i>
                                             </button>
                                             <form id="delete-form-{{ $application->id }}"
                                                 action="{{ route('deleteApplication', $application->id) }}" method="POST"
