@@ -244,7 +244,7 @@ public function manageDesignation()
     }
 }
 
-  public function store(Request $request)
+  public function saveApplication(Request $request)
     {
         try {
 
