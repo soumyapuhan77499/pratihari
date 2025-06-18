@@ -74,7 +74,7 @@
                                         </td>
                                        
                                         <td style="color:#B7070A;font-size: 15px">
-                                            <button class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                            <button class="btn btn-success" data-bs-toggle="modal"
                                                 data-bs-target="#editApplicationModal" data-id="{{ $application->id }}"
                                                 data-header="{{ $application->header }}"
                                                 data-body="{{ $application->body }}">

@@ -392,4 +392,34 @@ class PratihariProfileController extends Controller
         return view('admin.manage-application', compact('applications'));
     }
 
+    public function updateApplication(Request $request, $id)
+{
+    try {
+        
+        $application = PratihariApplication::findOrFail($id);
+
+        $application->header = $request->header;
+        $application->body = $request->body;
+
+        if ($request->hasFile('photo')) {
+            $file = $request->file('photo');
+            $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/application'), $fileName);
+
+            // Full URL using .env APP_PHOTO_URL
+            $fullPath = config('app.photo_url') . 'uploads/application/' . $fileName;
+
+            $application->photo = $fullPath;
+        }
+
+        $application->save();
+
+        return redirect()->back()->with('success', 'Application updated successfully.');
+    } catch (\Exception $e) {
+        \Log::error('Application update failed: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Failed to update application.');
+    }
+}
+
+
 }
