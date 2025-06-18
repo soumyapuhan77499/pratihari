@@ -199,4 +199,46 @@ public function getAllData(Request $request)
     }
 }
 
+public function manageDesignation()
+{
+    try {
+        $designations = PratihariDesignation::with('pratihariProfile')->get();
+
+        $formatted = $designations->map(function ($designation) {
+            return [
+                'id' => $designation->id,
+                'year' => $designation->year,
+                'designation' => $designation->designation,
+                'pratihari' => [
+                    'id' => $designation->pratihariProfile->id ?? null,
+                    'first_name' => $designation->pratihariProfile->first_name ?? null,
+                    'middle_name' => $designation->pratihariProfile->middle_name ?? null,
+                    'last_name' => $designation->pratihariProfile->last_name ?? null,
+                    'full_name' => trim(
+                        ($designation->pratihariProfile->first_name ?? '') . ' ' .
+                        ($designation->pratihariProfile->middle_name ?? '') . ' ' .
+                        ($designation->pratihariProfile->last_name ?? '')
+                    ),
+                ]
+            ];
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Designations fetched successfully.',
+            'data' => $formatted
+        ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Error fetching designations: ' . $e->getMessage());
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch designations.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
 }
