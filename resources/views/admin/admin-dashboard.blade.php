@@ -255,4 +255,82 @@
     <script src="{{ asset('assets/plugins/datatable/responsive.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/js/table-data.js') }}"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
+
+    
+    <script>
+        $(document).ready(function() {
+            $('.approve-btn').click(function() {
+                let profileId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to approve this profile?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Approve'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/pratihari/approve/' + profileId,
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire('Approved!', response.message, 'success')
+                                    .then(() => {
+                                        location.reload();
+                                    });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('.reject-btn').click(function() {
+                let profileId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Reject Profile',
+                    input: 'textarea',
+                    inputLabel: 'Reason for rejection',
+                    inputPlaceholder: 'Type your reason here...',
+                    inputAttributes: {
+                        'aria-label': 'Type your reason here'
+                    },
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Reject',
+                    preConfirm: (reason) => {
+                        if (!reason) {
+                            Swal.showValidationMessage('Reject reason is required');
+                        }
+                        return reason;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Send AJAX with reason
+                        $.ajax({
+                            url: '/admin/pratihari/reject/' + profileId,
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                reason: result.value
+                            },
+                            success: function(response) {
+                                Swal.fire('Rejected!', response.message, 'error').then(
+                                () => {
+                                    location.reload();
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
 @endsection
