@@ -55,12 +55,11 @@
                                         );
                                     @endphp
 
-                                    <td>{{ $fullName ?: 'Unknown' }}</td>
-
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $application->created_at->format('d-m-Y') }}</td>
                                         <td>{{ $fullName ?: 'Unknown' }}</td>
+                                        <td>{{ $application->header }}</td>
                                         <td>
                                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#viewBodyModal" data-body="{{ $application->body }}">
