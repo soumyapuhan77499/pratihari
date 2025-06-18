@@ -146,7 +146,7 @@
 
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-primary mb-3" style="background-color: #efb86a">
+                    <div class="card text-dark mb-3" style="background-color: #efb86a">
                         <div class="card-header">
                             <i class="bi bi-person-plus-fill me-2"></i>Incomplete Profiles
                         </div>
