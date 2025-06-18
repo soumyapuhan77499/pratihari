@@ -301,7 +301,7 @@
                                 </div>
                             </div>
 
-                            <!-- Alternative Phone No -->
+                            {{-- <!-- Alternative Phone No -->
                             <div class="col-md-3">
                                 <label for="alt_phone_no">Alternative Phone No</label>
                                 <div class="input-group mb-2">
@@ -310,7 +310,7 @@
                                     <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no"
                                         pattern="\d{10}" maxlength="10">
                                 </div>
-                            </div>
+                            </div> --}}
 
                             <!-- Blood Group -->
                             <div class="col-md-3">

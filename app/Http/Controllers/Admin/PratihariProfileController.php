@@ -48,7 +48,7 @@ class PratihariProfileController extends Controller
             $pratihariProfile->email = $request->email;
             $pratihariProfile->whatsapp_no = $request->whatsapp_no;
             $pratihariProfile->phone_no = $request->phone_no;
-            $pratihariProfile->alt_phone_no = $request->alt_phone_no;
+            // $pratihariProfile->alt_phone_no = $request->alt_phone_no;
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->healthcard_no;
 
@@ -233,7 +233,7 @@ class PratihariProfileController extends Controller
             $pratihariProfile->email = $request->email;
             $pratihariProfile->whatsapp_no = $request->whatsapp_no;
             $pratihariProfile->phone_no = $request->phone_no;
-            $pratihariProfile->alt_phone_no = $request->alt_phone_no;
+            // $pratihariProfile->alt_phone_no = $request->alt_phone_no;
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->health_card_no;
             $pratihariProfile->joining_date = $request->joining_date;
