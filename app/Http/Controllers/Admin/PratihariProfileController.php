@@ -363,7 +363,7 @@ class PratihariProfileController extends Controller
 
     public function addDesignation(Request $request)
     {
-        $profiles = PratihariProfile::where('status','active')->get();
+        $profiles = PratihariProfile::where('status','active')->where('pratihari_status','approved')->get();
 
         return view('admin.add-designation', compact('profiles'));
 

@@ -211,6 +211,7 @@ public function manageDesignation()
                 'designation' => $designation->designation,
                 'pratihari' => [
                     'id' => $designation->pratihariProfile->id ?? null,
+                    'pratihari_id' => $designation->pratihariProfile->pratihari_id ?? null,
                     'first_name' => $designation->pratihariProfile->first_name ?? null,
                     'middle_name' => $designation->pratihariProfile->middle_name ?? null,
                     'last_name' => $designation->pratihariProfile->last_name ?? null,
