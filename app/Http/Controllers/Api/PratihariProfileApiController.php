@@ -13,6 +13,8 @@ use App\Models\PratihariSocialMedia;
 use App\Models\PratihariAddress;
 use App\Models\PratihariChildren;
 use App\Models\MasterNijogaSeba;
+use App\Models\PratihariDesignation;
+use App\Models\PratihariNotice;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
