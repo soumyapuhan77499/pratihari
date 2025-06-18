@@ -34,11 +34,15 @@
 								</li>
 
 								<li class="slide">
-									<a class="side-menu__item" href="{{url('admin/manage-notice')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/sahi.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Notice</span></a>
+									<a class="side-menu__item" href="{{url('admin/manage-notice')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/notification.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Notice</span></a>
 								</li>
 
 								<li class="slide">
-									<a class="side-menu__item" href="{{url('admin/manage-designation')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/sahi.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Designation</span></a>
+									<a class="side-menu__item" href="{{url('admin/manage-designation')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/sketch.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Designation</span></a>
+								</li>
+
+								<li class="slide">
+									<a class="side-menu__item" href="{{url('admin/manage-application')}}"><span class="side-menu__label"><img src="{{asset('assets/img/brand/gallery.png')}}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Application</span></a>
 								</li>
 								
 								@if (Auth::guard('super_admin')->check() && Auth::guard('super_admin')->user()->role === 'super_admin')
@@ -50,7 +54,7 @@
 										</span>
 									</a>
 								</li>
-							@endif
+							    @endif
 
 							</ul>
 							<div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24"><path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z"/></svg></div>

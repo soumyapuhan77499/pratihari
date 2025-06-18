@@ -429,19 +429,16 @@ class PratihariProfileController extends Controller
         }
 
         public function softDelete($id)
-{
-    try {
-        $application = PratihariApplication::findOrFail($id);
-        $application->status = 'deleted';
-        $application->save();
+        {
+            try {
+                $application = PratihariApplication::findOrFail($id);
+                $application->status = 'deleted';
+                $application->save();
 
-        return redirect()->back()->with('success', 'Application deleted successfully.');
-    } catch (\Exception $e) {
-        \Log::error('Delete Application Error: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Failed to delete the application.');
-    }
-}
-
-
-
+                return redirect()->back()->with('success', 'Application deleted successfully.');
+            } catch (\Exception $e) {
+                \Log::error('Delete Application Error: ' . $e->getMessage());
+                return redirect()->back()->with('error', 'Failed to delete the application.');
+            }
+        }
 }
