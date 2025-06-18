@@ -16,6 +16,7 @@ use App\Models\PratihariSeba;
 use App\Models\PratihariOccupation;
 use App\Models\PratihariSocialMedia;
 use App\Models\PratihariDesignation;
+use App\Models\PratihariApplication;
 use Carbon\Carbon;
 
 class PratihariProfileController extends Controller
