@@ -218,7 +218,7 @@
                                                 <button class="btn btn-success btn-sm" disabled>Approved</button>
                                             @elseif ($profile->pratihari_status === 'rejected')
                                                 <button class="btn btn-danger btn-sm" disabled>Rejected</button>
-                                            @elseif ($profile->pratihari_status === 'updated')
+                                            @elseif ($profile->pratihari_status === 'pending')
                                                 <button class="btn btn-success btn-sm approve-btn" data-id="{{ $profile->id }}">Approve</button>
                                                 <button class="btn btn-danger btn-sm reject-btn"  data-id="{{ $profile->id }}">Reject</button>
                                             @elseif ($profile->pratihari_status === 'updated')
