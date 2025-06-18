@@ -20,6 +20,8 @@ use App\Models\PratihariApplication;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Config; // make sure this is at the top if needed
+
 
 class PratihariProfileApiController extends Controller
 {
@@ -262,7 +264,9 @@ public function manageDesignation()
                 $file = $request->file('photo');
                 $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/application'), $fileName);
-                $photoPath = 'uploads/application/' . $fileName;
+
+                // Generate full URL using APP_PHOTO_URL
+                $photoPath = Config::get('app.photo_url') . 'uploads/application/' . $fileName;
             }
 
             $application = PratihariApplication::create([
