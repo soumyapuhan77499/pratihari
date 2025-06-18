@@ -66,7 +66,7 @@
                                                 View Body
                                             </button>
                                         </td>
-                                        <td>{{ $application->body }}
+                                        <td>
                                             <button class="btn btn-secondary btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#viewPhotoModal" data-photo="{{ $application->photo }}">
                                                 View Photo
