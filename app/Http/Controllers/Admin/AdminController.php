@@ -73,12 +73,14 @@ class AdminController extends Controller
 
         $updatedProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->count();
 
-        $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();  // <--- Add this
+        $pendingProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'pending')->count();
+
+        $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();
 
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
 
-        // Logged-in user's profile completion
         $user = Auth::user();
+
         $profileStatus = [];
         if ($user) {
             $pratihari_id = $user->pratihari_id;
@@ -98,6 +100,7 @@ class AdminController extends Controller
             'totalActiveUsers',
             'rejectedUsers',
             'updatedProfile',
+            'pendingProfile',
             'profiles',
         ));
     }

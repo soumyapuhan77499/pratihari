@@ -129,6 +129,7 @@ public function getProfile(Request $request)
         'profile' => $profile,
     ]);
 }
+
 public function getAllData(Request $request)
 {
     try {
@@ -197,6 +198,5 @@ public function getAllData(Request $request)
         ], 500);
     }
 }
-
 
 }

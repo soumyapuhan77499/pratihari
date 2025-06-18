@@ -75,21 +75,6 @@
     <div class="container">
         <h2 class="mb-4">Pratihari Admin Dashboard</h2>
         <div class="row">
-            <!-- Today's Registrations -->
-            <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'today') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-primary mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-person-plus-fill me-2"></i>Today's Registrations
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $todayCount }}</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
-
-          
             <!-- Active Users -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}" style="text-decoration:none;">
@@ -99,6 +84,20 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ $totalActiveUsers }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+             <!-- Rejected Users -->
+            <div class="col-md-3">
+                <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}" style="text-decoration:none;">
+                    <div class="card text-dark bg-danger mb-3">
+                        <div class="card-header">
+                            <i class="bi bi-person-x-fill me-2"></i>Pending Users
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $pendingProfile }}</h5>
                         </div>
                     </div>
                 </a>
@@ -126,6 +125,33 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ $updatedProfile }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+             <!-- Today's Registrations -->
+            <div class="col-md-3">
+                <a href="{{ route('admin.pratihari.filterUsers', 'today') }}" style="text-decoration:none;">
+                    <div class="card text-dark mb-3" style="background-color: #6aefeb">
+                        <div class="card-header">
+                            <i class="bi bi-person-plus-fill me-2"></i>Today's Registrations
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $todayCount }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}" style="text-decoration:none;">
+                    <div class="card text-dark bg-primary mb-3" style="background-color: #efb86a">
+                        <div class="card-header">
+                            <i class="bi bi-person-plus-fill me-2"></i>Incomplete Profiles
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $incompleteProfiles }}</h5>
                         </div>
                     </div>
                 </a>

@@ -18,7 +18,6 @@ use App\Models\PratihariSocialMedia;
 use App\Models\PratihariDesignation;
 use Carbon\Carbon;
 
-
 class PratihariProfileController extends Controller
 {
     public function pratihariProfile()
@@ -298,7 +297,7 @@ class PratihariProfileController extends Controller
 
     public function filterUsers($filter)
     {
-        if ($filter === 'approved' || $filter === 'rejected' || $filter === 'updated') {
+        if ($filter === 'approved' || $filter === 'rejected' || $filter === 'updated' || $filter === 'pending') {
             $profiles = PratihariProfile::where('pratihari_status', $filter)->get();
         } elseif ($filter === 'today') {
             $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
@@ -343,7 +342,7 @@ class PratihariProfileController extends Controller
         return view('admin.pratihari-filter-user', compact('profiles', 'filter'));
     }
 
-     public function saveDesignation(Request $request)
+    public function saveDesignation(Request $request)
     {
         // Validation
         $request->validate([
@@ -364,9 +363,9 @@ class PratihariProfileController extends Controller
 
     public function addDesignation(Request $request)
     {
-            $profiles = PratihariProfile::where('status','active')->get();
+        $profiles = PratihariProfile::where('status','active')->get();
 
-            return view('admin.add-designation', compact('profiles'));
+        return view('admin.add-designation', compact('profiles'));
 
     }
 
