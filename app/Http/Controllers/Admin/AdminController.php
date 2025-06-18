@@ -11,6 +11,8 @@ use App\Models\PratihariIdcard;
 use App\Models\PratihariAddress;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSocialMedia;
+use App\Models\PratihariOccupation;
+use App\Models\PratihariApplication;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Client;
