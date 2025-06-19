@@ -191,12 +191,7 @@
                             <i class="fas fa-id-card"></i> ID Card
                         </a>
                     </li>
-                    <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link tab-link" id="id-card-tab" href="#"
-                            role="tab">
-                            <i class="fas fa-id-card"></i> ID Card
-                        </a>
-                    </li>
+                    
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="address-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="address" aria-selected="false">
