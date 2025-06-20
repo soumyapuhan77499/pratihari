@@ -11,7 +11,6 @@ use App\Models\PratihariIdcard;
 use App\Models\PratihariAddress;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSocialMedia;
-use App\Models\PratihariBeddhaMaster;
 use App\Models\PratihariOccupation;
 use App\Models\PratihariApplication;
 use Illuminate\Support\Facades\Hash;
@@ -219,26 +218,20 @@ class AdminController extends Controller
 
         return redirect()->route('admin.AdminLogin');
     }
-public function sebaDate(Request $request)
+
+ public function sebaDate(Request $request)
 {
     $pratihariId = $request->input('pratihari_id');
     $events = [];
 
     if ($pratihariId) {
-        $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
+        $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
 
         foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster->name ?? 'Unknown Seba';
-            $beddhaIds = $seba->beddha_id;
-
-            // Fetch beddha names in a single query
-            $beddhaNames = PratihariBeddhaMaster::whereIn('id', $beddhaIds)
-                            ->pluck('name', 'id')
-                            ->toArray();
+            $beddhaIds = $seba->beddha_id; // Already an array via accessor
 
             foreach ($beddhaIds as $beddhaId) {
                 $beddhaId = (int) trim($beddhaId);
-                $beddhaName = $beddhaNames[$beddhaId] ?? "Beddha ID $beddhaId";
 
                 if ($beddhaId >= 1 && $beddhaId <= 47) {
                     $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
@@ -247,7 +240,7 @@ public function sebaDate(Request $request)
                         $date = $startDate->copy()->addDays($i * 47);
 
                         $events[] = [
-                            'title' => "$sebaName - $beddhaName",
+                            'title' => "Working Day (Beddha ID $beddhaId)",
                             'start' => $date->toDateString(),
                         ];
                     }
