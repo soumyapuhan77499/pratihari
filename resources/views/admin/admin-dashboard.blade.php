@@ -175,7 +175,17 @@
                     </div>
                 </a>
             </div>
-            
+        </div>
+
+         <div class="col-lg-12 mb-4">
+            <div class="card custom-card">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-calendar-event me-2"></i>Custom Calendar
+                </div>
+                <div class="card-body">
+                    <div id="custom-calendar"></div>
+                </div>
+            </div>
         </div>
 
         <div class="col-lg-12 mb-3">
@@ -253,16 +263,7 @@
             </div>
         </div>
 
-        <div class="col-lg-12 mb-4">
-            <div class="card custom-card">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-calendar-event me-2"></i>Custom Calendar
-                </div>
-                <div class="card-body">
-                    <div id="custom-calendar"></div>
-                </div>
-            </div>
-        </div>
+       
 
     </div>
 @endsection
