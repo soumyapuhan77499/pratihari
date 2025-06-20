@@ -219,37 +219,38 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-    public function sebaDate(Request $request)
-    {
-        $pratihariId = $request->input('pratihari_id');
-        $events = [];
+   public function sebaDate(Request $request)
+{
+    $pratihariId = $request->input('pratihari_id');
+    $events = [];
 
-        if ($pratihariId) {
-            $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
+    if ($pratihariId) {
+        $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
 
-            foreach ($sebas as $seba) {
-                $beddhaIds = $seba->beddha_id; // already array from accessor
+        foreach ($sebas as $seba) {
+            $beddhaIds = $seba->beddha_id; // already an array due to accessor
 
-                foreach ($beddhaIds as $beddhaId) {
-                    $beddhaId = (int) trim($beddhaId);
+            foreach ($beddhaIds as $beddhaId) {
+                $beddhaId = (int) trim($beddhaId);
 
-                    if ($beddhaId >= 1 && $beddhaId <= 47) {
-                        $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
+                if ($beddhaId >= 1 && $beddhaId <= 47) {
+                    // Start date is June 1, 2025, plus offset based on beddhaId
+                    $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
 
-                        for ($i = 0; $i < 10; $i++) {
-                            $date = $startDate->copy()->addDays($i * 47);
+                    for ($i = 0; $i < 10; $i++) {
+                        $date = $startDate->copy()->addDays($i * 47);
 
-                            $events[] = [
-                                'title' => "Working Day (Beddha ID $beddhaId)",
-                                'start' => $date->toDateString(),
-                            ];
-                        }
+                        $events[] = [
+                            'title' => "Working Day (Beddha ID $beddhaId)",
+                            'start' => $date->toDateString(),
+                        ];
                     }
                 }
             }
         }
-
-        return response()->json($events);
     }
+
+    return response()->json($events);
+}
   
 }

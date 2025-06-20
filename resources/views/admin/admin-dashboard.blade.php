@@ -386,11 +386,11 @@
         });
     </script>
 
-     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-        <script>
+   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('custom-calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        const calendarEl = document.getElementById('custom-calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             height: 500,
             headerToolbar: {
@@ -398,22 +398,30 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            events: function(fetchInfo, successCallback, failureCallback) {
+            events: function (fetchInfo, successCallback, failureCallback) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const pratihariId = urlParams.get('pratihari_id');
 
                 if (pratihariId) {
-                    fetch(`{{ route('admin.sebaDate') }}?pratihari_id=${pratihariId}`)
-                        .then(response => response.json())
+                    fetch(`/admin/seba-date?pratihari_id=${encodeURIComponent(pratihariId)}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Failed to load events");
+                            return response.json();
+                        })
                         .then(data => successCallback(data))
-                        .catch(error => failureCallback(error));
+                        .catch(error => {
+                            console.error("Error loading events:", error);
+                            failureCallback(error);
+                        });
                 } else {
                     successCallback([]);
                 }
             }
         });
+
         calendar.render();
     });
 </script>
+
 
 @endsection
