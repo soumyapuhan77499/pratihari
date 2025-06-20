@@ -33,7 +33,7 @@ Route::controller(AdminController::class)->group(function() {
     Route::post('/verify-otp',  'verifyOtp')->name('admin.verifyOtp'); 
     Route::get('/dashboard', 'dashboard')->name('admin.dashboard');
     Route::post('/logout',  'logout')->name('admin.logout');
-    Route::get('/find-seba-date',  'sebaDate')->name('admin.sebaDate');
+    Route::get('admin/find-seba-date',  'sebaDate')->name('admin.sebaDate');
 
 
 });

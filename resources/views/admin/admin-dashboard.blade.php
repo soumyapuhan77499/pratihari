@@ -3,11 +3,11 @@
 @section('styles')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-     <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
-        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
-          
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+
     <style>
         #custom-calendar {
             max-width: 100%;
@@ -95,7 +95,7 @@
                 </a>
             </div>
 
-             <!-- Rejected Users -->
+            <!-- Rejected Users -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}" style="text-decoration:none;">
                     <div class="card text-dark mb-3">
@@ -123,7 +123,7 @@
                 </a>
             </div>
 
-              <div class="col-md-3">
+            <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}" style="text-decoration:none;">
                     <div class="card text-dark bg-warning mb-3">
                         <div class="card-header">
@@ -136,14 +136,14 @@
                 </a>
             </div>
 
-             <!-- Today's Registrations -->
+            <!-- Today's Registrations -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'today') }}" style="text-decoration:none;">
                     <div class="card text-dark mb-3">
                         <div class="card-header">
                             <i class="bi bi-person-plus-fill me-2"></i>Today's Registrations
                         </div>
-                        <div class="card-body"  style="background-color: #6aefeb">
+                        <div class="card-body" style="background-color: #6aefeb">
                             <h5 class="card-title">{{ $todayCount }}</h5>
                         </div>
                     </div>
@@ -152,7 +152,7 @@
 
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3" >
+                    <div class="card text-dark mb-3">
                         <div class="card-header">
                             <i class="bi bi-person-plus-fill me-2"></i>Incomplete Profiles
                         </div>
@@ -165,9 +165,9 @@
 
             <div class="col-md-3">
                 <a href="{{ route('today.application.filterUsers') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3" >
+                    <div class="card text-dark mb-3">
                         <div class="card-header">
-                             <i class="bi bi-exclamation-circle-fill me-2"></i>Todays Applications
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>Todays Applications
                         </div>
                         <div class="card-body" style="background-color: #38075e">
                             <h5 class="card-title">{{ $todayApplication }}</h5>
@@ -177,41 +177,48 @@
             </div>
         </div>
 
-        <div class="col-lg-4 mb-4">
-            <div class="card custom-card">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
-                </div>
-                <div class="card-body">
-                    <form method="GET" action="{{ route('admin.sebaDate') }}">
-                        <div class="mb-3">
-                            <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
-                                <option value="">-- Select Pratihari Name --</option>
-                                @foreach($profile_name as $profile)
-                                    <option value="{{ $profile->pratihari_id }}">
-                                        {{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </form>
+        <div class="row">
+            <!-- Filter by Pratihari Name -->
+            <div class="col-lg-4 mb-4">
+                <div class="card custom-card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
+                    </div>
+                    <div class="card-body">
+                        <form method="GET" action="{{ url()->current() }}">
+                            <div class="mb-3">
+                                <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
+                                    <option value="">-- Select Pratihari Name --</option>
+                                    @foreach ($profile_name as $profile)
+                                        <option value="{{ $profile->pratihari_id }}"
+                                            {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
+                                            {{ $profile->first_name }} {{ $profile->middle_name }}
+                                            {{ $profile->last_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-         <div class="col-lg-12 mb-4">
-            <div class="card custom-card">
-                <div class="card-header bg-primary text-white">
-                    <i class="bi bi-calendar-event me-2"></i>Custom Calendar
-                </div>
-                <div class="card-body">
-                    <div id="custom-calendar"></div>
+            <!-- Calendar -->
+            <div class="col-lg-12 mb-4">
+                <div class="card custom-card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-calendar-event me-2"></i>Custom Calendar
+                    </div>
+                    <div class="card-body">
+                        <div id="custom-calendar"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-12 mb-3">
-            <div class="card custom-card" style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #1d1818;">
+            <div class="card custom-card"
+                style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #1d1818;">
                 <div class="card-body d-flex align-items-center">
                     <i class="bi bi-table me-3" style="font-size: 2rem;"></i>
                     <div>
@@ -222,12 +229,12 @@
             </div>
         </div>
 
-         <div class="col-lg-12">
+        <div class="col-lg-12">
             <div class="card custom-card overflow-hidden">
                 <div class="card-body">
                     <div class="table-responsive export-table">
                         <table id="file-datatable" class="table table-bordered text-nowrap key-buttons border-bottom">
-                             <thead>
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Photo</th>
@@ -256,7 +263,8 @@
                                                 View Profile
                                             </a>
                                         </td>
-                                        <td>{{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
+                                        <td>{{ $profile->first_name }} {{ $profile->middle_name }}
+                                            {{ $profile->last_name }}
                                         </td>
                                         <td>{{ $profile->phone_no }}</td>
                                         <td>{{ $profile->occupation->occupation_type ?? 'N/A' }}</td>
@@ -268,11 +276,15 @@
                                             @elseif ($profile->pratihari_status === 'rejected')
                                                 <button class="btn btn-danger btn-sm" disabled>Rejected</button>
                                             @elseif ($profile->pratihari_status === 'pending')
-                                                <button class="btn btn-success btn-sm approve-btn" data-id="{{ $profile->id }}">Approve</button>
-                                                <button class="btn btn-danger btn-sm reject-btn"  data-id="{{ $profile->id }}">Reject</button>
+                                                <button class="btn btn-success btn-sm approve-btn"
+                                                    data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn"
+                                                    data-id="{{ $profile->id }}">Reject</button>
                                             @elseif ($profile->pratihari_status === 'updated')
-                                                <button class="btn btn-success btn-sm approve-btn"  data-id="{{ $profile->id }}">Approve</button>
-                                                <button class="btn btn-danger btn-sm reject-btn"  data-id="{{ $profile->id }}">Reject</button>
+                                                <button class="btn btn-success btn-sm approve-btn"
+                                                    data-id="{{ $profile->id }}">Approve</button>
+                                                <button class="btn btn-danger btn-sm reject-btn"
+                                                    data-id="{{ $profile->id }}">Reject</button>
                                             @endif
                                         </td>
 
@@ -285,13 +297,13 @@
             </div>
         </div>
 
-       
+
 
     </div>
 @endsection
 
 @section('scripts')
-   <!-- Internal Data tables -->
+    <!-- Internal Data tables -->
     <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
@@ -308,7 +320,7 @@
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    
+
     <script>
         $(document).ready(function() {
             $('.approve-btn').click(function() {
@@ -374,9 +386,9 @@
                             },
                             success: function(response) {
                                 Swal.fire('Rejected!', response.message, 'error').then(
-                                () => {
-                                    location.reload();
-                                });
+                                    () => {
+                                        location.reload();
+                                    });
                             }
                         });
                     }
@@ -386,42 +398,43 @@
         });
     </script>
 
-   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const calendarEl = document.getElementById('custom-calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            height: 500,
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: function (fetchInfo, successCallback, failureCallback) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const pratihariId = urlParams.get('pratihari_id');
+    <!-- FullCalendar Script -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('custom-calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 500,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const pratihariId = urlParams.get('pratihari_id');
 
-                if (pratihariId) {
-                    fetch(`/admin/seba-date?pratihari_id=${encodeURIComponent(pratihariId)}`)
-                        .then(response => {
-                            if (!response.ok) throw new Error("Failed to load events");
-                            return response.json();
-                        })
-                        .then(data => successCallback(data))
-                        .catch(error => {
-                            console.error("Error loading events:", error);
-                            failureCallback(error);
-                        });
-                } else {
-                    successCallback([]);
+                    if (pratihariId) {
+                        fetch(
+                                `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`)
+
+                            .then(response => {
+                                if (!response.ok) throw new Error("Failed to load events");
+                                return response.json();
+                            })
+                            .then(data => successCallback(data))
+                            .catch(error => {
+                                console.error("Error loading events:", error);
+                                failureCallback(error);
+                            });
+                    } else {
+                        successCallback([]);
+                    }
                 }
-            }
+            });
+
+            calendar.render();
         });
-
-        calendar.render();
-    });
-</script>
-
-
+    </script>
 @endsection

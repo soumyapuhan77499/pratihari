@@ -219,7 +219,7 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-   public function sebaDate(Request $request)
+ public function sebaDate(Request $request)
 {
     $pratihariId = $request->input('pratihari_id');
     $events = [];
@@ -228,13 +228,12 @@ class AdminController extends Controller
         $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
 
         foreach ($sebas as $seba) {
-            $beddhaIds = $seba->beddha_id; // already an array due to accessor
+            $beddhaIds = $seba->beddha_id; // Already an array via accessor
 
             foreach ($beddhaIds as $beddhaId) {
                 $beddhaId = (int) trim($beddhaId);
 
                 if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    // Start date is June 1, 2025, plus offset based on beddhaId
                     $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
 
                     for ($i = 0; $i < 10; $i++) {
@@ -252,5 +251,4 @@ class AdminController extends Controller
 
     return response()->json($events);
 }
-  
 }

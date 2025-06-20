@@ -60,4 +60,6 @@ class PratihariSeba extends Model
     {
         $this->attributes['beddha_id'] = is_array($value) ? implode(',', $value) : $value;
     }
+
+
 }
