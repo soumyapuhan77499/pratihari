@@ -163,7 +163,7 @@ class PratihariSebaApiController extends Controller
         $user = Auth::user();
 
         if (!$user) {
-            return response()->json(['error' => 'User not authenticated'], 401);
+            return response()->json(['error' => 'User not authenticated'], 400);
         }
 
         $request->validate([
@@ -173,20 +173,37 @@ class PratihariSebaApiController extends Controller
 
         $pratihariId = $user->pratihari_id;
         $now = Carbon::now('Asia/Kolkata');
+        $today = $now->toDateString();
 
+        // ❗ Check for duplicate entry
+        $existing = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+            ->where('seba_id', $request->seba_id)
+            ->where('beddha_id', $request->beddha_id)
+            ->where('date', $today)
+            ->first();
+
+        if ($existing) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Seba already started for this Beddha and Seba today.'
+            ], 400); // HTTP 409 Conflict
+        }
+
+        // ✅ Create new entry
         $record = PratihariSebaManagement::create([
             'pratihari_id' => $pratihariId,
             'seba_id'      => $request->seba_id,
             'beddha_id'    => $request->beddha_id,
-            'date'         => $now->toDateString(),
+            'date'         => $today,
             'start_time'   => $now->format('H:i:s'),
             'seba_status'  => 'started',
         ]);
 
         return response()->json([
+            'status' => 'success',
             'message' => 'Seba started successfully',
             'data' => $record
-        ], 201);
+        ], 200);
     }
 
 }
