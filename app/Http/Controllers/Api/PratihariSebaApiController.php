@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\PratihariNijogaMaster;
 use App\Models\PratihariNijogaSebaAssign;
 use App\Models\PratihariSebaBeddhaAssign;
+use App\Models\PratihariSebaManagement;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSebaMaster;
 
@@ -34,9 +35,6 @@ class PratihariSebaApiController extends Controller
             ], 500);
         }
     }
-    
-    
-
     // Get Seba list based on Nijoga ID
     public function getSebaByNijoga($nijoga_id)
     {
@@ -62,28 +60,28 @@ class PratihariSebaApiController extends Controller
     }
 
     public function getBeddha() 
-{
-    try {
-        // Fetch active records with related beddha details
-        $sebaBeddhas = PratihariSebaBeddhaAssign::where('status', 'active')
-            ->with('beddha') // Load beddha details
-            ->get()
-            ->groupBy('seba_id');
+    {
+        try {
+            // Fetch active records with related beddha details
+            $sebaBeddhas = PratihariSebaBeddhaAssign::where('status', 'active')
+                ->with('beddha') // Load beddha details
+                ->get()
+                ->groupBy('seba_id');
 
-        $formattedData = $sebaBeddhas->map(function ($items, $sebaId) {
-            // Fetch seba_name for this sebaId
-            $seba = PratihariSebaMaster::find($sebaId);
+            $formattedData = $sebaBeddhas->map(function ($items, $sebaId) {
+                // Fetch seba_name for this sebaId
+                $seba = PratihariSebaMaster::find($sebaId);
 
-          return [
-    'id' => $sebaId,
-    'name' => $seba ? $seba->seba_name : 'Unknown Seba',
-    'bedha' => $items->map(function ($item) use ($sebaId) {
-        return [
-            'id' => $sebaId . '_' . $item->beddha->id,  // concatenated id here
-            'name' => $item->beddha->beddha_name,
+            return [
+        'id' => $sebaId,
+        'name' => $seba ? $seba->seba_name : 'Unknown Seba',
+        'bedha' => $items->map(function ($item) use ($sebaId) {
+            return [
+                'id' => $sebaId . '_' . $item->beddha->id,  // concatenated id here
+                'name' => $item->beddha->beddha_name,
+            ];
+        })->values(),
         ];
-    })->values(),
-];
 
         })->values();
 
@@ -93,14 +91,14 @@ class PratihariSebaApiController extends Controller
             'data' => $formattedData
         ], 200);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 500,
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     public function saveSeba(Request $request)
     {
@@ -155,6 +153,37 @@ class PratihariSebaApiController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function startSeba(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $request->validate([
+            'seba_id' => 'required|integer',
+            'beddha_id' => 'required|integer',
+        ]);
+
+        $pratihariId = $user->pratihari_id;
+        $now = Carbon::now();
+
+        $record = PratihariSebaManagement::create([
+            'pratihari_id' => $pratihariId,
+            'seba_id'      => $request->seba_id,
+            'beddha_id'    => $request->beddha_id,
+            'date'         => $now->toDateString(),
+            'start_time'   => $now->toTimeString(),
+            'seba_status'  => 'started',
+        ]);
+
+        return response()->json([
+            'message' => 'Seba started successfully',
+            'data' => $record
+        ], 201);
     }
 
 }
