@@ -48,35 +48,34 @@ public function getBeddhaBySeba($seba_id)
         $beddhaIds = $request->beddha_id ?? [];
         $pratihariId = $request->pratihari_id;
 
+        // Map seba ID to corresponding column
+        $sebaFields = [
+            1 => 'badadwara_beddha_id',
+            2 => 'dakhini_beddha_id',
+            3 => 'dhukudi_beddha_id',
+            4 => 'garudadwara_beddha_id',
+            5 => 'bhogamandap_beddha_id',
+            6 => 'dwaraghara_beddha_id',
+            7 => 'jay_bijay_dwara_beddha_id',
+            8 => 'singha_dwara_pratihari_seba_beddha_id',
+        ];
+
+        // Prepare base data
+        $data = [
+            'pratihari_id' => $pratihariId,
+            'nijoga_id' => $nijogaId,
+        ];
+
+        // Loop through each seba ID and set corresponding beddha_id
         foreach ($sebaIds as $sebaId) {
-            // Get corresponding Beddha IDs for this Seba ID
-            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-            $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
-
-            // Map seba ID to dynamic fields in database
-            $sebaFields = [
-                1 => 'badadwara_id',
-                2 => 'dakhini_id',
-                3 => 'dhukudi_id',
-                4 => 'garudadwara_pratihari_id',
-                5 => 'bhogamandap_pratihari_id',
-                6 => 'dwaraghara_pratihari_id',
-                7 => 'jay_bijay_dwara_id',
-                8 => 'singha_dwara_pratihari_seba_id',
-            ];
-
-            $data = [
-                'pratihari_id' => $pratihariId,
-                'nijoga_id' => $nijogaId,
-                'beddha_id' => $beddhaIdsString,
-            ];
-
             if (array_key_exists($sebaId, $sebaFields)) {
-                $data[$sebaFields[$sebaId]] = $sebaId;
+                $field = $sebaFields[$sebaId];
+                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+                $data[$field] = !empty($beddhaList) ? implode(',', $beddhaList) : null;
             }
-
-            PratihariSeba::create($data);
         }
+
+        PratihariSeba::create($data);
 
         return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
                          ->with('success', 'Pratihari Seba details saved successfully');

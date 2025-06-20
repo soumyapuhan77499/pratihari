@@ -14,15 +14,14 @@ class PratihariSeba extends Model
     protected $fillable = [
         'pratihari_id',
         'nijoga_id',
-        'badadwara_id',
-        'dakhini_id',
-        'dhukudi_id	',
-        'garudadwara_pratihari_id',
-        'bhogamandap_pratihari_id',
-        'dwaraghara_pratihari_id',
-        'jay_bijay_dwara_id',
-        'singha_dwara_pratihari_seba_id',
-        'beddha_id',
+        'badadwara_beddha_id',
+        'dakhini_beddha_id',
+        'dhukudi_beddha_id	',
+        'garudadwara_beddha_id',
+        'bhogamandap_beddha_id',
+        'dwaraghara_beddha_id',
+        'jay_bijay_dwara_beddha_id',
+        'singha_dwara_pratihari_seba_beddha_id',
     ];
     
     public function sebaMaster()
