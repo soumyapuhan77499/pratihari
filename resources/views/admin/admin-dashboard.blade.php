@@ -6,8 +6,14 @@
      <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
-
+        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+          
     <style>
+        #custom-calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
         .card {
             border: none;
             border-radius: 1rem;
@@ -247,6 +253,17 @@
             </div>
         </div>
 
+        <div class="col-lg-12 mb-4">
+            <div class="card custom-card">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-calendar-event me-2"></i>Custom Calendar
+                </div>
+                <div class="card-body">
+                    <div id="custom-calendar"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 @endsection
 
@@ -345,4 +362,28 @@
 
         });
     </script>
+
+     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var calendarEl = document.getElementById('custom-calendar');
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    height: 500,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    events: [
+                        // Example events, replace or load dynamically as needed
+                        {
+                            title: 'Sample Event',
+                            start: new Date().toISOString().slice(0,10)
+                        }
+                    ]
+                });
+                calendar.render();
+            });
+        </script>
 @endsection

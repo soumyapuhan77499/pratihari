@@ -72,8 +72,8 @@ class MasterNijogaSebaController extends Controller
 
     public function pratihariSebaBeddha()
     {
-        $beddhas = PratihariBeddhaMaster::all(); // Fetch all Beddha names
-        $sebas = PratihariSebaMaster::all(); // Fetch all Seba names
+        $beddhas = PratihariBeddhaMaster::all(); // Fetch all Beddha namesw
+        $sebas = PratihariSebaMaster::where('status','active')->get(); // Fetch all Seba names
 
         return view('admin.master-seba-beddha-assign', compact('beddhas','sebas'));
     }
@@ -116,7 +116,7 @@ class MasterNijogaSebaController extends Controller
             // Insert multiple rows for each selected Beddha
             foreach ($request->beddha_name as $beddha_id) {
                 PratihariSebaBeddhaAssign::create([
-                    'seba_id' => $request->seba_name,
+                     'seba_id' => $request->seba_name,
                     'beddha_id' => $beddha_id
                 ]);
             }
@@ -128,5 +128,4 @@ class MasterNijogaSebaController extends Controller
             return redirect()->back()->with('error', 'Something went wrong! ' . $e->getMessage());
         }
     }
-
 }
