@@ -40,7 +40,6 @@ public function getBeddhaBySeba($seba_id)
 public function saveSeba(Request $request)
 {
     try {
-        $nijogaId = $request->nijoga_type;
         $sebaIds = $request->seba_id;
         $beddhaIds = $request->beddha_id ?? [];
         $pratihariId = $request->pratihari_id;
@@ -58,7 +57,6 @@ public function saveSeba(Request $request)
 
             PratihariSeba::create([
                 'pratihari_id' => $pratihariId,
-                'nijoga_id' => $nijogaId,
                 'seba_id' => $sebaId,
                 'beddha_id' => $beddhaIdsString,
             ]);
