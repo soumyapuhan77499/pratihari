@@ -177,6 +177,28 @@
             </div>
         </div>
 
+        <div class="col-lg-4 mb-4">
+            <div class="card custom-card">
+                <div class="card-header bg-primary text-white">
+                    <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ route('admin.pratihari.filterByName') }}">
+                        <div class="mb-3">
+                            <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
+                                <option value="">-- Select Pratihari Name --</option>
+                                @foreach($profile_name as $profile)
+                                    <option value="{{ $profile->pratihari_id }}">
+                                        {{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
          <div class="col-lg-12 mb-4">
             <div class="card custom-card">
                 <div class="card-header bg-primary text-white">

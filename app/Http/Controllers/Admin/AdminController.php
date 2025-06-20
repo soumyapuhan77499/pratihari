@@ -85,6 +85,7 @@ class AdminController extends Controller
     ->where('status', 'active')
     ->count();
 
+        $profile_name = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
 
         $user = Auth::user();
 
@@ -110,6 +111,7 @@ class AdminController extends Controller
             'pendingProfile',
             'todayApplication',
             'profiles',
+            'profile_name'
         ));
     }
 
