@@ -82,8 +82,8 @@ class AdminController extends Controller
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
 
         $todayApplication = PratihariApplication::whereDate('created_at', Carbon::today())
-    ->where('status', 'active')
-    ->count();
+        ->where('status', 'active')
+        ->count();
 
         $profile_name = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
 
@@ -219,38 +219,37 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-   public function sebaDate(Request $request)
-{
-    $pratihariId = $request->input('pratihari_id');
-    $events = [];
+    public function sebaDate(Request $request)
+    {
+        $pratihariId = $request->input('pratihari_id');
+        $events = [];
 
-    if ($pratihariId) {
-        $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
+        if ($pratihariId) {
+            $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
 
-        foreach ($sebas as $seba) {
-            $beddhaIds = explode(',', $seba->beddha_id); // handle comma-separated values
+            foreach ($sebas as $seba) {
+                $beddhaIds = $seba->beddha_id; // already array from accessor
 
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId); // sanitize
+                foreach ($beddhaIds as $beddhaId) {
+                    $beddhaId = (int) trim($beddhaId);
 
-                if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    // Start date offset based on beddha ID (example logic)
-                    $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
+                    if ($beddhaId >= 1 && $beddhaId <= 47) {
+                        $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
 
-                    for ($i = 0; $i < 10; $i++) {
-                        $date = $startDate->copy()->addDays($i * 47);
+                        for ($i = 0; $i < 10; $i++) {
+                            $date = $startDate->copy()->addDays($i * 47);
 
-                        $events[] = [
-                            'title' => "Working Day (Beddha ID $beddhaId)",
-                            'start' => $date->toDateString(),
-                        ];
+                            $events[] = [
+                                'title' => "Working Day (Beddha ID $beddhaId)",
+                                'start' => $date->toDateString(),
+                            ];
+                        }
                     }
                 }
             }
         }
-    }
 
-    return response()->json($events);
-}
-    
+        return response()->json($events);
+    }
+  
 }
