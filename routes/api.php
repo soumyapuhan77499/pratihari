@@ -42,5 +42,3 @@ Route::middleware('auth:sanctum')->post('/start-seba', [PratihariSebaApiControll
 Route::middleware('auth:sanctum')->get('/pratihari/status', [StatusController::class, 'checkCompletionStatus']);
 
 Route::get('/pratihari-notice', [PratihariNoticeController::class, 'getNotice']);
-
-
