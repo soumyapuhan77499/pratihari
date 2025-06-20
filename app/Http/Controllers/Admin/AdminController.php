@@ -235,10 +235,9 @@ class AdminController extends Controller
                 $beddhaId = (int) trim($beddhaId);
 
                 if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    $startDate = Carbon::create(2025, 7, 1)->addDays($beddhaId - 1);
+                    $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
                     $endDate = Carbon::create(2030, 12, 31);
                     $nextDate = $startDate->copy();
-
                     while ($nextDate->lte($endDate)) {
                         $events[] = [
                             'title' => "Beddha-$beddhaId",
