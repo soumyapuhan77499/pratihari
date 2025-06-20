@@ -32,13 +32,12 @@ Route::middleware('auth:sanctum')->post('/save-occupation', [PratihariOccupation
 Route::middleware('auth:sanctum')->post('/save-socialmedia', [PratihariSocialMediaApiController::class, 'saveSocialMedia']);
 Route::middleware('auth:sanctum')->get('/get-socialmedia', [PratihariSocialMediaApiController::class, 'getSocialMedia']);
 Route::middleware('auth:sanctum')->post('/save-seba', [PratihariSebaApiController::class, 'saveSeba']);
-
+Route::middleware('auth:sanctum')->post('/end-seba', [PratihariSebaApiController::class, 'endSeba']);
 
 Route::get('/nijogas', [PratihariSebaApiController::class, 'getNijogas']);
 Route::get('/sebas/{nijoga_id}', [PratihariSebaApiController::class, 'getSebaByNijoga']);
 Route::get('/beddhas', [PratihariSebaApiController::class, 'getBeddha']);
 Route::middleware('auth:sanctum')->post('/start-seba', [PratihariSebaApiController::class, 'startSeba']);
-
 
 Route::middleware('auth:sanctum')->get('/pratihari/status', [StatusController::class, 'checkCompletionStatus']);
 
