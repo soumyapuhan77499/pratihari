@@ -7,6 +7,7 @@
     <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         #custom-calendar {
@@ -215,6 +216,23 @@
                 </div>
             </div>
         </div>
+        <!-- Modal -->
+        <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="eventModalLabel">Seba Details</h5>
+                        <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Seba Name:</strong> <span id="modalSebaName"></span></p>
+                        <p><strong>Beddha ID:</strong> <span id="modalBeddhaId"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="col-lg-12 mb-3">
             <div class="card custom-card"
@@ -319,6 +337,7 @@
     <script src="{{ asset('assets/js/table-data.js') }}"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
     <script>
@@ -398,43 +417,51 @@
         });
     </script>
 
-    <!-- FullCalendar Script -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('custom-calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                height: 500,
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                },
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const pratihariId = urlParams.get('pratihari_id');
+ <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('custom-calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 500,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: function (fetchInfo, successCallback, failureCallback) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const pratihariId = urlParams.get('pratihari_id');
 
-                    if (pratihariId) {
-                        fetch(
-                                `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`)
-
-                            .then(response => {
-                                if (!response.ok) throw new Error("Failed to load events");
-                                return response.json();
-                            })
-                            .then(data => successCallback(data))
-                            .catch(error => {
-                                console.error("Error loading events:", error);
-                                failureCallback(error);
-                            });
-                    } else {
-                        successCallback([]);
-                    }
+                if (pratihariId) {
+                    fetch(`{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Failed to load events");
+                            return response.json();
+                        })
+                        .then(data => successCallback(data))
+                        .catch(error => {
+                            console.error("Error loading events:", error);
+                            failureCallback(error);
+                        });
+                } else {
+                    successCallback([]);
                 }
-            });
+            },
+            eventClick: function (info) {
+                const sebaName = info.event.extendedProps.sebaName;
+                const beddhaId = info.event.extendedProps.beddhaId;
 
-            calendar.render();
+                document.getElementById('modalSebaName').innerText = sebaName;
+                document.getElementById('modalBeddhaId').innerText = beddhaId;
+
+                const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+                modal.show();
+            }
         });
-    </script>
+
+        calendar.render();
+    });
+</script>
+
 @endsection

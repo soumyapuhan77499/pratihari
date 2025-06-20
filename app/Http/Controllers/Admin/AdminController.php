@@ -218,7 +218,8 @@ class AdminController extends Controller
 
         return redirect()->route('admin.AdminLogin');
     }
-public function sebaDate(Request $request)
+
+   public function sebaDate(Request $request)
 {
     $pratihariId = $request->input('pratihari_id');
     $events = [];
@@ -228,7 +229,7 @@ public function sebaDate(Request $request)
 
         foreach ($sebas as $seba) {
             $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $beddhaIds = $seba->beddha_id; // Already an array from accessor
+            $beddhaIds = $seba->beddha_id;
 
             foreach ($beddhaIds as $beddhaId) {
                 $beddhaId = (int) trim($beddhaId);
@@ -240,8 +241,12 @@ public function sebaDate(Request $request)
 
                     while ($nextDate->lte($endDate)) {
                         $events[] = [
-                            'title' => "$sebaName (Beddha-$beddhaId)",
+                            'title' => "Beddha-$beddhaId",
                             'start' => $nextDate->toDateString(),
+                            'extendedProps' => [
+                                'sebaName' => $sebaName,
+                                'beddhaId' => $beddhaId
+                            ]
                         ];
                         $nextDate->addDays(47);
                     }
@@ -252,6 +257,7 @@ public function sebaDate(Request $request)
 
     return response()->json($events);
 }
+
 
 
 
