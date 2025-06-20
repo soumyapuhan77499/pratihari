@@ -172,14 +172,14 @@ class PratihariSebaApiController extends Controller
         ]);
 
         $pratihariId = $user->pratihari_id;
-        $now = Carbon::now();
+        $now = Carbon::now('Asia/Kolkata');
 
         $record = PratihariSebaManagement::create([
             'pratihari_id' => $pratihariId,
             'seba_id'      => $request->seba_id,
             'beddha_id'    => $request->beddha_id,
             'date'         => $now->toDateString(),
-            'start_time'   => $now->toTimeString(),
+            'start_time'   => $now->format('H:i:s'),
             'seba_status'  => 'started',
         ]);
 
