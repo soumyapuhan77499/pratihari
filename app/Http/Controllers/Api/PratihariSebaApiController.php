@@ -166,11 +166,6 @@ class PratihariSebaApiController extends Controller
             return response()->json(['error' => 'User not authenticated'], 400);
         }
 
-        $request->validate([
-            'seba_id' => 'required|integer',
-            'beddha_id' => 'required|integer',
-        ]);
-
         $pratihariId = $user->pratihari_id;
         $now = Carbon::now('Asia/Kolkata');
         $today = $now->toDateString();
@@ -205,5 +200,42 @@ class PratihariSebaApiController extends Controller
             'data' => $record
         ], 200);
     }
+
+    public function endSeba(Request $request)
+{
+    $user = Auth::user();
+
+    if (!$user) {
+        return response()->json(['error' => 'User not authenticated'], 400);
+    }
+
+    $pratihariId = $user->pratihari_id;
+    $today = Carbon::now('Asia/Kolkata')->toDateString();
+
+    $record = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+        ->where('seba_id', $request->seba_id)
+        ->where('beddha_id', $request->beddha_id)
+        ->where('date', $today)
+        ->where('seba_status', 'started')
+        ->first();
+
+    if (!$record) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Seba already started for this Beddha and Seba today.' 
+        ], 400);
+    }
+
+    $record->update([
+        'end_time' => Carbon::now('Asia/Kolkata')->format('H:i:s'),
+        'seba_status' => 'completed',
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Seba ended successfully.',
+        'data' => $record
+    ],200);
+}
 
 }
