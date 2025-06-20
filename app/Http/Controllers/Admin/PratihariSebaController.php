@@ -21,10 +21,8 @@ public function pratihariSeba()
         ->select('master__seba.id', 'master__seba.seba_name')
         ->get();
 
-    // Optionally get the Nijoga name as well to display
-    $nijogaName = \App\Models\PratihariNijogaMaster::find($nijogaId)->nijoga_name ?? 'Nijoga 1';
-
-    return view('admin.pratihari-seba-details', compact('sebas', 'nijogaName', 'nijogaId'));
+   
+    return view('admin.pratihari-seba-details', compact('sebas'));
 }
 
 
