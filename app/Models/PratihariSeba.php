@@ -14,7 +14,14 @@ class PratihariSeba extends Model
     protected $fillable = [
         'pratihari_id',
         'nijoga_id',
-        'seba_id',
+        'badadwara_id',
+        'dakhini_id',
+        'dhukudi_id	',
+        'garudadwara_pratihari_id',
+        'bhogamandap_pratihari_id',
+        'dwaraghara_pratihari_id',
+        'jay_bijay_dwara_id',
+        'singha_dwara_pratihari_seba_id',
         'beddha_id',
     ];
     
@@ -27,7 +34,6 @@ class PratihariSeba extends Model
     {
         return $this->belongsTo(PratihariNijogaMaster::class, 'nijoga_id', 'id');
     }
-
 
     public function beddhaMaster()
     {

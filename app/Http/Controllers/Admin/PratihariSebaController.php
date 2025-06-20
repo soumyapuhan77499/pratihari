@@ -40,37 +40,53 @@ public function getBeddhaBySeba($seba_id)
 }
 
 
-    public function saveSeba(Request $request)
-    {
-        try {
-            $nijogaId = $request->nijoga_type;
-            $sebaIds = $request->seba_id;
-            $beddhaIds = $request->beddha_id ?? []; // Now correctly structured
-            $pratihariId = $request->pratihari_id;
+  public function saveSeba(Request $request)
+{
+    try {
+        $nijogaId = $request->nijoga_type;
+        $sebaIds = $request->seba_id;
+        $beddhaIds = $request->beddha_id ?? [];
+        $pratihariId = $request->pratihari_id;
 
-            foreach ($sebaIds as $sebaId) {
-                // Get corresponding Beddha IDs for this Seba ID
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-                $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
+        foreach ($sebaIds as $sebaId) {
+            // Get corresponding Beddha IDs for this Seba ID
+            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+            $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
-                PratihariSeba::create([
-                    'pratihari_id' => $pratihariId,
-                    'nijoga_id' => $nijogaId,
-                    'seba_id' => $sebaId,
-                    'beddha_id' => $beddhaIdsString, // Now correctly saves only related beddhas
-                ]);
+            // Map seba ID to dynamic fields in database
+            $sebaFields = [
+                1 => 'badadwara_id',
+                2 => 'dakhini_id',
+                3 => 'dhukudi_id',
+                4 => 'garudadwara_pratihari_id',
+                5 => 'bhogamandap_pratihari_id',
+                6 => 'dwaraghara_pratihari_id',
+                7 => 'jay_bijay_dwara_id',
+                8 => 'singha_dwara_pratihari_seba_id',
+            ];
+
+            $data = [
+                'pratihari_id' => $pratihariId,
+                'nijoga_id' => $nijogaId,
+                'beddha_id' => $beddhaIdsString,
+            ];
+
+            if (array_key_exists($sebaId, $sebaFields)) {
+                $data[$sebaFields[$sebaId]] = $sebaId;
             }
 
-            return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])->with('success', 'Pratihari Seba details saved successfully');
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+            PratihariSeba::create($data);
         }
 
+        return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
+                         ->with('success', 'Pratihari Seba details saved successfully');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return redirect()->back()->withErrors($e->validator)->withInput();
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
+}
 
     public function edit($pratihari_id)
     {
