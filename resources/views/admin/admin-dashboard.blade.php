@@ -183,7 +183,7 @@
                     <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
                 </div>
                 <div class="card-body">
-                    <form method="GET" action="{{ route('admin.pratihari.filterByName') }}">
+                    <form method="GET" action="{{ route('admin.sebaDate') }}">
                         <div class="mb-3">
                             <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
                                 <option value="">-- Select Pratihari Name --</option>
