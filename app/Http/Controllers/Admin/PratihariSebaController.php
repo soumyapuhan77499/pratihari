@@ -16,9 +16,8 @@ class PratihariSebaController extends Controller
    // Controller methods
 public function pratihariSeba()
 {
-    $nijogaId = 4;
 
-    $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijogaId)
+    $sebas = PratihariNijogaSebaAssign::where('status', 'active')
         ->join('master__seba', 'master__nijoga_seba_assign.seba_id', '=', 'master__seba.id')
         ->select('master__seba.id', 'master__seba.seba_name')
         ->get();
@@ -108,7 +107,7 @@ public function saveSeba(Request $request)
             $sebaNames[$seba_id] = PratihariSebaMaster::where('id', $seba_id)->value('seba_name');
         }
 
-        $sebas = PratihariSebaMaster::all();
+        $sebas = PratihariSebaMaster::where('status','active')->get();
 
         return view('admin.update-seba-details', compact(
             'pratihari_id',
