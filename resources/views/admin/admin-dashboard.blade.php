@@ -388,25 +388,32 @@
 
      <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var calendarEl = document.getElementById('custom-calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    height: 500,
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    },
-                    events: [
-                        // Example events, replace or load dynamically as needed
-                        {
-                            title: 'Sample Event',
-                            start: new Date().toISOString().slice(0,10)
-                        }
-                    ]
-                });
-                calendar.render();
-            });
-        </script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('custom-calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            height: 500,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: function(fetchInfo, successCallback, failureCallback) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const pratihariId = urlParams.get('pratihari_id');
+
+                if (pratihariId) {
+                    fetch(`{{ route('admin.sebaDate') }}?pratihari_id=${pratihariId}`)
+                        .then(response => response.json())
+                        .then(data => successCallback(data))
+                        .catch(error => failureCallback(error));
+                } else {
+                    successCallback([]);
+                }
+            }
+        });
+        calendar.render();
+    });
+</script>
+
 @endsection

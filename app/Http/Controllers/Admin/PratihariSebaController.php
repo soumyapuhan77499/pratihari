@@ -14,57 +14,57 @@ use App\Models\PratihariBeddhaMaster;
 class PratihariSebaController extends Controller
 {
    // Controller methods
-public function pratihariSeba()
-{
-    $sebas = PratihariSebaMaster::where('status', 'active')->get(); 
-        
-    return view('admin.pratihari-seba-details', compact('sebas'));
-}
+    public function pratihariSeba()
+    {
+        $sebas = PratihariSebaMaster::where('status', 'active')->get(); 
+            
+        return view('admin.pratihari-seba-details', compact('sebas'));
+    }
 
-public function getBeddhaBySeba($seba_id)
-{
-    $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-        ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
-        ->select('master__beddha.id', 'master__beddha.beddha_name')
-        ->get();
-    return response()->json($beddhas);
-}
+    public function getBeddhaBySeba($seba_id)
+    {
+        $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+            ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
+            ->select('master__beddha.id', 'master__beddha.beddha_name')
+            ->get();
+        return response()->json($beddhas);
+    }
 
-public function saveSeba(Request $request)
-{
-    try {
-        $sebaIds = $request->seba_id;
-        $beddhaIds = $request->beddha_id ?? [];
-        $pratihariId = $request->pratihari_id;
+    public function saveSeba(Request $request)
+    {
+        try {
+            $sebaIds = $request->seba_id;
+            $beddhaIds = $request->beddha_id ?? [];
+            $pratihariId = $request->pratihari_id;
 
-        foreach ($sebaIds as $sebaId) {
-            // Get corresponding Beddha IDs for this Seba ID
-            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+            foreach ($sebaIds as $sebaId) {
+                // Get corresponding Beddha IDs for this Seba ID
+                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
 
-            // Skip if no Beddha IDs are provided
-            if (empty($beddhaList)) {
-                continue;
+                // Skip if no Beddha IDs are provided
+                if (empty($beddhaList)) {
+                    continue;
+                }
+
+                $beddhaIdsString = implode(',', $beddhaList);
+
+                PratihariSeba::create([
+                    'pratihari_id' => $pratihariId,
+                    'seba_id' => $sebaId,
+                    'beddha_id' => $beddhaIdsString,
+                ]);
             }
 
-            $beddhaIdsString = implode(',', $beddhaList);
+            return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
+                            ->with('success', 'Pratihari Seba details saved successfully');
 
-            PratihariSeba::create([
-                'pratihari_id' => $pratihariId,
-                'seba_id' => $sebaId,
-                'beddha_id' => $beddhaIdsString,
-            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
-                         ->with('success', 'Pratihari Seba details saved successfully');
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()->withErrors($e->validator)->withInput();
-
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
-}
 
     public function edit($pratihari_id)
     {

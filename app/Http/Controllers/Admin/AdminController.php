@@ -218,5 +218,39 @@ class AdminController extends Controller
 
         return redirect()->route('admin.AdminLogin');
     }
+
+   public function sebaDate(Request $request)
+{
+    $pratihariId = $request->input('pratihari_id');
+    $events = [];
+
+    if ($pratihariId) {
+        $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
+
+        foreach ($sebas as $seba) {
+            $beddhaIds = explode(',', $seba->beddha_id); // handle comma-separated values
+
+            foreach ($beddhaIds as $beddhaId) {
+                $beddhaId = (int) trim($beddhaId); // sanitize
+
+                if ($beddhaId >= 1 && $beddhaId <= 47) {
+                    // Start date offset based on beddha ID (example logic)
+                    $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
+
+                    for ($i = 0; $i < 10; $i++) {
+                        $date = $startDate->copy()->addDays($i * 47);
+
+                        $events[] = [
+                            'title' => "Working Day (Beddha ID $beddhaId)",
+                            'start' => $date->toDateString(),
+                        ];
+                    }
+                }
+            }
+        }
+    }
+
+    return response()->json($events);
+}
     
 }
