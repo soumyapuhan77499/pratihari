@@ -39,8 +39,7 @@ public function getBeddhaBySeba($seba_id)
     return response()->json($beddhas);
 }
 
-
-  public function saveSeba(Request $request)
+public function saveSeba(Request $request)
 {
     try {
         $nijogaId = $request->nijoga_type;
@@ -48,40 +47,31 @@ public function getBeddhaBySeba($seba_id)
         $beddhaIds = $request->beddha_id ?? [];
         $pratihariId = $request->pratihari_id;
 
-        // Map seba ID to corresponding column
-        $sebaFields = [
-            1 => 'badadwara_beddha_id',
-            2 => 'dakhini_beddha_id',
-            3 => 'dhukudi_beddha_id',
-            4 => 'garudadwara_beddha_id',
-            5 => 'bhogamandap_beddha_id',
-            6 => 'dwaraghara_beddha_id',
-            7 => 'jay_bijay_dwara_beddha_id',
-            8 => 'singha_dwara_pratihari_seba_beddha_id',
-        ];
-
-        // Prepare base data
-        $data = [
-            'pratihari_id' => $pratihariId,
-            'nijoga_id' => $nijogaId,
-        ];
-
-        // Loop through each seba ID and set corresponding beddha_id
         foreach ($sebaIds as $sebaId) {
-            if (array_key_exists($sebaId, $sebaFields)) {
-                $field = $sebaFields[$sebaId];
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-                $data[$field] = !empty($beddhaList) ? implode(',', $beddhaList) : null;
-            }
-        }
+            // Get corresponding Beddha IDs for this Seba ID
+            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
 
-        PratihariSeba::create($data);
+            // Skip if no Beddha IDs are provided
+            if (empty($beddhaList)) {
+                continue;
+            }
+
+            $beddhaIdsString = implode(',', $beddhaList);
+
+            PratihariSeba::create([
+                'pratihari_id' => $pratihariId,
+                'nijoga_id' => $nijogaId,
+                'seba_id' => $sebaId,
+                'beddha_id' => $beddhaIdsString,
+            ]);
+        }
 
         return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
                          ->with('success', 'Pratihari Seba details saved successfully');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
         return redirect()->back()->withErrors($e->validator)->withInput();
+
     } catch (\Exception $e) {
         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
