@@ -218,14 +218,12 @@ class AdminController extends Controller
 
         return redirect()->route('admin.AdminLogin');
     }
-    
 public function sebaDate(Request $request)
 {
     $pratihariId = $request->input('pratihari_id');
     $events = [];
 
     if ($pratihariId) {
-        // Load Seba with sebaMaster relationship
         $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
 
         foreach ($sebas as $seba) {
@@ -237,14 +235,15 @@ public function sebaDate(Request $request)
 
                 if ($beddhaId >= 1 && $beddhaId <= 47) {
                     $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
+                    $endDate = Carbon::create(2030, 12, 31);
+                    $nextDate = $startDate->copy();
 
-                    for ($i = 0; $i < 10; $i++) {
-                        $date = $startDate->copy()->addDays($i * 47);
-
+                    while ($nextDate->lte($endDate)) {
                         $events[] = [
-                            'title' => "$sebaName (Beddha ID $beddhaId)",
-                            'start' => $date->toDateString(),
+                            'title' => "$sebaName (Beddha-$beddhaId)",
+                            'start' => $nextDate->toDateString(),
                         ];
+                        $nextDate->addDays(47);
                     }
                 }
             }
@@ -253,6 +252,7 @@ public function sebaDate(Request $request)
 
     return response()->json($events);
 }
+
 
 
 }
