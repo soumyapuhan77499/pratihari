@@ -218,17 +218,19 @@ class AdminController extends Controller
 
         return redirect()->route('admin.AdminLogin');
     }
-
- public function sebaDate(Request $request)
+    
+public function sebaDate(Request $request)
 {
     $pratihariId = $request->input('pratihari_id');
     $events = [];
 
     if ($pratihariId) {
-        $sebas = PratihariSeba::where('pratihari_id', $pratihariId)->get();
+        // Load Seba with sebaMaster relationship
+        $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
 
         foreach ($sebas as $seba) {
-            $beddhaIds = $seba->beddha_id; // Already an array via accessor
+            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+            $beddhaIds = $seba->beddha_id; // Already an array from accessor
 
             foreach ($beddhaIds as $beddhaId) {
                 $beddhaId = (int) trim($beddhaId);
@@ -240,7 +242,7 @@ class AdminController extends Controller
                         $date = $startDate->copy()->addDays($i * 47);
 
                         $events[] = [
-                            'title' => "Working Day (Beddha ID $beddhaId)",
+                            'title' => "$sebaName (Beddha ID $beddhaId)",
                             'start' => $date->toDateString(),
                         ];
                     }
@@ -251,4 +253,6 @@ class AdminController extends Controller
 
     return response()->json($events);
 }
+
+
 }
