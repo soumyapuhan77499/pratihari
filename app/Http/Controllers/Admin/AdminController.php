@@ -238,9 +238,10 @@ class AdminController extends Controller
                     $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
                     $endDate = Carbon::create(2030, 12, 31);
                     $nextDate = $startDate->copy();
+
                     while ($nextDate->lte($endDate)) {
                         $events[] = [
-                            'title' => "Beddha-$beddhaId",
+                            'title' => "$sebaName - $beddhaId",
                             'start' => $nextDate->toDateString(),
                             'extendedProps' => [
                                 'sebaName' => $sebaName,

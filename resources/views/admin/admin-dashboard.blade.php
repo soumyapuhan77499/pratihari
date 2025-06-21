@@ -316,8 +316,6 @@
             </div>
         </div>
 
-
-
     </div>
 @endsection
 
@@ -418,51 +416,52 @@
         });
     </script>
 
- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const calendarEl = document.getElementById('custom-calendar');
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            height: 500,
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-            },
-            events: function (fetchInfo, successCallback, failureCallback) {
-                const urlParams = new URLSearchParams(window.location.search);
-                const pratihariId = urlParams.get('pratihari_id');
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('custom-calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 500,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const pratihariId = urlParams.get('pratihari_id');
 
-                if (pratihariId) {
-                    fetch(`{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`)
-                        .then(response => {
-                            if (!response.ok) throw new Error("Failed to load events");
-                            return response.json();
-                        })
-                        .then(data => successCallback(data))
-                        .catch(error => {
-                            console.error("Error loading events:", error);
-                            failureCallback(error);
-                        });
-                } else {
-                    successCallback([]);
+                    if (pratihariId) {
+                        fetch(
+                                `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`)
+                            .then(response => {
+                                if (!response.ok) throw new Error("Failed to load events");
+                                return response.json();
+                            })
+                            .then(data => successCallback(data))
+                            .catch(error => {
+                                console.error("Error loading events:", error);
+                                failureCallback(error);
+                            });
+                    } else {
+                        successCallback([]);
+                    }
+                },
+                eventClick: function(info) {
+                    const sebaName = info.event.extendedProps.sebaName;
+                    const beddhaId = info.event.extendedProps.beddhaId;
+
+                    document.getElementById('modalSebaName').innerText = sebaName;
+                    document.getElementById('modalBeddhaId').innerText = beddhaId;
+
+                    const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+                    modal.show();
                 }
-            },
-            eventClick: function (info) {
-                const sebaName = info.event.extendedProps.sebaName;
-                const beddhaId = info.event.extendedProps.beddhaId;
 
-                document.getElementById('modalSebaName').innerText = sebaName;
-                document.getElementById('modalBeddhaId').innerText = beddhaId;
+            });
 
-                const modal = new bootstrap.Modal(document.getElementById('eventModal'));
-                modal.show();
-            }
+            calendar.render();
         });
-
-        calendar.render();
-    });
-</script>
-
+    </script>
 @endsection
