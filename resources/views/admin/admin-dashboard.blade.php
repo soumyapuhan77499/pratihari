@@ -23,17 +23,17 @@
         .fc .fc-toolbar-title {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #0d6efd;
+            color: #f8c66d;
         }
 
         .fc-button {
-            background-color: #0d6efd !important;
+            background-color: #f8c66d !important;
             border: none !important;
             border-radius: 6px !important;
         }
 
         .fc-button-primary:not(:disabled):hover {
-            background-color: #0b5ed7 !important;
+            background-color: #f8c66d !important;
         }
 
         .fc-event {
