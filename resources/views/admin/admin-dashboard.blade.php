@@ -244,8 +244,8 @@
 
         <div class="row">
             <!-- Filter by Pratihari Name -->
-            <div class="col-lg-4 mb-4">
-                <div class="card custom-card">
+            <div class="col-lg-4 mb-4 mx-auto d-flex justify-content-center">
+                <div class="card custom-card w-100">
                     <div class="card-header text-white" style="background-color: #f8c66d">
                         <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
                     </div>
@@ -257,8 +257,7 @@
                                     @foreach ($profile_name as $profile)
                                         <option value="{{ $profile->pratihari_id }}"
                                             {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
-                                            {{ $profile->first_name }} {{ $profile->middle_name }}
-                                            {{ $profile->last_name }}
+                                            {{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
                                         </option>
                                     @endforeach
                                 </select>
