@@ -245,7 +245,7 @@
             <!-- Calendar -->
             <div class="col-lg-12 mb-4">
                 <div class="card custom-card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header text-white" style="background-color: #f8c66d">
                         <i class="bi bi-calendar-event me-2"></i>Custom Calendar
                     </div>
                     <div class="card-body">
