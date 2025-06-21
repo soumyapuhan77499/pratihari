@@ -13,7 +13,7 @@
         #custom-calendar {
             max-width: 100%;
             margin: 0 auto;
-            height: 900px;
+            height: 900px !important;
             background: #ffffff;
             border-radius: 12px;
             padding: 20px;
@@ -37,11 +37,11 @@
         }
 
         .fc-event {
-            background-color: #7d040a !important;
+            background-color: #e96a01 !important;
             border: none !important;
             border-radius: 4px !important;
             padding: 2px 4px;
-            font-size: 0.705rem;
+            font-size: 0.685rem;
         }
 
         .fc-daygrid-day-number {
