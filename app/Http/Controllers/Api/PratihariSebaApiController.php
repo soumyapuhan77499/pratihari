@@ -202,40 +202,96 @@ class PratihariSebaApiController extends Controller
     }
 
     public function endSeba(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    if (!$user) {
-        return response()->json(['error' => 'User not authenticated'], 400);
-    }
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 400);
+        }
 
-    $pratihariId = $user->pratihari_id;
-    $today = Carbon::now('Asia/Kolkata')->toDateString();
+        $pratihariId = $user->pratihari_id;
+        $today = Carbon::now('Asia/Kolkata')->toDateString();
 
-    $record = PratihariSebaManagement::where('pratihari_id', $pratihariId)
-        ->where('seba_id', $request->seba_id)
-        ->where('beddha_id', $request->beddha_id)
-        ->where('date', $today)
-        ->where('seba_status', 'started')
-        ->first();
+        $record = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+            ->where('seba_id', $request->seba_id)
+            ->where('beddha_id', $request->beddha_id)
+            ->where('date', $today)
+            ->where('seba_status', 'started')
+            ->first();
 
-    if (!$record) {
+        if (!$record) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Seba already started for this Beddha and Seba today.' 
+            ], 400);
+        }
+
+        $record->update([
+            'end_time' => Carbon::now('Asia/Kolkata')->format('H:i:s'),
+            'seba_status' => 'completed',
+        ]);
+
         return response()->json([
-            'status' => 'error',
-            'message' => 'Seba already started for this Beddha and Seba today.' 
-        ], 400);
+            'status' => 'success',
+            'message' => 'Seba ended successfully.',
+            'data' => $record
+        ],200);
     }
 
-    $record->update([
-        'end_time' => Carbon::now('Asia/Kolkata')->format('H:i:s'),
-        'seba_status' => 'completed',
-    ]);
+    public function sebaDate(Request $request)
+    {
+        try {
+            $pratihariId = $request->input('pratihari_id');
+            $events = [];
 
-    return response()->json([
-        'status' => 'success',
-        'message' => 'Seba ended successfully.',
-        'data' => $record
-    ],200);
-}
+            if ($pratihariId) {
+                $sebas = PratihariSeba::with('sebaMaster')
+                    ->where('pratihari_id', $pratihariId)
+                    ->get();
+
+                foreach ($sebas as $seba) {
+                    $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+                    $beddhaIds = $seba->beddha_id;
+
+                    foreach ($beddhaIds as $beddhaId) {
+                        $beddhaId = (int) trim($beddhaId);
+
+                        if ($beddhaId >= 1 && $beddhaId <= 47) {
+                            $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
+                            $endDate = Carbon::create(2030, 12, 31);
+                            $nextDate = $startDate->copy();
+
+                            while ($nextDate->lte($endDate)) {
+                                $events[] = [
+                                    'title' => "$sebaName - $beddhaId",
+                                    'start' => $nextDate->toDateString(),
+                                    'extendedProps' => [
+                                        'sebaName' => $sebaName,
+                                        'beddhaId' => $beddhaId
+                                    ]
+                                ];
+                                $nextDate->addDays(47);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Events fetched successfully.',
+                'data' => $events
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Error fetching seba dates: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Server Error. Please try again later.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
 }
