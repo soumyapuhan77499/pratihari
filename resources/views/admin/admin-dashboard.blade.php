@@ -14,6 +14,43 @@
             max-width: 100%;
             margin: 0 auto;
             height: 900px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        .fc-button {
+            background-color: #0d6efd !important;
+            border: none !important;
+            border-radius: 6px !important;
+        }
+
+        .fc-button-primary:not(:disabled):hover {
+            background-color: #0b5ed7 !important;
+        }
+
+        .fc-event {
+            background-color: #198754 !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 2px 4px;
+            font-size: 0.875rem;
+        }
+
+        .fc-daygrid-day-number {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .fc-daygrid-day {
+            background-color: #f8f9fa;
         }
 
         .card {
@@ -216,6 +253,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
         <!-- Modal -->
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
@@ -434,7 +472,8 @@
 
                     if (pratihariId) {
                         fetch(
-                                `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`)
+                                `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`
+                            )
                             .then(response => {
                                 if (!response.ok) throw new Error("Failed to load events");
                                 return response.json();
