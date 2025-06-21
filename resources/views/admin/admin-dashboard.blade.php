@@ -118,7 +118,7 @@
 
 @section('content')
     <div class="container">
-        <div class="row mb-4">
+        <div class="row mb-4 mt-4">
             <div class="col-lg-12">
                 <div class="card custom-card" style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); color: #100f0f;">
                     <div class="card-body d-flex align-items-center">
@@ -131,6 +131,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row">
             <!-- Active Users -->
             <div class="col-md-3">
