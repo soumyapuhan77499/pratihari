@@ -37,11 +37,11 @@
         }
 
         .fc-event {
-            background-color: #198754 !important;
+            background-color: #7d040a !important;
             border: none !important;
             border-radius: 4px !important;
             padding: 2px 4px;
-            font-size: 0.875rem;
+            font-size: 0.705rem;
         }
 
         .fc-daygrid-day-number {
