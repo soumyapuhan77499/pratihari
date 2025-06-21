@@ -215,12 +215,25 @@
                 </a>
             </div>
         </div>
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card custom-card" style="background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%); color: #1d1818;">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-calendar-event me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h4 class="mb-0" style="font-weight: bold;">Pratihari Seba Calendar</h4>
+                            <small>View and manage Seba assignments for Pratihari users below.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="row">
             <!-- Filter by Pratihari Name -->
             <div class="col-lg-4 mb-4">
                 <div class="card custom-card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header text-white" style="background-color: #f8c66d">
                         <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
                     </div>
                     <div class="card-body">
