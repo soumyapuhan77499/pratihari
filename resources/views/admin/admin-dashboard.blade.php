@@ -118,7 +118,19 @@
 
 @section('content')
     <div class="container">
-        <h2 class="mb-4">Pratihari Admin Dashboard</h2>
+        <div class="row mb-4">
+            <div class="col-lg-12">
+                <div class="card custom-card" style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); color: #fff;">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-speedometer2 me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h2 class="mb-0" style="font-weight: bold;">Pratihari Admin Dashboard</h2>
+                            <small>Welcome to the admin dashboard. Manage users, view statistics, and monitor activities here.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <!-- Active Users -->
             <div class="col-md-3">
