@@ -92,65 +92,61 @@
             <div class="card">
                 <div class="card-header">🛕 Assign Seba to Pratihari</div>
                 <div class="card-body">
-                    <form method="GET" action="{{ route('admin.PratihariSebaAssign') }}">
-                        <div class="row align-items-end">
-                            <div class="col-md-6">
-                                <label for="pratihari_id">Select Pratihari</label>
-                                <select name="pratihari_id" id="pratihari_id" class="form-control"
-                                    onchange="this.form.submit()">
-                                    <option value="">-- Select Pratihari --</option>
-                                    @foreach ($pratiharis as $pratihari_id => $name)
-                                        <option value="{{ $pratihari_id }}"
-                                            {{ request('pratihari_id') == $pratihari_id ? 'selected' : '' }}>
-                                            {{ $name }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                   <form method="GET" action="{{ route('admin.PratihariSebaAssign') }}">
+    <div class="row align-items-end">
+        <div class="col-md-6">
+            <label for="pratihari_id">Select Pratihari</label>
+            <select name="pratihari_id" id="pratihari_id" class="form-control" onchange="this.form.submit()">
+                <option value="">-- Select Pratihari --</option>
+                @foreach ($pratiharis as $id => $name)
+                    <option value="{{ $id }}" {{ request('pratihari_id') == $id ? 'selected' : '' }}>
+                        {{ $name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+</form>
+
+@if ($pratihari_id)
+<form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
+    @csrf
+    <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+
+    <div class="beddha-section mt-4">
+        <label class="section-title">📜 Assign Beddha to Seba</label>
+        <div class="checkbox-list" id="beddha_list">
+            @foreach ($sebas as $seba)
+                <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
+                <div class="beddha-group-row mb-4">
+                    <strong class="d-block mb-2">{{ $seba->seba_name }}:</strong>
+                    <div class="beddha-items d-flex flex-wrap gap-3">
+                        @foreach ($beddhas[$seba->id] ?? [] as $beddha)
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox"
+                                    name="beddha_id[{{ $seba->id }}][]"
+                                    value="{{ $beddha->id }}"
+                                    id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
+                                    {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
+                                    {{ $beddha->beddha_name }}
+                                </label>
                             </div>
-                        </div>
-                    </form>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
 
-                    @if ($pratihari_id)
-                        <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+    <div class="text-center">
+        <button type="submit" class="btn btn-lg mt-4 w-50 custom-gradient-btn text-white">
+            <i class="fa fa-save"></i> Submit
+        </button>
+    </div>
+</form>
+@endif
 
-                            <div class="beddha-section mt-4">
-                                <label class="section-title">📜 Assign Beddha to Seba</label>
-                                <div class="checkbox-list" id="beddha_list">
-                                    @foreach ($sebas as $seba)
-                                        {{-- Include seba_id[] to send to controller --}}
-                                        <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
-
-                                        <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
-                                            <strong class="d-block mb-2">{{ $seba->seba_name }}:</strong>
-                                            <div class="beddha-items d-flex flex-wrap gap-3">
-                                                @foreach ($beddhas[$seba->id] ?? [] as $beddha)
-                                                    <div class="form-check me-3">
-                                                        <input class="form-check-input" type="checkbox"
-                                                            name="beddha_id[{{ $seba->id }}][]"
-                                                            value="{{ $beddha->id }}"
-                                                            id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
-                                                            {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
-                                                        <label class="form-check-label"
-                                                            for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
-                                                            {{ $beddha->beddha_name }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-lg mt-4 w-50 custom-gradient-btn text-white">
-                                    <i class="fa fa-save"></i> Submit
-                                </button>
-                            </div>
-                        </form>
-                    @endif
 
 
                 </div>
