@@ -184,40 +184,44 @@ class PratihariSebaController extends Controller
             'sebaNames'
         ));
     }
+public function savePratihariAssignSeba(Request $request)
+{
+    try {
+        $sebaIds = $request->seba_id;
+        $beddhaIds = $request->beddha_id ?? [];
+        $pratihariId = $request->pratihari_id;
 
-    public function savePratihariAssignSeba(Request $request)
-    {
-        try {
-            $sebaIds = $request->seba_id;
-            $beddhaIds = $request->beddha_id ?? [];
-            $pratihariId = $request->pratihari_id;
+        foreach ($sebaIds as $sebaId) {
+            // Get corresponding Beddha IDs for this Seba ID
+            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
 
-            foreach ($sebaIds as $sebaId) {
-                // Get corresponding Beddha IDs for this Seba ID
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-
-                // Skip if no Beddha IDs are provided
-                if (empty($beddhaList)) {
-                    continue;
-                }
-
-                $beddhaIdsString = implode(',', $beddhaList);
-
-                PratihariSeba::create([
-                    'pratihari_id' => $pratihariId,
-                    'seba_id' => $sebaId,
-                    'beddha_id' => $beddhaIdsString,
-                ]);
+            // Skip if no Beddha IDs are provided
+            if (empty($beddhaList)) {
+                continue;
             }
 
-               return redirect()->back()->with('success', 'Assignments updated successfully!');
+            $beddhaIdsString = implode(',', $beddhaList);
 
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+            // Update if exists, else create new
+            PratihariSeba::updateOrCreate(
+                [
+                    'pratihari_id' => $pratihariId,
+                    'seba_id' => $sebaId,
+                ],
+                [
+                    'beddha_id' => $beddhaIdsString,
+                ]
+            );
         }
+
+        return redirect()->back()->with('success', 'Assignments updated successfully!');
+        
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return redirect()->back()->withErrors($e->validator)->withInput();
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
+}
 
 }
