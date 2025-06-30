@@ -63,56 +63,55 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-   public function getBeddha() 
-{
-    try {
-        // Step 1: Get all active sebas
-        $allSebas = PratihariSebaMaster::where('status', 'active')->get()->keyBy('id');
+    public function getBeddha() 
+    {
+        try {
+            // Step 1: Get all active sebas
+            $allSebas = PratihariSebaMaster::where('status', 'active')->get()->keyBy('id');
 
-        // Step 2: Get all beddhas
-        $allBeddhas = PratihariBeddhaMaster::all()->keyBy('id');
+            // Step 2: Get all beddhas
+            $allBeddhas = PratihariBeddhaMaster::all()->keyBy('id');
 
-        // Step 3: Get active assignments with beddha relation
-        $assignments = PratihariSebaBeddhaAssign::where('status', 'active')
-            ->with('beddha')
-            ->get();
+            // Step 3: Get active assignments with beddha relation
+            $assignments = PratihariSebaBeddhaAssign::where('status', 'active')
+                ->with('beddha')
+                ->get();
 
-        // Step 4: Group assignments by seba_id
-        $groupedAssignments = $assignments->groupBy('seba_id');
+            // Step 4: Group assignments by seba_id
+            $groupedAssignments = $assignments->groupBy('seba_id');
 
-        $result = [];
+            $result = [];
 
-        // Step 5: For each seba (including those without assignments)
-        foreach ($allSebas as $sebaId => $seba) {
-            $items = $groupedAssignments->get($sebaId, collect());
+            // Step 5: For each seba (including those without assignments)
+            foreach ($allSebas as $sebaId => $seba) {
+                $items = $groupedAssignments->get($sebaId, collect());
 
-            $result[] = [
-                'id' => $sebaId,
-                'name' => $seba->seba_name,
-                'bedha' => $items->map(function ($item) use ($sebaId) {
-                    return [
-                        'id' => $sebaId . '_' . $item->beddha->id,
-                        'name' => $item->beddha->beddha_name,
-                    ];
-                })->values()
-            ];
+                $result[] = [
+                    'id' => $sebaId,
+                    'name' => $seba->seba_name,
+                    'bedha' => $items->map(function ($item) use ($sebaId) {
+                        return [
+                            'id' => $sebaId . '_' . $item->beddha->id,
+                            'name' => $item->beddha->beddha_name,
+                        ];
+                    })->values()
+                ];
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Beddhas fetched successfully',
+                'data' => collect($result)->values()
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Beddhas fetched successfully',
-            'data' => collect($result)->values()
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 500,
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
-
 
     public function saveSeba(Request $request)
     {
