@@ -410,16 +410,7 @@
                                     </h4>
 
                                     @foreach ($sebaDetails as $seba)
-                                        <!-- Nijoga Section -->
-                                        <div class="profile-item d-flex align-items-center">
-                                            <i class="fas fa-user-shield text-primary me-2"></i>
-                                            <div>
-                                                <span class="profile-text fw-bold">Nijoga:</span>
-                                                <span
-                                                    class="profile-value">{{ $seba->nijogaMaster->nijoga_name ?? 'Not Available' }}</span>
-                                            </div>
-                                        </div>
-
+                                     
                                         <!-- Seba Name Section -->
                                         <div class="profile-item d-flex align-items-center">
                                             <i class="fas fa-praying-hands text-success me-2"></i>
@@ -430,7 +421,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Beddha Assigned Section -->
                                         <!-- Beddha Assigned Section -->
                                         <div class="profile-item d-flex align-items-center">
                                             <i class="fas fa-link text-danger me-2"></i>

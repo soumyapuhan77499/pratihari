@@ -138,319 +138,290 @@
             }
         }
 
-                /* General Styling */
-                .form-label {
-                    font-weight: bold;
-                    font-size: 16px;
-                }
-                .form-select, .form-control {
-                    height: 45px;
-                    border-radius: 6px;
-                }
-                
-                /* Sections Styling */
-                .seba-section, .beddha-section {
-                    margin-top: 20px;
-                    padding: 15px;
-                    background: #fff;
-                    border-radius: 10px;
-                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-                }
-                .section-title {
-                    font-size: 18px;
-                    font-weight: bold;
-                    display: block;
-                    margin-bottom: 10px;
-                }
-            
-                /* Checkbox List */
-                .checkbox-list {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                    gap: 10px;
-                    padding: 10px;
-                    background: #f9f9f9;
-                    border-radius: 8px;
-                    max-height: 200px;
-                    overflow-y: auto;
-                }
-                .form-check-input {
-                    transform: scale(1.2);
-                    cursor: pointer;
-                    margin-right: 5px;
-                }
-                .form-check-label {
-                    font-size: 15px;
-                }
-            
-                /* Button Styling */
-                .custom-gradient-btn {
-                    background: linear-gradient(135deg, #6a11cb, #2575fc);
-                    color: white;
-                    font-size: 18px;
-                    font-weight: bold;
-                    padding: 12px;
-                    border-radius: 8px;
-                    transition: 0.3s;
-                }
-                .custom-gradient-btn:hover {
-                    background: linear-gradient(135deg, #2575fc, #6a11cb);
-                    transform: scale(1.05);
-                }
+        /* General Styling */
+        .form-label {
+            font-weight: bold;
+            font-size: 16px;
+        }
 
+        .form-select,
+        .form-control {
+            height: 45px;
+            border-radius: 6px;
+        }
+
+        /* Sections Styling */
+        .seba-section,
+        .beddha-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Checkbox List */
+        .checkbox-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .form-check-input {
+            transform: scale(1.2);
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .form-check-label {
+            font-size: 15px;
+        }
+
+        /* Button Styling */
+        .custom-gradient-btn {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .custom-gradient-btn:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            transform: scale(1.05);
+        }
     </style>
 @endsection
 
 @section('content')
+    <!-- Profile Form -->
+    <div class="row">
+        <div class="col-12 mt-2">
+            <div class="card">
+                <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">🛕Pratihari
+                    Seba</div>
+                <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
 
-<!-- Profile Form -->
-<div class="row">
-    <div class="col-12 mt-2">
-        <div class="card">
-            <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">🛕Pratihari
-                Seba</div>
-            <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="profile" aria-selected="true">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="family" aria-selected="true">
+                            <i class="fas fa-users"></i> Family
+                        </a>
+                    </li>
 
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}"
-                        role="tab" aria-controls="profile" aria-selected="true">
-                        <i class="fas fa-user"></i> Profile
-                    </a>
-                </li>
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="family-tab" data-toggle="tab" href="{{ route('admin.pratihariFamily') }}"
-                        role="tab" aria-controls="family" aria-selected="true">
-                        <i class="fas fa-users"></i> Family
-                    </a>
-                </li>
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="id-card" aria-selected="false">
+                            <i class="fas fa-id-card"></i> ID Card
+                        </a>
+                    </li>
 
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="id-card-tab" data-toggle="tab" href="{{ route('admin.pratihariIdcard') }}"
-                        role="tab" aria-controls="id-card" aria-selected="false">
-                        <i class="fas fa-id-card"></i> ID Card
-                    </a>
-                </li>
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="address-tab" data-toggle="tab" href="{{ route('admin.pratihariAddress') }}"
-                        role="tab" aria-controls="address" aria-selected="false">
-                        <i class="fas fa-map-marker-alt"></i> Address
-                    </a>
-                </li>
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="occupation-tab" data-toggle="tab"
-                        href="{{ route('admin.pratihariOccupation') }}" role="tab" aria-controls="occupation"
-                        aria-selected="false">
-                        <i class="fas fa-briefcase"></i> Occupation
-                    </a>
-                </li>
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="address" aria-selected="false">
+                            <i class="fas fa-map-marker-alt"></i> Address
+                        </a>
+                    </li>
 
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="seba-details-tab" style="background-color: rgb(49, 49, 181);color: white"
-                        data-toggle="tab" href="{{ route('admin.pratihariSeba') }}" role="tab"
-                        aria-controls="seba-details" aria-selected="false">
-                        <i class="fas fa-cogs" style="color: white"></i> Seba
-                    </a>
-                </li>
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="occupation-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="occupation" aria-selected="false">
+                            <i class="fas fa-briefcase"></i> Occupation
+                        </a>
+                    </li>
 
-                <li class="nav-item col-12 col-sm-auto">
-                    <a class="nav-link" id="social-media-tab" data-toggle="tab"
-                        href="{{ route('admin.pratihariSocialMedia') }}" role="tab" aria-controls="social-media"
-                        aria-selected="false">
-                        <i class="fas fa-share-alt" style="margin-right: 2px"></i>Social Media
-                    </a>
-                </li>
-            </ul>
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="seba-details-tab" style="background-color: rgb(49, 49, 181);color: white"
+                            data-toggle="tab" href="#" role="tab" aria-controls="seba-details"
+                            aria-selected="false">
+                            <i class="fas fa-cogs" style="color: white"></i> Seba
+                        </a>
+                    </li>
 
-            <div class="card-body">
-                <form action="{{ route('admin.pratihari-seba.update', $pratihari_id) }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                
-                    <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
-                
-                    <!-- Nijoga Selection -->
-                    <div class="form-group">
-                        <label for="nijoga_type" class="form-label">🛕 Nijoga Category</label>
-                        <select class="form-select" id="nijoga_type" name="nijoga_type" required>
-                            <option value="">Select Nijoga</option>
-                            @foreach ($nijogas as $nijoga)
-                                <option value="{{ $nijoga->id }}" {{ $nijoga->id == $selectedNijogaId ? 'selected' : '' }}>
-                                    {{ $nijoga->nijoga_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                
-                    <!-- Seba and Beddha Sections (Only show if Nijoga is pre-selected) -->
-                    <div id="seba_beddha_section" class="{{ $selectedNijogaId ? '' : 'd-none' }}">
-                        <!-- Available Seba List -->
-                        <div class="seba-section">
-                            <label class="section-title">✅ Available Sebas</label>
-                            <div class="checkbox-list" id="seba_list">
-                                @foreach ($sebas as $seba)
-                                    <div class="form-check me-3">
-                                        <input class="form-check-input seba-checkbox"
-                                               type="checkbox"
-                                               name="seba_id[]"
-                                               value="{{ $seba->id }}"
-                                               id="seba_{{ $seba->id }}"
-                                               data-seba-id="{{ $seba->id }}"
-                                               {{ in_array($seba->id, $assignedSebas) ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="seba_{{ $seba->id }}">{{ $seba->seba_name }}</label>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                        <div class="beddha-section">
-                            <label class="section-title">📜 Beddha List</label>
-                            <div class="checkbox-list" id="beddha_list">
-                                @foreach ($assignedSebas as $sebaId)
-                                    <div class="beddha-group" id="beddha_group_{{ $sebaId }}">
-                                        <strong>{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
-                                        <div class="d-flex flex-wrap gap-2 mt-2">
-                                            @foreach ($beddhas[$sebaId] ?? [] as $beddha)
-                                                <div class="form-check me-3">
-                                                    <input class="form-check-input"
-                                                           type="checkbox"
-                                                           name="beddha_id[{{ $sebaId }}][]"
-                                                           value="{{ $beddha->id }}"
-                                                           id="beddha_{{ $sebaId }}_{{ $beddha->id }}"
-                                                           {{ isset($assignedBeddhas[$sebaId]) && in_array($beddha->id, $assignedBeddhas[$sebaId]) ? 'checked' : '' }}>
-                                                    <label class="form-check-label" for="beddha_{{ $sebaId }}_{{ $beddha->id }}">
-                                                        {{ $beddha->beddha_name }}
-                                                    </label>
-                                                </div>
-                                            @endforeach
+                    <li class="nav-item col-12 col-sm-auto">
+                        <a class="nav-link" id="social-media-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="social-media" aria-selected="false">
+                            <i class="fas fa-share-alt" style="margin-right: 2px"></i>Social Media
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="card-body">
+                    <form action="{{ route('admin.pratihari-seba.update', $pratihari_id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+
+                        <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+
+                        <!-- Seba and Beddha Sections -->
+                        <div id="seba_beddha_section">
+                            <!-- Seba List -->
+                            <div class="seba-section">
+                                <label class="section-title">✅ Available Sebas</label>
+                                <div class="checkbox-list" id="seba_list">
+                                    @foreach ($sebas as $seba)
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input seba-checkbox" type="checkbox" name="seba_id[]"
+                                                value="{{ $seba->id }}" id="seba_{{ $seba->id }}"
+                                                data-seba-id="{{ $seba->id }}"
+                                                {{ in_array($seba->id, $assignedSebas) ? 'checked' : '' }}>
+                                            <label class="form-check-label"
+                                                for="seba_{{ $seba->id }}">{{ $seba->seba_name }}</label>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- Beddha List -->
+                            <div class="beddha-section mt-4">
+                                <label class="section-title">📜 Beddha List</label>
+                                <div class="checkbox-list" id="beddha_list">
+                                    @foreach ($assignedSebas as $sebaId)
+                                        <div class="beddha-group" id="beddha_group_{{ $sebaId }}">
+                                            <strong>{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
+                                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                                @foreach ($beddhas[$sebaId] ?? [] as $beddha)
+                                                    <div class="form-check me-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="beddha_id[{{ $sebaId }}][]"
+                                                            value="{{ $beddha->id }}"
+                                                            id="beddha_{{ $sebaId }}_{{ $beddha->id }}"
+                                                            {{ isset($assignedBeddhas[$sebaId]) && in_array($beddha->id, $assignedBeddhas[$sebaId]) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="beddha_{{ $sebaId }}_{{ $beddha->id }}">
+                                                            {{ $beddha->beddha_name }}
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                        
-                        
-                        
-                    </div>
-                
-                    <!-- Submit Button -->
-                    <div class="col-12 text-center">
-                        <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
-                            <i class="fa fa-save"></i> Update
-                        </button>
-                    </div>
-                </form>
-                
+
+                        <!-- Submit -->
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
+                                <i class="fa fa-save"></i> Update
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
             </div>
-            
         </div>
     </div>
-</div>
-</div>
 @endsection
-
 @section('scripts')
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-   document.addEventListener("DOMContentLoaded", function () {
-    // Flash message handling (unchanged)
-    @if(session('success'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: "{{ session('success') }}",
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-    @endif
+    <!-- Bootstrap Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    @if(session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: "{{ session('error') }}",
-            confirmButtonColor: '#d33',
-            confirmButtonText: 'OK'
-        });
-    @endif
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
 
-    // Function to handle seba checkbox toggling (handles both adding & removing Beddha)
-    function handleSebaCheckboxToggle(checkbox) {
-        let sebaId = checkbox.dataset.sebaId;
-        let beddhaList = document.getElementById('beddha_list');
-
-        if (checkbox.checked) {
-            fetch(`/admin/get-beddha/${sebaId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (!document.getElementById(`beddha_group_${sebaId}`)) {
-                        let beddhaHtml = `<div class="beddha-group" id="beddha_group_${sebaId}">
-                            <strong>${checkbox.nextElementSibling.innerText}:</strong>
-                            <div class="d-flex flex-wrap gap-2 mt-2">`;
-                        data.forEach(beddha => {
-                            beddhaHtml += `
-                                <div class="form-check me-3">
-                                    <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
-                                    <label class="form-check-label" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
-                                </div>`;
-                        });
-                        beddhaHtml += `</div></div>`;
-                        beddhaList.innerHTML += beddhaHtml;
-                    }
+            // ✅ SweetAlert for success
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
                 });
-        } else {
-            let beddhaGroup = document.getElementById(`beddha_group_${sebaId}`);
-            if (beddhaGroup) {
-                beddhaGroup.remove();
+            @endif
+
+            // ❌ SweetAlert for error
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#d33',
+                    confirmButtonText: 'OK'
+                });
+            @endif
+
+            // ✅ Function to fetch and toggle beddha group on seba selection
+            function handleSebaCheckboxToggle(checkbox) {
+                let sebaId = checkbox.dataset.sebaId;
+                let beddhaList = document.getElementById('beddha_list');
+
+                if (checkbox.checked) {
+                    fetch(`/admin/get-beddha/${sebaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!document.getElementById(`beddha_group_${sebaId}`)) {
+                                let beddhaHtml = `
+                                    <div class="beddha-group mt-3" id="beddha_group_${sebaId}">
+                                        <strong>${checkbox.nextElementSibling.innerText}:</strong>
+                                        <div class="d-flex flex-wrap gap-2 mt-2">`;
+
+                                data.forEach(beddha => {
+                                    beddhaHtml += `
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="beddha_id[${sebaId}][]"
+                                                   value="${beddha.id}"
+                                                   id="beddha_${sebaId}_${beddha.id}">
+                                            <label class="form-check-label" for="beddha_${sebaId}_${beddha.id}">
+                                                ${beddha.beddha_name}
+                                            </label>
+                                        </div>`;
+                                });
+
+                                beddhaHtml += `</div></div>`;
+                                beddhaList.innerHTML += beddhaHtml;
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Beddha fetch failed:", error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Fetch Error',
+                                text: 'Failed to load Beddha list.',
+                                confirmButtonColor: '#d33'
+                            });
+                        });
+                } else {
+                    // If unchecked, remove related beddha group
+                    let beddhaGroup = document.getElementById(`beddha_group_${sebaId}`);
+                    if (beddhaGroup) {
+                        beddhaGroup.remove();
+                    }
+                }
             }
-        }
-    }
 
-    // Attach handler to all existing seba checkboxes (in case of edit mode pre-selection)
-    document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            handleSebaCheckboxToggle(this);
-        });
-    });
-
-    // Nijoga change handler (unchanged, but make sure newly added checkboxes also get the handler)
-    document.getElementById('nijoga_type').addEventListener('change', function() {
-        let nijogaId = this.value;
-        let sebaList = document.getElementById('seba_list');
-        let beddhaList = document.getElementById('beddha_list');
-        let sebaBeddhaSection = document.getElementById('seba_beddha_section');
-
-        sebaList.innerHTML = '';
-        beddhaList.innerHTML = '';
-        sebaBeddhaSection.classList.add('d-none');
-
-        if (nijogaId) {
-            fetch(`/admin/get-seba/${nijogaId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        sebaBeddhaSection.classList.remove('d-none');
-                    }
-                    data.forEach(seba => {
-                        let checkbox = `
-                            <div class="form-check me-3">
-                                <input class="form-check-input seba-checkbox" type="checkbox" name="seba_id[]" value="${seba.id}" id="seba_${seba.id}" data-seba-id="${seba.id}">
-                                <label class="form-check-label" for="seba_${seba.id}">${seba.seba_name}</label>
-                            </div>`;
-                        sebaList.innerHTML += checkbox;
-                    });
-
-                    // Attach event listener to the new checkboxes as well
-                    document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
-                        checkbox.addEventListener('change', function() {
-                            handleSebaCheckboxToggle(this);
-                        });
-                    });
+            // Attach change handler to all existing seba checkboxes
+            document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    handleSebaCheckboxToggle(this);
                 });
-        }
-    });
-});
-
+            });
+        });
     </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

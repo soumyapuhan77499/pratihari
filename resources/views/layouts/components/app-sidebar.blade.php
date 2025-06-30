@@ -21,11 +21,15 @@
                     </svg>
 				</div>
                 <ul class="side-menu">
+                    
                     <li class="side-item side-item-category">Main</li>
+
                     <li class="slide">
                         <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}"><span   class="side-menu__label"><img src="{{ asset('assets/img/brand/dashboard.png') }}"   style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"  style="margin-left: 10px">Dashboards</span></a>
                     </li>
+
                     <li class="side-item side-item-category">PRATIHARI NIJOGA</li>
+
                     <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/pratihari-profile') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/monk.png') }}"
@@ -40,12 +44,12 @@
                                     style="margin-left: 10px">Pratihari Manage Profile</span></a>
                     </li>
 
-                    <li class="slide">
+                    {{-- <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/pratihari-nijoga-seba') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/pratihari.png') }}"
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
                                     style="margin-left: 10px">Pratihari Nijoga Assign</span></a>
-                    </li>
+                    </li> --}}
 
                     <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/pratihari-seba-beddha') }}"><span

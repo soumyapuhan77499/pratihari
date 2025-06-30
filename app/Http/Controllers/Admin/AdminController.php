@@ -236,7 +236,7 @@ class AdminController extends Controller
 
                 if ($beddhaId >= 1 && $beddhaId <= 47) {
                     $startDate = Carbon::create(2025, 6, 6)->addDays($beddhaId - 1);
-                    $endDate = Carbon::create(2030, 12, 31);
+                    $endDate = Carbon::create(2050, 12, 31);
                     $nextDate = $startDate->copy();
 
                     while ($nextDate->lte($endDate)) {
