@@ -185,32 +185,31 @@ class PratihariSebaController extends Controller
         ));
     }
 
+    
 public function savePratihariAssignSeba(Request $request)
 {
-    $pratihari_id = $request->input('pratihari_id');
-    $input = $request->input('beddha_id'); // array: [seba_id => [beddha_id1, beddha_id2, ...]]
+    $pratihariId = $request->input('pratihari_id');
+    $beddhaAssignments = $request->input('beddha_id', []); // array: [seba_id => [beddha_id1, beddha_id2, ...]]
 
-   foreach ($sebaIds as $sebaId) {
-                // Get corresponding Beddha IDs for this Seba ID
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+    // Delete old entries for this Pratihari
+    PratihariSeba::where('pratihari_id', $pratihariId)->delete();
 
-                // Skip if no Beddha IDs are provided
-                if (empty($beddhaList)) {
-                    continue;
-                }
+    foreach ($beddhaAssignments as $sebaId => $beddhaList) {
+        if (empty($beddhaList)) {
+            continue;
+        }
 
-                $beddhaIdsString = implode(',', $beddhaList);
+        $beddhaIdsString = implode(',', $beddhaList);
 
-                PratihariSeba::create([
-                    'pratihari_id' => $pratihariId,
-                    'seba_id' => $sebaId,
-                    'beddha_id' => $beddhaIdsString,
-                ]);
-            }
+        PratihariSeba::create([
+            'pratihari_id' => $pratihariId,
+            'seba_id' => $sebaId,
+            'beddha_id' => $beddhaIdsString,
+        ]);
+    }
 
     return redirect()->back()->with('success', 'Assignments updated successfully!');
 }
-
 
 
 }
