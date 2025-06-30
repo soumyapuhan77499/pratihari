@@ -185,31 +185,39 @@ class PratihariSebaController extends Controller
         ));
     }
 
-    
-public function savePratihariAssignSeba(Request $request)
-{
-    $pratihariId = $request->input('pratihari_id');
-    $beddhaAssignments = $request->input('beddha_id', []); // array: [seba_id => [beddha_id1, beddha_id2, ...]]
+    public function savePratihariAssignSeba(Request $request)
+    {
+        try {
+            $sebaIds = $request->seba_id;
+            $beddhaIds = $request->beddha_id ?? [];
+            $pratihariId = $request->pratihari_id;
 
-    // Delete old entries for this Pratihari
-    PratihariSeba::where('pratihari_id', $pratihariId)->delete();
+            foreach ($sebaIds as $sebaId) {
+                // Get corresponding Beddha IDs for this Seba ID
+                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
 
-    foreach ($beddhaAssignments as $sebaId => $beddhaList) {
-        if (empty($beddhaList)) {
-            continue;
+                // Skip if no Beddha IDs are provided
+                if (empty($beddhaList)) {
+                    continue;
+                }
+
+                $beddhaIdsString = implode(',', $beddhaList);
+
+                PratihariSeba::create([
+                    'pratihari_id' => $pratihariId,
+                    'seba_id' => $sebaId,
+                    'beddha_id' => $beddhaIdsString,
+                ]);
+            }
+
+               return redirect()->back()->with('success', 'Assignments updated successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        $beddhaIdsString = implode(',', $beddhaList);
-
-        PratihariSeba::create([
-            'pratihari_id' => $pratihariId,
-            'seba_id' => $sebaId,
-            'beddha_id' => $beddhaIdsString,
-        ]);
     }
-
-    return redirect()->back()->with('success', 'Assignments updated successfully!');
-}
-
 
 }

@@ -110,7 +110,6 @@
                         </div>
                     </form>
 
-
                     @if ($pratihari_id)
                         <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
                             @csrf
@@ -120,6 +119,9 @@
                                 <label class="section-title">📜 Assign Beddha to Seba</label>
                                 <div class="checkbox-list" id="beddha_list">
                                     @foreach ($sebas as $seba)
+                                        {{-- Include seba_id[] to send to controller --}}
+                                        <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
+
                                         <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
                                             <strong class="d-block mb-2">{{ $seba->seba_name }}:</strong>
                                             <div class="beddha-items d-flex flex-wrap gap-3">
@@ -149,6 +151,7 @@
                             </div>
                         </form>
                     @endif
+
 
                 </div>
             </div>
