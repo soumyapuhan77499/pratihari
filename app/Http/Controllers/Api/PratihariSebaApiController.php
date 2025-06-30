@@ -62,71 +62,73 @@ class PratihariSebaApiController extends Controller
             ], 500);
         }
     }
+    
+    public function getBeddha() 
+    {
+        try {
+            // Step 1: Get all sebas
+            $allSebas = PratihariSebaMaster::all()->keyBy('id');
 
-   public function getBeddha() 
-{
-    try {
-        // Step 1: Get all beddhas
-        $allBeddhas = PratihariBeddhaMaster::all()->keyBy('id');
+            // Step 2: Get all beddhas
+            $allBeddhas = PratihariBeddhaMaster::all()->keyBy('id');
 
-        // Step 2: Get active assignments with beddha relation
-        $assignments = PratihariSebaBeddhaAssign::where('status', 'active')
-            ->with('beddha')
-            ->get();
+            // Step 3: Get active assignments with beddha relation
+            $assignments = PratihariSebaBeddhaAssign::where('status', 'active')
+                ->with('beddha')
+                ->get();
 
-        // Step 3: Group by seba_id
-        $grouped = $assignments->groupBy('seba_id');
+            // Step 4: Group assignments by seba_id
+            $groupedAssignments = $assignments->groupBy('seba_id');
 
-        $result = [];
+            $result = [];
 
-        // Step 4: Process assigned beddhas
-        foreach ($grouped as $sebaId => $items) {
-            $seba = PratihariSebaMaster::find($sebaId);
+            // Step 5: For each seba (including those without assignments)
+            foreach ($allSebas as $sebaId => $seba) {
+                $items = $groupedAssignments->get($sebaId, collect());
 
-            $result[] = [
-                'id' => $sebaId,
-                'name' => $seba ? $seba->seba_name : 'Unknown Seba',
-                'bedha' => $items->map(function ($item) use ($sebaId) {
-                    return [
-                        'id' => $sebaId . '_' . $item->beddha->id,
-                        'name' => $item->beddha->beddha_name,
-                    ];
-                })->values()
-            ];
+                $result[] = [
+                    'id' => $sebaId,
+                    'name' => $seba->seba_name,
+                    'bedha' => $items->map(function ($item) use ($sebaId) {
+                        return [
+                            'id' => $sebaId . '_' . $item->beddha->id,
+                            'name' => $item->beddha->beddha_name,
+                        ];
+                    })->values()
+                ];
+            }
+
+            // Step 6: Add Unassigned beddhas
+            $assignedBeddhaIds = $assignments->pluck('beddha_id')->unique();
+            $unassigned = $allBeddhas->except($assignedBeddhaIds->toArray());
+
+            if ($unassigned->isNotEmpty()) {
+                $result[] = [
+                    'id' => null,
+                    'name' => 'Unassigned',
+                    'bedha' => $unassigned->map(function ($beddha) {
+                        return [
+                            'id' => 'unassigned_' . $beddha->id,
+                            'name' => $beddha->beddha_name,
+                        ];
+                    })->values()
+                ];
+            }
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Beddhas fetched successfully',
+                'data' => collect($result)->values()
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Step 5: Add unassigned beddhas
-        $assignedBeddhaIds = $assignments->pluck('beddha_id')->unique();
-        $unassigned = $allBeddhas->except($assignedBeddhaIds->toArray());
-
-        if ($unassigned->isNotEmpty()) {
-            $result[] = [
-                'id' => null,
-                'name' => 'Unassigned',
-                'bedha' => $unassigned->map(function ($beddha) {
-                    return [
-                        'id' => 'unassigned_' . $beddha->id,
-                        'name' => $beddha->beddha_name,
-                    ];
-                })->values()
-            ];
-        }
-
-        return response()->json([
-            'status' => 200,
-            'message' => 'Beddhas fetched successfully',
-            'data' => collect($result)->values()
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 500,
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
-
 
     public function saveSeba(Request $request)
     {
