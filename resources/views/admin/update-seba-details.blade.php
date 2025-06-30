@@ -160,22 +160,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .beddha-group-row {
-            padding: 10px 0;
-            border-bottom: 1px dashed #ccc;
-        }
-
-        .beddha-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .form-check {
-            display: flex;
-            align-items: center;
-        }
-
         .section-title {
             font-size: 18px;
             font-weight: bold;
@@ -313,10 +297,9 @@
                                 <label class="section-title">📜 Beddha List</label>
                                 <div class="checkbox-list" id="beddha_list">
                                     @foreach ($assignedSebas as $sebaId)
-                                        <div class="beddha-group-row mb-4" id="beddha_group_{{ $sebaId }}">
-                                            <strong
-                                                class="d-block mb-2">{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
-                                            <div class="beddha-items d-flex flex-wrap gap-3">
+                                        <div class="beddha-group" id="beddha_group_{{ $sebaId }}">
+                                            <strong>{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
+                                            <div class="d-flex flex-wrap gap-2 mt-2">
                                                 @foreach ($beddhas[$sebaId] ?? [] as $beddha)
                                                     <div class="form-check me-3">
                                                         <input class="form-check-input" type="checkbox"
@@ -335,7 +318,6 @@
                                     @endforeach
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- Submit -->
@@ -394,38 +376,37 @@
                         .then(data => {
                             if (!document.getElementById(`beddha_group_${sebaId}`)) {
                                 let beddhaHtml = `
-            <div class="beddha-group-row mb-4" id="beddha_group_${sebaId}">
-                <strong class="d-block mb-2">${checkbox.nextElementSibling.innerText}:</strong>
-                <div class="beddha-items d-flex flex-wrap gap-3">`;
+                                    <div class="beddha-group mt-3" id="beddha_group_${sebaId}">
+                                        <strong>${checkbox.nextElementSibling.innerText}:</strong>
+                                        <div class="d-flex flex-wrap gap-2 mt-2">`;
 
                                 data.forEach(beddha => {
                                     beddhaHtml += `
-                <div class="form-check me-3">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           name="beddha_id[${sebaId}][]"
-                           value="${beddha.id}"
-                           id="beddha_${sebaId}_${beddha.id}">
-                    <label class="form-check-label" for="beddha_${sebaId}_${beddha.id}">
-                        ${beddha.beddha_name}
-                    </label>
-                </div>`;
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="beddha_id[${sebaId}][]"
+                                                   value="${beddha.id}"
+                                                   id="beddha_${sebaId}_${beddha.id}">
+                                            <label class="form-check-label" for="beddha_${sebaId}_${beddha.id}">
+                                                ${beddha.beddha_name}
+                                            </label>
+                                        </div>`;
                                 });
 
                                 beddhaHtml += `</div></div>`;
                                 beddhaList.innerHTML += beddhaHtml;
                             }
+                        })
+                        .catch(error => {
+                            console.error("Beddha fetch failed:", error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Fetch Error',
+                                text: 'Failed to load Beddha list.',
+                                confirmButtonColor: '#d33'
+                            });
                         });
-
-                    .catch(error => {
-                        console.error("Beddha fetch failed:", error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Fetch Error',
-                            text: 'Failed to load Beddha list.',
-                            confirmButtonColor: '#d33'
-                        });
-                    });
                 } else {
                     // If unchecked, remove related beddha group
                     let beddhaGroup = document.getElementById(`beddha_group_${sebaId}`);
