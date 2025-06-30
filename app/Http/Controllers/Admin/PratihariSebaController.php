@@ -10,6 +10,7 @@ use App\Models\PratihariSebaBeddhaAssign;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSebaMaster;
 use App\Models\PratihariBeddhaMaster;
+use App\Models\PratihariProfile;
 
 class PratihariSebaController extends Controller
 {
@@ -143,7 +144,7 @@ class PratihariSebaController extends Controller
 public function PratihariSebaAssign(Request $request)
 {
     $pratihari_id = $request->get('pratihari_id'); // from dropdown
-    
+
     $pratiharis = PratihariProfile::all()->mapWithKeys(function ($item) {
         $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
         return [$item->id => $fullName];
