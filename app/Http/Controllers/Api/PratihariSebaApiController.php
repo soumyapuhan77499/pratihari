@@ -62,12 +62,12 @@ class PratihariSebaApiController extends Controller
             ], 500);
         }
     }
-    
+
     public function getBeddha() 
     {
         try {
             // Step 1: Get all sebas
-            $allSebas = PratihariSebaMaster::all()->keyBy('id');
+            $allSebas = PratihariSebaMaster::where('status','active')->all()->keyBy('id');
 
             // Step 2: Get all beddhas
             $allBeddhas = PratihariBeddhaMaster::all()->keyBy('id');
@@ -93,23 +93,6 @@ class PratihariSebaApiController extends Controller
                         return [
                             'id' => $sebaId . '_' . $item->beddha->id,
                             'name' => $item->beddha->beddha_name,
-                        ];
-                    })->values()
-                ];
-            }
-
-            // Step 6: Add Unassigned beddhas
-            $assignedBeddhaIds = $assignments->pluck('beddha_id')->unique();
-            $unassigned = $allBeddhas->except($assignedBeddhaIds->toArray());
-
-            if ($unassigned->isNotEmpty()) {
-                $result[] = [
-                    'id' => null,
-                    'name' => 'Unassigned',
-                    'bedha' => $unassigned->map(function ($beddha) {
-                        return [
-                            'id' => 'unassigned_' . $beddha->id,
-                            'name' => $beddha->beddha_name,
                         ];
                     })->values()
                 ];
