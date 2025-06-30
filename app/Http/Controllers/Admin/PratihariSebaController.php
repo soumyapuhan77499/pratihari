@@ -93,7 +93,8 @@ class PratihariSebaController extends Controller
         $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
             ->where('seba_id', $seba_id)
             ->value('beddha_id');
-$assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr) ? $assignedBeddhaStr : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+
+        $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr) ? $assignedBeddhaStr : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
 
         $sebaNames[$seba_id] = PratihariSebaMaster::where('id', $seba_id)->value('seba_name');
     }
@@ -139,5 +140,4 @@ $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr) ? $assignedBeddhaStr :
     }
 }
 
-    
 }

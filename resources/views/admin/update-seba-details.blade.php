@@ -160,14 +160,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Horizontal Beddha Checkbox Alignment */
-        .beddha-checkbox-row label.form-check-label {
-            margin-right: 15px;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-        }
-
         .section-title {
             font-size: 18px;
             font-weight: bold;
@@ -307,24 +299,25 @@
                                     @foreach ($assignedSebas as $sebaId)
                                         <div class="beddha-group" id="beddha_group_{{ $sebaId }}">
                                             <strong>{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
-                                            <div
-                                                class="d-flex flex-wrap gap-3 mt-2 align-items-center beddha-checkbox-row">
+                                            <div class="d-flex flex-wrap gap-2 mt-2">
                                                 @foreach ($beddhas[$sebaId] ?? [] as $beddha)
-                                                    <label class="form-check-label me-3 d-flex align-items-center gap-1">
+                                                    <div class="form-check me-3">
                                                         <input class="form-check-input" type="checkbox"
                                                             name="beddha_id[{{ $sebaId }}][]"
                                                             value="{{ $beddha->id }}"
                                                             id="beddha_{{ $sebaId }}_{{ $beddha->id }}"
                                                             {{ isset($assignedBeddhas[$sebaId]) && in_array($beddha->id, $assignedBeddhas[$sebaId]) ? 'checked' : '' }}>
-                                                        {{ $beddha->beddha_name }}
-                                                    </label>
+                                                        <label class="form-check-label"
+                                                            for="beddha_{{ $sebaId }}_{{ $beddha->id }}">
+                                                            {{ $beddha->beddha_name }}
+                                                        </label>
+                                                    </div>
                                                 @endforeach
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
                             </div>
-
                         </div>
 
                         <!-- Submit -->
