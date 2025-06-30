@@ -115,23 +115,23 @@
                         <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
                             @csrf
                             <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+
                             <div class="beddha-section mt-4">
-                                <label class="section-title">📜 Beddha List</label>
+                                <label class="section-title">📜 Assign Beddha to Seba</label>
                                 <div class="checkbox-list" id="beddha_list">
-                                    @foreach ($assignedSebas as $sebaId)
-                                        <div class="beddha-group-row mb-4" id="beddha_group_{{ $sebaId }}">
-                                            <strong
-                                                class="d-block mb-2">{{ $sebaNames[$sebaId] ?? 'Unknown Seba' }}:</strong>
+                                    @foreach ($sebas as $seba)
+                                        <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
+                                            <strong class="d-block mb-2">{{ $seba->seba_name }}:</strong>
                                             <div class="beddha-items d-flex flex-wrap gap-3">
-                                                @foreach ($beddhas[$sebaId] ?? [] as $beddha)
+                                                @foreach ($beddhas[$seba->id] ?? [] as $beddha)
                                                     <div class="form-check me-3">
                                                         <input class="form-check-input" type="checkbox"
-                                                            name="beddha_id[{{ $sebaId }}][]"
+                                                            name="beddha_id[{{ $seba->id }}][]"
                                                             value="{{ $beddha->id }}"
-                                                            id="beddha_{{ $sebaId }}_{{ $beddha->id }}"
-                                                            {{ in_array($beddha->id, $assignedBeddhas[$sebaId]) ? 'checked' : '' }}>
+                                                            id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
+                                                            {{ in_array($beddha->id, $assignedBeddhas[$seba->id]) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
-                                                            for="beddha_{{ $sebaId }}_{{ $beddha->id }}">
+                                                            for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
                                                             {{ $beddha->beddha_name }}
                                                         </label>
                                                     </div>
@@ -153,7 +153,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
