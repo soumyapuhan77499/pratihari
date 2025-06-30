@@ -92,7 +92,7 @@
             <div class="card">
                 <div class="card-header">🛕 Assign Seba to Pratihari</div>
                 <div class="card-body">
-                    <form method="GET" action="{{ route('admin.editPratihariSebaAssign') }}">
+                    <form method="GET" action="{{ route('admin.PratihariSebaAssign') }}">
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label for="pratihari_id">Select Pratihari</label>
@@ -100,13 +100,16 @@
                                     onchange="this.form.submit()">
                                     <option value="">-- Select Pratihari --</option>
                                     @foreach ($pratiharis as $id => $name)
-                                        <option value="{{ $id }}" {{ $pratihari_id == $id ? 'selected' : '' }}>
-                                            {{ $name }}</option>
+                                        <option value="{{ $id }}"
+                                            {{ request('pratihari_id') == $id ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                     </form>
+
 
                     @if ($pratihari_id)
                         <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
