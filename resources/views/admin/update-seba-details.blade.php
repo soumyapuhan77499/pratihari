@@ -382,7 +382,7 @@
 
                                 data.forEach(beddha => {
                                     beddhaHtml += `
-                                        <div class="form-check me-3">
+                                          <div class="form-check d-flex align-items-center gap-1">
                                             <input class="form-check-input"
                                                    type="checkbox"
                                                    name="beddha_id[${sebaId}][]"
@@ -393,6 +393,8 @@
                                             </label>
                                         </div>`;
                                 });
+
+                            
 
                                 beddhaHtml += `</div></div>`;
                                 beddhaList.innerHTML += beddhaHtml;
