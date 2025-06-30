@@ -10,6 +10,7 @@ use App\Models\PratihariSebaBeddhaAssign;
 use App\Models\PratihariSebaManagement;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSebaMaster;
+use App\Models\PratihariBeddhaMaster;
 
 use Carbon\Carbon;
 
