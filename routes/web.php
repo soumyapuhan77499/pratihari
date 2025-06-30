@@ -110,6 +110,8 @@ Route::prefix('admin')->group(function() {
     Route::get('/get-beddha/{seba_id}', [PratihariSebaController::class, 'getBeddhaBySeba'])->name('admin.getBeddhaBySeba');
     Route::get('/seba-edit/{pratihari_id}', [PratihariSebaController::class, 'edit'])->name('seba.update');
     Route::put('/seba-update/{pratihari_id}', [PratihariSebaController::class, 'update'])->name('admin.pratihari-seba.update');
+    Route::get('/assign-pratihari-seba', [PratihariSebaController::class, 'PratihariSebaAssign'])->name('admin.PratihariSebaAssign');
+    Route::post('/save-pratihari-assign-seba', [PratihariSebaController::class, 'savePratihariAssignSeba'])->name('admin.savePratihariAssignSeba');
 });
 
 Route::prefix('admin')->group(function() {
