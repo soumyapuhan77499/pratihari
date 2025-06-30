@@ -76,126 +76,137 @@ class PratihariSebaController extends Controller
         }
     }
 
-   public function edit($pratihari_id)
-{
-    $assignedSebas = PratihariSeba::where('pratihari_id', $pratihari_id)
-        ->pluck('seba_id')
-        ->toArray();
+    public function edit($pratihari_id)
+    {
+        $assignedSebas = PratihariSeba::where('pratihari_id', $pratihari_id)
+            ->pluck('seba_id')
+            ->toArray();
 
-    $assignedBeddhas = [];
-    $beddhas = [];
-    $sebaNames = [];
+        $assignedBeddhas = [];
+        $beddhas = [];
+        $sebaNames = [];
 
-    foreach ($assignedSebas as $seba_id) {
-        $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)->pluck('beddha_id');
-        $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
+        foreach ($assignedSebas as $seba_id) {
+            $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)->pluck('beddha_id');
+            $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
 
-        // Assigned Beddha IDs
-        $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
-            ->where('seba_id', $seba_id)
-            ->value('beddha_id');
+            // Assigned Beddha IDs
+            $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
+                ->where('seba_id', $seba_id)
+                ->value('beddha_id');
 
-        $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr) ? $assignedBeddhaStr : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+            $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr) ? $assignedBeddhaStr : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
 
-        $sebaNames[$seba_id] = PratihariSebaMaster::where('id', $seba_id)->value('seba_name');
-    }
-
-    $sebas = PratihariSebaMaster::where('status', 'active')->get();
-
-    return view('admin.update-seba-details', compact(
-        'pratihari_id',
-        'assignedSebas',
-        'beddhas',
-        'assignedBeddhas',
-        'sebaNames',
-        'sebas'
-    ));
-}
-
-
-  public function update(Request $request, $pratihariId)
-{
-    try {
-        $sebaIds = $request->seba_id;
-        $beddhaIds = $request->beddha_id ?? [];
-
-        PratihariSeba::where('pratihari_id', $pratihariId)->delete();
-
-        foreach ($sebaIds as $sebaId) {
-            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-            $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
-
-            PratihariSeba::create([
-                'pratihari_id' => $pratihariId,
-                'seba_id' => $sebaId,
-                'beddha_id' => $beddhaIdsString,
-            ]);
+            $sebaNames[$seba_id] = PratihariSebaMaster::where('id', $seba_id)->value('seba_name');
         }
 
-        return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
-                        ->with('success', 'Pratihari Seba details updated successfully');
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()->withErrors($e->validator)->withInput();
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
-    }
-}
+        $sebas = PratihariSebaMaster::where('status', 'active')->get();
 
-public function PratihariSebaAssign(Request $request)
-{
-    $pratihari_id = $request->get('pratihari_id');
-
-    // Get all Pratiharis with full name
-    $pratiharis = PratihariProfile::all()->mapWithKeys(function ($item) {
-        $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
-        return [$item->pratihari_id => $fullName];
-    });
-
-    // Get all sebas (active)
-    $sebas = PratihariSebaMaster::where('status', 'active')->get();
-    $assignedBeddhas = [];
-    $beddhas = [];
-    $sebaNames = [];
-
-    foreach ($sebas as $seba) {
-        $seba_id = $seba->id;
-        $sebaNames[$seba_id] = $seba->seba_name;
-
-        // All available beddhas for this seba
-        $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)->pluck('beddha_id');
-        $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
-
-        // Assigned beddhas for this seba & pratihari
-        $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
-            ->where('seba_id', $seba_id)
-            ->value('beddha_id');
-
-        $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
-            ? $assignedBeddhaStr
-            : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+        return view('admin.update-seba-details', compact(
+            'pratihari_id',
+            'assignedSebas',
+            'beddhas',
+            'assignedBeddhas',
+            'sebaNames',
+            'sebas'
+        ));
     }
 
-    return view('admin.assign-pratihari-seba', compact(
-        'pratihari_id',
-        'pratiharis',
-        'sebas',
-        'beddhas',
-        'assignedBeddhas',
-        'sebaNames'
-    ));
-}
+
+    public function update(Request $request, $pratihariId)
+    {
+        try {
+            $sebaIds = $request->seba_id;
+            $beddhaIds = $request->beddha_id ?? [];
+
+            PratihariSeba::where('pratihari_id', $pratihariId)->delete();
+
+            foreach ($sebaIds as $sebaId) {
+                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+                $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
+
+                PratihariSeba::create([
+                    'pratihari_id' => $pratihariId,
+                    'seba_id' => $sebaId,
+                    'beddha_id' => $beddhaIdsString,
+                ]);
+            }
+
+            return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
+                            ->with('success', 'Pratihari Seba details updated successfully');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        }
+    }
+
+    public function PratihariSebaAssign(Request $request)
+    {
+        $pratihari_id = $request->get('pratihari_id');
+
+        // Get all Pratiharis with full name
+        $pratiharis = PratihariProfile::all()->mapWithKeys(function ($item) {
+            $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
+            return [$item->pratihari_id => $fullName];
+        });
+
+        // Get all sebas (active)
+        $sebas = PratihariSebaMaster::where('status', 'active')->get();
+        $assignedBeddhas = [];
+        $beddhas = [];
+        $sebaNames = [];
+
+        foreach ($sebas as $seba) {
+            $seba_id = $seba->id;
+            $sebaNames[$seba_id] = $seba->seba_name;
+
+            // All available beddhas for this seba
+            $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)->pluck('beddha_id');
+            $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
+
+            // Assigned beddhas for this seba & pratihari
+            $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
+                ->where('seba_id', $seba_id)
+                ->value('beddha_id');
+
+            $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
+                ? $assignedBeddhaStr
+                : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+        }
+
+        return view('admin.assign-pratihari-seba', compact(
+            'pratihari_id',
+            'pratiharis',
+            'sebas',
+            'beddhas',
+            'assignedBeddhas',
+            'sebaNames'
+        ));
+    }
 
 public function savePratihariAssignSeba(Request $request)
 {
     $pratihari_id = $request->input('pratihari_id');
     $input = $request->input('beddha_id'); // array: [seba_id => [beddha_id1, beddha_id2, ...]]
 
-    foreach ($input as $seba_id => $beddhaIds) {
-        PratihariSeba::updateOrCreate(
-            ['pratihari_id' => $pratihari_id, 'seba_id' => $seba_id],
-            ['beddha_id' => implode(',', $beddhaIds)]
-        );
-    }
+   foreach ($sebaIds as $sebaId) {
+                // Get corresponding Beddha IDs for this Seba ID
+                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+
+                // Skip if no Beddha IDs are provided
+                if (empty($beddhaList)) {
+                    continue;
+                }
+
+                $beddhaIdsString = implode(',', $beddhaList);
+
+                PratihariSeba::create([
+                    'pratihari_id' => $pratihariId,
+                    'seba_id' => $sebaId,
+                    'beddha_id' => $beddhaIdsString,
+                ]);
+            }
 
     return redirect()->back()->with('success', 'Assignments updated successfully!');
 }
