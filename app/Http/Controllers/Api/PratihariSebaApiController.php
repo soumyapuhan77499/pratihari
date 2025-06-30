@@ -39,7 +39,7 @@ class PratihariSebaApiController extends Controller
         }
     }
     // Get Seba list based on Nijoga ID
-    public function getSebaByNijoga($nijoga_id)
+    public function getSebaByNijoga()
     {
         try {
             $sebas = PratihariNijogaSebaAssign::where('nijoga_id', $nijoga_id)
@@ -62,46 +62,70 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-    public function getBeddha() 
-    {
-        try {
-            // Fetch active records with related beddha details
-            $sebaBeddhas = PratihariSebaBeddhaAssign::where('status', 'active')
-                ->with('beddha') // Load beddha details
-                ->get()
-                ->groupBy('seba_id');
+   public function getBeddha() 
+{
+    try {
+        // Step 1: Get all beddhas
+        $allBeddhas = PratihariBeddhaMaster::all()->keyBy('id');
 
-            $formattedData = $sebaBeddhas->map(function ($items, $sebaId) {
-                // Fetch seba_name for this sebaId
-                $seba = PratihariSebaMaster::find($sebaId);
+        // Step 2: Get active assignments with beddha relation
+        $assignments = PratihariSebaBeddhaAssign::where('status', 'active')
+            ->with('beddha')
+            ->get();
 
-            return [
-        'id' => $sebaId,
-        'name' => $seba ? $seba->seba_name : 'Unknown Seba',
-        'bedha' => $items->map(function ($item) use ($sebaId) {
-            return [
-                'id' => $sebaId . '_' . $item->beddha->id,  // concatenated id here
-                'name' => $item->beddha->beddha_name,
+        // Step 3: Group by seba_id
+        $grouped = $assignments->groupBy('seba_id');
+
+        $result = [];
+
+        // Step 4: Process assigned beddhas
+        foreach ($grouped as $sebaId => $items) {
+            $seba = PratihariSebaMaster::find($sebaId);
+
+            $result[] = [
+                'id' => $sebaId,
+                'name' => $seba ? $seba->seba_name : 'Unknown Seba',
+                'bedha' => $items->map(function ($item) use ($sebaId) {
+                    return [
+                        'id' => $sebaId . '_' . $item->beddha->id,
+                        'name' => $item->beddha->beddha_name,
+                    ];
+                })->values()
             ];
-        })->values(),
-        ];
+        }
 
-        })->values();
+        // Step 5: Add unassigned beddhas
+        $assignedBeddhaIds = $assignments->pluck('beddha_id')->unique();
+        $unassigned = $allBeddhas->except($assignedBeddhaIds->toArray());
+
+        if ($unassigned->isNotEmpty()) {
+            $result[] = [
+                'id' => null,
+                'name' => 'Unassigned',
+                'bedha' => $unassigned->map(function ($beddha) {
+                    return [
+                        'id' => 'unassigned_' . $beddha->id,
+                        'name' => $beddha->beddha_name,
+                    ];
+                })->values()
+            ];
+        }
 
         return response()->json([
             'status' => 200,
             'message' => 'Beddhas fetched successfully',
-            'data' => $formattedData
+            'data' => collect($result)->values()
         ], 200);
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 500,
-                'message' => 'Something went wrong',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 500,
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     public function saveSeba(Request $request)
     {
