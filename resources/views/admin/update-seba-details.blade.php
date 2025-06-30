@@ -375,10 +375,9 @@
                         .then(response => response.json())
                         .then(data => {
                             if (!document.getElementById(`beddha_group_${sebaId}`)) {
-                                let beddhaHtml = `
-                                    <div class="beddha-group mt-3" id="beddha_group_${sebaId}">
-                                        <strong>${checkbox.nextElementSibling.innerText}:</strong>
-                                        <div class="d-flex flex-wrap gap-2 mt-2">`;
+                                let beddhaHtml = `   
+                                  < class="d-flex flex-wrap gap-2 mt-2" id="beddha_group_${sebaId}">
+                                        <strong>${checkbox.nextElementSibling.innerText}:</strong>`;
 
                                 data.forEach(beddha => {
                                     beddhaHtml += `
@@ -396,7 +395,7 @@
 
                             
 
-                                beddhaHtml += `</div></div>`;
+                                beddhaHtml += `</div>`;
                                 beddhaList.innerHTML += beddhaHtml;
                             }
                         })
