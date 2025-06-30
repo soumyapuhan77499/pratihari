@@ -145,11 +145,9 @@ public function PratihariSebaAssign(Request $request)
 {
     $pratihari_id = $request->get('pratihari_id'); // from dropdown
 
-    dd($pratihari_id);
-
     $pratiharis = PratihariProfile::all()->mapWithKeys(function ($item) {
         $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
-        return [$item->id => $fullName];
+        return [$item->pratihari_id => $fullName];
     });
 
     $assignedSebas = [];

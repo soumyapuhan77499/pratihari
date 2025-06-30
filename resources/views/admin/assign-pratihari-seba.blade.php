@@ -99,9 +99,9 @@
                                 <select name="pratihari_id" id="pratihari_id" class="form-control"
                                     onchange="this.form.submit()">
                                     <option value="">-- Select Pratihari --</option>
-                                    @foreach ($pratiharis as $id => $name)
-                                        <option value="{{ $id }}"
-                                            {{ request('pratihari_id') == $id ? 'selected' : '' }}>
+                                    @foreach ($pratiharis as $pratihari_id => $name)
+                                        <option value="{{ $pratihari_id }}"
+                                            {{ request('pratihari_id') == $pratihari_id ? 'selected' : '' }}>
                                             {{ $name }}
                                         </option>
                                     @endforeach
