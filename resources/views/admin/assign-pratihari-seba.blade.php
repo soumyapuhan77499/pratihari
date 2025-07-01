@@ -92,34 +92,32 @@
             <div class="card">
                 <div class="card-header">🛕 Assign Seba to Pratihari</div>
                 <div class="card-body">
-                    <form method="GET" action="{{ route('admin.PratihariSebaAssign') }}">
+
+                    <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">
+                        @csrf
+
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label for="pratihari_id">Select Pratihari</label>
-                                <select name="pratihari_id" id="pratihari_id" class="form-control"
-                                    onchange="this.form.submit()">
+                                <select name="pratihari_id" id="pratihari_id" class="form-control">
                                     <option value="">-- Select Pratihari --</option>
-                                    @foreach ($pratiharis as $pratihari_id => $name)
-                                        <option value="{{ $pratihari_id }}"
-                                            {{ request('pratihari_id') == $pratihari_id ? 'selected' : '' }}>
+                                    @foreach ($pratiharis as $pratihari_id_option => $name)
+                                        <option value="{{ $pratihari_id_option }}"
+                                            {{ request('pratihari_id') == $pratihari_id_option ? 'selected' : '' }}>
                                             {{ $name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                    </form>
 
-                    @if ($pratihari_id)
-                        <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
-                            @csrf
-                            <input type="text" name="pratihari_id" value="{{ $pratihari_id }}">
+                        @if (request('pratihari_id'))
+                            <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
 
                             <div class="beddha-section mt-4">
                                 <label class="section-title">📜 Assign Beddha to Seba</label>
                                 <div class="checkbox-list" id="beddha_list">
                                     @foreach ($sebas as $seba)
-                                        {{-- Include seba_id[] to send to controller --}}
                                         <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
 
                                         <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
@@ -149,8 +147,8 @@
                                     <i class="fa fa-save"></i> Submit
                                 </button>
                             </div>
-                        </form>
-                    @endif
+                        @endif
+                    </form>
 
 
                 </div>
@@ -166,6 +164,16 @@
             setTimeout(() => document.getElementById("errorMessage")?.classList.add("d-none"), 5000);
         });
     </script>
+
+    <script>
+        document.getElementById('pratihari_id').addEventListener('change', function() {
+            const selectedId = this.value;
+            const url = new URL(window.location.href);
+            url.searchParams.set('pratihari_id', selectedId);
+            window.location.href = url.toString();
+        });
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
