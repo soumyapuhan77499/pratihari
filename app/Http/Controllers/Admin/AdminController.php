@@ -219,43 +219,43 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-   public function sebaDate(Request $request)
-{
-    $pratihariId = $request->input('pratihari_id');
-    $events = [];
+    public function sebaDate(Request $request)
+    {
+        $pratihariId = $request->input('pratihari_id');
+        $events = [];
 
-    if ($pratihariId) {
-        $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
+        if ($pratihariId) {
+            $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
 
-        foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $beddhaIds = $seba->beddha_id;
+            foreach ($sebas as $seba) {
+                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+                $beddhaIds = $seba->beddha_id;
 
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId);
+                foreach ($beddhaIds as $beddhaId) {
+                    $beddhaId = (int) trim($beddhaId);
 
-                if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    $startDate = Carbon::create(2025, 6, 6)->addDays($beddhaId - 1);
-                    $endDate = Carbon::create(2050, 12, 31);
-                    $nextDate = $startDate->copy();
+                    if ($beddhaId >= 1 && $beddhaId <= 47) {
+                        $startDate = Carbon::create(2025, 6, 6)->addDays($beddhaId - 1);
+                        $endDate = Carbon::create(2050, 12, 31);
+                        $nextDate = $startDate->copy();
 
-                    while ($nextDate->lte($endDate)) {
-                        $events[] = [
-                            'title' => "$sebaName - $beddhaId",
-                            'start' => $nextDate->toDateString(),
-                            'extendedProps' => [
-                                'sebaName' => $sebaName,
-                                'beddhaId' => $beddhaId
-                            ]
-                        ];
-                        $nextDate->addDays(47);
+                        while ($nextDate->lte($endDate)) {
+                            $events[] = [
+                                'title' => "$sebaName - $beddhaId",
+                                'start' => $nextDate->toDateString(),
+                                'extendedProps' => [
+                                    'sebaName' => $sebaName,
+                                    'beddhaId' => $beddhaId
+                                ]
+                            ];
+                            $nextDate->addDays(47);
+                        }
                     }
                 }
             }
         }
-    }
 
-    return response()->json($events);
-}
+        return response()->json($events);
+    }
 
 }

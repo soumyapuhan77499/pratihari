@@ -22,6 +22,10 @@ return [
             'driver' => 'session',
             'provider' => 'super_admins',
         ],
+        'api' => [ // ✅ Add this
+            'driver' => 'sanctum',
+            'provider' => 'users',
+        ],
     ],
 
     'providers' => [

@@ -29,7 +29,7 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     });
 
     Route::get('/designations', 'manageDesignation');
-    Route::middleware('auth:api')->get('/get-application', 'getApplication');
+    Route::get('/get-application', 'getApplication');
 });
 
 
