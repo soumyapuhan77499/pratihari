@@ -102,7 +102,6 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
-
 public function getHomePage()
 {
     try {
@@ -133,18 +132,16 @@ public function getHomePage()
             ? $photoBaseUrl . ltrim($profile->profile_photo, '/')
             : null;
 
-        // Prepare reject reason
-        $rejectReason = [
-            'reason' => $profile->reject_reason ?? null,
+        // Prepare the array of objects
+        $responseData = [
+            ['profile' => $profile],
+            ['reject_reason' => ['reason' => $profile->reject_reason ?? null]],
         ];
 
         return response()->json([
             'status' => true,
             'message' => 'Home Data fetched successfully',
-            'data' => [
-                'profile' => $profile,
-                'reject_reason' => $rejectReason,
-            ]
+            'data' => $responseData,
         ], 200);
 
     } catch (\Exception $e) {
