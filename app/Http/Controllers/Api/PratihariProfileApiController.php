@@ -343,7 +343,7 @@ public function saveApplication(Request $request)
     }
 }
 
-public function getApplication(Request $request)
+public function getApplication()
 {
     try {
        $user = Auth::user();
