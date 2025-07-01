@@ -184,26 +184,29 @@ class PratihariSebaController extends Controller
         ));
     }
 
-    
-public function savePratihariAssignSeba(Request $request)
+    public function savePratihariAssignSeba(Request $request)
 {
     try {
-        $sebaIds = $request->seba_id;
-        $beddhaIds = $request->beddha_id ?? [];
-        $pratihariId = $request->pratihari_id;
+        $sebaIds = $request->input('seba_id', []);
+        $beddhaIds = $request->input('beddha_id', []);
+        $pratihariId = $request->input('pratihari_id') ?? $request->query('pratihari_id');
+
+        if (!$pratihariId) {
+            return redirect()->back()->with('error', 'Missing pratihari_id in request.');
+        }
 
         foreach ($sebaIds as $sebaId) {
-            // Get corresponding Beddha IDs for this Seba ID
-            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+            $beddhaList = $beddhaIds[$sebaId] ?? [];
 
-            // Skip if no Beddha IDs are provided
             if (empty($beddhaList)) {
+                PratihariSeba::where('pratihari_id', $pratihariId)
+                    ->where('seba_id', $sebaId)
+                    ->delete();
                 continue;
             }
 
             $beddhaIdsString = implode(',', $beddhaList);
 
-            // Update if exists, else create new
             PratihariSeba::updateOrCreate(
                 [
                     'pratihari_id' => $pratihariId,
@@ -216,7 +219,7 @@ public function savePratihariAssignSeba(Request $request)
         }
 
         return redirect()->back()->with('success', 'Assignments updated successfully!');
-        
+
     } catch (\Illuminate\Validation\ValidationException $e) {
         return redirect()->back()->withErrors($e->validator)->withInput();
 
