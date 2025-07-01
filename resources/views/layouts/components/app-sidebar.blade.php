@@ -59,6 +59,14 @@
                     </li>
 
                     <li class="slide">
+                        <a class="side-menu__item" href="{{ url('admin/assign-pratihari-seba') }}"><span
+                                class="side-menu__label"><img src="{{ asset('assets/img/brand/manage.png') }}"
+                                    style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
+                                    style="margin-left: 10px">Pratihari Seba Assign</span></a>
+                    </li>
+
+
+                    <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/manage-notice') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/notification.png') }}"
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
