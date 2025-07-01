@@ -134,7 +134,6 @@ public function getProfile(Request $request)
         'profile' => $profile,
     ]);
 }
-
 public function getAllData(Request $request)
 {
     try {
@@ -147,22 +146,37 @@ public function getAllData(Request $request)
         $pratihari_id = $user->pratihari_id;
         $photoBaseUrl = config('app.photo_url');
 
-        // Fetch all related data for the authenticated user's pratihari_id
+        // Fetch related data
         $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
         $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
         $address = PratihariAddress::where('pratihari_id', $pratihari_id)->first();
         $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
         $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
-        $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get();
+
+        // 👉 Eager-load SebaMaster to get seba_name
+        $sebaDetailsRaw = PratihariSeba::with('sebaMaster')
+            ->where('pratihari_id', $pratihari_id)
+            ->get();
+
+        // Format Seba Details with seba_name
+        $sebaDetails = $sebaDetailsRaw->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'seba_id' => $item->seba_id,
+                'seba_name' => $item->sebaMaster->seba_name ?? null,
+                'beddha_id' => $item->beddha_id,
+            ];
+        });
+
         $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->get();
 
-        // Append full URLs to photos in profile object
+        // Append full URLs to profile photos
         if ($profile) {
             $profile->profile_photo_url = !empty($profile->profile_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->profile_photo, '/') : null;
             $profile->health_card_photo_url = !empty($profile->health_card_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->health_card_photo, '/') : null;
         }
 
-        // Append full URLs to photos in family object
+        // Family photo URLs
         if ($family) {
             $family->father_photo_url = !empty($family->father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->father_photo, '/') : null;
             $family->mother_photo_url = !empty($family->mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->mother_photo, '/') : null;
@@ -171,7 +185,7 @@ public function getAllData(Request $request)
             $family->spouse_mother_photo_url = !empty($family->spouse_mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_mother_photo, '/') : null;
         }
 
-        // Append full URLs to photos in idcard collection
+        // ID card photo URLs
         $idcard->transform(function ($item) use ($photoBaseUrl) {
             $item->id_photo_url = !empty($item->id_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->id_photo, '/') : null;
             return $item;
@@ -193,7 +207,6 @@ public function getAllData(Request $request)
         ], 200);
 
     } catch (\Exception $e) {
-        // Log the error
         \Log::error('Error fetching data for pratihari_id ' . ($user->pratihari_id ?? 'unknown') . ': ' . $e->getMessage());
 
         return response()->json([
