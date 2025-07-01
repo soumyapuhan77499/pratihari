@@ -189,7 +189,7 @@ class PratihariSebaController extends Controller
     try {
         $sebaIds = $request->input('seba_id', []);
         $beddhaIds = $request->input('beddha_id', []);
-        $pratihariId = $request->query('pratihariId');
+        $pratihariId = $request->input('pratihari_id');
 
         if (!$pratihariId) {
             return redirect()->back()->with('error', 'Missing pratihari_id in request.');

@@ -113,7 +113,7 @@
                     @if ($pratihari_id)
                         <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="pratihariId" value="{{ $pratihari_id }}">
+                            <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
 
                             <div class="beddha-section mt-4">
                                 <label class="section-title">📜 Assign Beddha to Seba</label>
