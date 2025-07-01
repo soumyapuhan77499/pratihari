@@ -26,10 +26,10 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
         Route::get('/get-home-page', 'getHomePage');
         Route::get('/get-all-pratihari-profile', 'getAllData');
         Route::post('/application/save', 'saveApplication');
+        Route::get('/get-application', 'getApplication');
     });
 
     Route::get('/designations', 'manageDesignation');
-    Route::get('/get-application', 'getApplication');
 });
 
 
