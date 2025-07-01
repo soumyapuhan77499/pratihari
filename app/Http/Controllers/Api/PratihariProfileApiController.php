@@ -207,24 +207,36 @@ public function getAllData(Request $request)
 public function manageDesignation()
 {
     try {
+        $photoBaseUrl = config('app.photo_url');
+
         $designations = PratihariDesignation::with('pratihariProfile')->get();
 
-        $formatted = $designations->map(function ($designation) {
+        $formatted = $designations->map(function ($designation) use ($photoBaseUrl) {
+            $profile = $designation->pratihariProfile;
+
+            $profilePhotoUrl = null;
+
+            if ($profile && $profile->profile_photo) {
+                $relativePath = ltrim($profile->profile_photo, '/');
+                $profilePhotoUrl = rtrim($photoBaseUrl, '/') . '/' . $relativePath;
+            }
+
             return [
                 'id' => $designation->id,
                 'year' => $designation->year,
                 'designation' => $designation->designation,
                 'pratihari' => [
-                    'id' => $designation->pratihariProfile->id ?? null,
-                    'pratihari_id' => $designation->pratihariProfile->pratihari_id ?? null,
-                    'first_name' => $designation->pratihariProfile->first_name ?? null,
-                    'middle_name' => $designation->pratihariProfile->middle_name ?? null,
-                    'last_name' => $designation->pratihariProfile->last_name ?? null,
+                    'id' => $profile->id ?? null,
+                    'pratihari_id' => $profile->pratihari_id ?? null,
+                    'first_name' => $profile->first_name ?? null,
+                    'middle_name' => $profile->middle_name ?? null,
+                    'last_name' => $profile->last_name ?? null,
                     'full_name' => trim(
-                        ($designation->pratihariProfile->first_name ?? '') . ' ' .
-                        ($designation->pratihariProfile->middle_name ?? '') . ' ' .
-                        ($designation->pratihariProfile->last_name ?? '')
+                        ($profile->first_name ?? '') . ' ' .
+                        ($profile->middle_name ?? '') . ' ' .
+                        ($profile->last_name ?? '')
                     ),
+                    'profile_photo_url' => $profilePhotoUrl,
                 ]
             ];
         });
