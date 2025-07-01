@@ -102,6 +102,7 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
+
 public function getHomePage()
 {
     try {

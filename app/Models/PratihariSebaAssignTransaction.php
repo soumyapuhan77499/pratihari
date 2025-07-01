@@ -14,17 +14,9 @@ class PratihariSebaAssignTransaction extends Model
     protected $fillable = [
         'pratihari_id',
         'assigned_by',
-        'header',
-        'body',
-        'photo',
+        'seba_id',
+        'beddha_id',
+        'date_time',
         'status',
     ];
-
-    
-    public function profile()
-    {
-        return $this->hasOne(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
-    }
-
-    
 }

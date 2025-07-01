@@ -184,9 +184,16 @@ class PratihariSebaController extends Controller
         ));
     }
 
-    public function savePratihariAssignSeba(Request $request)
+   public function savePratihariAssignSeba(Request $request)
 {
     try {
+        $admins = Auth::admins();
+
+        if (!$admins) {
+            return redirect()->back()->with('error', 'User not authenticated.');
+        }
+
+        $assigned_by = $admins->admin_id;
         $sebaIds = $request->input('seba_id', []);
         $beddhaIds = $request->input('beddha_id', []);
         $pratihariId = $request->input('pratihari_id');
@@ -207,6 +214,7 @@ class PratihariSebaController extends Controller
 
             $beddhaIdsString = implode(',', $beddhaList);
 
+            // Update or create the main assignment
             PratihariSeba::updateOrCreate(
                 [
                     'pratihari_id' => $pratihariId,
@@ -216,6 +224,15 @@ class PratihariSebaController extends Controller
                     'beddha_id' => $beddhaIdsString,
                 ]
             );
+
+            // Insert transaction record
+            PratihariSebaAssignTransaction::create([
+                'pratihari_id' => $pratihariId,
+                'assigned_by' => $assigned_by,
+                'seba_id' => $sebaId,
+                'beddha_id' => $beddhaIdsString,
+                'date_time' => now('Asia/Kolkata'),
+            ]);
         }
 
         return redirect()->back()->with('success', 'Assignments updated successfully!');
@@ -224,8 +241,11 @@ class PratihariSebaController extends Controller
         return redirect()->back()->withErrors($e->validator)->withInput();
 
     } catch (\Exception $e) {
+        \Log::error('Error in savePratihariAssignSeba: ' . $e->getMessage());
+
         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
 }
+
 
 }
