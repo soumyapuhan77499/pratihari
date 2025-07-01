@@ -103,7 +103,7 @@ public function saveProfile(Request $request)
     }
 }
 
-public function getHomePage(Request $request)
+public function getHomePage()
 {
     try {
         $user = Auth::user();
