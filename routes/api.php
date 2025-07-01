@@ -24,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/get-home-page', [PratihariProfileApiCon
 Route::middleware('auth:sanctum')->get('/get-all-pratihari-profile', [PratihariProfileApiController::class, 'getAllData']);
 Route::get('/designations', [PratihariProfileApiController::class, 'manageDesignation']);
 Route::middleware('auth:sanctum')->post('/application/save', [PratihariProfileApiController::class, 'saveApplication']);
+Route::middleware('auth:sanctum')->get('/get-application', [PratihariProfileApiController::class, 'getApplication'])->middleware('auth:api');
+
 
 Route::middleware('auth:sanctum')->post('/save-family', [PratihariFamilyApiController::class, 'saveFamily']);
 Route::middleware('auth:sanctum')->post('/save-idcard', [PratihariIdcardApiController::class, 'saveIdcard']);

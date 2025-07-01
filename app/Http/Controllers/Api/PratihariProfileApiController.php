@@ -319,5 +319,44 @@ public function saveApplication(Request $request)
         ], 500);
     }
 }
+public function getApplication(Request $request)
+{
+    try {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not authenticated'], 401);
+        }
+
+        $pratihari_id = $user->pratihari_id;
+        $photoBaseUrl = rtrim(config('app.photo_url'), '/') . '/';
+
+        // Get applications
+        $applications = PratihariApplication::where('pratihari_id', $pratihari_id)->get();
+
+        // Append full photo URL
+        $applications->transform(function ($app) use ($photoBaseUrl) {
+            $app->photo_url = $app->photo
+                ? (str_starts_with($app->photo, 'http') ? $app->photo : $photoBaseUrl . ltrim($app->photo, '/'))
+                : null;
+            return $app;
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Applications fetched successfully.',
+            'data' => $applications
+        ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Error fetching applications: ' . $e->getMessage());
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Failed to fetch applications.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 }
