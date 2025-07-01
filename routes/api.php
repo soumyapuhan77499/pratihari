@@ -20,7 +20,7 @@ Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('admin.ver
 Route::middleware('auth:sanctum')->post('/userLogout', [OtpController::class, 'userLogout']);
 
 Route::middleware('auth:sanctum')->post('/save-profile', [PratihariProfileApiController::class, 'saveProfile']);
-Route::middleware('auth:sanctum')->get('/pratihari-profile', [PratihariProfileApiController::class, 'getProfile']);
+Route::middleware('auth:sanctum')->get('/get-home-page', [PratihariProfileApiController::class, 'getHomePage']);
 Route::middleware('auth:sanctum')->get('/get-all-pratihari-profile', [PratihariProfileApiController::class, 'getAllData']);
 Route::get('/designations', [PratihariProfileApiController::class, 'manageDesignation']);
 Route::middleware('auth:sanctum')->post('/application/save', [PratihariProfileApiController::class, 'saveApplication']);

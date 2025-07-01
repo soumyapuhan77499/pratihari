@@ -43,8 +43,12 @@
                                     name="year" required>
                                     <option value="">Select Year</option>
                                     @for ($y = date('Y'); $y >= 2000; $y--)
-                                        <option value="{{ $y }}" {{ old('year') == $y ? 'selected' : '' }}>
-                                            {{ $y }}</option>
+                                        @php
+                                            $display = $y . '-' . ($y + 1);
+                                        @endphp
+                                        <option value="{{ $display }}" {{ old('year') == $display ? 'selected' : '' }}>
+                                            {{ $display }}
+                                        </option>
                                     @endfor
                                 </select>
                                 @error('year')
@@ -96,14 +100,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
-<script>
-    $(document).ready(function() {
-        $('.select2').select2({
-            placeholder: 'Select Pratihari',
-            allowClear: true,
-            width: '100%'
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: 'Select Pratihari',
+                allowClear: true,
+                width: '100%'
+            });
         });
-    });
-</script>
-
+    </script>
 @endsection
