@@ -114,7 +114,6 @@ class PratihariSebaController extends Controller
         ));
     }
 
-
     public function update(Request $request, $pratihariId)
     {
         try {
@@ -188,66 +187,66 @@ class PratihariSebaController extends Controller
 
    public function savePratihariAssignSeba(Request $request)
 {
-    try {
-$admins = Auth::guard('admins')->user();
+        try {
+            
+            $admins = Auth::guard('admins')->user();
 
-        if (!$admins) {
-            return redirect()->back()->with('error', 'User not authenticated.');
-        }
-
-        $assigned_by = $admins->admin_id;
-        $sebaIds = $request->input('seba_id', []);
-        $beddhaIds = $request->input('beddha_id', []);
-        $pratihariId = $request->input('pratihari_id');
-
-        if (!$pratihariId) {
-            return redirect()->back()->with('error', 'Missing pratihari_id in request.');
-        }
-
-        foreach ($sebaIds as $sebaId) {
-            $beddhaList = $beddhaIds[$sebaId] ?? [];
-
-            if (empty($beddhaList)) {
-                PratihariSeba::where('pratihari_id', $pratihariId)
-                    ->where('seba_id', $sebaId)
-                    ->delete();
-                continue;
+            if (!$admins) {
+                return redirect()->back()->with('error', 'User not authenticated.');
             }
 
-            $beddhaIdsString = implode(',', $beddhaList);
+            $assigned_by = $admins->admin_id;
+            $sebaIds = $request->input('seba_id', []);
+            $beddhaIds = $request->input('beddha_id', []);
+            $pratihariId = $request->input('pratihari_id');
 
-            // Update or create the main assignment
-            PratihariSeba::updateOrCreate(
-                [
+            if (!$pratihariId) {
+                return redirect()->back()->with('error', 'Missing pratihari_id in request.');
+            }
+
+            foreach ($sebaIds as $sebaId) {
+                $beddhaList = $beddhaIds[$sebaId] ?? [];
+
+                if (empty($beddhaList)) {
+                    PratihariSeba::where('pratihari_id', $pratihariId)
+                        ->where('seba_id', $sebaId)
+                        ->delete();
+                    continue;
+                }
+
+                $beddhaIdsString = implode(',', $beddhaList);
+
+                // Update or create the main assignment
+                PratihariSeba::updateOrCreate(
+                    [
+                        'pratihari_id' => $pratihariId,
+                        'seba_id' => $sebaId,
+                    ],
+                    [
+                        'beddha_id' => $beddhaIdsString,
+                    ]
+                );
+
+                // Insert transaction record
+                PratihariSebaAssignTransaction::create([
                     'pratihari_id' => $pratihariId,
+                    'assigned_by' => $assigned_by,
                     'seba_id' => $sebaId,
-                ],
-                [
                     'beddha_id' => $beddhaIdsString,
-                ]
-            );
+                    'date_time' => now('Asia/Kolkata'),
+                ]);
+            }
 
-            // Insert transaction record
-            PratihariSebaAssignTransaction::create([
-                'pratihari_id' => $pratihariId,
-                'assigned_by' => $assigned_by,
-                'seba_id' => $sebaId,
-                'beddha_id' => $beddhaIdsString,
-                'date_time' => now('Asia/Kolkata'),
-            ]);
+            return redirect()->back()->with('success', 'Assignments updated successfully!');
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+
+        } catch (\Exception $e) {
+            \Log::error('Error in savePratihariAssignSeba: ' . $e->getMessage());
+
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        return redirect()->back()->with('success', 'Assignments updated successfully!');
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()->withErrors($e->validator)->withInput();
-
-    } catch (\Exception $e) {
-        \Log::error('Error in savePratihariAssignSeba: ' . $e->getMessage());
-
-        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
-}
-
 
 }

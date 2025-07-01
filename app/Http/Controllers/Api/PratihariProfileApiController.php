@@ -133,16 +133,18 @@ public function getHomePage()
             ? $photoBaseUrl . ltrim($profile->profile_photo, '/')
             : null;
 
-        // Prepare the array of objects
-        $responseData = [
-            ['profile' => $profile],
-            ['reject_reason' => ['reason' => $profile->reject_reason ?? null]],
+        // Prepare reject reason
+        $rejectReason = [
+            'reason' => $profile->reject_reason ?? null,
         ];
 
         return response()->json([
             'status' => true,
             'message' => 'Home Data fetched successfully',
-            'data' => $responseData,
+            'data' => [
+                'profile' => $profile,
+                'reject_reason' => $rejectReason,
+            ]
         ], 200);
 
     } catch (\Exception $e) {
