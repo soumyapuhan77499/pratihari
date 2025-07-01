@@ -96,7 +96,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label for="pratihari_id">Select Pratihari</label>
-                                <select name="pratihariId" id="pratihari_id" class="form-control"
+                                <select name="pratihari_id" id="pratihari_id" class="form-control"
                                     onchange="this.form.submit()">
                                     <option value="">-- Select Pratihari --</option>
                                     @foreach ($pratiharis as $pratihari_id => $name)
@@ -113,7 +113,7 @@
                     @if ($pratihari_id)
                         <form action="{{ route('admin.savePratihariAssignSeba') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="pratihari_id" value="{{ $pratihari_id }}">
+                            <input type="hidden" name="pratihariId" value="{{ $pratihari_id }}">
 
                             <div class="beddha-section mt-4">
                                 <label class="section-title">📜 Assign Beddha to Seba</label>
