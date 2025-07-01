@@ -346,7 +346,7 @@ public function saveApplication(Request $request)
 public function getApplication(Request $request)
 {
     try {
-        $user = Auth::user();
+       $user = Auth::user();
 
         if (!$user) {
             return response()->json(['error' => 'User not authenticated'], 401);
