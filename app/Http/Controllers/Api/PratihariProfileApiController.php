@@ -105,34 +105,57 @@ public function saveProfile(Request $request)
 
 public function getHomePage(Request $request)
 {
-    $user = Auth::user();
+    try {
+        $user = Auth::user();
 
-    if (!$user) {
-        return response()->json(['error' => 'User not authenticated'], 401);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User not authenticated',
+            ], 401);
+        }
+
+        $pratihari_id = $user->pratihari_id;
+
+        $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
+
+        if (!$profile) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Profile not found',
+            ], 404);
+        }
+
+        $photoBaseUrl = rtrim(config('app.photo_url'), '/') . '/';
+
+        // Append profile photo URL
+        $profile->profile_photo_url = $profile->profile_photo
+            ? $photoBaseUrl . ltrim($profile->profile_photo, '/')
+            : null;
+
+        // Prepare reject reason
+        $rejectReason = [
+            'reason' => $profile->reject_reason ?? null,
+        ];
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Home Data fetched successfully',
+            'data' => [
+                'profile' => $profile,
+                'reject_reason' => $rejectReason,
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Error fetching home page data: ' . $e->getMessage());
+
+        return response()->json([
+            'status' => false,
+            'message' => 'An error occurred while fetching home data',
+            'error' => $e->getMessage(),
+        ], 500);
     }
-
-    $pratihari_id = $user->pratihari_id;
-
-    $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
-
-    if (!$profile) {
-        return response()->json(['error' => 'Profile not found'], 404);
-    }
-
-    $photoBaseUrl = config('app.photo_url');
-
-    if ($profile->profile_photo) {
-        // Ensure no double slashes
-        $profile_photo = ltrim($profile->profile_photo, '/');
-        $profile->profile_photo_url = rtrim($photoBaseUrl, '/') . '/' . $profile_photo;
-    } else {
-        $profile->profile_photo_url = null;
-    }
-
-    return response()->json([
-        'pratihari_id' => $pratihari_id,
-        'profile' => $profile,
-    ]);
 }
 
 public function getAllData(Request $request)
@@ -319,6 +342,7 @@ public function saveApplication(Request $request)
         ], 500);
     }
 }
+
 public function getApplication(Request $request)
 {
     try {
