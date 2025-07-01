@@ -96,7 +96,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label for="pratihari_id">Select Pratihari</label>
-                                <select name="pratihari_id" id="pratihari_id" class="form-control"
+                                <select name="pratihariId" id="pratihari_id" class="form-control"
                                     onchange="this.form.submit()">
                                     <option value="">-- Select Pratihari --</option>
                                     @foreach ($pratiharis as $pratihari_id => $name)
