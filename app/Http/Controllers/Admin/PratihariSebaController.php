@@ -189,7 +189,7 @@ class PratihariSebaController extends Controller
    public function savePratihariAssignSeba(Request $request)
 {
     try {
-        $admins = Auth::admins();
+$admins = Auth::guard('admins')->user();
 
         if (!$admins) {
             return redirect()->back()->with('error', 'User not authenticated.');
