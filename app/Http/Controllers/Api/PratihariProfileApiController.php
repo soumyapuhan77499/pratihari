@@ -482,5 +482,48 @@ public function getPofileDataByPratihariId(Request $request)
     }
 }
 
+public function getApprovedProfiles()
+{
+    try {
+        $photoBaseUrl = config('app.photo_url');
+
+        $profiles = PratihariProfile::where('pratihari_status', 'approved')
+            ->select([
+                'pratihari_id',
+                'first_name',
+                'middle_name',
+                'last_name',
+                'alias_name',
+                'email',
+                'whatsapp_no',
+                'phone_no',
+                'alt_phone_no',
+                'profile_photo',
+            ])
+            ->get()
+            ->map(function ($item) use ($photoBaseUrl) {
+                $item->full_name = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
+                $item->profile_photo_url = $item->profile_photo 
+                    ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->profile_photo, '/') 
+                    : null;
+                return $item;
+            });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Approved profiles fetched successfully',
+            'data' => $profiles
+        ], 200);
+    } catch (\Exception $e) {
+        \Log::error('Error fetching approved profiles: ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching approved profiles',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 
 }
