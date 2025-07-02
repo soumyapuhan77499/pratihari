@@ -11,6 +11,7 @@ use App\Models\UserDevice;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Exception\RequestException;
+    use App\Services\WhatsappService;
 
 class OtpController extends Controller
 {
@@ -189,69 +190,112 @@ class OtpController extends Controller
         }
     }
 
-    
-  public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
-    {
-
-        dd("soumya");
-        $phone = $request->input('phone');
-        $phoneNumber = '+91' . $phone;
-
-        // Check if admin exists
-        $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-        if (!$admin) {
-            return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
-        }
-
-        $otp = rand(100000, 999999); // 6-digit OTP
-
-        // Store in session
-        Session::put('otp', $otp);
-        Session::put('otp_phone', $phoneNumber);
-
-        // Send OTP via WhatsApp
-        $sent = $whatsappService->sendOtp($phone, $otp); // phone without +91
-
-        if ($sent) {
-            return back()->with(['otp_sent' => true, 'message' => 'OTP sent via WhatsApp.']);
-        } else {
-            return back()->with('message', 'Failed to send OTP via WhatsApp.');
-        }
+    public function sendOtp(Request $request, WhatsappService $whatsappService)
+{
+    if (!$request->expectsJson() && !$request->isJson()) {
+        return response()->json(['message' => 'Only JSON requests are allowed'], 406);
     }
 
-    // Verify OTP
-    public function verifyWhatsappOtp(Request $request)
-    {
-        $inputOtp = $request->input('otp');
-        $storedOtp = Session::get('otp');
-        $phoneNumber = Session::get('otp_phone');
+    $phoneNumber = $request->input('phone');
 
-        if (!$storedOtp || !$phoneNumber) {
-            return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
-        }
-
-        if ($inputOtp == $storedOtp) {
-            // Check if admin exists
-            $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-            if (!$admin) {
-                // Optional: auto-create admin (if needed)
-                $admin = Admin::firstOrCreate(
-                    ['mobile_no' => $phoneNumber],
-                    ['admin' => 'ADMIN' . rand(10000, 99999)]
-                );
-            }
-
-            // Authenticate
-            Auth::guard('admins')->login($admin);
-
-            // Clear session
-            Session::forget(['otp', 'otp_phone']);
-
-            return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
-        }
-
-        return back()->with('message', 'Invalid OTP.');
+    if (!$phoneNumber) {
+        return response()->json(['message' => 'Phone number is required.'], 422);
     }
+
+    try {
+        $otp = rand(100000, 999999);
+
+        $sent = $whatsappService->sendOtp($phoneNumber, $otp);
+
+        if (!$sent) {
+            return response()->json(['message' => 'Failed to send OTP. Please try again.'], 400);
+        }
+
+        // Store OTP and phone in session (you can also use DB or Redis for better scaling)
+        session(['otp_phone' => '91' . $phoneNumber]);
+        session(['otp' => $otp]);
+
+        return response()->json([
+            'message' => 'OTP sent successfully via WhatsApp.',
+            'phone' => $phoneNumber
+        ], 200);
+    } catch (\Exception $e) {
+        Log::error("WhatsApp OTP Send Error: " . $e->getMessage());
+
+        return response()->json([
+            'message' => 'Failed to send OTP. Please try again.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+public function verifyOtp(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'otp'       => 'required|digits:6',
+        'phone'     => 'required|string',
+        'device_id' => 'nullable|string',
+        'platform'  => 'nullable|string',
+        'device_model' => 'nullable|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['message' => $validator->errors()->first()], 422);
+    }
+
+    $phone = $request->input('phone');
+    $inputOtp = $request->input('otp');
+    $deviceId = $request->input('device_id');
+    $platform = $request->input('platform');
+    $deviceModel = $request->input('device_model');
+
+    $storedOtp = session('otp');
+    $storedPhone = session('otp_phone');
+
+    if (!$storedOtp || !$storedPhone) {
+        return response()->json(['message' => 'Session expired. Please request OTP again.'], 400);
+    }
+
+    if ($inputOtp != $storedOtp || $storedPhone !== '91' . $phone) {
+        return response()->json(['message' => 'Invalid OTP.'], 400);
+    }
+
+    try {
+        // Lookup or create user
+        $user = User::where('mobile_number', '91' . $phone)->first();
+
+        if (!$user) {
+            $user = User::create([
+                'pratihari_id' => 'PRATIHARI' . rand(10000, 99999),
+                'mobile_number' => '91' . $phone,
+            ]);
+        }
+
+        // Save device info
+        if ($deviceId) {
+            UserDevice::updateOrCreate(
+                ['pratihari_id' => $user->pratihari_id, 'device_id' => $deviceId],
+                ['platform' => $platform, 'device_model' => $deviceModel]
+            );
+        }
+
+        // Create API token
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        // Clear OTP session
+        session()->forget(['otp', 'otp_phone']);
+
+        return response()->json([
+            'message' => 'User authenticated successfully.',
+            'user' => $user,
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
+    } catch (\Exception $e) {
+        Log::error("WhatsApp OTP Verify Error: " . $e->getMessage());
+
+        return response()->json(['message' => 'Failed to verify OTP. Please try again.'], 500);
+    }
+}
+
 }

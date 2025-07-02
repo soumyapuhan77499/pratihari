@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Auth;
-    use App\Services\WhatsappService;
 
 use Carbon\Carbon;
 
