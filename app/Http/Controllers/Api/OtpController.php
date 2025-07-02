@@ -25,136 +25,136 @@ class OtpController extends Controller
         $this->clientSecret = '5rjidx7nav2mkrz9jo7f56bmj8zuc1r2';
     }
 
-    public function sendOtp(Request $request)
-    {
-        if (!$request->expectsJson() && !$request->isJson()) {
-            return response()->json(['message' => 'Only JSON requests are allowed'], 406);
-        }
+    // public function sendOtp(Request $request)
+    // {
+    //     if (!$request->expectsJson() && !$request->isJson()) {
+    //         return response()->json(['message' => 'Only JSON requests are allowed'], 406);
+    //     }
     
-        $phoneNumber = $request->input('phone');
+    //     $phoneNumber = $request->input('phone');
     
-        if (!$phoneNumber) {
-            return response()->json(['message' => 'Phone number is required.'], 422);
-        }
+    //     if (!$phoneNumber) {
+    //         return response()->json(['message' => 'Phone number is required.'], 422);
+    //     }
     
-        try {
-            $client = new Client();
-            $url = rtrim($this->apiUrl, '/') . '/auth/otp/v1/send';
+    //     try {
+    //         $client = new Client();
+    //         $url = rtrim($this->apiUrl, '/') . '/auth/otp/v1/send';
     
-            $response = $client->post($url, [
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'clientId'      => $this->clientId,
-                    'clientSecret'  => $this->clientSecret,
-                ],
-                'json' => ['phoneNumber' => $phoneNumber],
-            ]);
+    //         $response = $client->post($url, [
+    //             'headers' => [
+    //                 'Content-Type'  => 'application/json',
+    //                 'clientId'      => $this->clientId,
+    //                 'clientSecret'  => $this->clientSecret,
+    //             ],
+    //             'json' => ['phoneNumber' => $phoneNumber],
+    //         ]);
     
-            $body = json_decode($response->getBody(), true);
-            Log::info("Send OTP Response: ", $body);
+    //         $body = json_decode($response->getBody(), true);
+    //         Log::info("Send OTP Response: ", $body);
     
-            if (!isset($body['orderId'])) {
-                return response()->json(['message' => 'Failed to send OTP. Please try again.'], 400);
-            }
+    //         if (!isset($body['orderId'])) {
+    //             return response()->json(['message' => 'Failed to send OTP. Please try again.'], 400);
+    //         }
     
-            session(['otp_order_id' => $body['orderId']]);
-            session(['otp_phone' => $phoneNumber]);
+    //         session(['otp_order_id' => $body['orderId']]);
+    //         session(['otp_phone' => $phoneNumber]);
     
-            return response()->json([
-                'message' => 'OTP sent successfully',
-                'order_id' => $body['orderId'],
-                'phone' => $phoneNumber
-            ], 200);
-        } catch (RequestException $e) {
-            Log::error("Send OTP Error: " . $e->getMessage());
+    //         return response()->json([
+    //             'message' => 'OTP sent successfully',
+    //             'order_id' => $body['orderId'],
+    //             'phone' => $phoneNumber
+    //         ], 200);
+    //     } catch (RequestException $e) {
+    //         Log::error("Send OTP Error: " . $e->getMessage());
     
-            return response()->json([
-                'message' => 'Failed to send OTP. Please try again.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'message' => 'Failed to send OTP. Please try again.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
     
     // ✅ Verify OTP Function
-    public function verifyOtp(Request $request)
-    {
-        // Validate request inputs
-        $validator = Validator::make($request->all(), [
-            'orderId'   => 'required|string',
-            'otp'       => 'required|digits:6',
-            'phoneNumber' => 'required|string',
-            'device_id' => 'nullable|string',
-            'platform'  => 'nullable|string',
-            'device_model' => 'nullable|string',
-        ]);
+    // public function verifyOtp(Request $request)
+    // {
+    //     // Validate request inputs
+    //     $validator = Validator::make($request->all(), [
+    //         'orderId'   => 'required|string',
+    //         'otp'       => 'required|digits:6',
+    //         'phoneNumber' => 'required|string',
+    //         'device_id' => 'nullable|string',
+    //         'platform'  => 'nullable|string',
+    //         'device_model' => 'nullable|string',
+    //     ]);
 
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
+    //     if ($validator->fails()) {
+    //         return response()->json(['message' => $validator->errors()->first()], 422);
+    //     }
 
-        // Extract values
-        $orderId = $request->input('orderId');
-        $otp = $request->input('otp');
-        $phoneNumber = $request->input('phoneNumber');
-        $deviceId = $request->input('device_id');
-        $platform = $request->input('platform');
-        $deviceModel = $request->input('device_model');
+    //     // Extract values
+    //     $orderId = $request->input('orderId');
+    //     $otp = $request->input('otp');
+    //     $phoneNumber = $request->input('phoneNumber');
+    //     $deviceId = $request->input('device_id');
+    //     $platform = $request->input('platform');
+    //     $deviceModel = $request->input('device_model');
 
-        $client = new Client();
-        $url = rtrim($this->apiUrl, '/') . '/auth/otp/v1/verify';
+    //     $client = new Client();
+    //     $url = rtrim($this->apiUrl, '/') . '/auth/otp/v1/verify';
 
-        try {
-            $response = $client->post($url, [
-                'headers' => [
-                    'Content-Type'  => 'application/json',
-                    'clientId'      => $this->clientId,
-                    'clientSecret'  => $this->clientSecret,
-                ],
-                'json' => [
-                    'orderId' => $orderId,
-                    'otp' => $otp,
-                    'phoneNumber' => $phoneNumber,
-                ],
-            ]);
+    //     try {
+    //         $response = $client->post($url, [
+    //             'headers' => [
+    //                 'Content-Type'  => 'application/json',
+    //                 'clientId'      => $this->clientId,
+    //                 'clientSecret'  => $this->clientSecret,
+    //             ],
+    //             'json' => [
+    //                 'orderId' => $orderId,
+    //                 'otp' => $otp,
+    //                 'phoneNumber' => $phoneNumber,
+    //             ],
+    //         ]);
 
-            $body = json_decode($response->getBody(), true);
-            Log::info("Verify OTP Response: ", $body);
+    //         $body = json_decode($response->getBody(), true);
+    //         Log::info("Verify OTP Response: ", $body);
 
-            if (!isset($body['isOTPVerified']) || !$body['isOTPVerified']) {
-                return response()->json(['message' => 'Invalid OTP.'], 400);
-            }
+    //         if (!isset($body['isOTPVerified']) || !$body['isOTPVerified']) {
+    //             return response()->json(['message' => 'Invalid OTP.'], 400);
+    //         }
 
-            $user = User::where('mobile_number', $phoneNumber)->first();
+    //         $user = User::where('mobile_number', $phoneNumber)->first();
 
-            if (!$user) {
-                $user = User::create([
-                    'pratihari_id' => 'PRATIHARI' . rand(10000, 99999),
-                    'mobile_number' => $phoneNumber,
-                    'order_id' => $orderId,
-                ]);
-            }
+    //         if (!$user) {
+    //             $user = User::create([
+    //                 'pratihari_id' => 'PRATIHARI' . rand(10000, 99999),
+    //                 'mobile_number' => $phoneNumber,
+    //                 'order_id' => $orderId,
+    //             ]);
+    //         }
 
-            // Store device details only if device_id is provided
-            if ($deviceId) {
-                UserDevice::updateOrCreate(
-                    ['pratihari_id' => $user->pratihari_id, 'device_id' => $deviceId],
-                    ['platform' => $platform, 'device_model' => $deviceModel]
-                );
-            }
+    //         // Store device details only if device_id is provided
+    //         if ($deviceId) {
+    //             UserDevice::updateOrCreate(
+    //                 ['pratihari_id' => $user->pratihari_id, 'device_id' => $deviceId],
+    //                 ['platform' => $platform, 'device_model' => $deviceModel]
+    //             );
+    //         }
 
-            $token = $user->createToken('API Token')->plainTextToken;
+    //         $token = $user->createToken('API Token')->plainTextToken;
 
-            return response()->json([
-                'message' => 'User authenticated successfully.',
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'Bearer'
-            ], 200);
-        } catch (RequestException $e) {
-            Log::error("Verify OTP Error: " . $e->getMessage());
-            return response()->json(['message' => 'Failed to verify OTP. Please try again.'], 500);
-        }
-    }
+    //         return response()->json([
+    //             'message' => 'User authenticated successfully.',
+    //             'user' => $user,
+    //             'token' => $token,
+    //             'token_type' => 'Bearer'
+    //         ], 200);
+    //     } catch (RequestException $e) {
+    //         Log::error("Verify OTP Error: " . $e->getMessage());
+    //         return response()->json(['message' => 'Failed to verify OTP. Please try again.'], 500);
+    //     }
+    // }
 
     // ✅ Logout Function
     public function userLogout(Request $request)
@@ -187,5 +187,71 @@ class OtpController extends Controller
             Log::error("Logout Error: " . $e->getMessage());
             return response()->json(['message' => 'An error occurred while logging out.'], 500);
         }
+    }
+
+    
+  public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
+    {
+
+        dd("soumya");
+        $phone = $request->input('phone');
+        $phoneNumber = '+91' . $phone;
+
+        // Check if admin exists
+        $admin = Admin::where('mobile_no', $phoneNumber)->first();
+
+        if (!$admin) {
+            return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
+        }
+
+        $otp = rand(100000, 999999); // 6-digit OTP
+
+        // Store in session
+        Session::put('otp', $otp);
+        Session::put('otp_phone', $phoneNumber);
+
+        // Send OTP via WhatsApp
+        $sent = $whatsappService->sendOtp($phone, $otp); // phone without +91
+
+        if ($sent) {
+            return back()->with(['otp_sent' => true, 'message' => 'OTP sent via WhatsApp.']);
+        } else {
+            return back()->with('message', 'Failed to send OTP via WhatsApp.');
+        }
+    }
+
+    // Verify OTP
+    public function verifyWhatsappOtp(Request $request)
+    {
+        $inputOtp = $request->input('otp');
+        $storedOtp = Session::get('otp');
+        $phoneNumber = Session::get('otp_phone');
+
+        if (!$storedOtp || !$phoneNumber) {
+            return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
+        }
+
+        if ($inputOtp == $storedOtp) {
+            // Check if admin exists
+            $admin = Admin::where('mobile_no', $phoneNumber)->first();
+
+            if (!$admin) {
+                // Optional: auto-create admin (if needed)
+                $admin = Admin::firstOrCreate(
+                    ['mobile_no' => $phoneNumber],
+                    ['admin' => 'ADMIN' . rand(10000, 99999)]
+                );
+            }
+
+            // Authenticate
+            Auth::guard('admins')->login($admin);
+
+            // Clear session
+            Session::forget(['otp', 'otp_phone']);
+
+            return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
+        }
+
+        return back()->with('message', 'Invalid OTP.');
     }
 }
