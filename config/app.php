@@ -20,6 +20,7 @@ return [
 'photo_url' => env('APP_PHOTO_URL', env('APP_URL')),
 
 
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
