@@ -34,7 +34,6 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
 
 });
 
-
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(PratihariFamilyApiController::class)->group(function () {
