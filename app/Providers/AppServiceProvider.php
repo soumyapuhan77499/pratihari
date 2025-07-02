@@ -12,12 +12,13 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
- public function register()
+ 
+public function register()
 {
     $this->app->singleton(UrlGenerator::class, function ($app) {
         return new UrlGenerator(
             $app['router']->getRoutes(),
-            Request::create($app['config']['app.url'])
+            Request::create(config('app.url')) // fake request object
         );
     });
 }

@@ -17,7 +17,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
-    'photo_url' => env('APP_PHOTO_URL', ''),
+'photo_url' => env('APP_PHOTO_URL', env('APP_URL')),
 
 
     /*
