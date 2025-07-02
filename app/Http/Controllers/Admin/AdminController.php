@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Auth;
+    use App\Services\WhatsappService;
+
 use Carbon\Carbon;
 
 
@@ -256,6 +258,70 @@ class AdminController extends Controller
         }
 
         return response()->json($events);
+    }
+
+    
+  public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
+    {
+        $phone = $request->input('phone');
+        $phoneNumber = '+91' . $phone;
+
+        // Check if admin exists
+        $admin = Admin::where('mobile_no', $phoneNumber)->first();
+
+        if (!$admin) {
+            return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
+        }
+
+        $otp = rand(100000, 999999); // 6-digit OTP
+
+        // Store in session
+        Session::put('otp', $otp);
+        Session::put('otp_phone', $phoneNumber);
+
+        // Send OTP via WhatsApp
+        $sent = $whatsappService->sendOtp($phone, $otp); // phone without +91
+
+        if ($sent) {
+            return back()->with(['otp_sent' => true, 'message' => 'OTP sent via WhatsApp.']);
+        } else {
+            return back()->with('message', 'Failed to send OTP via WhatsApp.');
+        }
+    }
+
+    // Verify OTP
+    public function verifyWhatsappOtp(Request $request)
+    {
+        $inputOtp = $request->input('otp');
+        $storedOtp = Session::get('otp');
+        $phoneNumber = Session::get('otp_phone');
+
+        if (!$storedOtp || !$phoneNumber) {
+            return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
+        }
+
+        if ($inputOtp == $storedOtp) {
+            // Check if admin exists
+            $admin = Admin::where('mobile_no', $phoneNumber)->first();
+
+            if (!$admin) {
+                // Optional: auto-create admin (if needed)
+                $admin = Admin::firstOrCreate(
+                    ['mobile_no' => $phoneNumber],
+                    ['admin' => 'ADMIN' . rand(10000, 99999)]
+                );
+            }
+
+            // Authenticate
+            Auth::guard('admins')->login($admin);
+
+            // Clear session
+            Session::forget(['otp', 'otp_phone']);
+
+            return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
+        }
+
+        return back()->with('message', 'Invalid OTP.');
     }
 
 }
