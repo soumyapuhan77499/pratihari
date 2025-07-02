@@ -190,7 +190,7 @@ class OtpController extends Controller
         }
     }
 
-    public function sendOtp(Request $request, WhatsappService $whatsappService)
+   public function sendOtp(Request $request, WhatsappService $whatsappService)
 {
     if (!$request->expectsJson() && !$request->isJson()) {
         return response()->json(['message' => 'Only JSON requests are allowed'], 406);
@@ -205,25 +205,33 @@ class OtpController extends Controller
     try {
         $otp = rand(100000, 999999);
 
-        $sent = $whatsappService->sendOtp($phoneNumber, $otp);
+        // Call service and get full HTTP response
+        $response = $whatsappService->sendOtp($phoneNumber, $otp);
 
-        if (!$sent) {
-            return response()->json(['message' => 'Failed to send OTP. Please try again.'], 400);
+        if ($response->successful()) {
+            session(['otp_phone' => '91' . $phoneNumber]);
+            session(['otp' => $otp]);
+
+            return response()->json([
+                'message' => 'OTP sent successfully via WhatsApp.',
+                'phone' => $phoneNumber
+            ], 200);
+        } else {
+            $body = json_decode($response->body(), true);
+            $errorMsg = $body['message'] ?? 'Unknown error from MSG91.';
+
+            return response()->json([
+                'message' => 'Failed to send OTP.',
+                'error' => $errorMsg,
+                'status' => $response->status(),
+                'details' => $body
+            ], 400);
         }
-
-        // Store OTP and phone in session (you can also use DB or Redis for better scaling)
-        session(['otp_phone' => '91' . $phoneNumber]);
-        session(['otp' => $otp]);
-
-        return response()->json([
-            'message' => 'OTP sent successfully via WhatsApp.',
-            'phone' => $phoneNumber
-        ], 200);
     } catch (\Exception $e) {
-        Log::error("WhatsApp OTP Send Error: " . $e->getMessage());
+        Log::error("WhatsApp OTP Send Exception: " . $e->getMessage());
 
         return response()->json([
-            'message' => 'Failed to send OTP. Please try again.',
+            'message' => 'Failed to send OTP due to exception.',
             'error' => $e->getMessage()
         ], 500);
     }

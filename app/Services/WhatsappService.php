@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WhatsappService
 {
@@ -40,6 +41,11 @@ class WhatsappService
             'Content-Type' => 'application/json'
         ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
 
-        return $response->successful();
+        Log::info("MSG91 WhatsApp OTP Response", [
+            'status' => $response->status(),
+            'body' => $response->body()
+        ]);
+
+        return $response;
     }
 }
