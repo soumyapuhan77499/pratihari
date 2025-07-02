@@ -30,6 +30,8 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     });
 
     Route::get('/designations', 'manageDesignation');
+    Route::get('/get-profile-by-id', 'getPofileDataByPratihariId');
+
 });
 
 

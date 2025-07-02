@@ -383,4 +383,104 @@ public function getApplication()
     }
 }
 
+public function getPofileDataByPratihariId(Request $request)
+{
+    try {
+        // ✅ Accept pratihari_id from query or form input
+        $pratihari_id = $request->input('pratihari_id');
+
+        if (!$pratihari_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Missing pratihari_id in request'
+            ], 400);
+        }
+
+        $photoBaseUrl = config('app.photo_url');
+
+        // Fetch related data
+        $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
+        $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
+        $address = PratihariAddress::where('pratihari_id', $pratihari_id)->first();
+        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
+        $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
+
+        // Eager-load SebaMaster to get seba_name
+        $sebaDetailsRaw = PratihariSeba::with('sebaMaster')
+            ->where('pratihari_id', $pratihari_id)
+            ->get();
+
+        $sebaDetails = $sebaDetailsRaw->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'seba_id' => $item->seba_id,
+                'seba_name' => $item->sebaMaster->seba_name ?? null,
+                'beddha_id' => $item->beddha_id,
+            ];
+        });
+
+        $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->get();
+
+        // Append full photo URLs
+        if ($profile) {
+            $profile->profile_photo_url = $profile->profile_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->profile_photo, '/')
+                : null;
+            $profile->health_card_photo_url = $profile->health_card_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->health_card_photo, '/')
+                : null;
+        }
+
+        if ($family) {
+            $family->father_photo_url = $family->father_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->father_photo, '/')
+                : null;
+            $family->mother_photo_url = $family->mother_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->mother_photo, '/')
+                : null;
+            $family->spouse_photo_url = $family->spouse_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_photo, '/')
+                : null;
+            $family->spouse_father_photo_url = $family->spouse_father_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_father_photo, '/')
+                : null;
+            $family->spouse_mother_photo_url = $family->spouse_mother_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_mother_photo, '/')
+                : null;
+        }
+
+        $idcard->transform(function ($item) use ($photoBaseUrl) {
+            $item->id_photo_url = $item->id_photo
+                ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->id_photo, '/')
+                : null;
+            return $item;
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data retrieved successfully',
+            'pratihari_id' => $pratihari_id,
+            'data' => [
+                'profile' => $profile,
+                'family' => $family,
+                'address' => $address,
+                'idcard' => $idcard,
+                'occupation' => $occupation,
+                'sebaDetails' => $sebaDetails,
+                'socialMedia' => $socialMedia,
+            ]
+        ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Error fetching data for pratihari_id ' . ($pratihari_id ?? 'unknown') . ': ' . $e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'An error occurred while fetching data',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
+
 }
