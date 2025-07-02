@@ -14,8 +14,8 @@ use App\Http\Controllers\Api\PratihariNoticeController;
 
 use App\Http\Controllers\Api\StatusController;
 
-Route::post('/send-otp', [OtpController::class, 'sendOtp'])->withoutMiddleware('auth');
-Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('admin.verifyOtp');
+Route::post('/send-otp', [OtpController::class, 'sendWhatsappOtp'])->withoutMiddleware('auth');
+Route::post('/verify-otp', [OtpController::class, 'verifyWhatsappOtp'])->name('admin.verifyOtp');
 
 Route::middleware('auth:sanctum')->post('/userLogout', [OtpController::class, 'userLogout']);
 
