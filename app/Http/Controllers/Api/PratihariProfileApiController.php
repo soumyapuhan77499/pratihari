@@ -383,12 +383,10 @@ public function getApplication()
     }
 }
 
-public function getPofileDataByPratihariId(Request $request)
+public function getPofileDataByPratihariId($pratihari_id)
 {
     try {
-        // ✅ Accept pratihari_id from query or form input
-        $pratihari_id = $request->input('pratihari_id');
-
+        
         if (!$pratihari_id) {
             return response()->json([
                 'success' => false,
