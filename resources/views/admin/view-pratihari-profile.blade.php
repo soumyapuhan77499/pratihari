@@ -68,47 +68,11 @@
         }
 
 
-      .personal-details-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
-    gap: 15px;
-    font-size: 15px;
-    color: #333;
-}
-
-.personal-details-item i {
-    font-size: 18px;
-    color: #f5c12e;
-    min-width: 24px;
-}
-
-.personal-details-text {
-    min-width: 160px;
-    font-weight: 600;
-    color: #222;
-}
-
-.personal-details-value {
-    color: #555;
-    font-weight: 500;
-    flex: 1;
-}
-
-.view-photo-btn {
-    background: linear-gradient(45deg, #dc8f06, #f5c12e);
-    color: white;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 6px;
-    transition: 0.3s ease;
-    text-decoration: none;
-}
-
-.view-photo-btn:hover {
-    opacity: 0.9;
-}
+        .personal-details-item i {
+            font-size: 20px;
+            color: #f5c12e;
+            margin-right: 15px;
+        }
 
         .beddha-pill {
             display: inline-flex;
