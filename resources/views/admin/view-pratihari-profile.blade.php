@@ -7,7 +7,7 @@
         .progress-circle-wrapper {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-top: 1rem;
         }
 
