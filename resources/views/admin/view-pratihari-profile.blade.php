@@ -175,22 +175,27 @@
                         <div class="main-content-body tab-pane active" id="personal">
                             <div class="card personal-details-card">
                                 <div class="card-body">
-                                    <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e;font-size: 25px"></i>
-                                        Personal Details</h4>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h4 class="fw-bold"><i class="fas fa-user-circle me-2"
+                                                style="color:#f5c12e;font-size: 25px"></i> Personal Details</h4>
 
-                                        <div class="d-flex justify-content-start mb-3">
-                                            <a href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-warning btn-sm" title="Edit Personal Details">
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <a href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit Personal Details">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
                                         </div>
+                                    </div>
 
-                                        <div class="personal-details-item">
-                                            <i class="fas fa-user-tag"></i>
-                                            <div>
-                                                <span class="personal-details-text">Alias Name:</span>
-                                                <span class="personal-details-value">{{ $profile->alias_name ?? 'Not Available' }}</span>
-                                            </div>
+
+                                    <div class="personal-details-item">
+                                        <i class="fas fa-user-tag"></i>
+                                        <div>
+                                            <span class="personal-details-text">Alias Name:</span>
+                                            <span
+                                                class="personal-details-value">{{ $profile->alias_name ?? 'Not Available' }}</span>
                                         </div>
+                                    </div>
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-id-card"></i>
