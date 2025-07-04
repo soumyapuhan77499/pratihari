@@ -145,7 +145,7 @@
                             <div class="card personal-details-card">
                                 <div class="card-body">
                                     <h4 class="fw-bold" style="color: rgb(6, 6, 6)"><i class="fas fa-user-circle"
-                                            style="color:rgb(218, 200, 33)"></i> Personal Details</h4>
+                                            style="color:#f5c12e"></i> Personal Details</h4>
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-id-card"></i>
