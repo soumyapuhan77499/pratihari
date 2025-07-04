@@ -66,6 +66,13 @@
             box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
             transform: scale(1.1);
         }
+
+        
+.personal-details-item i {
+    font-size: 20px;
+    color: #f5c12e;
+    margin-right: 15px;
+}
     </style>
 @endsection
 
