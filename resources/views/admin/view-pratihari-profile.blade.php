@@ -30,7 +30,15 @@
             font-size: 13px;
             color: #333;
         }
-
+.profiles-nav-line {
+display: flex;
+justify-content: center;
+gap: 15px;
+background: #ffffff;
+border-radius: 12px;
+padding: 12px;
+box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
         
 .profiles-nav-line .nav-link {
 color: #ffffff;
