@@ -178,7 +178,7 @@
                                     <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e;font-size: 25px"></i>
                                         Personal Details</h4>
 
-                                        <div class="d-flex justify-content-end mb-3">
+                                        <div class="d-flex justify-content-start mb-3">
                                             <a href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-warning btn-sm" title="Edit Personal Details">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
