@@ -73,6 +73,30 @@
             color: #f5c12e;
             margin-right: 15px;
         }
+
+        .beddha-pill {
+            display: inline-flex;
+            align-items: center;
+            background: linear-gradient(135deg, #58c472, #1d976c);
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 50px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            margin-right: 8px;
+            margin-bottom: 6px;
+            transition: transform 0.2s ease;
+        }
+
+        .beddha-pill i {
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .beddha-pill:hover {
+            transform: scale(1.05);
+        }
     </style>
 @endsection
 
@@ -330,11 +354,11 @@
                         </div>
 
                         <!-- ID Card Section -->
-                        <div class="tab-pane fade" id="idcard"> 
+                        <div class="tab-pane fade" id="idcard">
                             <div class="card profile-section">
                                 <div class="card-body">
                                     <h4 class="fw-bold mb-4">
-                                        <i class="fas fa-id-card"  style="color:#f5c12e"></i> ID Card Details
+                                        <i class="fas fa-id-card" style="color:#f5c12e"></i> ID Card Details
                                     </h4>
 
                                     <div class="row g-4">
@@ -373,7 +397,7 @@
                         <div class="tab-pane fade" id="address">
                             <div class="card profile-section shadow-lg border-0">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-center mb-4" >
+                                    <h4 class="fw-bold text-center mb-4">
                                         <i class="fas fa-map-marker-alt me-2" style="color:#f5c12e"></i> Address Details
                                     </h4>
 
@@ -436,7 +460,8 @@
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold"><i class="fas fa-briefcase" style="color: #f5c12e"></i> Occupation Details
+                                    <h4 class="fw-bold"><i class="fas fa-briefcase" style="color: #f5c12e"></i>
+                                        Occupation Details
                                     </h4>
 
                                     @if ($occupation->isNotEmpty())
@@ -481,7 +506,7 @@
                                     @foreach ($sebaDetails as $seba)
                                         <!-- Seba Name Section -->
                                         <div class="profile-item d-flex align-items-center">
-                                            
+
                                             <div>
                                                 <span class="profile-text fw-bold">Seba Name:</span>
                                                 <span
@@ -491,7 +516,7 @@
 
                                         <!-- Beddha Assigned Section -->
                                         <div class="profile-item d-flex align-items-center">
-                                           
+
                                             <div>
                                                 <span class="profile-text fw-bold">Beddha Assigned:</span>
                                                 <div class="profile-value mt-1">
@@ -501,8 +526,10 @@
 
                                                     @if ($beddhas->isNotEmpty())
                                                         @foreach ($beddhas as $beddha)
-                                                            <span
-                                                                class="badge bg-success me-1">{{ $beddha->beddha_name }}</span>
+                                                            <span class="beddha-pill">
+                                                                <i class="fas fa-user-tag me-1"></i>
+                                                                {{ $beddha->beddha_name }}
+                                                            </span>
                                                         @endforeach
                                                     @else
                                                         <span class="text-muted">Not Assigned</span>
@@ -520,7 +547,8 @@
                         <div class="tab-pane fade" id="social">
                             <div class="card">
                                 <div class="p-4">
-                                             <h4 class="fw-bold"><i class="fas fa-share-alt" style="color: #f5c12e"></i> Social Media Links
+                                    <h4 class="fw-bold"><i class="fas fa-share-alt" style="color: #f5c12e"></i> Social
+                                        Media Links
                                     </h4>
                                     <div class="d-lg-flex flex-wrap " style="margin-top: 20px">
                                         @php
