@@ -85,72 +85,61 @@ color: white;
 box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
 transform: scale(1.1);
 }
+    .personal-details-card {
+        border: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        background: #ffffff;
+    }
 
-/* personal css   */
-.personal-details-card {
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background: #f8f9fa;
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+    .personal-details-card h4 {
+        font-size: 20px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 10px;
+    }
 
-.personal-details-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
+    .personal-details-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        gap: 15px;
+    }
 
-.personal-details-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #dee2e6;
-}
+    .personal-details-item i {
+        font-size: 22px;
+        padding: 10px;
+        border-radius: 8px;
+        color: white;
+        background: linear-gradient(135deg, #f5c12e, #dc8f06);
+        min-width: 42px;
+        text-align: center;
+    }
 
-.personal-details-item i {
-    font-size: 20px;
-    color: #f5c12e;
-    margin-right: 15px;
-}
+    .personal-details-text {
+        font-weight: 600;
+        color: #333;
+        display: block;
+    }
 
-.personal-details-item:last-child {
-    border-bottom: none;
-}
+    .personal-details-value {
+        color: #555;
+        font-size: 15px;
+    }
 
-.personal-details-text {
-    font-size: 13px;
-    font-weight: 500;
-    color: #0d0d0d;
-}
+    .view-photo-btn {
+        background: linear-gradient(45deg, #dc8f06, #f5c12e);
+        color: white;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 6px;
+        transition: 0.3s ease;
+        text-decoration: none;
+    }
 
-.personal-details-value {
-    font-size: 15px;
-    color: #666;
-}
-
-/* family css */
-
-.profile-imgs {
-    border-radius: 50%;
-    transition: transform 0.3s ease;
-    display: block;
-    margin: 0 auto;
-    object-fit: cover;
-}
-
-.profile-imgs:hover {
-    transform: scale(1.5);
-}
-
-.custom-card {
-    border-radius: 10px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.custom-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
+    .view-photo-btn:hover {
+        opacity: 0.9;
+    }
 
 .family-section {
     padding: 20px;

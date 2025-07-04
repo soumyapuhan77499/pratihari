@@ -67,12 +67,12 @@
             transform: scale(1.1);
         }
 
-        
-.personal-details-item i {
-    font-size: 20px;
-    color: #f5c12e;
-    margin-right: 15px;
-}
+
+        .personal-details-item i {
+            font-size: 20px;
+            color: #f5c12e;
+            margin-right: 15px;
+        }
     </style>
 @endsection
 
@@ -148,60 +148,59 @@
                     <div class="tab-content">
                         <!-- Personal Information -->
 
-                        <div class="main-content-body tab-pane active" id="personal">
-                            <div class="card personal-details-card">
-                                <div class="card-body">
-                                    <h4 class="fw-bold" style="color: rgb(6, 6, 6)"><i class="fas fa-user-circle"
-                                            style="color:#f5c12e"></i> Personal Details</h4>
+               
 
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-id-card"></i>
-                                        <div>
-                                            <span class="personal-details-text">Health Card No:</span>
-                                            <span class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
+<div class="main-content-body tab-pane active" id="personal">
+    <div class="card personal-details-card">
+        <div class="card-body">
+            <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e"></i> Personal Details</h4>
 
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-birthday-cake"></i>
-                                        <div>
-                                            <span class="personal-details-text">Date of Birth:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->date_of_birth ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
+            <div class="personal-details-item">
+                <i class="fas fa-id-card"></i>
+                <div>
+                    <span class="personal-details-text">Health Card No:</span>
+                    <span class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
+                </div>
+            </div>
 
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-tint"></i>
-                                        <div>
-                                            <span class="personal-details-text">Blood Group:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->blood_group ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
+            <div class="personal-details-item">
+                <i class="fas fa-birthday-cake"></i>
+                <div>
+                    <span class="personal-details-text">Date of Birth:</span>
+                    <span class="personal-details-value">{{ $profile->date_of_birth ?? 'Not Available' }}</span>
+                </div>
+            </div>
 
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-calendar-check"></i>
-                                        <div>
-                                            <span class="personal-details-text">Joining Date:</span>
-                                            <span  class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
+            <div class="personal-details-item">
+                <i class="fas fa-tint"></i>
+                <div>
+                    <span class="personal-details-text">Blood Group:</span>
+                    <span class="personal-details-value">{{ $profile->blood_group ?? 'Not Available' }}</span>
+                </div>
+            </div>
 
-                                    @if (!empty($profile->health_card_photo))
-                                        <div class="personal-details-item d-flex align-items-center mb-3">
-                                            <i class="fas fa-image me-2"></i>
-                                            <span class="personal-details-text me-2">Health Card Photo:</span>
-                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
-                                                rel="noopener noreferrer" class="btn btn-sm"
-                                                style="background: linear-gradient(45deg, #dc8f06, #f5c12e); color: white;">
-                                                View Photo
-                                            </a>
-                                        </div>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
+            <div class="personal-details-item">
+                <i class="fas fa-calendar-check"></i>
+                <div>
+                    <span class="personal-details-text">Joining Date:</span>
+                    <span class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
+                </div>
+            </div>
+
+            @if (!empty($profile->health_card_photo))
+                <div class="personal-details-item">
+                    <i class="fas fa-image"></i>
+                    <div>
+                        <span class="personal-details-text">Health Card Photo:</span>
+                        <a href="{{ asset($profile->health_card_photo) }}" target="_blank" rel="noopener noreferrer"
+                           class="view-photo-btn mt-1 d-inline-block">View Photo</a>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
 
                         <!-- Family Information -->
                         <div class="main-content-body tab-pane border-top-0" id="family">
