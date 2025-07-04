@@ -522,7 +522,7 @@
                                 <div class="p-4">
                                              <h4 class="fw-bold"><i class="fas fa-share-alt" style="color: #f5c12e"></i> Social Media Links
                                     </h4>
-                                    <div class="d-lg-flex flex-wrap">
+                                    <div class="d-lg-flex flex-wrap " style="margin-top: 20px">
                                         @php
                                             $socialLinks = [
                                                 [
