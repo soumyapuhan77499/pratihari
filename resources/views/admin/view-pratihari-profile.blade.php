@@ -69,7 +69,7 @@
 
 
         .personal-details-item i {
-            font-size: 15px;
+            font-size: 13px;
             color: #f0eee8;
             margin-right: 15px;
         }
@@ -175,7 +175,7 @@
                         <div class="main-content-body tab-pane active" id="personal">
                             <div class="card personal-details-card">
                                 <div class="card-body">
-                                    <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e"></i>
+                                    <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e;font-size: 13px"></i>
                                         Personal Details</h4>
 
                                         <div class="personal-details-item">
