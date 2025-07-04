@@ -7,15 +7,15 @@
         .progress-circle-wrapper {
             display: flex;
             flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
         .progress-circle {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 120px;
+            width: 80px;
         }
 
         .progress-circle canvas {
