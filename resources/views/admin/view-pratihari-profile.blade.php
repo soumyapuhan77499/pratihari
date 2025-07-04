@@ -27,7 +27,7 @@
             margin-top: 0.5rem;
             text-align: center;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 13px;
             color: #333;
         }
     </style>
