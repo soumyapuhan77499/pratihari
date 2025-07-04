@@ -30,41 +30,42 @@
             font-size: 13px;
             color: #333;
         }
-.profiles-nav-line {
-display: flex;
-justify-content: center;
-gap: 15px;
-background: #ffffff;
-border-radius: 12px;
-padding: 12px;
-box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-        
-.profiles-nav-line .nav-link {
-color: #ffffff;
-font-weight: 600;
-padding: 12px 20px;
-border-radius: 10px;
-transition: all 0.3s ease-in-out;
-background: linear-gradient(45deg, #dc8f06, #f5c12e);
-text-transform: uppercase;
-font-size: 14px;
-}
 
-.profiles-nav-line .nav-link:hover {
-transform: translateY(-3px);
-background: linear-gradient(45deg, #dc8f06, #6d5601);
-box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-color: white;
+        .profiles-nav-line {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-}
+        .profiles-nav-line .nav-link {
+            color: #ffffff;
+            font-weight: 600;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            background: linear-gradient(45deg, #dc8f06, #f5c12e);
+            text-transform: uppercase;
+            font-size: 14px;
+        }
 
-.profiles-nav-line .active {
-background: linear-gradient(45deg, #fbcc4c, #bb7908);
-color: white;
-box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
-transform: scale(1.1);
-}
+        .profiles-nav-line .nav-link:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(45deg, #dc8f06, #6d5601);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+
+        }
+
+        .profiles-nav-line .active {
+            background: linear-gradient(45deg, #fbcc4c, #bb7908);
+            color: white;
+            box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
+            transform: scale(1.1);
+        }
     </style>
 @endsection
 
@@ -144,14 +145,13 @@ transform: scale(1.1);
                             <div class="card personal-details-card">
                                 <div class="card-body">
                                     <h4 class="fw-bold" style="color: rgb(6, 6, 6)"><i class="fas fa-user-circle"
-                                            style="color:rgb(61, 33, 218)"></i> Personal Details</h4>
+                                            style="color:rgb(218, 200, 33)"></i> Personal Details</h4>
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-id-card"></i>
                                         <div>
                                             <span class="personal-details-text">Health Card No:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
+                                            <span class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
                                         </div>
                                     </div>
 
@@ -177,17 +177,17 @@ transform: scale(1.1);
                                         <i class="fas fa-calendar-check"></i>
                                         <div>
                                             <span class="personal-details-text">Joining Date:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
+                                            <span  class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
                                         </div>
                                     </div>
 
-                                      @if (!empty($profile->health_card_photo))
+                                    @if (!empty($profile->health_card_photo))
                                         <div class="personal-details-item d-flex align-items-center mb-3">
                                             <i class="fas fa-image me-2"></i>
                                             <span class="personal-details-text me-2">Health Card Photo:</span>
                                             <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
-                                                rel="noopener noreferrer" class="btn btn-sm" style="background: linear-gradient(45deg, #dc8f06, #f5c12e); color: white;">
+                                                rel="noopener noreferrer" class="btn btn-sm"
+                                                style="background: linear-gradient(45deg, #dc8f06, #f5c12e); color: white;">
                                                 View Photo
                                             </a>
                                         </div>
