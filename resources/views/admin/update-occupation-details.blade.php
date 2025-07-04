@@ -60,7 +60,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -132,7 +132,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -227,9 +227,9 @@
                             <form action="{{ route('admin.pratihari-occupation.update', $pratihariId) }}" method="POST">
                                 @csrf
                                 @method('PUT')
-                        
+
                                 <input type="hidden" name="pratihari_id" value="{{ $pratihariId }}">
-                        
+
                                 <div class="row">
                                     <!-- Occupation Field -->
                                     <div class="col-md-6">
@@ -246,40 +246,52 @@
                                             </div>
                                         </div>
                                     </div>
-                        
+
                                     <!-- Extra Curriculum Activities -->
                                     <div class="col-md-6">
                                         <label for="extra_activity">Extra Curriculum Activity</label>
                                         <div id="extraActivityContainer">
                                             @php
-                                                $activities = $occupation->extra_activity ? explode(',', $occupation->extra_activity) : [];
+                                                $activities =
+                                                    isset($occupation) && $occupation->extra_activity
+                                                        ? explode(',', $occupation->extra_activity)
+                                                        : [];
                                             @endphp
-                        
+
                                             @if (count($activities) > 0)
                                                 @foreach ($activities as $activity)
                                                     <div class="input-group mb-2">
-                                                        <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
-                                                        <input type="text" name="extra_activity[]" class="form-control" value="{{ $activity }}" placeholder="Enter Curriculum Activity">
-                                                        <button type="button" class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
+                                                        <span class="input-group-text"><i class="fas fa-briefcase"
+                                                                style="color: blue"></i></span>
+                                                        <input type="text" name="extra_activity[]"
+                                                            class="form-control" value="{{ $activity }}"
+                                                            placeholder="Enter Curriculum Activity">
+                                                        <button type="button" class="btn btn-danger remove"><i
+                                                                class="fas fa-trash"></i></button>
                                                     </div>
                                                 @endforeach
                                             @else
                                                 <div class="input-group mb-2">
-                                                    <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
-                                                    <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
-                                                    <button type="button" class="btn btn-success addMore"><i class="fas fa-plus"></i></button>
+                                                    <span class="input-group-text"><i class="fas fa-briefcase"
+                                                            style="color: blue"></i></span>
+                                                    <input type="text" name="extra_activity[]" class="form-control"
+                                                        placeholder="Enter Curriculum Activity">
+                                                    <button type="button" class="btn btn-success addMore"><i
+                                                            class="fas fa-plus"></i></button>
                                                 </div>
                                             @endif
                                         </div>
                                     </div>
-                        
+
+
                                     <div class="col-12 text-center">
-                                        <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn" style="color: white">
+                                        <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
+                                            style="color: white">
                                             <i class="fa fa-save"></i> Update
                                         </button>
                                     </div>
                                 </div>
-                            </form>                         
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -314,40 +326,40 @@
         });
     </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const container = document.getElementById("extraActivityContainer");
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById("extraActivityContainer");
 
-        container.addEventListener("click", function (e) {
-            if (e.target.classList.contains("addMore")) {
-                const newField = document.createElement("div");
-                newField.classList.add("input-group", "mb-2");
-                newField.innerHTML = `
+            container.addEventListener("click", function(e) {
+                if (e.target.classList.contains("addMore")) {
+                    const newField = document.createElement("div");
+                    newField.classList.add("input-group", "mb-2");
+                    newField.innerHTML = `
                     <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
                     <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
                     <button type="button" class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
                 `;
-                container.appendChild(newField);
-            }
+                    container.appendChild(newField);
+                }
 
-            if (e.target.classList.contains("remove")) {
-                e.target.closest(".input-group").remove();
+                if (e.target.classList.contains("remove")) {
+                    e.target.closest(".input-group").remove();
+                }
+            });
+
+            // If initial activities exist, make sure the first one has a plus button
+            const inputs = container.getElementsByClassName("input-group");
+            if (inputs.length > 0) {
+                const firstInput = inputs[0];
+                const btn = firstInput.querySelector(".remove");
+                if (btn) {
+                    btn.classList.remove("btn-danger", "remove");
+                    btn.classList.add("btn-success", "addMore");
+                    btn.innerHTML = '<i class="fas fa-plus"></i>';
+                }
             }
         });
-
-        // If initial activities exist, make sure the first one has a plus button
-        const inputs = container.getElementsByClassName("input-group");
-        if (inputs.length > 0) {
-            const firstInput = inputs[0];
-            const btn = firstInput.querySelector(".remove");
-            if (btn) {
-                btn.classList.remove("btn-danger", "remove");
-                btn.classList.add("btn-success", "addMore");
-                btn.innerHTML = '<i class="fas fa-plus"></i>';
-            }
-        }
-    });
-</script>
+    </script>
 
     <!-- FontAwesome for Icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
