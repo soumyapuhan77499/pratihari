@@ -227,7 +227,7 @@
                                             <label for="occupation">Occupation</label>
                                             <div class="input-group">
                                                 <span class="input-group-text" style="width: 35px">
-                                                    <i class="fas fa-briefcase"></i>
+                                                    <i class="fas fa-briefcase" style="color: #f5c12e"></i>
                                                 </span>
                                                 <input type="text" name="occupation" id="occupation"
                                                     class="form-control"
