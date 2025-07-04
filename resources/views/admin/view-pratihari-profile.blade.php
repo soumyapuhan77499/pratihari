@@ -330,7 +330,7 @@
                         </div>
 
                         <!-- ID Card Section -->
-                        <div class="tab-pane fade" id="idcard">
+                        <div class="tab-pane fade" id="idcard"> 
                             <div class="card profile-section">
                                 <div class="card-body">
                                     <h4 class="fw-bold mb-4">
@@ -520,8 +520,8 @@
                         <div class="tab-pane fade" id="social">
                             <div class="card">
                                 <div class="p-4">
-                                    <label class="main-content-label tx-13 mg-b-20 fw-bold text-primary">
-                                        <i class="fas fa-share-alt"></i> Connect with Us
+                                    <label class="main-content-label tx-13 mg-b-20 fw-bold">
+                                        <i class="fas fa-share-alt" style="color: #f5c12e"></i> Connect with Us
                                     </label>
                                     <div class="d-lg-flex flex-wrap">
                                         @php
