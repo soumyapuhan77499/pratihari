@@ -101,7 +101,7 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}"
-                                                style="background-color:rgb(76, 2, 82);color: white" class="btn btn-sm">
+                                                style="background-color:#f5c12e;color: white" class="btn btn-sm">
                                                 View Profile
                                             </a>
                                         </td>
@@ -109,7 +109,7 @@
                                         </td>
                                         <td>{{ $profile->phone_no }}</td>
                                         <td>
-                                            <button class="btn btn-info btn-sm view-address" data-bs-toggle="modal"
+                                            <button class="btn btn-sm view-address"  style="background-color:#f5c12e;color: white" data-bs-toggle="modal"
                                                 data-bs-target="#addressModal"
                                                 data-address="{{ $profile->address->address ?? 'N/A' }}"
                                                 data-district="{{ $profile->address->district ?? 'N/A' }}"
