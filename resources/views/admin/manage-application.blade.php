@@ -109,9 +109,10 @@
                                             @elseif ($application->status === 'approved')
                                                 <button class="btn btn-outline-success btn-sm" disabled>Approved</button>
                                             @elseif ($application->status === 'rejected')
+                                                <button class="btn btn-outline-danger btn-sm" disabled>Rejected</button>
                                                 <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
                                                     data-bs-target="#rejectionReasonModal-{{ $application->id }}">
-                                                    Rejected
+                                                     Reason
                                                 </button>
                                             @endif
                                         </td>
