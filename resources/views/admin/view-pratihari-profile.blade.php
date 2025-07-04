@@ -521,7 +521,7 @@
                             <div class="card">
                                 <div class="p-4">
                                     <label class="main-content-label tx-13 mg-b-20 fw-bold">
-                                        <i class="fas fa-share-alt" style="color: #f5c12e;font-size: 20px"></i> Connect with Us
+                                        <i class="fas fa-share-alt" style="color: #f5c12e;font-size: 20px"></i> <h4>Connect with Us</h4>
                                     </label>
                                     <div class="d-lg-flex flex-wrap">
                                         @php
