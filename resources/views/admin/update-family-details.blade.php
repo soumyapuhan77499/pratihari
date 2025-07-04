@@ -287,9 +287,14 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                <img src="{{ asset($family->father_photo) }}" class="img-fluid"
-                                                    alt="Father Photo">
+                                                @if (!empty($family) && !empty($family->father_photo))
+                                                    <img src="{{ asset($family->father_photo) }}" class="img-fluid"
+                                                        alt="Father Photo">
+                                                @else
+                                                    <p class="text-muted">No father photo available.</p>
+                                                @endif
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -334,14 +339,16 @@
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
-                                                <img src="{{ asset($family->mother_photo) }}" class="img-fluid"
-                                                    alt="Mother Photo">
+                                                @if (!empty($family) && !empty($family->mother_photo))
+                                                    <img src="{{ asset($family->mother_photo) }}" class="img-fluid"
+                                                        alt="Mother Photo">
+                                                @else
+                                                    <p class="text-muted">No mother photo available.</p>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-
 
                                 <!-- Marital Status -->
                                 <div class="col-md-6 mb-3">
@@ -494,7 +501,7 @@
                                                         </div>
                                                     @endif
 
-                                                   
+
 
                                                     <div class="col-md-1 d-flex align-items-end">
                                                         <button type="button" class="btn btn-danger removeChild"><i

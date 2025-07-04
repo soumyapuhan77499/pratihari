@@ -265,12 +265,8 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
-
                                     </div>
                                 </div>
-
-
 
                                 <!-- New Father Name (Hidden Initially) -->
                                 <div class="mb-3" id="father_name_input_div" style="display: none;">
