@@ -35,14 +35,18 @@ class PratihariOccupationController extends Controller
             return redirect()->back()->with('error', 'Failed to save occupation details. Please try again. ' . $e->getMessage());
         }
     }
+public function edit($pratihariId)
+{
+    $occupation = PratihariOccupation::where('pratihari_id', $pratihariId)->first();
 
-    public function edit($pratihariId)
-    {
-        $occupation = PratihariOccupation::where('pratihari_id', $pratihariId)->first();
-
-        return view('admin.update-occupation-details', compact('occupation', 'pratihariId'));
+    // Fallback to empty model if not found
+    if (!$occupation) {
+        $occupation = new \App\Models\PratihariOccupation();
     }
-    
+
+    return view('admin.update-occupation-details', compact('occupation', 'pratihariId'));
+}
+
     public function update(Request $request, $pratihari_id)
     {
         try {
