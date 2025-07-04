@@ -82,33 +82,76 @@
                                             </button>
 
                                         </td>
-                                        
+
                                         <td style="font-size: 15px">
                                             @if ($application->status === 'pending')
-                                                <form action="{{ route('application.approve', $application->id) }}"
-                                                    method="POST" style="display:inline;">
+                                                <button class="btn btn-success btn-sm"
+                                                    onclick="confirmApprove({{ $application->id }})">Approve</button>
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="confirmReject({{ $application->id }})">Reject</button>
+
+                                                <!-- Hidden forms -->
+                                                <form id="approve-form-{{ $application->id }}"
+                                                    action="{{ route('application.approve', $application->id) }}"
+                                                    method="POST" style="display: none;">
                                                     @csrf
                                                     @method('PATCH')
-                                                    <button class="btn btn-success btn-sm">Approve</button>
                                                 </form>
 
-                                                <form action="{{ route('application.reject', $application->id) }}"
-                                                    method="POST" style="display:inline;">
+                                                <form id="reject-form-{{ $application->id }}"
+                                                    action="{{ route('application.reject', $application->id) }}"
+                                                    method="POST" style="display: none;">
                                                     @csrf
                                                     @method('PATCH')
-                                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                                    <input type="hidden" name="rejection_reason"
+                                                        id="rejection-reason-{{ $application->id }}">
                                                 </form>
                                             @elseif ($application->status === 'approved')
                                                 <button class="btn btn-outline-success btn-sm" disabled>Approved</button>
                                             @elseif ($application->status === 'rejected')
-                                                <button class="btn btn-outline-danger btn-sm" disabled>Rejected</button>
+                                                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#rejectionReasonModal-{{ $application->id }}">
+                                                    Rejected
+                                                </button>
                                             @endif
                                         </td>
 
+
                                     </tr>
                                 @endforeach
+                             
                             </tbody>
                         </table>
+
+                           @foreach ($applications as $application)
+                                    @if ($application->status === 'rejected')
+                                        <div class="modal fade" id="rejectionReasonModal-{{ $application->id }}"
+                                            tabindex="-1"
+                                            aria-labelledby="rejectionReasonModalLabel-{{ $application->id }}"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title"
+                                                            id="rejectionReasonModalLabel-{{ $application->id }}">Rejection
+                                                            Reason</h5>
+                                                        <button type="button" class="btn-close btn-close-white"
+                                                            data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>{{ $application->rejection_reason ?: 'No reason provided.' }}
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary btn-sm"
+                                                            data-bs-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endforeach
+
                         <!-- Edit Modal -->
                         <div class="modal fade" id="editApplicationModal" tabindex="-1" aria-labelledby="editModalLabel"
                             aria-hidden="true">
@@ -125,8 +168,8 @@
                                             <input type="hidden" id="edit-id">
                                             <div class="mb-3">
                                                 <label>Header</label>
-                                                <input type="text" class="form-control" name="header" id="edit-header"
-                                                    required>
+                                                <input type="text" class="form-control" name="header"
+                                                    id="edit-header" required>
                                             </div>
                                             <div class="mb-3">
                                                 <label>Body</label>
@@ -251,5 +294,48 @@
             const fullPhotoUrl = photoPath ? '{{ config('app.photo_url') }}' + photoPath : '';
             $('#modal-photo-img').attr('src', fullPhotoUrl);
         });
+    </script>
+
+    <script>
+        function confirmApprove(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You want to approve this application.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, approve it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('approve-form-' + id).submit();
+                }
+            });
+        }
+
+        function confirmReject(id) {
+            Swal.fire({
+                title: 'Reject Application',
+                input: 'textarea',
+                inputLabel: 'Reason for rejection',
+                inputPlaceholder: 'Enter reason...',
+                inputAttributes: {
+                    'aria-label': 'Type your message here'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Reject',
+                cancelButtonText: 'Cancel',
+                preConfirm: (reason) => {
+                    if (!reason) {
+                        Swal.showValidationMessage('Rejection reason is required');
+                    }
+                    return reason;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('rejection-reason-' + id).value = result.value;
+                    document.getElementById('reject-form-' + id).submit();
+                }
+            });
+        }
     </script>
 @endsection

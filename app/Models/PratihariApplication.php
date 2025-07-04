@@ -17,6 +17,7 @@ class PratihariApplication extends Model
         'header',
         'body',
         'photo',
+        'rejection_reason',
         'status',
     ];
 

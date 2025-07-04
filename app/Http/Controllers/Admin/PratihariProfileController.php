@@ -439,13 +439,17 @@ class PratihariProfileController extends Controller
     return redirect()->back()->with('success', 'Application approved successfully.');
 }
 
-public function rejectApplication($id)
+public function rejectApplication(Request $request, $id)
 {
+    $request->validate([
+        'rejection_reason' => 'required|string|max:1000',
+    ]);
+
     $application = PratihariApplication::findOrFail($id);
     $application->status = 'rejected';
+    $application->rejection_reason = $request->rejection_reason;
     $application->save();
 
-    return redirect()->back()->with('success', 'Application rejected successfully.');
+    return redirect()->back()->with('success', 'Application rejected with reason.');
 }
-
 }
