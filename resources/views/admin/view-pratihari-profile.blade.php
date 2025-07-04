@@ -30,6 +30,33 @@
             font-size: 13px;
             color: #333;
         }
+
+        
+.profiles-nav-line .nav-link {
+color: #ffffff;
+font-weight: 600;
+padding: 12px 20px;
+border-radius: 10px;
+transition: all 0.3s ease-in-out;
+background: linear-gradient(45deg, #dc8f06, #f5c12e);
+text-transform: uppercase;
+font-size: 14px;
+}
+
+.profiles-nav-line .nav-link:hover {
+transform: translateY(-3px);
+background: linear-gradient(45deg, #dc8f06, #6d5601);
+box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+color: white;
+
+}
+
+.profiles-nav-line .active {
+background: linear-gradient(45deg, #fbcc4c, #bb7908);
+color: white;
+box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
+transform: scale(1.1);
+}
     </style>
 @endsection
 
@@ -81,7 +108,7 @@
                     </div>
 
                     <div class="card-footer py-3">
-                        <nav class="nav main-nav-line profile-nav-line">
+                        <nav class="nav main-nav-line profiles-nav-line">
                             <a style="color: white" class="nav-link active" data-bs-toggle="tab"
                                 href="#personal">Personal</a>
                             <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
