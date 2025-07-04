@@ -175,7 +175,7 @@
                         <div class="main-content-body tab-pane active" id="personal">
                             <div class="card personal-details-card">
                                 <div class="card-body">
-                                    <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e;font-size: 13px"></i>
+                                    <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e;font-size: 25px"></i>
                                         Personal Details</h4>
 
                                         <div class="personal-details-item">
