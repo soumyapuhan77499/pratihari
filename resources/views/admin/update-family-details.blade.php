@@ -408,9 +408,14 @@
                                                         aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <img src="{{ asset($family->spouse_photo) }}" class="img-fluid"
-                                                        alt="Spouse Photo">
+                                                    @if (!empty($family) && !empty($family->spouse_photo))
+                                                        <img src="{{ asset($family->spouse_photo) }}" class="img-fluid"
+                                                            alt="Spouse Photo">
+                                                    @else
+                                                        <p class="text-muted">No spouse photo available.</p>
+                                                    @endif
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -493,9 +498,15 @@
                                                                             aria-label="Close"></button>
                                                                     </div>
                                                                     <div class="modal-body text-center">
-                                                                        <img src="{{ asset($child->photo) }}"
-                                                                            class="img-fluid" alt="Child Photo">
+                                                                        @if (!empty($child) && !empty($child->photo))
+                                                                            <img src="{{ asset($child->photo) }}"
+                                                                                class="img-fluid" alt="Child Photo">
+                                                                        @else
+                                                                            <p class="text-muted">No child photo available.
+                                                                            </p>
+                                                                        @endif
                                                                     </div>
+
                                                                 </div>
                                                             </div>
                                                         </div>
