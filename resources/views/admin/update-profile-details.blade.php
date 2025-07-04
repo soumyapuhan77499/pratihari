@@ -170,40 +170,38 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"><i class="fas fa-user-circle"
-                        style="font-size: 1.8rem;margin-right: 5px;color:rgb(251, 51, 64);text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"></i>Pratihari
-                    Profile</div>
+               
                 <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="profile-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="profile-tab" style="background-color:#e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariProfile') }}" role="tab"
                             aria-controls="profile" aria-selected="true">
                             <i class="fas fa-user" style="color: white"></i> Profile
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="family-tab" data-toggle="tab" href="{{ route('admin.pratihariFamily') }}"
+                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="family" aria-selected="true">
                             <i class="fas fa-users"></i> Family
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="{{ route('admin.pratihariIdcard') }}"
+                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="id-card" aria-selected="false">
                             <i class="fas fa-id-card"></i> ID Card
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab" data-toggle="tab" href="{{ route('admin.pratihariAddress') }}"
+                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt"></i> Address
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="occupation-tab" data-toggle="tab"
-                            href="{{ route('admin.pratihariOccupation') }}" role="tab" aria-controls="occupation"
+                            href="#" role="tab" aria-controls="occupation"
                             aria-selected="false">
                             <i class="fas fa-briefcase"></i> Occupation
                         </a>
@@ -211,7 +209,7 @@
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="seba-details-tab" data-toggle="tab"
-                            href="{{ route('admin.pratihariSeba') }}" role="tab" aria-controls="seba-details"
+                            href="#" role="tab" aria-controls="seba-details"
                             aria-selected="false">
                             <i class="fas fa-cogs"></i> Seba
                         </a>
@@ -219,7 +217,7 @@
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="social-media-tab" data-toggle="tab"
-                            href="{{ route('admin.pratihariSocialMedia') }}" role="tab" aria-controls="social-media"
+                            href="#" role="tab" aria-controls="social-media"
                             aria-selected="false">
                             <i class="fas fa-share-alt" style="margin-right: 2px"></i>Social Media
                         </a>
