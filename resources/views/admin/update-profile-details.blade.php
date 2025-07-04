@@ -5,9 +5,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-
-
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .form-group {
             position: relative;
@@ -164,61 +162,55 @@
     </style>
 @endsection
 
-
 @section('content')
     <!-- Profile Form -->
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-               
                 <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
-
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="profile-tab" style="background-color:#e96a01;color: white"
-                            data-toggle="tab" href="{{ route('admin.pratihariProfile') }}" role="tab"
-                            aria-controls="profile" aria-selected="true">
+                        <a class="nav-link" id="profile-tab" style="background-color:#e96a01;color: white" data-toggle="tab"
+                            href="{{ route('admin.pratihariProfile') }}" role="tab" aria-controls="profile"
+                            aria-selected="true">
                             <i class="fas fa-user" style="color: white"></i> Profile
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="family" aria-selected="true">
+                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="family" aria-selected="true">
                             <i class="fas fa-users"></i> Family
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="id-card" aria-selected="false">
+                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="id-card" aria-selected="false">
                             <i class="fas fa-id-card"></i> ID Card
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="address" aria-selected="false">
+                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt"></i> Address
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="occupation-tab" data-toggle="tab"
-                            href="#" role="tab" aria-controls="occupation"
-                            aria-selected="false">
+                        <a class="nav-link" id="occupation-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="occupation" aria-selected="false">
                             <i class="fas fa-briefcase"></i> Occupation
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="seba-details-tab" data-toggle="tab"
-                            href="#" role="tab" aria-controls="seba-details"
-                            aria-selected="false">
+                        <a class="nav-link" id="seba-details-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="seba-details" aria-selected="false">
                             <i class="fas fa-cogs"></i> Seba
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="social-media-tab" data-toggle="tab"
-                            href="#" role="tab" aria-controls="social-media"
-                            aria-selected="false">
+                        <a class="nav-link" id="social-media-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="social-media" aria-selected="false">
                             <i class="fas fa-share-alt" style="margin-right: 2px"></i>Social Media
                         </a>
                     </li>
@@ -257,7 +249,8 @@
                             <div class="col-md-3">
                                 <label for="last_name">Last Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: #f5c12e"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-user"
+                                            style="color: #f5c12e"></i></span>
                                     <input type="text" name="last_name" id="last_name" class="form-control"
                                         value="{{ old('last_name', $profile->last_name ?? '') }}">
                                 </div>
@@ -285,20 +278,24 @@
                                 </div>
                             </div>
 
-                             <!-- WhatsApp No -->
-                             <div class="col-md-3">
+                            <!-- WhatsApp No -->
+                            <div class="col-md-3">
                                 <label for="whatsapp_no">WhatsApp No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: #f5c12e"></i></span>
-                                    <input type="tel" class="form-control"   value="{{ old('whatsapp_no', $profile->whatsapp_no ?? '') }}" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10">
+                                    <span class="input-group-text"><i class="fa fa-phone"
+                                            style="color: #f5c12e"></i></span>
+                                    <input type="tel" class="form-control"
+                                        value="{{ old('whatsapp_no', $profile->whatsapp_no ?? '') }}" id="whatsapp_no"
+                                        name="whatsapp_no" pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
-                    
+
                             <!-- Phone Number -->
                             <div class="col-md-3">
                                 <label for="phone_no">Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: #f5c12e"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-phone"
+                                            style="color: #f5c12e"></i></span>
                                     <input type="tel" class="form-control" id="phone_no" name="phone_no"
                                         pattern="\d{10}" maxlength="10"
                                         value="{{ old('phone_no', $profile->phone_no ?? '') }}">
@@ -308,8 +305,11 @@
                             <div class="col-md-3">
                                 <label for="alt_phone_no">Alternative Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: #f5c12e"></i></span>
-                                    <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no" value="{{ old('alt_phone_no', $profile->alt_phone_no ?? '') }}"  pattern="\d{10}" maxlength="10">
+                                    <span class="input-group-text"><i class="fa fa-phone"
+                                            style="color: #f5c12e"></i></span>
+                                    <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no"
+                                        value="{{ old('alt_phone_no', $profile->alt_phone_no ?? '') }}" pattern="\d{10}"
+                                        maxlength="10">
                                 </div>
                             </div>
 
@@ -317,7 +317,8 @@
                             <div class="col-md-3">
                                 <label for="blood_group">Blood Group</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-tint" style="color: #f5c12e"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-tint"
+                                            style="color: #f5c12e"></i></span>
                                     <select class="form-control" id="blood_group" name="blood_group">
                                         <option value="">Select Blood Group</option>
                                         @foreach (['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'] as $group)
@@ -330,12 +331,14 @@
                                 </div>
                             </div>
 
-                             <!-- Health Card No -->
-                             <div class="col-md-3">
+                            <!-- Health Card No -->
+                            <div class="col-md-3">
                                 <label for="health_card_no">Health Card No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: #f5c12e"></i></span>
-                                    <input type="text" class="form-control" id="healthcard_no" name="healthcard_no"  value="{{ old('health_card_no', $profile->healthcard_no ?? '') }}" >
+                                    <span class="input-group-text"><i class="fa fa-id-card"
+                                            style="color: #f5c12e"></i></span>
+                                    <input type="text" class="form-control" id="healthcard_no" name="healthcard_no"
+                                        value="{{ old('health_card_no', $profile->healthcard_no ?? '') }}">
                                 </div>
                             </div>
 
@@ -343,26 +346,34 @@
                             <div class="col-md-3">
                                 <label for="health_card_photo">Health Card Photo</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: #f5c12e"></i></span>
-                                    <input type="file" class="form-control" id="health_card_photo" name="health_card_photo">
+                                    <span class="input-group-text"><i class="fa fa-camera"
+                                            style="color: #f5c12e"></i></span>
+                                    <input type="file" class="form-control" id="health_card_photo"
+                                        name="health_card_photo">
                                 </div>
 
                                 @if (isset($profile) && $profile->health_card_photo)
                                     <!-- Button to open modal -->
-                                    <button type="button" class="btn btn-sm mt-2" style="background-color: #e96a01;color: white" data-bs-toggle="modal" data-bs-target="#healthCardModal">
+                                    <button type="button" class="btn btn-sm mt-2"
+                                        style="background-color: #e96a01;color: white" data-bs-toggle="modal"
+                                        data-bs-target="#healthCardModal">
                                         View Photo
                                     </button>
 
                                     <!-- Modal -->
-                                    <div class="modal fade" id="healthCardModal" tabindex="-1" aria-labelledby="healthCardModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="healthCardModal" tabindex="-1"
+                                        aria-labelledby="healthCardModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo" class="img-fluid">
+                                                    <img src="{{ asset($profile->health_card_photo) }}"
+                                                        alt="Health Card Photo" class="img-fluid">
                                                 </div>
                                             </div>
                                         </div>
@@ -374,34 +385,39 @@
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: #f5c12e"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-camera"
+                                            style="color: #f5c12e"></i></span>
                                     <input type="file" class="form-control" id="profile_photo" name="profile_photo">
                                 </div>
-                            
+
                                 @if (isset($profile) && $profile->profile_photo)
-                                    
                                     <!-- Button to open modal -->
-                                    <button type="button" class="btn btn-sm mt-2"  style="background-color: #e96a01;color: white" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                    <button type="button" class="btn btn-sm mt-2"
+                                        style="background-color: #e96a01;color: white" data-bs-toggle="modal"
+                                        data-bs-target="#profileModal">
                                         View Photo
                                     </button>
-                            
+
                                     <!-- Modal -->
-                                    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+                                    <div class="modal fade" id="profileModal" tabindex="-1"
+                                        aria-labelledby="profileModalLabel" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
                                             <div class="modal-content">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="profileModalLabel">Profile Photo</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body text-center">
-                                                    <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo" class="img-fluid">
+                                                    <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo"
+                                                        class="img-fluid">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
                             </div>
-                            
+
 
                             <!-- Date of Birth -->
                             <div class="col-md-3">
@@ -509,6 +525,6 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 @endsection

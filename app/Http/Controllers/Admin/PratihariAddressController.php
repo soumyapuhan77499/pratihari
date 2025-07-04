@@ -184,15 +184,19 @@ public function updateAddress(Request $request)
         return redirect()->back()->with('error', 'Failed to save address. Please try again.');
     }
 }
-
 public function edit($pratihari_id)
 {
-
     $pratihariAddress = PratihariAddress::where('pratihari_id', $pratihari_id)->first();
+
+    // Prevent null by using an empty model if not found
+    if (!$pratihariAddress) {
+        $pratihariAddress = new \App\Models\PratihariAddress();
+        $pratihariAddress->pratihari_id = $pratihari_id; // assign the ID manually
+    }
+
     $sahiList = PratihariSahi::where('status', 'active')->get();
 
-    return view('admin.update-address-details', compact('pratihariAddress','sahiList'));
-
+    return view('admin.update-address-details', compact('pratihariAddress', 'sahiList'));
 }
 
 }
