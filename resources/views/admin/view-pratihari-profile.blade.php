@@ -119,18 +119,6 @@
                                                 class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
                                         </div>
                                     </div>
-                                    @if (!empty($profile->health_card_photo))
-                                        <div class="personal-details-item d-flex align-items-center mb-3">
-                                            <i class="fas fa-image me-2"></i>
-                                            <span class="personal-details-text me-2">Health Card Photo:</span>
-                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
-                                                rel="noopener noreferrer" class="btn btn-sm btn-primary">
-                                                View Photo
-                                            </a>
-                                        </div>
-                                    @endif
-
-
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-birthday-cake"></i>
@@ -158,6 +146,17 @@
                                                 class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
                                         </div>
                                     </div>
+
+                                      @if (!empty($profile->health_card_photo))
+                                        <div class="personal-details-item d-flex align-items-center mb-3">
+                                            <i class="fas fa-image me-2"></i>
+                                            <span class="personal-details-text me-2">Health Card Photo:</span>
+                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
+                                                rel="noopener noreferrer" class="btn btn-sm" style="background: linear-gradient(45deg, #dc8f06, #f5c12e); color: white;">
+                                                View Photo
+                                            </a>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
