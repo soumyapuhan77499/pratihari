@@ -39,6 +39,7 @@
                                     <th class="border-bottom-0">Header</th>
                                     <th class="border-bottom-0">Body</th>
                                     <th class="border-bottom-0">Photo</th>
+                                    <th class="border-bottom-0">Update</th>
                                     <th class="border-bottom-0">Action</th>
                                 </tr>
                             </thead>
@@ -116,7 +117,6 @@
                                                 </button>
                                             @endif
                                         </td>
-
 
                                     </tr>
                                 @endforeach

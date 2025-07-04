@@ -20,56 +20,132 @@
     </div>
     <!-- /breadcrumb -->
     <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card custom-card">
-                    <div class="card-body d-md-flex align-items-center">
-                        <div class="me-4">
-                            <span class="profile-image">
-                                <img class="br-5" src="{{ asset($profile->profile_photo) }}" alt="Profile Photo">
-                                <span class="profile-online"></span>
-                            </span>
-                        </div>
+        <style>
+      .profile-image img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid #ddd;
+    }
 
-                        <div class="my-md-auto mt-4 prof-details">
-                            <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
-                            <p><i class="fa fa-user me-2"></i> <b>Nijoga Id:</b> {{ $profile->nijoga_id }}</p>
-                            <p><i class="fa fa-envelope me-2"></i> <b>Email:</b> {{ $profile->email }}</p>
-                            <p><i class="fa fa-phone me-2"></i> <b>Phone:</b> {{ $profile->phone_no }}</p>
-                            <p><i class="fa fa-globe me-2"></i> <b>Whatsapp:</b> {{ $profile->whatsapp_no }}</p>
-                        </div>
-                    </div>
+    .prof-details h4 {
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
 
-                    <div class="card-footer py-3">
-                        <nav class="nav main-nav-line profile-nav-line">
-                            <a style="color: white" class="nav-link active" data-bs-toggle="tab"
-                                href="#personal">Personal</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
-                        </nav>
-                    </div>
+    .prof-details p {
+        margin-bottom: 3px;
+        color: #555;
+    }
 
-                    <div class="progress-container-wrapper">
-                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
-                            <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}"
-                                class="progress-card-link">
-                                <div class="progress-card">
-                                    <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
-                                    <div class="chart-container">
-                                        <canvas id="{{ $data[2] }}"></canvas>
-                                    </div>
+    .progress-container-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .progress-card-link {
+        text-decoration: none;
+        flex: 1 1 160px;
+        max-width: 180px;
+    }
+
+    .progress-card {
+        background: #f5f5f5;
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease;
+        height: 120px;
+    }
+
+    .progress-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .progress-card label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .chart-container {
+        height: 40px;
+    }
+
+    @media (max-width: 576px) {
+        .progress-container-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .progress-card-link {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card custom-card">
+            <div class="card-body d-md-flex align-items-center">
+                <div class="me-4">
+                    <span class="profile-image">
+                        <img class="br-5" src="{{ asset($profile->profile_photo) }}" alt="Profile Photo">
+                        <span class="profile-online"></span>
+                    </span>
+                </div>
+
+                <div class="my-md-auto mt-4 prof-details">
+                    <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
+                    <p><i class="fa fa-user me-2"></i> <b>Nijoga Id:</b> {{ $profile->nijoga_id }}</p>
+                    <p><i class="fa fa-envelope me-2"></i> <b>Email:</b> {{ $profile->email }}</p>
+                    <p><i class="fa fa-phone me-2"></i> <b>Phone:</b> {{ $profile->phone_no }}</p>
+                    <p><i class="fa fa-globe me-2"></i> <b>Whatsapp:</b> {{ $profile->whatsapp_no }}</p>
+                </div>
+
+                <div class="ms-md-auto progress-container-wrapper">
+                    @foreach ([
+                        ['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'],
+                        ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'],
+                        ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'],
+                        ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'],
+                        ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'],
+                        ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'],
+                        ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update'],
+                    ] as $data)
+                        <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}" class="progress-card-link">
+                            <div class="progress-card">
+                                <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
+                                <div class="chart-container">
+                                    <canvas id="{{ $data[2] }}"></canvas>
                                 </div>
-                            </a>
-                        @endforeach
-                    </div>
-
+                            </div>
+                        </a>
+                    @endforeach
                 </div>
             </div>
+
+            <div class="card-footer py-3">
+                <nav class="nav main-nav-line profile-nav-line">
+                    <a style="color: white" class="nav-link active" data-bs-toggle="tab" href="#personal">Personal</a>
+                    <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
+                    <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
+                    <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
+                    <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
+                    <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
+                    <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
+                </nav>
+            </div>
         </div>
+    </div>
+</div>
+
 
         <!-- Row -->
         <div class="row row-sm">
