@@ -121,16 +121,36 @@
                                     </div>
 
                                     @if (!empty($profile->health_card_photo))
-                                        <div class="personal-details-item d-flex align-items-center">
+                                        <div class="personal-details-item d-flex align-items-center mb-3">
                                             <i class="fas fa-image me-2"></i>
                                             <span class="personal-details-text me-2">Health Card Photo:</span>
-                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
-                                                rel="noopener noreferrer">
-                                                <img src="{{ asset($profile->health_card_photo) }}" alt="Health Card Photo"
-                                                    class="img-thumbnail" style="max-width: 100px; cursor: pointer;" />
-                                            </a>
+                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
+                                                data-bs-target="#healthCardModal">
+                                                View Photo
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="healthCardModal" tabindex="-1"
+                                            aria-labelledby="healthCardModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body text-center">
+                                                        <img src="{{ asset($profile->health_card_photo) }}"
+                                                            alt="Health Card Photo" class="img-fluid rounded shadow"
+                                                            style="max-height: 80vh;">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
+
 
                                     <div class="personal-details-item">
                                         <i class="fas fa-birthday-cake"></i>
@@ -549,50 +569,54 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const chartData = {
-        profileChart: {{ round($profileCompletion) }},
-        familyChart: {{ round($familyCompletion) }},
-        idcardChart: {{ round($idcardCompletion) }},
-        addressChart: {{ round($addressCompletion) }},
-        occupationChart: {{ round($occupationCompletion) }},
-        sebaChart: {{ round($sebaCompletion) }},
-        socialmediaChart: {{ round($socialmediaCompletion) }},
-    };
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const chartData = {
+            profileChart: {{ round($profileCompletion) }},
+            familyChart: {{ round($familyCompletion) }},
+            idcardChart: {{ round($idcardCompletion) }},
+            addressChart: {{ round($addressCompletion) }},
+            occupationChart: {{ round($occupationCompletion) }},
+            sebaChart: {{ round($sebaCompletion) }},
+            socialmediaChart: {{ round($socialmediaCompletion) }},
+        };
 
-    const chartColors = {
-        profileChart: '#4CAF50',
-        familyChart: '#FF9800',
-        idcardChart: '#2196F3',
-        addressChart: '#673AB7',
-        occupationChart: '#009688',
-        sebaChart: '#FF5722',
-        socialmediaChart: '#E91E63',
-    };
+        const chartColors = {
+            profileChart: '#4CAF50',
+            familyChart: '#FF9800',
+            idcardChart: '#2196F3',
+            addressChart: '#673AB7',
+            occupationChart: '#009688',
+            sebaChart: '#FF5722',
+            socialmediaChart: '#E91E63',
+        };
 
-    Object.keys(chartData).forEach(id => {
-        const ctx = document.getElementById(id).getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [chartData[id], 100 - chartData[id]],
-                    backgroundColor: [chartColors[id], '#e0e0e0'],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                cutout: '75%',
-                responsive: false,
-                plugins: {
-                    tooltip: { enabled: false },
-                    legend: { display: false },
+        Object.keys(chartData).forEach(id => {
+            const ctx = document.getElementById(id).getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [chartData[id], 100 - chartData[id]],
+                        backgroundColor: [chartColors[id], '#e0e0e0'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '75%',
+                    responsive: false,
+                    plugins: {
+                        tooltip: {
+                            enabled: false
+                        },
+                        legend: {
+                            display: false
+                        },
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
