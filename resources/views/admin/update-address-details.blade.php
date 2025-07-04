@@ -66,7 +66,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -140,7 +140,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -190,7 +190,7 @@
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="address-tab" style="background-color:#e96a01;color: white" 
                             data-toggle="tab" href="{{ route('admin.pratihariAddress') }}" role="tab"
                             aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt" style="color: white"></i> Address
@@ -234,7 +234,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="sahi">Sahi</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-map-marker-alt" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-map-marker-alt" style="color: #f5c12e"></i></span>
                                     <select class="form-control" id="sahi" name="sahi">
                                         <option value="">Select Sahi</option>
                                         @foreach ($sahiList as $sahi)
@@ -249,7 +249,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="landmark">Landmark</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-location-arrow" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-location-arrow" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="landmark" name="landmark" 
                                         value="{{ $pratihariAddress->landmark }}" placeholder="Enter your landmark">
                                 </div>
@@ -258,7 +258,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="post">Post Office</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-envelope" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="post" name="post" 
                                         value="{{ $pratihariAddress->post }}" placeholder="Enter your post office">
                                 </div>
@@ -267,7 +267,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="police_station">Police Station</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-shield-alt" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-shield-alt" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="police_station" name="police_station" 
                                         value="{{ $pratihariAddress->police_station }}" placeholder="Enter your police station">
                                 </div>
@@ -276,7 +276,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="pincode">Pincode</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-map-pin" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-map-pin" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="pincode" name="pincode" 
                                         value="{{ $pratihariAddress->pincode }}" placeholder="Enter your pincode">
                                 </div>
@@ -285,7 +285,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="district">District</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-city" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-city" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="district" name="district" 
                                         value="{{ $pratihariAddress->district }}" placeholder="Enter your district">
                                 </div>
@@ -294,7 +294,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="state">State</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-map" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-map" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="state" name="state" 
                                         value="{{ $pratihariAddress->state }}" placeholder="Enter your state">
                                 </div>
@@ -303,7 +303,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="country">Country</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-globe" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-globe" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="country" name="country" 
                                         value="{{ $pratihariAddress->country }}" placeholder="Enter your country">
                                 </div>
@@ -312,7 +312,7 @@
                             <div class="col-md-12 mb-3">
                                 <label for="address">Address</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-address-card" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-address-card" style="color: #f5c12e"></i></span>
                                     <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your address">{{ $pratihariAddress->address }}</textarea>
                                 </div>
                             </div>  
@@ -335,7 +335,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_sahi">Permanent Sahi</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map-marker-alt" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-map-marker-alt" style="color: #f5c12e"></i></span>
                                             <select class="form-control" id="per_sahi" name="per_sahi">
                                                 <option value="">Select Sahi</option>
                                                 @foreach ($sahiList as $sahi)
@@ -350,7 +350,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_landmark">Permanent Landmark</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-location-arrow" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-location-arrow" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_landmark" name="per_landmark"
                                                 placeholder="Enter your landmark" value="{{ old('per_landmark', $pratihariAddress->per_landmark ?? '') }}">
                                         </div>
@@ -359,7 +359,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_post">Permanent Post Office</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-envelope" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-envelope" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_post" name="per_post"
                                                 placeholder="Enter your post office" value="{{ old('per_post', $pratihariAddress->per_post ?? '') }}">
                                         </div>
@@ -368,7 +368,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_police_station">Permanent Police Station</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-shield-alt" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-shield-alt" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_police_station" name="per_police_station"
                                                 placeholder="Enter your police station" value="{{ old('per_police_station', $pratihariAddress->per_police_station ?? '') }}">
                                         </div>
@@ -377,7 +377,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_pincode">Permanent Pincode</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map-pin" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-map-pin" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_pincode" name="per_pincode"
                                                 placeholder="Enter your pincode" value="{{ old('per_pincode', $pratihariAddress->per_pincode ?? '') }}">
                                         </div>
@@ -386,7 +386,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_district">Permanent District</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-city" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-city" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_district" name="per_district"
                                                 placeholder="Enter your district" value="{{ old('per_district', $pratihariAddress->per_district ?? '') }}">
                                         </div>
@@ -395,7 +395,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_state">Permanent State</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-map" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-map" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_state" name="per_state"
                                                 placeholder="Enter your state" value="{{ old('per_state', $pratihariAddress->per_state ?? '') }}">
                                         </div>
@@ -404,7 +404,7 @@
                                     <div class="col-md-3 mb-3">
                                         <label for="per_country">Permanent Country</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-globe" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-globe" style="color: #f5c12e"></i></span>
                                             <input type="text" class="form-control" id="per_country" name="per_country"
                                                 placeholder="Enter your country" value="{{ old('per_country', $pratihariAddress->per_country ?? '') }}">
                                         </div>
@@ -413,7 +413,7 @@
                                     <div class="col-md-12 mb-3">
                                         <label for="per_address">Permanent Address</label>
                                         <div class="input-group">
-                                            <span class="input-group-text"><i class="fa fa-address-card" style="color: blue"></i></span>
+                                            <span class="input-group-text"><i class="fa fa-address-card" style="color: #f5c12e"></i></span>
                                             <textarea class="form-control" id="per_address" name="per_address" rows="3"
                                                 placeholder="Enter your address">{{ old('per_address', $pratihariAddress->per_address ?? '') }}</textarea>
                                         </div>
