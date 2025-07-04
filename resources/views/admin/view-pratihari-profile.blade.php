@@ -3,6 +3,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('assets/css/profile.css') }}" rel="stylesheet">
+    <style>
+        .progress-circle-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .progress-circle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+        }
+
+        .progress-circle canvas {
+            width: 100px !important;
+            height: 100px !important;
+        }
+
+        .progress-label {
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -39,19 +67,16 @@
                             <p><i class="fa fa-globe me-2"></i> <b>Whatsapp:</b> {{ $profile->whatsapp_no }}</p>
                         </div>
 
-                             <div class="progress-container-wrapper">
-                        @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
-                            <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}"
-                                class="progress-card-link">
-                                <div class="progress-card">
-                                    <label><strong>{{ $data[0] }}:</strong> {{ round($data[1]) }}%</label>
-                                    <div class="chart-container">
-                                        <canvas id="{{ $data[2] }}"></canvas>
-                                    </div>
-                                </div>
-                            </a>
-                        @endforeach
-                    </div>
+
+                        <div class="progress-circle-wrapper">
+                            @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
+                                <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}"
+                                    class="progress-circle">
+                                    <canvas id="{{ $data[2] }}"></canvas>
+                                    <div class="progress-label">{{ $data[0] }}<br>{{ round($data[1]) }}%</div>
+                                </a>
+                            @endforeach
+                        </div>
 
                     </div>
 
@@ -68,7 +93,7 @@
                         </nav>
                     </div>
 
-               
+
                 </div>
             </div>
         </div>
@@ -412,7 +437,6 @@
                                     </h4>
 
                                     @foreach ($sebaDetails as $seba)
-                                     
                                         <!-- Seba Name Section -->
                                         <div class="profile-item d-flex align-items-center">
                                             <i class="fas fa-praying-hands text-success me-2"></i>
@@ -525,70 +549,50 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const charts = [{
-                    id: 'profileChart',
-                    data: {{ $profileCompletion }},
-                    color: '#4CAF50'
-                },
-                {
-                    id: 'familyChart',
-                    data: {{ $familyCompletion }},
-                    color: '#FF9800'
-                },
-                {
-                    id: 'idcardChart',
-                    data: {{ $idcardCompletion }},
-                    color: '#2196F3'
-                },
-                {
-                    id: 'addressChart',
-                    data: {{ $addressCompletion }},
-                    color: '#673AB7'
-                },
-                {
-                    id: 'occupationChart',
-                    data: {{ $occupationCompletion }},
-                    color: '#009688'
-                },
-                {
-                    id: 'sebaChart',
-                    data: {{ $sebaCompletion }},
-                    color: '#FF5722'
-                },
-                {
-                    id: 'socialmediaChart',
-                    data: {{ $socialmediaCompletion }},
-                    color: '#E91E63'
-                }
-            ];
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartData = {
+        profileChart: {{ round($profileCompletion) }},
+        familyChart: {{ round($familyCompletion) }},
+        idcardChart: {{ round($idcardCompletion) }},
+        addressChart: {{ round($addressCompletion) }},
+        occupationChart: {{ round($occupationCompletion) }},
+        sebaChart: {{ round($sebaCompletion) }},
+        socialmediaChart: {{ round($socialmediaCompletion) }},
+    };
 
-            charts.forEach(chart => {
-                const ctx = document.getElementById(chart.id).getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'Remaining'],
-                        datasets: [{
-                            data: [chart.data, 100 - chart.data],
-                            backgroundColor: [chart.color, '#E8E8E8']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        cutout: '70%',
-                        plugins: {
-                            legend: {
-                                display: false
-                            }
-                        }
-                    }
-                });
-            });
+    const chartColors = {
+        profileChart: '#4CAF50',
+        familyChart: '#FF9800',
+        idcardChart: '#2196F3',
+        addressChart: '#673AB7',
+        occupationChart: '#009688',
+        sebaChart: '#FF5722',
+        socialmediaChart: '#E91E63',
+    };
+
+    Object.keys(chartData).forEach(id => {
+        const ctx = document.getElementById(id).getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [chartData[id], 100 - chartData[id]],
+                    backgroundColor: [chartColors[id], '#e0e0e0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '75%',
+                responsive: false,
+                plugins: {
+                    tooltip: { enabled: false },
+                    legend: { display: false },
+                }
+            }
         });
-    </script>
+    });
+</script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
