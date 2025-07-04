@@ -333,8 +333,8 @@
                         <div class="tab-pane fade" id="idcard">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold mb-4" style="color:#f5c12e">
-                                        <i class="fas fa-id-card"></i> ID Card Details
+                                    <h4 class="fw-bold mb-4">
+                                        <i class="fas fa-id-card"  style="color:#f5c12e"></i> ID Card Details
                                     </h4>
 
                                     <div class="row g-4">
@@ -373,8 +373,8 @@
                         <div class="tab-pane fade" id="address">
                             <div class="card profile-section shadow-lg border-0">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-center mb-4" style="color:#f5c12e">
-                                        <i class="fas fa-map-marker-alt me-2 text-primary"></i> Address Details
+                                    <h4 class="fw-bold text-center mb-4" >
+                                        <i class="fas fa-map-marker-alt me-2" style="color:#f5c12e"></i> Address Details
                                     </h4>
 
                                     <!-- Current Address -->
