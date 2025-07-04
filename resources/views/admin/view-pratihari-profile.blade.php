@@ -148,59 +148,62 @@
                     <div class="tab-content">
                         <!-- Personal Information -->
 
-               
+                        <div class="main-content-body tab-pane active" id="personal">
+                            <div class="card personal-details-card">
+                                <div class="card-body">
+                                    <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e"></i>
+                                        Personal Details</h4>
 
-<div class="main-content-body tab-pane active" id="personal">
-    <div class="card personal-details-card">
-        <div class="card-body">
-            <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e"></i> Personal Details</h4>
+                                    <div class="personal-details-item">
+                                        <i class="fas fa-id-card"></i>
+                                        <div>
+                                            <span class="personal-details-text">Health Card No:</span>
+                                            <span
+                                                class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
+                                        </div>
+                                    </div>
 
-            <div class="personal-details-item">
-                <i class="fas fa-id-card"></i>
-                <div>
-                    <span class="personal-details-text">Health Card No:</span>
-                    <span class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
-                </div>
-            </div>
+                                    <div class="personal-details-item">
+                                        <i class="fas fa-birthday-cake"></i>
+                                        <div>
+                                            <span class="personal-details-text">Date of Birth:</span>
+                                            <span
+                                                class="personal-details-value">{{ $profile->date_of_birth ?? 'Not Available' }}</span>
+                                        </div>
+                                    </div>
 
-            <div class="personal-details-item">
-                <i class="fas fa-birthday-cake"></i>
-                <div>
-                    <span class="personal-details-text">Date of Birth:</span>
-                    <span class="personal-details-value">{{ $profile->date_of_birth ?? 'Not Available' }}</span>
-                </div>
-            </div>
+                                    <div class="personal-details-item">
+                                        <i class="fas fa-tint"></i>
+                                        <div>
+                                            <span class="personal-details-text">Blood Group:</span>
+                                            <span
+                                                class="personal-details-value">{{ $profile->blood_group ?? 'Not Available' }}</span>
+                                        </div>
+                                    </div>
 
-            <div class="personal-details-item">
-                <i class="fas fa-tint"></i>
-                <div>
-                    <span class="personal-details-text">Blood Group:</span>
-                    <span class="personal-details-value">{{ $profile->blood_group ?? 'Not Available' }}</span>
-                </div>
-            </div>
+                                    <div class="personal-details-item">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <div>
+                                            <span class="personal-details-text">Joining Date:</span>
+                                            <span
+                                                class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
+                                        </div>
+                                    </div>
 
-            <div class="personal-details-item">
-                <i class="fas fa-calendar-check"></i>
-                <div>
-                    <span class="personal-details-text">Joining Date:</span>
-                    <span class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
-                </div>
-            </div>
-
-            @if (!empty($profile->health_card_photo))
-                <div class="personal-details-item">
-                    <i class="fas fa-image"></i>
-                    <div>
-                        <span class="personal-details-text">Health Card Photo:</span>
-                        <a href="{{ asset($profile->health_card_photo) }}" target="_blank" rel="noopener noreferrer"
-                           class="view-photo-btn mt-1 d-inline-block">View Photo</a>
-                    </div>
-                </div>
-            @endif
-        </div>
-    </div>
-</div>
-
+                                    @if (!empty($profile->health_card_photo))
+                                        <div class="personal-details-item">
+                                            <i class="fas fa-image"></i>
+                                            <div>
+                                                <span class="personal-details-text">Health Card Photo:</span>
+                                                <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="view-photo-btn mt-1 d-inline-block">View Photo</a>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Family Information -->
                         <div class="main-content-body tab-pane border-top-0" id="family">
@@ -210,7 +213,7 @@
                                 <!-- Parent Details Section -->
                                 <div class="family-section mb-5">
                                     <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
-                                        <i class="fas fa-users me-2" style="color:rgb(85, 1, 15)"></i> Parents
+                                        <i class="fas fa-users me-2" style="color:#f5c12e"></i> Parents
                                     </h4>
                                     <div class="row g-4 text-center">
                                         <!-- Father -->
@@ -330,7 +333,7 @@
                         <div class="tab-pane fade" id="idcard">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
+                                    <h4 class="fw-bold mb-4" style="color:#f5c12e">
                                         <i class="fas fa-id-card"></i> ID Card Details
                                     </h4>
 
@@ -370,7 +373,7 @@
                         <div class="tab-pane fade" id="address">
                             <div class="card profile-section shadow-lg border-0">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-center mb-4" style="color:#001a33">
+                                    <h4 class="fw-bold text-center mb-4" style="color:#f5c12e">
                                         <i class="fas fa-map-marker-alt me-2 text-primary"></i> Address Details
                                     </h4>
 
@@ -433,7 +436,7 @@
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-primary"><i class="fas fa-briefcase"></i> Occupation Details
+                                    <h4 class="fw-bold"><i class="fas fa-briefcase" style="color: #f5c12e"></i> Occupation Details
                                     </h4>
 
                                     @if ($occupation->isNotEmpty())
@@ -473,13 +476,12 @@
                         <div class="tab-pane fade" id="seba">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-primary"><i class="fas fa-hands-helping"></i> Seba Details
-                                    </h4>
+                                    <h4 class="fw-bold">Seba Details </h4>
 
                                     @foreach ($sebaDetails as $seba)
                                         <!-- Seba Name Section -->
                                         <div class="profile-item d-flex align-items-center">
-                                            <i class="fas fa-praying-hands text-success me-2"></i>
+                                            
                                             <div>
                                                 <span class="profile-text fw-bold">Seba Name:</span>
                                                 <span
@@ -489,7 +491,7 @@
 
                                         <!-- Beddha Assigned Section -->
                                         <div class="profile-item d-flex align-items-center">
-                                            <i class="fas fa-link text-danger me-2"></i>
+                                           
                                             <div>
                                                 <span class="profile-text fw-bold">Beddha Assigned:</span>
                                                 <div class="profile-value mt-1">
