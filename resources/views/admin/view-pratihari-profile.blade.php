@@ -178,6 +178,14 @@
                                     <h4 class="fw-bold"><i class="fas fa-user-circle me-2" style="color:#f5c12e"></i>
                                         Personal Details</h4>
 
+                                        <div class="personal-details-item">
+                                            <i class="fas fa-user-tag"></i>
+                                            <div>
+                                                <span class="personal-details-text">Alias Name:</span>
+                                                <span class="personal-details-value">{{ $profile->alias_name ?? 'Not Available' }}</span>
+                                            </div>
+                                        </div>
+
                                     <div class="personal-details-item">
                                         <i class="fas fa-id-card"></i>
                                         <div>
