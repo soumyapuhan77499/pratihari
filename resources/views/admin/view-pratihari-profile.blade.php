@@ -77,7 +77,7 @@
         .beddha-pill {
             display: inline-flex;
             align-items: center;
-            background: linear-gradient(135deg, #58c472, #1d976c);
+            background: linear-gradient(45deg, #fbcc4c, #bb7908);
             color: #fff;
             font-weight: 600;
             font-size: 14px;
