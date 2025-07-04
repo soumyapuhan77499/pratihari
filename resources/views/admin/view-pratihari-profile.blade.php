@@ -70,7 +70,7 @@
 
         .personal-details-item i {
             font-size: 15px;
-            color: #f5c12e;
+            color: #f0eee8;
             margin-right: 15px;
         }
 
