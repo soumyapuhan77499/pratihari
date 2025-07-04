@@ -407,7 +407,7 @@
                             <div class="col-12" id="childrenSection">
                                 <h5 class="mt-3"><i class="fas fa-child" style="color: #f5c12e"></i> Children Details
                                 </h5>
-                                <button type="button" class="btn btn-sm btn-success" id="addChild">
+                                <button type="button" class="btn btn-sm" style="background-color: #e96a01;color:#fff" id="addChild">
                                     <i class="fa fa-plus-circle"></i> Add Child
                                 </button>
                                 <div id="childrenContainer">
