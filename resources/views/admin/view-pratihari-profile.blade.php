@@ -250,7 +250,7 @@
                                 @if ($family && $family->maritial_status == 'married')
                                     <div class="family-section mb-5">
                                         <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
-                                            <i class="fas fa-heart me-2" style="color:rgb(85, 1, 15)"></i> Spouse &
+                                            <i class="fas fa-heart me-2" style="color:#f5c12e"></i> Spouse &
                                             In-Laws
                                         </h4>
                                         <div class="row g-4 text-center">
@@ -305,7 +305,7 @@
                                 <!-- Children Details Section -->
                                 <div class="family-section">
                                     <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
-                                        <i class="fas fa-child me-2" style="color:rgb(85, 1, 15)"></i> Children
+                                        <i class="fas fa-child me-2" style="color:#f5c12e"></i> Children
                                     </h4>
                                     <div class="row g-4">
                                         @forelse ($children as $child)
