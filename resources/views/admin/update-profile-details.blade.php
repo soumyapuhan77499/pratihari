@@ -349,7 +349,7 @@
 
                                 @if (isset($profile) && $profile->health_card_photo)
                                     <!-- Button to open modal -->
-                                    <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#healthCardModal">
+                                    <button type="button" class="btn btn-sm mt-2" style="background-color: #e96a01" data-bs-toggle="modal" data-bs-target="#healthCardModal">
                                         View Photo
                                     </button>
 
@@ -381,7 +381,7 @@
                                 @if (isset($profile) && $profile->profile_photo)
                                     
                                     <!-- Button to open modal -->
-                                    <button type="button" class="btn btn-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                    <button type="button" class="btn btn-sm mt-2"  style="background-color: #e96a01" data-bs-toggle="modal" data-bs-target="#profileModal">
                                         View Photo
                                     </button>
                             
