@@ -59,14 +59,13 @@
                             </span>
                         </div>
 
-                        <div class="my-md-auto mt-4 prof-details">
+                        <div class="my-md-auto mt-4 prof-details" style="width: 300px">
                             <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
                             <p><i class="fa fa-user me-2"></i> <b>Nijoga Id:</b> {{ $profile->nijoga_id }}</p>
                             <p><i class="fa fa-envelope me-2"></i> <b>Email:</b> {{ $profile->email }}</p>
                             <p><i class="fa fa-phone me-2"></i> <b>Phone:</b> {{ $profile->phone_no }}</p>
                             <p><i class="fa fa-globe me-2"></i> <b>Whatsapp:</b> {{ $profile->whatsapp_no }}</p>
                         </div>
-
 
                         <div class="progress-circle-wrapper">
                             @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
