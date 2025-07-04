@@ -285,7 +285,7 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="button" class="btn btn-success mt-3" id="add-id-btn"><i
+                            <button type="button" class="btn mt-3" style="background-color: #e96a01;color: white" id="add-id-btn"><i
                                     class="fas fa-plus"></i> Add ID</button>
                             <button type="submit" class="btn mt-3 w-50 custom-gradient-btn"><i class="fa fa-save"></i>
                                 Update</button>
