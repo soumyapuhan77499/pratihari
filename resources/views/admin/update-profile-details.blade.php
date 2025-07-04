@@ -69,7 +69,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -143,7 +143,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -239,7 +239,7 @@
                             <div class="col-md-3">
                                 <label for="first_name">First Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-user" style="color: #f5c12e"></i></span>
                                     <input type="text" name="first_name" id="first_name" class="form-control"
                                         value="{{ old('first_name', $profile->first_name ?? '') }}">
                                 </div>
@@ -249,7 +249,7 @@
                             <div class="col-md-3">
                                 <label for="middle_name">Middle Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-user" style="color: #f5c12e"></i></span>
                                     <input type="text" name="middle_name" id="middle_name" class="form-control"
                                         value="{{ old('middle_name', $profile->middle_name ?? '') }}">
                                 </div>
@@ -259,7 +259,7 @@
                             <div class="col-md-3">
                                 <label for="last_name">Last Name</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-user" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-user" style="color: #f5c12e"></i></span>
                                     <input type="text" name="last_name" id="last_name" class="form-control"
                                         value="{{ old('last_name', $profile->last_name ?? '') }}">
                                 </div>
@@ -270,7 +270,7 @@
                                 <label for="alias_name">Alias Name</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-user-tag"
-                                            style="color: blue"></i></span>
+                                            style="color: #f5c12e"></i></span>
                                     <input type="text" name="alias_name" id="alias_name" class="form-control"
                                         value="{{ old('alias_name', $profile->alias_name ?? '') }}">
                                 </div>
@@ -281,7 +281,7 @@
                                 <label for="email">Email ID</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-envelope"
-                                            style="color: blue"></i></span>
+                                            style="color: #f5c12e"></i></span>
                                     <input type="email" class="form-control" id="email" name="email"
                                         value="{{ old('email', $profile->email ?? '') }}">
                                 </div>
@@ -291,7 +291,7 @@
                              <div class="col-md-3">
                                 <label for="whatsapp_no">WhatsApp No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-phone" style="color: #f5c12e"></i></span>
                                     <input type="tel" class="form-control"   value="{{ old('whatsapp_no', $profile->whatsapp_no ?? '') }}" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
@@ -300,7 +300,7 @@
                             <div class="col-md-3">
                                 <label for="phone_no">Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-phone" style="color: #f5c12e"></i></span>
                                     <input type="tel" class="form-control" id="phone_no" name="phone_no"
                                         pattern="\d{10}" maxlength="10"
                                         value="{{ old('phone_no', $profile->phone_no ?? '') }}">
@@ -310,7 +310,7 @@
                             <div class="col-md-3">
                                 <label for="alt_phone_no">Alternative Phone No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-phone" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-phone" style="color: #f5c12e"></i></span>
                                     <input type="tel" class="form-control" id="alt_phone_no" name="alt_phone_no" value="{{ old('alt_phone_no', $profile->alt_phone_no ?? '') }}"  pattern="\d{10}" maxlength="10">
                                 </div>
                             </div>
@@ -319,7 +319,7 @@
                             <div class="col-md-3">
                                 <label for="blood_group">Blood Group</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-tint" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-tint" style="color: #f5c12e"></i></span>
                                     <select class="form-control" id="blood_group" name="blood_group">
                                         <option value="">Select Blood Group</option>
                                         @foreach (['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'] as $group)
@@ -336,7 +336,7 @@
                              <div class="col-md-3">
                                 <label for="health_card_no">Health Card No</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-id-card" style="color: #f5c12e"></i></span>
                                     <input type="text" class="form-control" id="healthcard_no" name="healthcard_no"  value="{{ old('health_card_no', $profile->healthcard_no ?? '') }}" >
                                 </div>
                             </div>
@@ -345,7 +345,7 @@
                             <div class="col-md-3">
                                 <label for="health_card_photo">Health Card Photo</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-camera" style="color: #f5c12e"></i></span>
                                     <input type="file" class="form-control" id="health_card_photo" name="health_card_photo">
                                 </div>
 
@@ -376,7 +376,7 @@
                             <div class="col-md-3">
                                 <label for="profile_photo">Profile Photo</label>
                                 <div class="input-group mb-2">
-                                    <span class="input-group-text"><i class="fa fa-camera" style="color: blue"></i></span>
+                                    <span class="input-group-text"><i class="fa fa-camera" style="color: #f5c12e"></i></span>
                                     <input type="file" class="form-control" id="profile_photo" name="profile_photo">
                                 </div>
                             
@@ -410,7 +410,7 @@
                                 <label for="date_of_birth">Date of Birth</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-calendar"
-                                            style="color: blue"></i></span>
+                                            style="color: #f5c12e"></i></span>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
                                         value="{{ old('date_of_birth', $profile->date_of_birth ?? '') }}">
                                 </div>
@@ -421,7 +421,7 @@
                                 <label for="joining_date">Year of Joining</label>
                                 <div class="input-group mb-2">
                                     <span class="input-group-text"><i class="fa fa-calendar-alt"
-                                            style="color: blue"></i></span>
+                                            style="color: #f5c12e"></i></span>
                                     <select class="form-control" id="joining_date" name="joining_date">
                                         <option value="">Select Year</option>
                                         @for ($i = date('Y'); $i >= 1900; $i--)
