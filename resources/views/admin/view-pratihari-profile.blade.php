@@ -251,8 +251,15 @@
                         <!-- Family Information -->
                         <div class="main-content-body tab-pane border-top-0" id="family">
                             <div class="card p-4 shadow-lg">
-                                <h3 class="fw-bold text-center mb-4" style="color: rgb(1, 1, 66)">Family Details</h3>
-
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <h3 class="fw-bold text-center mb-4" style="color: rgb(1, 1, 66)">Family Details</h3>
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <a href="{{ route('family.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                            class="btn btn-warning btn-sm" title="Edit Family Details">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                    </div>
+                                </div>
                                 <!-- Parent Details Section -->
                                 <div class="family-section mb-5">
                                     <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
@@ -376,9 +383,20 @@
                         <div class="tab-pane fade" id="idcard">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold mb-4">
-                                        <i class="fas fa-id-card" style="color:#f5c12e"></i> ID Card Details
-                                    </h4>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <h4 class="fw-bold mb-4">
+                                            <i class="fas fa-id-card" style="color:#f5c12e"></i> ID Card Details
+                                        </h4>
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <a href="{{ route('idcard.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit ID Card Details">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                        </div>
+
+                                    </div>
 
                                     <div class="row g-4">
                                         @foreach ($idcard as $index => $card)
@@ -416,9 +434,20 @@
                         <div class="tab-pane fade" id="address">
                             <div class="card profile-section shadow-lg border-0">
                                 <div class="card-body">
-                                    <h4 class="fw-bold text-center mb-4">
-                                        <i class="fas fa-map-marker-alt me-2" style="color:#f5c12e"></i> Address Details
-                                    </h4>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <h4 class="fw-bold text-center mb-4">
+                                            <i class="fas fa-map-marker-alt me-2" style="color:#f5c12e"></i> Address
+                                            Details
+                                        </h4>
+
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <a href="{{ route('address.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit Address Details">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                        </div>
+                                    </div>
 
                                     <!-- Current Address -->
                                     <h5 class="fw-semibold mb-3 text-dark">
@@ -479,9 +508,20 @@
                         <div class="tab-pane fade" id="occupation">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold"><i class="fas fa-briefcase" style="color: #f5c12e"></i>
-                                        Occupation Details
-                                    </h4>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <h4 class="fw-bold"><i class="fas fa-briefcase" style="color: #f5c12e"></i>
+                                            Occupation Details
+                                        </h4>
+
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <a href="{{ route('occupation.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit Occupation Details">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                        </div>
+
+                                    </div>
 
                                     @if ($occupation->isNotEmpty())
                                         <div class="profile-item">
@@ -520,7 +560,17 @@
                         <div class="tab-pane fade" id="seba">
                             <div class="card profile-section">
                                 <div class="card-body">
-                                    <h4 class="fw-bold">Seba Details </h4>
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <h4 class="fw-bold">Seba Details </h4>
+
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit Seba Details">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                        </div>
+                                    </div>
 
                                     @foreach ($sebaDetails as $seba)
                                         <!-- Seba Name Section -->
@@ -566,9 +616,24 @@
                         <div class="tab-pane fade" id="social">
                             <div class="card">
                                 <div class="p-4">
-                                    <h4 class="fw-bold"><i class="fas fa-share-alt" style="color: #f5c12e"></i> Social
-                                        Media Links
-                                    </h4>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                        <h4 class="fw-bold"><i class="fas fa-share-alt" style="color: #f5c12e"></i>
+                                            Social
+                                            Media Links
+                                        </h4>
+
+                                        <div class="d-flex justify-content-end mb-3">
+                                            <a href="{{ route('social.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit Social Media Links">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                        </div>
+
+                                    </div>
+
+
                                     <div class="d-lg-flex flex-wrap " style="margin-top: 20px">
                                         @php
                                             $socialLinks = [
