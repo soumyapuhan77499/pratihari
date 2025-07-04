@@ -15,7 +15,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 80px;
+            width: 60px;
         }
 
         .progress-circle canvas {
@@ -27,7 +27,7 @@
             margin-top: 0.5rem;
             text-align: center;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px;
             color: #333;
         }
     </style>
