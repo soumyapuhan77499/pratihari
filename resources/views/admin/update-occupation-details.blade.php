@@ -187,7 +187,7 @@
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="occupation-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="occupation-tab" style="background-color: #e96a01;color: white"
                             data-toggle="tab" href="{{ route('admin.pratihariOccupation') }}" role="tab"
                             aria-controls="occupation" aria-selected="false">
                             <i class="fas fa-briefcase" style="color: white"></i> Occupation
@@ -266,7 +266,7 @@
                                                             style="color: #f5c12e"></i></span>
                                                     <input type="text" name="extra_activity[]" class="form-control"
                                                         placeholder="Enter Curriculum Activity">
-                                                    <button type="button" class="btn btn-success addMore"><i
+                                                    <button type="button" class="btn addMore" style="background-color: #e96a01;color: white"><i
                                                             class="fas fa-plus"></i></button>
                                                 </div>
                                             @endif
@@ -325,7 +325,7 @@
                     const newField = document.createElement("div");
                     newField.classList.add("input-group", "mb-2");
                     newField.innerHTML = `
-                    <span class="input-group-text"><i class="fas fa-briefcase" style="color: blue"></i></span>
+                    <span class="input-group-text"><i class="fas fa-briefcase" style="color: #f5c12e"></i></span>
                     <input type="text" name="extra_activity[]" class="form-control" placeholder="Enter Curriculum Activity">
                     <button type="button" class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
                 `;
