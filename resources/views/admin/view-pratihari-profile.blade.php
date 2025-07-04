@@ -119,37 +119,17 @@
                                                 class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
                                         </div>
                                     </div>
-
                                     @if (!empty($profile->health_card_photo))
                                         <div class="personal-details-item d-flex align-items-center mb-3">
                                             <i class="fas fa-image me-2"></i>
                                             <span class="personal-details-text me-2">Health Card Photo:</span>
-                                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                data-bs-target="#healthCardModal">
+                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
+                                                rel="noopener noreferrer" class="btn btn-sm btn-primary">
                                                 View Photo
-                                            </button>
-                                        </div>
-
-                                        <!-- Modal -->
-                                        <div class="modal fade" id="healthCardModal" tabindex="-1"
-                                            aria-labelledby="healthCardModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="healthCardModalLabel">Health Card Photo
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body text-center">
-                                                        <img src="{{ asset($profile->health_card_photo) }}"
-                                                            alt="Health Card Photo" class="img-fluid rounded shadow"
-                                                            style="max-height: 80vh;">
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            </a>
                                         </div>
                                     @endif
+
 
 
                                     <div class="personal-details-item">
