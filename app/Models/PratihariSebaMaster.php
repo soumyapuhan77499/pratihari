@@ -12,6 +12,6 @@ class PratihariSebaMaster extends Model
     protected $table = 'master__seba';
 
     protected $fillable = [
-        'seba_name',        
+        'seba_name',
     ];
 }

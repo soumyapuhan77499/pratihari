@@ -31,7 +31,7 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
 
     Route::get('/designations', 'manageDesignation');
     Route::get('/get-profile-by-id', 'getPofileDataByPratihariId');
-Route::get('/approved-pratihari-profiles',  'getApprovedProfiles');
+    Route::get('/approved-pratihari-profiles',  'getApprovedProfiles');
 
 });
 

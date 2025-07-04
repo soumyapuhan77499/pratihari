@@ -525,5 +525,4 @@ public function getApprovedProfiles()
     }
 }
 
-
 }

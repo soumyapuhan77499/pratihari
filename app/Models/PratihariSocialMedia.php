@@ -12,11 +12,11 @@ class PratihariSocialMedia extends Model
     protected $table = 'pratihari__social_media';
 
     protected $fillable = [
-        'pratihari_id', 
-        'facebook_url',        
-        'instagram_url',        
-        'youtube_url',        
-        'twitter_url',        
-        'linkedin_url',        
+        'pratihari_id',
+        'facebook_url',
+        'instagram_url',
+        'youtube_url',
+        'twitter_url',
+        'linkedin_url',
     ];
 }

@@ -14,7 +14,6 @@ use App\Models\PratihariBeddhaMaster;
 
 use Carbon\Carbon;
 
-
 use Illuminate\Support\Facades\Auth;
 
 class PratihariSebaApiController extends Controller
@@ -39,7 +38,7 @@ class PratihariSebaApiController extends Controller
             ], 500);
         }
     }
-    // Get Seba list based on Nijoga ID
+
     public function getSebaByNijoga()
     {
         try {

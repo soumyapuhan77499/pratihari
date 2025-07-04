@@ -25,7 +25,7 @@
                     <li class="side-item side-item-category">Main</li>
 
                     <li class="slide">
-                        <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}"><span   class="side-menu__label"><img src="{{ asset('assets/img/brand/dashboard.png') }}"   style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"  style="margin-left: 10px">Dashboards</span></a>
+                        <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}"><span   class="side-menu__label"><img src="{{ asset('assets/img/brand/dashboard.png') }}"   style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"  style="margin-left: 10px">Dashboard</span></a>
                     </li>
 
                     <li class="side-item side-item-category">PRATIHARI NIJOGA</li>
@@ -34,14 +34,14 @@
                         <a class="side-menu__item" href="{{ url('admin/pratihari-profile') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/monk.png') }}"
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
-                                    style="margin-left: 10px">Pratihari Profile</span></a>
+                                    style="margin-left: 10px">Add Pratihari</span></a>
                     </li>
 
                     <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/pratihari-manage-profile') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/resume.png') }}"
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
-                                    style="margin-left: 10px">Pratihari Manage Profile</span></a>
+                                    style="margin-left: 10px"> Manage Pratihari Profile</span></a>
                     </li>
 
                     {{-- <li class="slide">
@@ -65,7 +65,6 @@
                                     style="margin-left: 10px">Pratihari Seba Assign</span></a>
                     </li>
 
-
                     <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/manage-notice') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/notification.png') }}"
@@ -77,7 +76,7 @@
                         <a class="side-menu__item" href="{{ url('admin/manage-designation') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/sketch.png') }}"
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
-                                    style="margin-left: 10px">Manage Designation</span></a>
+                                    style="margin-left: 10px">Manage Committee</span></a>
                     </li>
 
                     <li class="slide">
@@ -100,10 +99,10 @@
                     @endif
 
                 </ul>
-                <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
-                        width="24" height="24" viewBox="0 0 24 24">
+                <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">
                         <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z" />
-                    </svg></div>
+                    </svg>
+                </div>
             </div>
         </aside>
     </div>

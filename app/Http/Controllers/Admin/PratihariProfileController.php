@@ -387,14 +387,16 @@ class PratihariProfileController extends Controller
 
     public function manageApplication()
     {
-        $applications = PratihariApplication::with('profile')->where('status','active')->get();
+        $applications = PratihariApplication::with('profile')
+        ->whereIn('status', ['pending', 'approved', 'rejected'])
+        ->get();
 
         return view('admin.manage-application', compact('applications'));
     }
 
     public function filterApplication()
     {
-        $applications = PratihariApplication::with('profile')->where('status','active')->whereDate('created_at', Carbon::today())->get();
+        $applications = PratihariApplication::with('profile')->whereDate('created_at', Carbon::today())->get();
 
         return view('admin.manage-application', compact('applications'));
     }
@@ -428,17 +430,22 @@ class PratihariProfileController extends Controller
             }
         }
 
-        public function softDelete($id)
-        {
-            try {
-                $application = PratihariApplication::findOrFail($id);
-                $application->status = 'deleted';
-                $application->save();
+      public function approveApplication($id)
+{
+    $application = PratihariApplication::findOrFail($id);
+    $application->status = 'approved';
+    $application->save();
 
-                return redirect()->back()->with('success', 'Application deleted successfully.');
-            } catch (\Exception $e) {
-                \Log::error('Delete Application Error: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Failed to delete the application.');
-            }
-        }
+    return redirect()->back()->with('success', 'Application approved successfully.');
+}
+
+public function rejectApplication($id)
+{
+    $application = PratihariApplication::findOrFail($id);
+    $application->status = 'rejected';
+    $application->save();
+
+    return redirect()->back()->with('success', 'Application rejected successfully.');
+}
+
 }

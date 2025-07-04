@@ -63,7 +63,7 @@
                                         <td>
                                             <button class="btn btn-info btn-sm" data-bs-toggle="modal"
                                                 data-bs-target="#viewBodyModal" data-body="{{ $application->body }}">
-                                                View Body
+                                                View Text
                                             </button>
                                         </td>
                                         <td>
@@ -72,25 +72,39 @@
                                                 View Photo
                                             </button>
                                         </td>
-                                       
+
                                         <td style="color:#B7070A;font-size: 15px">
                                             <button class="btn btn-success" data-bs-toggle="modal"
                                                 data-bs-target="#editApplicationModal" data-id="{{ $application->id }}"
                                                 data-header="{{ $application->header }}"
                                                 data-body="{{ $application->body }}">
-                                                 <i class="fa fa-edit"></i>
+                                                <i class="fa fa-edit"></i>
                                             </button>
-                                            <form id="delete-form-{{ $application->id }}"
-                                                action="{{ route('deleteApplication', $application->id) }}" method="POST"
-                                                style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger"
-                                                    onclick="confirmDelete({{ $application->id }})">
-                                                    <i class="fa fa-trash"></i>
-                                                </button>
-                                            </form>
+
                                         </td>
+                                        
+                                        <td style="font-size: 15px">
+                                            @if ($application->status === 'pending')
+                                                <form action="{{ route('application.approve', $application->id) }}"
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button class="btn btn-success btn-sm">Approve</button>
+                                                </form>
+
+                                                <form action="{{ route('application.reject', $application->id) }}"
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button class="btn btn-danger btn-sm">Reject</button>
+                                                </form>
+                                            @elseif ($application->status === 'approved')
+                                                <button class="btn btn-outline-success btn-sm" disabled>Approved</button>
+                                            @elseif ($application->status === 'rejected')
+                                                <button class="btn btn-outline-danger btn-sm" disabled>Rejected</button>
+                                            @endif
+                                        </td>
+
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -192,24 +206,6 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <script>
-        function confirmDelete(id) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + id).submit();
-                }
-            });
-        }
-    </script>
 
     <script>
         // Hide success/error message after 3 seconds
