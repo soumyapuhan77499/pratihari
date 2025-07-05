@@ -65,7 +65,7 @@
 
         .nav-tabs {
             border-bottom: 3px solid #007bff;
-            background: linear-gradient(45deg, #a3d4f7, #fb76bf);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             padding: 10px;
             border-radius: 10px;
             display: flex;
@@ -139,7 +139,7 @@
         }
 
         .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            background-image: linear-gradient(170deg, #F7CE68 0%, #FBAB7E 100%);
             /* Purple to Blue Gradient */
             border: none;
             color: white;
@@ -215,36 +215,33 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header" style="text-shadow: 2px 1px 3px rgba(0,0,0,0.4)"><i class="fas fa-share-alt"
-                        style="font-size: 1.8rem; margin-right: 10px; color: rgb(251, 51, 71); text-shadow: 2px 1px 3px rgba(0,0,0,0.4)">
-
-                    </i>Pratihari Social Media</div>
+               
 
                 <ul class="nav nav-tabs flex-column flex-sm-row mt-2" role="tablist">
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="{{ route('admin.pratihariProfile') }}"
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="profile" aria-selected="true">
                             <i class="fas fa-user"></i> Profile
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="family-tab" data-toggle="tab" href="{{ route('admin.pratihariFamily') }}"
+                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="family" aria-selected="true">
                             <i class="fas fa-users"></i> Family
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="{{ route('admin.pratihariIdcard') }}"
+                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="id-card" aria-selected="false">
                             <i class="fas fa-id-card"></i> ID Card
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab" data-toggle="tab" href="{{ route('admin.pratihariAddress') }}"
+                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#"
                             role="tab" aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt"></i> Address
                         </a>
@@ -252,7 +249,7 @@
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="occupation-tab" data-toggle="tab"
-                            href="{{ route('admin.pratihariOccupation') }}" role="tab" aria-controls="occupation"
+                            href="#" role="tab" aria-controls="occupation"
                             aria-selected="false">
                             <i class="fas fa-briefcase"></i> Occupation
                         </a>
@@ -260,14 +257,14 @@
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="seba-details-tab" data-toggle="tab"
-                            href="{{ route('admin.pratihariSeba') }}" role="tab" aria-controls="seba-details"
+                            href="#" role="tab" aria-controls="seba-details"
                             aria-selected="false">
                             <i class="fas fa-cogs"></i> Seba
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="social-media-tab" style="background-color: rgb(49, 49, 181);color: white"
+                        <a class="nav-link" id="social-media-tab" style="background-color:#e96a01;color: white" 
                             data-toggle="tab" href="{{ route('admin.pratihariSocialMedia') }}" role="tab"
                             aria-controls="social-media" aria-selected="false">
                             <i class="fas fa-share-alt" style="margin-right: 2px;color: white"></i>Social Media
@@ -287,7 +284,7 @@
                                 <div class="form-group mt-3">
                                     <label for="facebook_url">Facebook</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fab fa-facebook" style="color: blue"></i></span>
+                                        <span class="input-group-text"><i class="fab fa-facebook" style="color: #f5c12e"></i></span>
                                         <input type="text" name="facebook_url" id="facebook_url" class="form-control"
                                             placeholder="Enter Facebook URL" value="{{ old('facebook', $socialMedia->facebook_url ?? '') }}">
                                     </div>
@@ -299,7 +296,7 @@
                                 <div class="form-group mt-3">
                                     <label for="twitter_url">Twitter</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fab fa-twitter" style="color: blue"></i></span>
+                                        <span class="input-group-text"><i class="fab fa-twitter" style="color: #f5c12e"></i></span>
                                         <input type="text" name="twitter_url" id="twitter_url" class="form-control"
                                             placeholder="Enter Twitter URL" value="{{ old('twitter', $socialMedia->twitter_url ?? '') }}">
                                     </div>
@@ -311,7 +308,7 @@
                                 <div class="form-group mt-3">
                                     <label for="instagram_url">Instagram</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fab fa-instagram" style="color: blue"></i></span>
+                                        <span class="input-group-text"><i class="fab fa-instagram" style="color: #f5c12e"></i></span>
                                         <input type="text" name="instagram_url" id="instagram_url" class="form-control"
                                             placeholder="Enter Instagram URL" value="{{ old('instagram', $socialMedia->instagram_url ?? '') }}">
                                     </div>
@@ -323,7 +320,7 @@
                                 <div class="form-group mt-3">
                                     <label for="linkedin_url">LinkedIn</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fab fa-linkedin" style="color: blue"></i></span>
+                                        <span class="input-group-text"><i class="fab fa-linkedin" style="color: #f5c12e"></i></span>
                                         <input type="text" name="linkedin_url" id="linkedin_url" class="form-control"
                                             placeholder="Enter LinkedIn URL" value="{{ old('linkedin', $socialMedia->linkedin_url ?? '') }}">
                                     </div>
@@ -335,7 +332,7 @@
                                 <div class="form-group mt-3">
                                     <label for="youtube_url">YouTube</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fab fa-youtube" style="color: blue"></i></span>
+                                        <span class="input-group-text"><i class="fab fa-youtube" style="color: #f5c12e"></i></span>
                                         <input type="text" name="youtube_url" id="youtube_url" class="form-control"
                                             placeholder="Enter YouTube URL" value="{{ old('youtube', $socialMedia->youtube_url ?? '') }}">
                                     </div>
