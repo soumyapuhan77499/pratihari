@@ -262,7 +262,6 @@ class AdminController extends Controller
 
   public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
     {
-
         $phone = $request->input('phone');
         $phoneNumber = '+91' . $phone;
 
