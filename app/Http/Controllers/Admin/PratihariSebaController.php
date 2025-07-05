@@ -163,31 +163,36 @@ public function getBeddhaBySeba($seba_id)
         $beddhas = [];
         $sebaNames = [];
 
-        foreach ($sebas as $seba) {
-            $seba_id = $seba->id;
-            $sebaNames[$seba_id] = $seba->seba_name;
+   foreach ($sebas as $seba) {
+    $seba_id = $seba->id;
+    $sebaNames[$seba_id] = $seba->seba_name;
 
-            // All available beddhas for this seba
-            $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)->pluck('beddha_id');
-            $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
+    // Only get beddhas assigned to this seba with beddha_status = 0
+    $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+        ->where('beddha_status', 0)
+        ->pluck('beddha_id');
 
-            // Assigned beddhas for this seba & pratihari
-            $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
-                ->where('seba_id', $seba_id)
-                ->value('beddha_id');
+    $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
 
-            $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
-                ? $assignedBeddhaStr
-                : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
-        }
+    // Assigned beddhas for this seba & pratihari
+    $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
+        ->where('seba_id', $seba_id)
+        ->value('beddha_id');
 
-        return view('admin.assign-pratihari-seba', compact(
-            'pratiharis',
-            'sebas',
-            'beddhas',
-            'assignedBeddhas',
-            'sebaNames'
-        ));
+    $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
+        ? $assignedBeddhaStr
+        : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+}
+
+
+      return view('admin.assign-pratihari-seba', compact(
+    'pratiharis',
+    'filteredSebas',  // use this instead of $sebas
+    'beddhas',
+    'assignedBeddhas',
+    'sebaNames'
+));
+
     }
 
    public function savePratihariAssignSeba(Request $request)
