@@ -14,6 +14,7 @@ class PratihariSebaBeddhaAssign extends Model
     protected $fillable = [
         'seba_id',
         'beddha_id',
+        'beddha_status',
     ];
 
     public function beddha()

@@ -23,15 +23,20 @@ class PratihariSebaController extends Controller
             
         return view('admin.pratihari-seba-details', compact('sebas'));
     }
+    
+public function getBeddhaBySeba($seba_id)
+{
+    $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+        ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
+        ->select(
+            'master__beddha.id',
+            'master__beddha.beddha_name',
+            'master__seba_beddha_assign.beddha_status'
+        )
+        ->get();
 
-    public function getBeddhaBySeba($seba_id)
-    {
-        $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-            ->join('master__beddha', 'master__seba_beddha_assign.beddha_id', '=', 'master__beddha.id')
-            ->select('master__beddha.id', 'master__beddha.beddha_name')
-            ->get();
-        return response()->json($beddhas);
-    }
+    return response()->json($beddhas);
+}
 
 //     public function getBeddha($sebaId)
 // {

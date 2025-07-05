@@ -347,66 +347,67 @@
         });
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const beddhaList = document.getElementById('beddha_list');
-            const beddhaSection = document.getElementById('beddha_section');
+   <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const beddhaList = document.getElementById('beddha_list');
+    const beddhaSection = document.getElementById('beddha_section');
 
-            function updateBeddhaVisibility() {
-                const anyChecked = [...document.querySelectorAll('.seba-checkbox')].some(cb => cb.checked);
-                if (anyChecked) {
-                    beddhaSection.classList.remove('d-none');
-                } else {
-                    beddhaSection.classList.add('d-none');
-                    beddhaList.innerHTML = '';
-                }
-            }
+    function updateBeddhaVisibility() {
+        const anyChecked = [...document.querySelectorAll('.seba-checkbox')].some(cb => cb.checked);
+        if (anyChecked) {
+            beddhaSection.classList.remove('d-none');
+        } else {
+            beddhaSection.classList.add('d-none');
+            beddhaList.innerHTML = '';
+        }
+    }
 
-            document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    const sebaId = this.dataset.sebaId;
-                    const beddhaGroupId = `beddha_group_${sebaId}`;
-                    let beddhaGroup = document.getElementById(beddhaGroupId);
+    document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const sebaId = this.dataset.sebaId;
+            const beddhaGroupId = `beddha_group_${sebaId}`;
+            let beddhaGroup = document.getElementById(beddhaGroupId);
 
-                    if (this.checked) {
-                        if (!beddhaGroup) {
-                            fetch(`/admin/get-beddha/${sebaId}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    beddhaGroup = document.createElement('div');
-                                    beddhaGroup.classList.add('beddha-group', 'mb-3');
-                                    beddhaGroup.id = beddhaGroupId;
+            if (this.checked) {
+                if (!beddhaGroup) {
+                    fetch(`/admin/get-beddha/${sebaId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            beddhaGroup = document.createElement('div');
+                            beddhaGroup.classList.add('beddha-group', 'mb-3');
+                            beddhaGroup.id = beddhaGroupId;
 
-                                    let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
-                                <div class="d-flex flex-wrap gap-2 mt-2">`;
+                            let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
+                            <div class="d-flex flex-wrap gap-2 mt-2">`;
 
-                                    data.forEach(beddha => {
-                                        innerHtml += `
+                            data.forEach(beddha => {
+                                const disabled = beddha.beddha_status == 0 ? 'disabled' : '';
+                                innerHtml += `
                                     <div class="form-check d-flex align-items-center gap-1">
-                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}">
+                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}" ${disabled}>
                                         <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
                                     </div>`;
-                                    });
+                            });
 
-                                    innerHtml += '</div>';
-
-                                    beddhaGroup.innerHTML = innerHtml;
-                                    beddhaList.appendChild(beddhaGroup);
-                                    updateBeddhaVisibility();
-                                });
-                        }
-                    } else {
-                        if (beddhaGroup) {
-                            beddhaGroup.remove();
-                        }
-                        updateBeddhaVisibility();
-                    }
-                });
-            });
-
-            updateBeddhaVisibility();
+                            innerHtml += '</div>';
+                            beddhaGroup.innerHTML = innerHtml;
+                            beddhaList.appendChild(beddhaGroup);
+                            updateBeddhaVisibility();
+                        });
+                }
+            } else {
+                if (beddhaGroup) {
+                    beddhaGroup.remove();
+                }
+                updateBeddhaVisibility();
+            }
         });
-    </script>
+    });
+
+    updateBeddhaVisibility();
+});
+</script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 @endsection
