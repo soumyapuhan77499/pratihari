@@ -220,6 +220,12 @@
             margin-bottom: 12px;
             letter-spacing: 0.03em;
         }
+
+    .beddha-disabled label {
+        color: #000 !important;
+        cursor: not-allowed;
+    }
+</style>
     </style>
 @endsection
 
@@ -346,8 +352,7 @@
             @endif
         });
     </script>
-
-   <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
     const beddhaList = document.getElementById('beddha_list');
     const beddhaSection = document.getElementById('beddha_section');
@@ -381,10 +386,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="d-flex flex-wrap gap-2 mt-2">`;
 
                             data.forEach(beddha => {
-                                const disabled = beddha.beddha_status == 0 ? 'disabled' : '';
+                                const isDisabled = beddha.beddha_status == 0;
+                                const disabledAttr = isDisabled ? 'disabled' : '';
+                                const tooltip = isDisabled ? 'title="Admin assigned this Bheddha ID"' : '';
+                                const extraClass = isDisabled ? 'beddha-disabled' : '';
+
                                 innerHtml += `
-                                    <div class="form-check d-flex align-items-center gap-1">
-                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}" ${disabled}>
+                                    <div class="form-check d-flex align-items-center gap-1 ${extraClass}" ${tooltip}>
+                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}" ${disabledAttr}>
                                         <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
                                     </div>`;
                             });
