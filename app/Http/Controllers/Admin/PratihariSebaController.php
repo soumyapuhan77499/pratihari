@@ -163,18 +163,32 @@ public function getBeddhaBySeba($seba_id)
         $beddhas = [];
         $sebaNames = [];
 
-      foreach ($sebas as $seba) {
+    $filteredSebas = [];
+$sebaNames = [];
+
+foreach ($sebas as $seba) {
     $seba_id = $seba->id;
+
+    // Check if any beddha with status 1 exists for this seba
+    $hasStatusOne = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+        ->where('beddha_status', 1)
+        ->exists();
+
+    // Skip this seba if it has any beddha with status 1
+    if ($hasStatusOne) {
+        continue;
+    }
+
+    // This seba is valid — collect data
+    $filteredSebas[] = $seba;
     $sebaNames[$seba_id] = $seba->seba_name;
 
-    // Only get beddhas assigned to this seba with beddha_status = 0
     $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
         ->where('beddha_status', 0)
         ->pluck('beddha_id');
 
     $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
 
-    // Assigned beddhas for this seba & pratihari
     $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
         ->where('seba_id', $seba_id)
         ->value('beddha_id');
@@ -185,13 +199,14 @@ public function getBeddhaBySeba($seba_id)
 }
 
 
-        return view('admin.assign-pratihari-seba', compact(
-            'pratiharis',
-            'sebas',
-            'beddhas',
-            'assignedBeddhas',
-            'sebaNames'
-        ));
+      return view('admin.assign-pratihari-seba', compact(
+    'pratiharis',
+    'filteredSebas',  // use this instead of $sebas
+    'beddhas',
+    'assignedBeddhas',
+    'sebaNames'
+));
+
     }
 
    public function savePratihariAssignSeba(Request $request)

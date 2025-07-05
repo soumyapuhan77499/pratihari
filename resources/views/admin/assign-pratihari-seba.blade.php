@@ -117,7 +117,7 @@
                             <div class="beddha-section mt-4">
                                 <label class="section-title">📜 Assign Beddha to Seba</label>
                                 <div class="checkbox-list" id="beddha_list">
-                                    @foreach ($sebas as $seba)
+                                    @foreach ($filteredSebas as $seba)
                                         <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
 
                                         <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
