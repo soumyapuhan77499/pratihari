@@ -221,11 +221,23 @@
             letter-spacing: 0.03em;
         }
 
-    .beddha-disabled label {
-        color: #000 !important;
-        cursor: not-allowed;
-    }
-</style>
+        .beddha-disabled label {
+            color: #000 !important;
+            cursor: not-allowed;
+        }
+
+        .beddha-disabled label {
+            color: black !important;
+        }
+
+        .beddha-disabled input[type="checkbox"] {
+            cursor: not-allowed;
+        }
+
+        .beddha-disabled {
+            opacity: 0.7;
+        }
+    </style>
     </style>
 @endsection
 
@@ -236,51 +248,49 @@
             <div class="card">
                 <ul class="nav nav-tabs flex-column flex-sm-row" role="tablist">
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="profile" aria-selected="true">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="profile" aria-selected="true">
                             <i class="fas fa-user"></i> Profile
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="family" aria-selected="true">
+                        <a class="nav-link" id="family-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="family" aria-selected="true">
                             <i class="fas fa-users"></i> Family
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="id-card" aria-selected="false">
+                        <a class="nav-link" id="id-card-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="id-card" aria-selected="false">
                             <i class="fas fa-id-card"></i> ID Card
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#"
-                            role="tab" aria-controls="address" aria-selected="false">
+                        <a class="nav-link" id="address-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="address" aria-selected="false">
                             <i class="fas fa-map-marker-alt"></i> Address
                         </a>
                     </li>
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="occupation-tab" data-toggle="tab"
-                            href="#" role="tab" aria-controls="occupation"
-                            aria-selected="false">
+                        <a class="nav-link" id="occupation-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="occupation" aria-selected="false">
                             <i class="fas fa-briefcase"></i> Occupation
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
                         <a class="nav-link" id="seba-details-tab" style="background-color: #e96a01;color: white"
-                            data-toggle="tab" href="#" role="tab"
-                            aria-controls="seba-details" aria-selected="false">
+                            data-toggle="tab" href="#" role="tab" aria-controls="seba-details"
+                            aria-selected="false">
                             <i class="fas fa-cogs" style="color: white"></i> Seba
                         </a>
                     </li>
 
                     <li class="nav-item col-12 col-sm-auto">
-                        <a class="nav-link" id="social-media-tab" data-toggle="tab"
-                            href="#" role="tab" aria-controls="social-media"
-                            aria-selected="false">
+                        <a class="nav-link" id="social-media-tab" data-toggle="tab" href="#" role="tab"
+                            aria-controls="social-media" aria-selected="false">
                             <i class="fas fa-share-alt" style="margin-right: 2px"></i>Social Media
                         </a>
                     </li>
@@ -352,70 +362,74 @@
             @endif
         });
     </script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const beddhaList = document.getElementById('beddha_list');
-    const beddhaSection = document.getElementById('beddha_section');
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const beddhaList = document.getElementById('beddha_list');
+            const beddhaSection = document.getElementById('beddha_section');
 
-    function updateBeddhaVisibility() {
-        const anyChecked = [...document.querySelectorAll('.seba-checkbox')].some(cb => cb.checked);
-        if (anyChecked) {
-            beddhaSection.classList.remove('d-none');
-        } else {
-            beddhaSection.classList.add('d-none');
-            beddhaList.innerHTML = '';
-        }
-    }
+            function updateBeddhaVisibility() {
+                const anyChecked = [...document.querySelectorAll('.seba-checkbox')].some(cb => cb.checked);
+                if (anyChecked) {
+                    beddhaSection.classList.remove('d-none');
+                } else {
+                    beddhaSection.classList.add('d-none');
+                    beddhaList.innerHTML = '';
+                }
+            }
 
-    document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function () {
-            const sebaId = this.dataset.sebaId;
-            const beddhaGroupId = `beddha_group_${sebaId}`;
-            let beddhaGroup = document.getElementById(beddhaGroupId);
+            document.querySelectorAll('.seba-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const sebaId = this.dataset.sebaId;
+                    const beddhaGroupId = `beddha_group_${sebaId}`;
+                    let beddhaGroup = document.getElementById(beddhaGroupId);
 
-            if (this.checked) {
-                if (!beddhaGroup) {
-                    fetch(`/admin/get-beddha/${sebaId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            beddhaGroup = document.createElement('div');
-                            beddhaGroup.classList.add('beddha-group', 'mb-3');
-                            beddhaGroup.id = beddhaGroupId;
+                    if (this.checked) {
+                        if (!beddhaGroup) {
+                            fetch(`/admin/get-beddha/${sebaId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    beddhaGroup = document.createElement('div');
+                                    beddhaGroup.classList.add('beddha-group', 'mb-3');
+                                    beddhaGroup.id = beddhaGroupId;
 
-                            let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
+                                    let innerHtml = `<strong>${this.nextElementSibling.innerText}:</strong>
                             <div class="d-flex flex-wrap gap-2 mt-2">`;
 
-                            data.forEach(beddha => {
-                                const isDisabled = beddha.beddha_status == 0;
-                                const disabledAttr = isDisabled ? 'disabled' : '';
-                                const tooltip = isDisabled ? 'title="Admin assigned this Bheddha ID"' : '';
-                                const extraClass = isDisabled ? 'beddha-disabled' : '';
+                                    data.forEach(beddha => {
+                                        const isDisabled = beddha.beddha_status == 0;
+                                        const disabledAttr = isDisabled ? 'disabled' :
+                                            '';
+                                        const tooltip = isDisabled ?
+                                            'title="Admin assigned this Bheddha ID"' :
+                                            '';
+                                        const extraClass = isDisabled ?
+                                            'beddha-disabled' : '';
 
-                                innerHtml += `
-                                    <div class="form-check d-flex align-items-center gap-1 ${extraClass}" ${tooltip}>
-                                        <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}" ${disabledAttr}>
-                                        <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
-                                    </div>`;
-                            });
+                                        innerHtml += `
+                                            <div class="form-check d-flex align-items-center gap-1 ${extraClass}" ${tooltip}>
+                                                <input class="form-check-input" type="checkbox" name="beddha_id[${sebaId}][]" value="${beddha.id}" id="beddha_${sebaId}_${beddha.id}" ${disabledAttr}>
+                                                <label class="form-check-label mb-0" for="beddha_${sebaId}_${beddha.id}">${beddha.beddha_name}</label>
+                                            </div>`;
+                                    });
 
-                            innerHtml += '</div>';
-                            beddhaGroup.innerHTML = innerHtml;
-                            beddhaList.appendChild(beddhaGroup);
-                            updateBeddhaVisibility();
-                        });
-                }
-            } else {
-                if (beddhaGroup) {
-                    beddhaGroup.remove();
-                }
-                updateBeddhaVisibility();
-            }
+                                    innerHtml += '</div>';
+                                    beddhaGroup.innerHTML = innerHtml;
+                                    beddhaList.appendChild(beddhaGroup);
+                                    updateBeddhaVisibility();
+                                });
+                        }
+                    } else {
+                        if (beddhaGroup) {
+                            beddhaGroup.remove();
+                        }
+                        updateBeddhaVisibility();
+                    }
+                });
+            });
+
+            updateBeddhaVisibility();
         });
-    });
-
-    updateBeddhaVisibility();
-});
-</script>
+    </script>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
