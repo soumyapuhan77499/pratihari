@@ -132,8 +132,10 @@
                                                             {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
                                                         <label class="form-check-label"
                                                             for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
-                                                            {{ $beddha->beddha_name }}
+                                                            {{ $beddha->beddha_name }} <span class="text-muted">(Admin
+                                                                Assigned)</span>
                                                         </label>
+
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -149,7 +151,6 @@
                             </div>
                         @endif
                     </form>
-
 
                 </div>
             </div>
