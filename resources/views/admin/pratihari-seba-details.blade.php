@@ -222,12 +222,12 @@
         }
 
         .beddha-disabled label {
-            color: #000 !important;
+            color: #3314f9 !important;
             cursor: not-allowed;
         }
 
         .beddha-disabled label {
-            color: black !important;
+            color: rgb(12, 67, 247) !important;
         }
 
         .beddha-disabled input[type="checkbox"] {
