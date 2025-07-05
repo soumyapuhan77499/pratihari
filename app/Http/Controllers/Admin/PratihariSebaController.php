@@ -187,7 +187,7 @@ public function getBeddhaBySeba($seba_id)
 
       return view('admin.assign-pratihari-seba', compact(
     'pratiharis',
-    'filteredSebas',  // use this instead of $sebas
+    'sebas',  // use this instead of $sebas
     'beddhas',
     'assignedBeddhas',
     'sebaNames'
