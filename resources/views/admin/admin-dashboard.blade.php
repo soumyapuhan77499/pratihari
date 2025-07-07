@@ -10,21 +10,26 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-      .user-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    transition: box-shadow 0.3s ease;
-}
-.user-card:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.user-img {
-    width: 50px;
-    height: 50px;
-    object-fit: cover;
-    border: 2px solid #ccc;
-}
+        .user-list-card {
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+        }
 
+        .user-list-item {
+            transition: background 0.3s ease;
+        }
+
+        .user-list-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .user-img {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border: 2px solid #ccc;
+        }
     </style>
 @endsection
 
@@ -48,20 +53,29 @@
 
         <div class="row">
             <!-- Active Users -->
-            <div class="row">
-                @foreach ($totalActiveUsers as $user)
-                    <div class="col-md-6 col-lg-4 mb-3">
-                        <div class="user-card d-flex align-items-center p-3 shadow-sm rounded">
-                            <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
-                                class="user-img rounded-circle me-3">
-                            <div>
-                                <h6 class="mb-1">{{ $user->first_name }} {{ $user->last_name }}</h6>
-                                <small class="text-muted">ID: {{ $user->pratihari_id }}</small>
-                            </div>
-                        </div>
+            <div class="col-md-6">
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header bg-white fw-bold">
+                        Active Users
                     </div>
-                @endforeach
+                    <div class="card-body p-0">
+                        @foreach ($totalActiveUsers as $user)
+                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
+                                        class="user-img rounded-circle me-3">
+                                    <div>
+                                        <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        <div class="text-muted small">Kudos your activity!</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
+
 
 
             <!-- Rejected Users -->
