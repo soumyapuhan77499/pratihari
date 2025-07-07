@@ -52,7 +52,7 @@
                 @foreach ($totalActiveUsers as $user)
                     <div class="col-md-6 col-lg-4 mb-3">
                         <div class="user-card d-flex align-items-center p-3 shadow-sm rounded">
-                            <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile Photo"
+                            <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
                                 class="user-img rounded-circle me-3">
                             <div>
                                 <h6 class="mb-1">{{ $user->first_name }} {{ $user->last_name }}</h6>
