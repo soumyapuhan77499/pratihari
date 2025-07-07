@@ -318,7 +318,7 @@ public function sendOtp(Request $request)
         return response()->json(['message' => 'Phone number is required.'], 422);
     }
 
-$fullPhone = '+91' . $phoneNumber;
+    $fullPhone = '+91' . $phoneNumber;
 
     // Lookup user with static OTP
     $user = User::where('mobile_number', $fullPhone)->first();
@@ -349,7 +349,7 @@ public function verifyOtp(Request $request)
 
     $phone = $request->input('phone');
     $inputOtp = $request->input('otp');
-    $fullPhone = '91' . $phone;
+    $fullPhone = '+91' . $phone;
 
     // Lookup user with matching phone and OTP (both must match)
     $user = User::where('mobile_number', $fullPhone)
