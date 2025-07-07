@@ -19,13 +19,16 @@
                         width="24" height="24" viewBox="0 0 24 24">
                         <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" />
                     </svg>
-				</div>
+                </div>
                 <ul class="side-menu">
-                    
+
                     <li class="side-item side-item-category">Main</li>
 
                     <li class="slide">
-                        <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}"><span   class="side-menu__label"><img src="{{ asset('assets/img/brand/dashboard.png') }}"   style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"  style="margin-left: 10px">Dashboard</span></a>
+                        <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('admin.dashboard') }}"><span
+                                class="side-menu__label"><img src="{{ asset('assets/img/brand/dashboard.png') }}"
+                                    style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
+                                    style="margin-left: 10px">Dashboard</span></a>
                     </li>
 
                     <li class="side-item side-item-category">PRATIHARI NIJOGA</li>
@@ -34,7 +37,7 @@
                         <a class="side-menu__item" href="{{ url('admin/pratihari-profile') }}"><span
                                 class="side-menu__label"><img src="{{ asset('assets/img/brand/monk.png') }}"
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
-                                    style="margin-left: 10px">Add Pratihari</span></a>
+                                    style="margin-left: 10px">Add Pratihari Profile</span></a>
                     </li>
 
                     <li class="slide">
@@ -50,13 +53,14 @@
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
                                     style="margin-left: 10px">Pratihari Nijoga Assign</span></a>
                     </li> --}}
-
-                    <li class="slide">
-                        <a class="side-menu__item" href="{{ url('admin/pratihari-seba-beddha') }}"><span
-                                class="side-menu__label"><img src="{{ asset('assets/img/brand/manage.png') }}"
-                                    style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
-                                    style="margin-left: 10px">Pratihari Beddha Assign</span></a>
-                    </li>
+                    @if (Auth::guard('super_admin')->check() && Auth::guard('super_admin')->user()->role === 'super_admin')
+                        <li class="slide">
+                            <a class="side-menu__item" href="{{ url('admin/pratihari-seba-beddha') }}"><span
+                                    class="side-menu__label"><img src="{{ asset('assets/img/brand/manage.png') }}"
+                                        style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
+                                        style="margin-left: 10px">Pratihari Beddha Assign</span></a>
+                        </li>
+                    @endif
 
                     <li class="slide">
                         <a class="side-menu__item" href="{{ url('admin/assign-pratihari-seba') }}"><span
@@ -99,7 +103,8 @@
                     @endif
 
                 </ul>
-                <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24" height="24" viewBox="0 0 24 24">
+                <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191"
+                        width="24" height="24" viewBox="0 0 24 24">
                         <path d="M10.707 17.707 16.414 12l-5.707-5.707-1.414 1.414L13.586 12l-4.293 4.293z" />
                     </svg>
                 </div>
