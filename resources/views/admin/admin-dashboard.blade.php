@@ -92,7 +92,7 @@
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
-                        style="background-color: #dc3545;">
+                        style="background-color: #faa409;">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Users
                         </div>
