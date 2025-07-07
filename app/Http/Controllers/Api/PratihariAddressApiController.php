@@ -10,7 +10,6 @@ use App\Models\PratihariAddress;
 
 class PratihariAddressApiController extends Controller
 {
- 
     public function saveAddress(Request $request)
     {
         try {
