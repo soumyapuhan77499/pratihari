@@ -103,8 +103,7 @@
                         @foreach ($pendingProfile->take(5) as $user)
                             <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
-                                        class="user-img rounded-circle me-3">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"  alt="Profile Photo" class="user-img rounded-circle me-3">
                                     <div>
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
