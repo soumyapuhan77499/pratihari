@@ -10,121 +10,36 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-        #custom-calendar {
-            max-width: 100%;
-            margin: 0 auto;
-            height: 900px !important;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
+      .user-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    transition: box-shadow 0.3s ease;
+}
+.user-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.user-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}
 
-        .fc .fc-toolbar-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #f8c66d;
-        }
-
-        .fc-button {
-            background-color: #f8c66d !important;
-            border: none !important;
-            border-radius: 6px !important;
-        }
-
-        .fc-button-primary:not(:disabled):hover {
-            background-color: #f8c66d !important;
-        }
-
-        .fc-event {
-            background-color: #e96a01 !important;
-            border: none !important;
-            border-radius: 4px !important;
-            padding: 2px 4px;
-            font-size: 0.685rem;
-        }
-
-        .fc-daygrid-day-number {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .fc-daygrid-day {
-            background-color: #f8f9fa;
-        }
-
-        .card {
-            border: none;
-            border-radius: 1rem;
-            box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.15);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-            background-color: rgba(0, 0, 0, 0.05);
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .card-title {
-            font-size: 25px;
-            font-weight: bold;
-            color: white;
-        }
-
-        .card-body p {
-            margin: 0.2rem 0;
-            color: white;
-        }
-
-        /* Specific background colors with contrast text */
-        .bg-primary {
-            background-color: #007bff !important;
-            color: #fff !important;
-        }
-
-        .bg-warning {
-            background-color: #ffc107 !important;
-            color: #212529 !important;
-        }
-
-        .bg-success {
-            background-color: #28a745 !important;
-            color: #fff !important;
-        }
-
-        .bg-danger {
-            background-color: #dc3545 !important;
-            color: #fff !important;
-        }
-
-        @media (max-width: 768px) {
-            .card-title {
-                font-size: 1.5rem;
-            }
-
-            .card-header {
-                font-size: 0.9rem;
-            }
-        }
     </style>
 @endsection
 
 @section('content')
     <div class="container">
+
         <div class="row mb-4 mt-4">
             <div class="col-lg-12">
-                <div class="card custom-card" style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); color: #100f0f;">
+                <div class="card custom-card"
+                    style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); color: #100f0f;">
                     <div class="card-body d-flex align-items-center">
                         <div>
                             <h2 class="mb-0" style="font-weight: bold;">Pratihari Admin Dashboard</h2>
-                            <small>Welcome to the admin dashboard. Manage users, view statistics, and monitor activities here.</small>
+                            <small>Welcome to the admin dashboard. Manage users, view statistics, and monitor activities
+                                here.</small>
                         </div>
                     </div>
                 </div>
@@ -133,18 +48,21 @@
 
         <div class="row">
             <!-- Active Users -->
-            <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-success mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-people-fill me-2"></i>Active Users
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $totalActiveUsers }}</h5>
+            <div class="row">
+                @foreach ($activeUsers as $user)
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="user-card d-flex align-items-center p-3 shadow-sm rounded">
+                            <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile Photo"
+                                class="user-img rounded-circle me-3">
+                            <div>
+                                <h6 class="mb-1">{{ $user->first_name }} {{ $user->last_name }}</h6>
+                                <small class="text-muted">ID: {{ $user->pratihari_id }}</small>
+                            </div>
                         </div>
                     </div>
-                </a>
+                @endforeach
             </div>
+
 
             <!-- Rejected Users -->
             <div class="col-md-3">
@@ -229,7 +147,8 @@
         </div>
         <div class="row mb-4 mt-4">
             <div class="col-lg-12">
-                <div class="card custom-card" style="background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%); color: #1d1818;">
+                <div class="card custom-card"
+                    style="background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%); color: #1d1818;">
                     <div class="card-body d-flex align-items-center">
                         <i class="bi bi-calendar-event me-3" style="font-size: 2rem;"></i>
                         <div>
@@ -256,7 +175,8 @@
                                     @foreach ($profile_name as $profile)
                                         <option value="{{ $profile->pratihari_id }}"
                                             {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
-                                            {{ $profile->first_name }} {{ $profile->middle_name }} {{ $profile->last_name }}
+                                            {{ $profile->first_name }} {{ $profile->middle_name }}
+                                            {{ $profile->last_name }}
                                         </option>
                                     @endforeach
                                 </select>

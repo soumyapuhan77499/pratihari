@@ -72,6 +72,7 @@ class AdminController extends Controller
         // OR profiles with missing social media
         ->orWhereDoesntHave('socialMedia')
         ->count();
+        
         $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->count();
 
         $updatedProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->count();
@@ -214,58 +215,57 @@ class AdminController extends Controller
     // }
 
     public function sendOtp(Request $request)
-{
-    $phoneNumber = '+91' . $request->input('phone');
+    {
+        $phoneNumber = '+91' . $request->input('phone');
 
-    // Check if admin exists with this mobile number and static OTP set
-    $admin = Admin::where('mobile_no', $phoneNumber)->first();
+        // Check if admin exists with this mobile number and static OTP set
+        $admin = Admin::where('mobile_no', $phoneNumber)->first();
 
-    if (!$admin || !$admin->otp) {
-        return back()->with('message', 'Your number is not registered or OTP not set. Please contact the Super Admin.');
+        if (!$admin || !$admin->otp) {
+            return back()->with('message', 'Your number is not registered or OTP not set. Please contact the Super Admin.');
+        }
+
+        // Store phone and OTP in session for verification
+        Session::put('otp_phone', $phoneNumber);
+        Session::put('otp', $admin->otp);
+
+        return back()->with([
+            'otp_sent' => true,
+            'message' => 'OTP is preset in the system. Please enter it to verify.'
+        ]);
     }
 
-    // Store phone and OTP in session for verification
-    Session::put('otp_phone', $phoneNumber);
-    Session::put('otp', $admin->otp);
+    public function verifyOtp(Request $request)
+    {
+        $inputOtp = $request->input('otp');
+        $phoneNumber = Session::get('otp_phone');
+        $storedOtp = Session::get('otp');
 
-    return back()->with([
-        'otp_sent' => true,
-        'message' => 'OTP is preset in the system. Please enter it to verify.'
-    ]);
-}
+        if (!$phoneNumber || !$storedOtp) {
+            return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
+        }
 
-public function verifyOtp(Request $request)
-{
-    $inputOtp = $request->input('otp');
-    $phoneNumber = Session::get('otp_phone');
-    $storedOtp = Session::get('otp');
+        if ($inputOtp !== $storedOtp) {
+            return redirect()->back()->with('message', 'Invalid OTP.');
+        }
 
-    if (!$phoneNumber || !$storedOtp) {
-        return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
+        // Lookup admin again to ensure valid
+        $admin = Admin::where('mobile_no', $phoneNumber)
+                    ->where('otp', $inputOtp)
+                    ->first();
+
+        if (!$admin) {
+            return redirect()->back()->with('message', 'Admin not found or OTP mismatch.');
+        }
+
+        // Log in admin
+        Auth::guard('admins')->login($admin);
+
+        // Clear session
+        Session::forget(['otp_phone', 'otp']);
+
+        return redirect()->route('admin.dashboard')->with('success', 'Admin authenticated successfully.');
     }
-
-    if ($inputOtp !== $storedOtp) {
-        return redirect()->back()->with('message', 'Invalid OTP.');
-    }
-
-    // Lookup admin again to ensure valid
-    $admin = Admin::where('mobile_no', $phoneNumber)
-                  ->where('otp', $inputOtp)
-                  ->first();
-
-    if (!$admin) {
-        return redirect()->back()->with('message', 'Admin not found or OTP mismatch.');
-    }
-
-    // Log in admin
-    Auth::guard('admins')->login($admin);
-
-    // Clear session
-    Session::forget(['otp_phone', 'otp']);
-
-    return redirect()->route('admin.dashboard')->with('success', 'Admin authenticated successfully.');
-}
-
 
     public function logout()
     {
