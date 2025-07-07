@@ -49,7 +49,7 @@
         <div class="row">
             <!-- Active Users -->
             <div class="row">
-                @foreach ($activeUsers as $user)
+                @foreach ($totalActiveUsers as $user)
                     <div class="col-md-6 col-lg-4 mb-3">
                         <div class="user-card d-flex align-items-center p-3 shadow-sm rounded">
                             <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile Photo"
