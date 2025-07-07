@@ -77,8 +77,8 @@ class AdminController extends Controller
 
         $updatedProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->count();
 
-        $pendingProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'pending')->count();
-
+        $pendingUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'pending')->get();
+                                                                    
         $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();
 
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();

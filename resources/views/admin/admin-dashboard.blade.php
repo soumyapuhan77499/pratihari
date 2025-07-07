@@ -70,7 +70,9 @@
                                     <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
                                         class="user-img rounded-circle me-3">
                                     <div>
-                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"><div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div></a>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
                                         <div class="text-muted small">{{ $user->pratihari_id }} </div>
                                     </div>
                                 </div>
@@ -87,19 +89,42 @@
                 </div>
             </div>
 
-            <!-- Rejected Users -->
             <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-person-x-fill me-2"></i>Pending Users
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #dc3545;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Users
                         </div>
-                        <div class="card-body" style="background-color: #35dc3b">
-                            <h5 class="card-title">{{ $pendingProfile }}</h5>
-                        </div>
+                        <span class="badge bg-light text-dark">{{ count($pendingUsers) }}</span>
                     </div>
-                </a>
+
+                    <div class="card-body p-0">
+                        @foreach ($pendingUsers->take(5) as $user)
+                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
+                                        class="user-img rounded-circle me-3">
+                                    <div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
             </div>
+
 
             <!-- Rejected Users -->
             <div class="col-md-3">
