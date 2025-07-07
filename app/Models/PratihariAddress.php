@@ -22,6 +22,7 @@ class PratihariAddress extends Model
          'district',
          'state',
          'country',
+         'same_as_permanent_address',
          'per_address',
          'per_sahi',
          'per_landmark',
