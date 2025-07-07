@@ -55,11 +55,16 @@
             <!-- Active Users -->
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
-                    <div class="card-header bg-white fw-bold">
-                        Active Users
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #FBAB7E;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-check-fill me-2 fs-5"></i> Active Users
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($totalActiveUsers) }}</span>
                     </div>
+
                     <div class="card-body p-0">
-                        @foreach ($totalActiveUsers as $user)
+                        @foreach ($totalActiveUsers->take(5) as $user)
                             <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
@@ -69,14 +74,18 @@
                                         <div class="text-muted small">Kudos your activity!</div>
                                     </div>
                                 </div>
-
                             </div>
                         @endforeach
                     </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
                 </div>
             </div>
-
-
 
             <!-- Rejected Users -->
             <div class="col-md-3">
