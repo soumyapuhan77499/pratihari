@@ -70,7 +70,7 @@
                                     <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
                                         class="user-img rounded-circle me-3">
                                     <div>
-                                        <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"><div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div></a>
                                         <div class="text-muted small">{{ $user->pratihari_id }} </div>
                                     </div>
                                 </div>
