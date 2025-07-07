@@ -190,7 +190,7 @@ class OtpController extends Controller
         }
     }
 
-//    public function sendOtp(Request $request, WhatsappService $whatsappService)
+// public function sendOtp(Request $request, WhatsappService $whatsappService)
 // {
 //     if (!$request->expectsJson() && !$request->isJson()) {
 //         return response()->json(['message' => 'Only JSON requests are allowed'], 406);
@@ -336,6 +336,7 @@ public function sendOtp(Request $request)
         'phone' => $phoneNumber
     ], 200);
 }
+
 public function verifyOtp(Request $request)
 {
     $validator = Validator::make($request->all(), [
