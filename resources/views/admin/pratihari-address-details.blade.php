@@ -331,9 +331,9 @@
                             <!-- Checkbox for Permanent Address -->
                             <div class="col-md-12 mb-3">
                                 <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" id="differentAsPermanent"
-                                        name="differentAsPermanent">
-                                    <label class="form-check-label" for="differentAsPermanent">This address is not the
+                                    <input type="checkbox" class="form-check-input" id="same_as_permanent_address"
+                                        name="same_as_permanent_address">
+                                    <label class="form-check-label" for="same_as_permanent_address">This address is not the
                                         same as the permanent address</label>
                                 </div>
                             </div>
