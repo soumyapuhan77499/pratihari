@@ -318,7 +318,7 @@ public function sendOtp(Request $request)
         return response()->json(['message' => 'Phone number is required.'], 422);
     }
 
-    $fullPhone = '91' . $phoneNumber;
+$fullPhone = '+91' . $phoneNumber;
 
     // Lookup user with static OTP
     $user = User::where('mobile_number', $fullPhone)->first();
@@ -375,6 +375,5 @@ public function verifyOtp(Request $request)
         'token_type' => 'Bearer'
     ], 200);
 }
-
 
 }
