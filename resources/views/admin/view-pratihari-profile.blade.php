@@ -130,11 +130,10 @@
                         <div class="my-md-auto mt-4 prof-details" style="width: 300px">
                             <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
 
-                            <p><i class="bi bi-person-vcard-fill me-2 text-primary"></i> <b>Nijoga Id:</b>
+                            <p><i class="bi bi-person-badge-fill me-2 text-primary"></i> <b>Nijoga Id:</b>
                                 {{ $profile->nijoga_id }}</p>
 
-                            <p><i class="bi bi-envelope-at-fill me-2 text-success"></i> <b>Email:</b> {{ $profile->email }}
-                            </p>
+                            <p><i class="bi bi-envelope-fill me-2 text-success"></i> <b>Email:</b> {{ $profile->email }}</p>
 
                             <p><i class="bi bi-telephone-fill me-2 text-info"></i> <b>Phone:</b> {{ $profile->phone_no }}
                             </p>
