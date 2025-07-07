@@ -24,7 +24,7 @@ class PratihariProfile extends Model
          'alt_phone_no',
          'blood_group',
          'healthcard_no',
-         'health_card_photo',
+         'healthcard_photo',
          'profile_photo',
          'joining_date',
          'joining_year',
