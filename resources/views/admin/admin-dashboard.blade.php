@@ -53,7 +53,7 @@
 
         <div class="row">
             <!-- Active Users -->
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header bg-white fw-bold">
                         Active Users
