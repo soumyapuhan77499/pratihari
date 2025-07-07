@@ -96,11 +96,11 @@
                         <div class="d-flex align-items-center">
                             <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Users
                         </div>
-                        <span class="badge bg-light text-dark">{{ count($pendingUsers) }}</span>
+                        <span class="badge bg-light text-dark">{{ count($pendingProfile) }}</span>
                     </div>
 
                     <div class="card-body p-0">
-                        @foreach ($pendingUsers->take(5) as $user)
+                        @foreach ($pendingProfile->take(5) as $user)
                             <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
