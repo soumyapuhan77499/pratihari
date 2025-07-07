@@ -71,7 +71,7 @@
                                         class="user-img rounded-circle me-3">
                                     <div>
                                         <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
-                                        <div class="text-muted small">Kudos your activity!</div>
+                                        <div class="text-muted small">{{ $user->pratihari_id }} </div>
                                     </div>
                                 </div>
                             </div>
