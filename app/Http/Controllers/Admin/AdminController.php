@@ -72,8 +72,8 @@ class AdminController extends Controller
         // OR profiles with missing social media
         ->orWhereDoesntHave('socialMedia')
         ->count();
-        
-        $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->count();
+
+        $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
 
         $updatedProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->count();
 
