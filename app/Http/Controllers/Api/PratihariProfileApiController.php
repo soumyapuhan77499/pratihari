@@ -57,8 +57,8 @@ public function saveProfile(Request $request)
         if ($request->hasFile('healthcard_photo')) {
             $file = $request->file('healthcard_photo');
             $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/healthcard_photos'), $filename);
-            $pratihariProfile->healthcard_photo = 'uploads/healthcard_photos/' . $filename;
+            $file->move(public_path('uploads/healthcard_photo'), $filename);
+            $pratihariProfile->healthcard_photo = 'uploads/healthcard_photo/' . $filename;
         }
 
         if ($request->hasFile('original_photo')) {

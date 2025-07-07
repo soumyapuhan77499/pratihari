@@ -53,11 +53,11 @@ class PratihariProfileController extends Controller
             $pratihariProfile->blood_group = $request->blood_group;
             $pratihariProfile->healthcard_no = $request->healthcard_no;
 
-            if ($request->hasFile('health_card_photo')) {
-                $file = $request->file('health_card_photo');
-                $filename = 'health_card_photo_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/health_card_photo'), $filename);
-                $pratihariProfile->health_card_photo = 'uploads/health_card_photo/' . $filename;
+            if ($request->hasFile('healthcard_photo')) {
+                $file = $request->file('healthcard_photo');
+                $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/healthcard_photo'), $filename);
+                $pratihariProfile->healthcard_photo = 'uploads/healthcard_photo/' . $filename;
             }
 
             if ($request->hasFile('original_photo')) {
