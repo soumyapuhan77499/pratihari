@@ -28,23 +28,20 @@ class PratihariProfileApiController extends Controller
 
 public function saveProfile(Request $request)
 {
-    $validator = Validator::make($request->all(), [
-        'first_name' => 'required|string|max:255',
-        'joining_date' => 'nullable|date',
-        'joining_year' => 'nullable|integer|min:1900|max:' . date('Y'),
-    ]);
+    $user = Auth::user();
 
-    if ($validator->fails()) {
+    $pratihariId = $user->pratihari_id;
+
+    if (!$pratihariId) {
         return response()->json([
-            'status' => 422,
-            'errors' => $validator->errors(),
-        ], 422);
+            'status' => 401,
+            'message' => 'Unauthorized. Please log in.',
+        ], 401);
     }
-
+    
     try {
         $pratihariProfile = new PratihariProfile();
 
-        $pratihariId = 'PRATIHARI' . rand(10000, 99999);
         $pratihariProfile->pratihari_id = $pratihariId;
         $pratihariProfile->first_name = $request->first_name;
         $pratihariProfile->middle_name = $request->middle_name;

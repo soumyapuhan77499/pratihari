@@ -239,8 +239,7 @@
             </div>
         </div>
 
-
-        <div class="col-lg-12 mb-3">
+        {{-- <div class="col-lg-12 mb-3">
             <div class="card custom-card"
                 style="background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: #1d1818;">
                 <div class="card-body d-flex align-items-center">
@@ -319,7 +318,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
     </div>
 @endsection
