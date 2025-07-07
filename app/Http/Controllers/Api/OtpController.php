@@ -190,7 +190,123 @@ class OtpController extends Controller
         }
     }
 
-   public function sendOtp(Request $request, WhatsappService $whatsappService)
+//    public function sendOtp(Request $request, WhatsappService $whatsappService)
+// {
+//     if (!$request->expectsJson() && !$request->isJson()) {
+//         return response()->json(['message' => 'Only JSON requests are allowed'], 406);
+//     }
+
+//     $phoneNumber = $request->input('phone');
+
+//     if (!$phoneNumber) {
+//         return response()->json(['message' => 'Phone number is required.'], 422);
+//     }
+
+//     try {
+//         $otp = rand(100000, 999999);
+
+//         // Call service and get full HTTP response
+//         $response = $whatsappService->sendOtp($phoneNumber, $otp);
+
+//         if ($response->successful()) {
+//             session(['otp_phone' => '91' . $phoneNumber]);
+//             session(['otp' => $otp]);
+
+//             return response()->json([
+//                 'message' => 'OTP sent successfully via WhatsApp.',
+//                 'phone' => $phoneNumber
+//             ], 200);
+//         } else {
+//             $body = json_decode($response->body(), true);
+//             $errorMsg = $body['message'] ?? 'Unknown error from MSG91.';
+
+//             return response()->json([
+//                 'message' => 'Failed to send OTP.',
+//                 'error' => $errorMsg,
+//                 'status' => $response->status(),
+//                 'details' => $body
+//             ], 400);
+//         }
+//     } catch (\Exception $e) {
+//         Log::error("WhatsApp OTP Send Exception: " . $e->getMessage());
+
+//         return response()->json([
+//             'message' => 'Failed to send OTP due to exception.',
+//             'error' => $e->getMessage()
+//         ], 500);
+//     }
+// }
+
+// public function verifyOtp(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'otp'       => 'required|digits:6',
+//         'phone'     => 'required|string',
+//         'device_id' => 'nullable|string',
+//         'platform'  => 'nullable|string',
+//         'device_model' => 'nullable|string',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['message' => $validator->errors()->first()], 422);
+//     }
+
+//     $phone = $request->input('phone');
+//     $inputOtp = $request->input('otp');
+//     $deviceId = $request->input('device_id');
+//     $platform = $request->input('platform');
+//     $deviceModel = $request->input('device_model');
+
+//     $storedOtp = session('otp');
+//     $storedPhone = session('otp_phone');
+
+//     if (!$storedOtp || !$storedPhone) {
+//         return response()->json(['message' => 'Session expired. Please request OTP again.'], 400);
+//     }
+
+//     if ($inputOtp != $storedOtp || $storedPhone !== '91' . $phone) {
+//         return response()->json(['message' => 'Invalid OTP.'], 400);
+//     }
+
+//     try {
+//         // Lookup or create user
+//         $user = User::where('mobile_number', '91' . $phone)->first();
+
+//         if (!$user) {
+//             $user = User::create([
+//                 'pratihari_id' => 'PRATIHARI' . rand(10000, 99999),
+//                 'mobile_number' => '91' . $phone,
+//             ]);
+//         }
+
+//         // Save device info
+//         if ($deviceId) {
+//             UserDevice::updateOrCreate(
+//                 ['pratihari_id' => $user->pratihari_id, 'device_id' => $deviceId],
+//                 ['platform' => $platform, 'device_model' => $deviceModel]
+//             );
+//         }
+
+//         // Create API token
+//         $token = $user->createToken('API Token')->plainTextToken;
+
+//         // Clear OTP session
+//         session()->forget(['otp', 'otp_phone']);
+
+//         return response()->json([
+//             'message' => 'User authenticated successfully.',
+//             'user' => $user,
+//             'token' => $token,
+//             'token_type' => 'Bearer'
+//         ], 200);
+//     } catch (\Exception $e) {
+//         Log::error("WhatsApp OTP Verify Error: " . $e->getMessage());
+
+//         return response()->json(['message' => 'Failed to verify OTP. Please try again.'], 500);
+//     }
+// }
+
+public function sendOtp(Request $request)
 {
     if (!$request->expectsJson() && !$request->isJson()) {
         return response()->json(['message' => 'Only JSON requests are allowed'], 406);
@@ -202,49 +318,29 @@ class OtpController extends Controller
         return response()->json(['message' => 'Phone number is required.'], 422);
     }
 
-    try {
-        $otp = rand(100000, 999999);
+    $fullPhone = '91' . $phoneNumber;
 
-        // Call service and get full HTTP response
-        $response = $whatsappService->sendOtp($phoneNumber, $otp);
+    // Lookup user with static OTP
+    $user = User::where('mobile_number', $fullPhone)->first();
 
-        if ($response->successful()) {
-            session(['otp_phone' => '91' . $phoneNumber]);
-            session(['otp' => $otp]);
-
-            return response()->json([
-                'message' => 'OTP sent successfully via WhatsApp.',
-                'phone' => $phoneNumber
-            ], 200);
-        } else {
-            $body = json_decode($response->body(), true);
-            $errorMsg = $body['message'] ?? 'Unknown error from MSG91.';
-
-            return response()->json([
-                'message' => 'Failed to send OTP.',
-                'error' => $errorMsg,
-                'status' => $response->status(),
-                'details' => $body
-            ], 400);
-        }
-    } catch (\Exception $e) {
-        Log::error("WhatsApp OTP Send Exception: " . $e->getMessage());
-
-        return response()->json([
-            'message' => 'Failed to send OTP due to exception.',
-            'error' => $e->getMessage()
-        ], 500);
+    if (!$user || !$user->otp) {
+        return response()->json(['message' => 'This number is not registered or OTP not set.'], 404);
     }
-}
 
+    // Store phone & OTP in session for verification
+    session(['otp_phone' => $fullPhone]);
+    session(['otp' => $user->otp]);
+
+    return response()->json([
+        'message' => 'OTP is preset in the database. Use it to verify.',
+        'phone' => $phoneNumber
+    ], 200);
+}
 public function verifyOtp(Request $request)
 {
     $validator = Validator::make($request->all(), [
-        'otp'       => 'required|digits:6',
-        'phone'     => 'required|string',
-        'device_id' => 'nullable|string',
-        'platform'  => 'nullable|string',
-        'device_model' => 'nullable|string',
+        'otp'   => 'required|digits:6',
+        'phone' => 'required|string',
     ]);
 
     if ($validator->fails()) {
@@ -253,57 +349,32 @@ public function verifyOtp(Request $request)
 
     $phone = $request->input('phone');
     $inputOtp = $request->input('otp');
-    $deviceId = $request->input('device_id');
-    $platform = $request->input('platform');
-    $deviceModel = $request->input('device_model');
+    $fullPhone = '91' . $phone;
 
-    $storedOtp = session('otp');
-    $storedPhone = session('otp_phone');
+    // Lookup user with matching phone and OTP (both must match)
+    $user = User::where('mobile_number', $fullPhone)
+                ->where('otp', $inputOtp)
+                ->first();
 
-    if (!$storedOtp || !$storedPhone) {
-        return response()->json(['message' => 'Session expired. Please request OTP again.'], 400);
+    if (!$user) {
+        return response()->json(['message' => 'Invalid mobile number or OTP.'], 400);
     }
 
-    if ($inputOtp != $storedOtp || $storedPhone !== '91' . $phone) {
-        return response()->json(['message' => 'Invalid OTP.'], 400);
-    }
+    // Create API token
+    $token = $user->createToken('API Token')->plainTextToken;
 
-    try {
-        // Lookup or create user
-        $user = User::where('mobile_number', '91' . $phone)->first();
-
-        if (!$user) {
-            $user = User::create([
-                'pratihari_id' => 'PRATIHARI' . rand(10000, 99999),
-                'mobile_number' => '91' . $phone,
-            ]);
-        }
-
-        // Save device info
-        if ($deviceId) {
-            UserDevice::updateOrCreate(
-                ['pratihari_id' => $user->pratihari_id, 'device_id' => $deviceId],
-                ['platform' => $platform, 'device_model' => $deviceModel]
-            );
-        }
-
-        // Create API token
-        $token = $user->createToken('API Token')->plainTextToken;
-
-        // Clear OTP session
-        session()->forget(['otp', 'otp_phone']);
-
-        return response()->json([
-            'message' => 'User authenticated successfully.',
-            'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
-        ], 200);
-    } catch (\Exception $e) {
-        Log::error("WhatsApp OTP Verify Error: " . $e->getMessage());
-
-        return response()->json(['message' => 'Failed to verify OTP. Please try again.'], 500);
-    }
+    return response()->json([
+        'message' => 'User authenticated successfully.',
+        'user' => [
+            'id' => $user->id,
+            'pratihari_id' => $user->pratihari_id,
+            'mobile_number' => $user->mobile_number,
+            // add any other user fields you want here
+        ],
+        'token' => $token,
+        'token_type' => 'Bearer'
+    ], 200);
 }
+
 
 }

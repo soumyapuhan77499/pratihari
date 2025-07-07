@@ -163,26 +163,26 @@ public function getBeddhaBySeba($seba_id)
         $beddhas = [];
         $sebaNames = [];
 
-   foreach ($sebas as $seba) {
-    $seba_id = $seba->id;
-    $sebaNames[$seba_id] = $seba->seba_name;
+    foreach ($sebas as $seba) {
+        $seba_id = $seba->id;
+        $sebaNames[$seba_id] = $seba->seba_name;
 
-    // Only get beddhas assigned to this seba with beddha_status = 0
-    $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-        ->where('beddha_status', 0)
-        ->pluck('beddha_id');
+        // Only get beddhas assigned to this seba with beddha_status = 0
+        $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+            ->where('beddha_status', 0)
+            ->pluck('beddha_id');
 
-    $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
+        $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
 
-    // Assigned beddhas for this seba & pratihari
-    $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
-        ->where('seba_id', $seba_id)
-        ->value('beddha_id');
+        // Assigned beddhas for this seba & pratihari
+        $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
+            ->where('seba_id', $seba_id)
+            ->value('beddha_id');
 
-    $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
-        ? $assignedBeddhaStr
-        : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
-}
+        $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
+            ? $assignedBeddhaStr
+            : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+    }
 
 
       return view('admin.assign-pratihari-seba', compact(

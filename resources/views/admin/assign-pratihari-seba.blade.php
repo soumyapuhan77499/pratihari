@@ -135,11 +135,11 @@
                                                             {{ $beddha->beddha_name }} <span class="text-muted">(Admin
                                                                 Assigned)</span>
                                                         </label>
-
                                                     </div>
                                                 @endforeach
                                             </div>
                                         </div>
+
                                     @endforeach
                                 </div>
                             </div>
@@ -149,6 +149,7 @@
                                     <i class="fa fa-save"></i> Submit
                                 </button>
                             </div>
+
                         @endif
                     </form>
 
