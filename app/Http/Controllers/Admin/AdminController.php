@@ -39,6 +39,10 @@ class AdminController extends Controller
     {
         $todayProfiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
 
+        $todayApprovedProfiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'approved')->get();
+
+        $todayRejectedProfiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'rejected')->get();
+
         $incompleteProfiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
             $query->whereNull('email')
                 ->orWhereNull('phone_no')
@@ -113,7 +117,9 @@ class AdminController extends Controller
             'pendingProfile',
             'todayApplications',
             'profiles',
-            'profile_name'
+            'profile_name',
+            'todayApprovedProfiles',
+            'todayRejectedProfiles',
         ));
     }
 
