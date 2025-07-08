@@ -57,7 +57,7 @@
             border-radius: 12px;
             overflow: hidden;
             background: #fff;
-            height: 500px;
+            height: 450px;
             display: flex;
             flex-direction: column;
         }
