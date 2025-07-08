@@ -154,7 +154,6 @@ public function getHomePage()
         ], 500);
     }
 }
-
 public function getAllData(Request $request)
 {
     try {
@@ -165,21 +164,21 @@ public function getAllData(Request $request)
         }
 
         $pratihari_id = $user->pratihari_id;
-        $photoBaseUrl = config('app.photo_url');
+        $photoBaseUrl = rtrim(config('app.photo_url'), '/');
 
-        // Fetch related data
+        // Fetch main records
         $profile = PratihariProfile::where('pratihari_id', $pratihari_id)->first();
         $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
         $address = PratihariAddress::where('pratihari_id', $pratihari_id)->first();
         $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get();
         $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
+        $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->get();
 
-        // 👉 Eager-load SebaMaster to get seba_name
+        // 👉 Seba with seba_name
         $sebaDetailsRaw = PratihariSeba::with('sebaMaster')
             ->where('pratihari_id', $pratihari_id)
             ->get();
 
-        // Format Seba Details with seba_name
         $sebaDetails = $sebaDetailsRaw->map(function ($item) {
             return [
                 'id' => $item->id,
@@ -189,28 +188,35 @@ public function getAllData(Request $request)
             ];
         });
 
-        $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->get();
+        // 📌 NEW: Load children records
+        $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get()->map(function ($child) use ($photoBaseUrl) {
+            return [
+                'id' => $child->id,
+                'children_name' => $child->children_name,
+                'date_of_birth' => $child->date_of_birth,
+                'gender' => $child->gender,
+                'photo' => $child->photo,
+                'photo_url' => !empty($child->photo) ? $photoBaseUrl . '/' . ltrim($child->photo, '/') : null,
+            ];
+        });
+
+        // Append full URLs to family photos
+        if ($family) {
+            $family->father_photo_url = !empty($family->father_photo) ? $photoBaseUrl . '/' . ltrim($family->father_photo, '/') : null;
+            $family->mother_photo_url = !empty($family->mother_photo) ? $photoBaseUrl . '/' . ltrim($family->mother_photo, '/') : null;
+            $family->spouse_photo_url = !empty($family->spouse_photo) ? $photoBaseUrl . '/' . ltrim($family->spouse_photo, '/') : null;
+            $family->spouse_father_photo_url = !empty($family->spouse_father_photo) ? $photoBaseUrl . '/' . ltrim($family->spouse_father_photo, '/') : null;
+            $family->spouse_mother_photo_url = !empty($family->spouse_mother_photo) ? $photoBaseUrl . '/' . ltrim($family->spouse_mother_photo, '/') : null;
+
+            // 📌 Attach children array
+            $family->children = $children;
+        }
 
         // Append full URLs to profile photos
         if ($profile) {
-            $profile->profile_photo_url = !empty($profile->profile_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->profile_photo, '/') : null;
-            $profile->health_card_photo_url = !empty($profile->health_card_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($profile->health_card_photo, '/') : null;
+            $profile->profile_photo_url = !empty($profile->profile_photo) ? $photoBaseUrl . '/' . ltrim($profile->profile_photo, '/') : null;
+            $profile->health_card_photo_url = !empty($profile->health_card_photo) ? $photoBaseUrl . '/' . ltrim($profile->health_card_photo, '/') : null;
         }
-
-        // Family photo URLs
-        if ($family) {
-            $family->father_photo_url = !empty($family->father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->father_photo, '/') : null;
-            $family->mother_photo_url = !empty($family->mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->mother_photo, '/') : null;
-            $family->spouse_photo_url = !empty($family->spouse_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_photo, '/') : null;
-            $family->spouse_father_photo_url = !empty($family->spouse_father_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_father_photo, '/') : null;
-            $family->spouse_mother_photo_url = !empty($family->spouse_mother_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($family->spouse_mother_photo, '/') : null;
-        }
-
-        // ID card photo URLs
-        $idcard->transform(function ($item) use ($photoBaseUrl) {
-            $item->id_photo_url = !empty($item->id_photo) ? rtrim($photoBaseUrl, '/') . '/' . ltrim($item->id_photo, '/') : null;
-            return $item;
-        });
 
         return response()->json([
             'success' => true,

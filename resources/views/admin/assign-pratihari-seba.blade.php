@@ -96,85 +96,84 @@
                 <div class="card-header">🛕 Assign Seba to Pratihari</div>
                 <div class="card-body">
 
-                   <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">
-    @csrf
+                    <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">
+                        @csrf
 
-    <div class="row align-items-end">
-        <div class="col-md-6">
-            <label for="pratihari_id">Select Pratihari</label>
-            <select name="pratihari_id" id="pratihari_id" class="form-control select2">
-                <option value="">-- Select Pratihari --</option>
-                @foreach ($pratiharis as $pratihari_id_option => $name)
-                    <option value="{{ $pratihari_id_option }}"
-                        {{ request('pratihari_id') == $pratihari_id_option ? 'selected' : '' }}>
-                        {{ $name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+                        <div class="row align-items-end">
+                            <div class="col-md-6">
+                                <label for="pratihari_id">Select Pratihari</label>
+                                <select name="pratihari_id" id="pratihari_id" class="form-control select2">
+                                    <option value="">-- Select Pratihari --</option>
+                                    @foreach ($pratiharis as $pratihari_id_option => $name)
+                                        <option value="{{ $pratihari_id_option }}"
+                                            {{ request('pratihari_id') == $pratihari_id_option ? 'selected' : '' }}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
-        <div class="col-md-6">
-            <label for="year" class="form-label">Year</label>
-            <select class="form-select @error('year') is-invalid @enderror" id="year"
-                name="year" required>
-                <option value="">Select Year</option>
-                @for ($y = date('Y'); $y >= 2000; $y--)
-                    @php
-                        $display = $y . '-' . ($y + 1);
-                    @endphp
-                    <option value="{{ $display }}"
-                        {{ request('year') == $display ? 'selected' : '' }}>
-                        {{ $display }}
-                    </option>
-                @endfor
-            </select>
-            @error('year')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
-    </div>
-
-    @if (request('pratihari_id') && request('year'))
-        <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
-        <input type="hidden" name="year" value="{{ request('year') }}">
-
-        <div class="beddha-section mt-4">
-            <label class="section-title">📜 Assign Beddha to Seba</label>
-            <div class="checkbox-list" id="beddha_list">
-                @foreach ($sebas as $seba)
-                    <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
-
-                    <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
-                        <strong class="d-block mb-2">{{ $seba->seba_name }}:</strong>
-                        <div class="beddha-items d-flex flex-wrap gap-3">
-                            @foreach ($beddhas[$seba->id] ?? [] as $beddha)
-                                <div class="form-check me-3">
-                                    <input class="form-check-input" type="checkbox"
-                                        name="beddha_id[{{ $seba->id }}][]"
-                                        value="{{ $beddha->id }}"
-                                        id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
-                                        {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
-                                    <label class="form-check-label"
-                                        for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
-                                        {{ $beddha->beddha_name }} <span class="text-muted">(Admin Assigned)</span>
-                                    </label>
-                                </div>
-                            @endforeach
+                            <div class="col-md-6">
+                                <label for="year" class="form-label">Year</label>
+                                <select class="form-select @error('year') is-invalid @enderror" id="year"
+                                    name="year" required>
+                                    <option value="">Select Year</option>
+                                    @for ($y = date('Y'); $y >= 2000; $y--)
+                                        @php
+                                            $display = $y . '-' . ($y + 1);
+                                        @endphp
+                                        <option value="{{ $display }}"
+                                            {{ request('year') == $display ? 'selected' : '' }}>
+                                            {{ $display }}
+                                        </option>
+                                    @endfor
+                                </select>
+                                @error('year')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
 
-        <div class="text-center">
-            <button type="submit" class="btn btn-lg mt-4 w-50 custom-gradient-btn text-white">
-                <i class="fa fa-save"></i> Submit
-            </button>
-        </div>
-    @endif
-</form>
+                        @if (request('pratihari_id') && request('year'))
+                            <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
+                            <input type="hidden" name="year" value="{{ request('year') }}">
 
+                            <div class="beddha-section mt-4">
+                                <label class="section-title">📜 Assign Beddha to Seba</label>
+                                <div class="checkbox-list" id="beddha_list">
+                                    @foreach ($sebas as $seba)
+                                        <input type="hidden" name="seba_id[]" value="{{ $seba->id }}">
 
+                                        <div class="beddha-group-row mb-4" id="beddha_group_{{ $seba->id }}">
+                                            <strong class="d-block mb-2">{{ $seba->seba_name }}:</strong>
+                                            <div class="beddha-items d-flex flex-wrap gap-3">
+                                                @foreach ($beddhas[$seba->id] ?? [] as $beddha)
+                                                    <div class="form-check me-3">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            name="beddha_id[{{ $seba->id }}][]"
+                                                            value="{{ $beddha->id }}"
+                                                            id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
+                                                            {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
+                                                        <label class="form-check-label"
+                                                            for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
+                                                            {{ $beddha->beddha_name }} <span class="text-muted">(Admin
+                                                                Assigned)</span>
+                                                        </label>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-lg mt-4 w-50 custom-gradient-btn text-white">
+                                    <i class="fa fa-save"></i> Submit
+                                </button>
+                            </div>
+                        @endif
+                    </form>
 
                 </div>
             </div>
@@ -196,25 +195,26 @@
         });
     </script>
 
-<!-- Include Select2 and reload logic -->
-<script>
-    $(document).ready(function () {
-        $('#pratihari_id, #year').change(function () {
-            let pratihari_id = $('#pratihari_id').val();
-            let year = $('#year').val();
+    <!-- Include Select2 and reload logic -->
+    <script>
+        $(document).ready(function() {
+            $('#pratihari_id, #year').change(function() {
+                let pratihari_id = $('#pratihari_id').val();
+                let year = $('#year').val();
 
-            if (pratihari_id && year) {
-                let url = `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
-                window.location.href = url;
-            }
-        });
+                if (pratihari_id && year) {
+                    let url =
+                        `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
+                    window.location.href = url;
+                }
+            });
 
-        $('#pratihari_id').select2({
-            placeholder: '-- Select Pratihari --',
-            allowClear: true
+            $('#pratihari_id').select2({
+                placeholder: '-- Select Pratihari --',
+                allowClear: true
+            });
         });
-    });
-</script>
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
