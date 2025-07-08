@@ -57,7 +57,7 @@
             border-radius: 12px;
             overflow: hidden;
             background: #fff;
-            height: 450px;
+            height: 400px;
             display: flex;
             flex-direction: column;
         }
@@ -100,7 +100,7 @@
         <div class="row">
             <!-- Active Users -->
             <div class="col-md-3">
-                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                <div class="card user-list-card shadow-sm" style="height: 400px; display: flex; flex-direction: column;">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #24960b;">
                         <div class="d-flex align-items-center">
