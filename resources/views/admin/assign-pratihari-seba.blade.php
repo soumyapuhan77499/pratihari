@@ -204,7 +204,7 @@
             let year = $('#year').val();
 
             if (pratihari_id && year) {
-                let url = `{{ route('admin.assign-pratihari-seba') }}?pratihari_id=${pratihari_id}&year=${year}`;
+                let url = `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
                 window.location.href = url;
             }
         });
