@@ -197,11 +197,22 @@
     </script>
 
     <script>
-        document.getElementById('pratihari_id').addEventListener('change', function() {
-            const selectedId = this.value;
-            const url = new URL(window.location.href);
-            url.searchParams.set('pratihari_id', selectedId);
-            window.location.href = url.toString();
+        $(document).ready(function() {
+            $('#pratihari_id, #year').change(function() {
+                const pratihari_id = $('#pratihari_id').val();
+                const year = $('#year').val();
+
+                if (pratihari_id && year) {
+                    const url =
+                        `{{ route('admin.assign-pratihari-seba') }}?pratihari_id=${pratihari_id}&year=${year}`;
+                    window.location.href = url;
+                }
+            });
+
+            $('#pratihari_id').select2({
+                placeholder: '-- Select Pratihari --',
+                allowClear: true
+            });
         });
     </script>
 

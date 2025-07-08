@@ -16,6 +16,7 @@ class PratihariSeba extends Model
         'nijoga_id',
         'seba_id',
         'beddha_id',
+        'year'
     ];
     
     public function sebaMaster()
