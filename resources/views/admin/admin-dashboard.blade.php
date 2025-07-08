@@ -135,6 +135,114 @@
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #faa409;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Users
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($pendingProfile) }}</span>
+                    </div>
+
+                    <div class="card-body p-0">
+                        @foreach ($pendingProfile->take(5) as $user)
+                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
+                                    <div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #dc3545;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Rejected Users
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($rejectedProfiles) }}</span>
+                    </div>
+
+                    <div class="card-body p-0">
+                        @foreach ($rejectedProfiles->take(5) as $user)
+                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
+                                    <div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'rejected') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #ffc107;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i> Updated Profiles
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($updatedProfiles) }}</span>
+                    </div>
+
+                    <div class="card-body p-0">
+                        @foreach ($updatedProfiles->take(5) as $user)
+                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
+                                    <div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #17c3ce;">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-person-plus-fill me-2 fs-5"></i> Today’s Registrations
@@ -144,7 +252,8 @@
 
                     <div class="card-body p-0">
                         @foreach ($todayProfiles->take(5) as $user)
-                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
@@ -168,58 +277,80 @@
                 </div>
             </div>
 
-            <!-- Rejected Users -->
+
             <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'rejected') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-danger mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-person-x-fill me-2"></i>Rejected Users
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #efb86a;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-person-plus-fill me-2 fs-5"></i> Incomplete Profiles
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $rejectedUsers }}</h5>
-                        </div>
+                        <span class="badge bg-light text-dark">{{ count($incompleteProfiles) }}</span>
                     </div>
-                </a>
+
+                    <div class="card-body p-0">
+                        @foreach ($incompleteProfiles->take(5) as $user)
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
+                                    <div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}" style="text-decoration:none;">
-                    <div class="card text-dark bg-warning mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i>Updated Profiles
+                <div class="card user-list-card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #38075e;">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i> Today's Applications
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $updatedProfile }}</h5>
-                        </div>
+                        <span class="badge bg-light text-dark">{{ count($todayApplications) }}</span>
                     </div>
-                </a>
-            </div>
-         
-            <div class="col-md-3">
-                <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-person-plus-fill me-2"></i>Incomplete Profiles
-                        </div>
-                        <div class="card-body" style="background-color: #efb86a">
-                            <h5 class="card-title">{{ $incompleteProfiles }}</h5>
-                        </div>
+
+                    <div class="card-body p-0">
+                        @foreach ($todayApplications->take(5) as $user)
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
+                                    <div>
+                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
+                                        </a>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                </a>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('today.application.filterUsers') }}" class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-3">
-                <a href="{{ route('today.application.filterUsers') }}" style="text-decoration:none;">
-                    <div class="card text-dark mb-3">
-                        <div class="card-header">
-                            <i class="bi bi-exclamation-circle-fill me-2"></i>Todays Applications
-                        </div>
-                        <div class="card-body" style="background-color: #38075e">
-                            <h5 class="card-title">{{ $todayApplication }}</h5>
-                        </div>
-                    </div>
-                </a>
-            </div>
         </div>
 
         <div class="row mb-4 mt-4">

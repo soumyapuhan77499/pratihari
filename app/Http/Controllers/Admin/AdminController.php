@@ -71,21 +71,21 @@ class AdminController extends Controller
         ->orWhereDoesntHave('seba')
         // OR profiles with missing social media
         ->orWhereDoesntHave('socialMedia')
-        ->count();
+        ->get();
 
         $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
 
-        $updatedProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->count();
+        $updatedProfiles = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->get();
 
         $pendingProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'pending')->get();
                                                                     
-        $rejectedUsers = PratihariProfile::where('pratihari_status', 'rejected')->count();
+        $rejectedProfiles = PratihariProfile::where('pratihari_status', 'rejected')->get();
 
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
 
-        $todayApplication = PratihariApplication::whereDate('created_at', Carbon::today())
+        $todayApplications = PratihariApplication::whereDate('created_at', Carbon::today())
         ->where('status', 'active')
-        ->count();
+        ->get();
 
         $profile_name = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
 
@@ -108,10 +108,10 @@ class AdminController extends Controller
             'todayProfiles',
             'incompleteProfiles',
             'totalActiveUsers',
-            'rejectedUsers',
-            'updatedProfile',
+            'rejectedProfiles',
+            'updatedProfiles',
             'pendingProfile',
-            'todayApplication',
+            'todayApplications',
             'profiles',
             'profile_name'
         ));
