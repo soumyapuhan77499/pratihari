@@ -10,7 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
-           #custom-calendar {
+        #custom-calendar {
             max-width: 100%;
             margin: 0 auto;
             height: 900px !important;
@@ -135,18 +135,19 @@
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
-                        style="background-color: #faa409;">
+                        style="background-color: #17c3ce;">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Users
+                            <i class="bi bi-person-plus-fill me-2 fs-5"></i> Today’s Registrations
                         </div>
-                        <span class="badge bg-light text-dark">{{ count($pendingProfile) }}</span>
+                        <span class="badge bg-light text-dark">{{ count($todayProfiles) }}</span>
                     </div>
 
                     <div class="card-body p-0">
-                        @foreach ($pendingProfile->take(5) as $user)
+                        @foreach ($todayProfiles->take(5) as $user)
                             <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"  alt="Profile Photo" class="user-img rounded-circle me-3">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
                                     <div>
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
@@ -159,7 +160,7 @@
                     </div>
 
                     <div class="card-footer bg-white text-center">
-                        <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}"
+                        <a href="{{ route('admin.pratihari.filterUsers', 'today') }}"
                             class="text-decoration-none fw-semibold">
                             View More &rarr;
                         </a>

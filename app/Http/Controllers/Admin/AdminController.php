@@ -37,7 +37,7 @@ class AdminController extends Controller
     
     public function dashboard()
     {
-        $todayCount = PratihariProfile::whereDate('created_at', Carbon::today())->count();
+        $todayProfiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
 
         $incompleteProfiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
             $query->whereNull('email')
@@ -105,7 +105,7 @@ class AdminController extends Controller
         }
 
         return view('admin.admin-dashboard', compact(
-            'todayCount',
+            'todayProfiles',
             'incompleteProfiles',
             'totalActiveUsers',
             'rejectedUsers',
