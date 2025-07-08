@@ -53,6 +53,7 @@
                                     style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
                                     style="margin-left: 10px">Pratihari Nijoga Assign</span></a>
                     </li> --}}
+
                     @if (Auth::guard('super_admin')->check() && Auth::guard('super_admin')->user()->role === 'super_admin')
                         <li class="slide">
                             <a class="side-menu__item" href="{{ url('admin/pratihari-seba-beddha') }}"><span

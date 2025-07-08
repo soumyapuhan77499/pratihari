@@ -10,6 +10,49 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
+           #custom-calendar {
+            max-width: 100%;
+            margin: 0 auto;
+            height: 900px !important;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .fc .fc-toolbar-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #f8c66d;
+        }
+
+        .fc-button {
+            background-color: #f8c66d !important;
+            border: none !important;
+            border-radius: 6px !important;
+        }
+
+        .fc-button-primary:not(:disabled):hover {
+            background-color: #f8c66d !important;
+        }
+
+        .fc-event {
+            background-color: #e96a01 !important;
+            border: none !important;
+            border-radius: 4px !important;
+            padding: 2px 4px;
+            font-size: 0.685rem;
+        }
+
+        .fc-daygrid-day-number {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .fc-daygrid-day {
+            background-color: #f8f9fa;
+        }
+
         .user-list-card {
             border-radius: 12px;
             overflow: hidden;
@@ -124,7 +167,6 @@
                 </div>
             </div>
 
-
             <!-- Rejected Users -->
             <div class="col-md-3">
                 <a href="{{ route('admin.pratihari.filterUsers', 'rejected') }}" style="text-decoration:none;">
@@ -192,6 +234,7 @@
                 </a>
             </div>
         </div>
+
         <div class="row mb-4 mt-4">
             <div class="col-lg-12">
                 <div class="card custom-card"
