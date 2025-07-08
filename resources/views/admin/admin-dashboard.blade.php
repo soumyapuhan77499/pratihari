@@ -99,7 +99,7 @@
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
-                        style="background-color: #faa409;">
+                        style="background-color: #24960b;">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-person-check-fill me-2 fs-5"></i> Active Users
                         </div>
