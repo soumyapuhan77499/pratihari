@@ -348,7 +348,7 @@
                     </div>
 
                     <div class="card-footer bg-white text-center">
-                        <a href="{{ route('today.application.filterUsers') }}" class="text-decoration-none fw-semibold">
+                        <a href="{{ route('admin.application.filter', 'today') }}" class="text-decoration-none fw-semibold">
                             View More &rarr;
                         </a>
                     </div>
@@ -446,8 +446,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-file-person me-3 fs-4 text-success"></i>
                                     <div>
-                                        <div class="fw-semibold">{{ $app->applicant_name ?? 'N/A' }}</div>
-                                        <div class="text-muted small">{{ $app->application_id ?? 'App ID N/A' }}</div>
+                                        <div class="fw-semibold">{{ $app->header ?? 'N/A' }}</div>
+                                        <div class="text-muted small">{{ $app->date ?? 'App ID N/A' }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -480,8 +480,8 @@
                                 <div class="d-flex align-items-center">
                                     <i class="bi bi-file-person me-3 fs-4 text-danger"></i>
                                     <div>
-                                        <div class="fw-semibold">{{ $app->applicant_name ?? 'N/A' }}</div>
-                                        <div class="text-muted small">{{ $app->application_id ?? 'App ID N/A' }}</div>
+                                        <div class="fw-semibold">{{ $app->header ?? 'N/A' }}</div>
+                                        <div class="text-muted small">{{ $app->date ?? 'App ID N/A' }}</div>
                                     </div>
                                 </div>
                             </div>

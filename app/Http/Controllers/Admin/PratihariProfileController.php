@@ -394,12 +394,23 @@ class PratihariProfileController extends Controller
         return view('admin.manage-application', compact('applications'));
     }
 
-    public function filterApplication()
-    {
-        $applications = PratihariApplication::with('profile')->whereDate('created_at', Carbon::today())->get();
+    public function filterApplication($type = null)
+{
+    $query = PratihariApplication::with('profile');
 
-        return view('admin.manage-application', compact('applications'));
+    if ($type === 'approved') {
+        $query->where('status', 'approved');
+    } elseif ($type === 'rejected') {
+        $query->where('status', 'rejected');
+    } elseif ($type === 'today') {
+        $query->whereDate('created_at', Carbon::today());
     }
+
+    $applications = $query->latest()->get();
+
+    return view('admin.manage-application', compact('applications', 'type'));
+}
+
 
     public function updateApplication(Request $request, $id)
         {
