@@ -192,7 +192,7 @@ class PratihariSebaController extends Controller
     ));
 }
 
-   public function savePratihariAssignSeba(Request $request)
+ public function savePratihariAssignSeba(Request $request)
 {
     try {
         $admins = Auth::guard('admins')->user();
@@ -205,7 +205,7 @@ class PratihariSebaController extends Controller
         $sebaIds = $request->input('seba_id', []);
         $beddhaIds = $request->input('beddha_id', []);
         $pratihariId = $request->input('pratihari_id');
-        $year = $request->input('year'); // ← NEW
+        $year = $request->input('year');
 
         if (!$pratihariId || !$year) {
             return redirect()->back()->with('error', 'Missing pratihari_id or year in request.');
@@ -217,31 +217,30 @@ class PratihariSebaController extends Controller
             if (empty($beddhaList)) {
                 PratihariSeba::where('pratihari_id', $pratihariId)
                     ->where('seba_id', $sebaId)
-                    ->where('year', $year) // ← NEW
+                    ->where('year', $year)
                     ->delete();
                 continue;
             }
 
             $beddhaIdsString = implode(',', $beddhaList);
 
-            // Save main assignment
             PratihariSeba::updateOrCreate(
                 [
                     'pratihari_id' => $pratihariId,
                     'seba_id' => $sebaId,
-                    'year' => $year // ← NEW
+                    'year' => $year
                 ],
                 [
                     'beddha_id' => $beddhaIdsString,
                 ]
             );
 
-            // Save to transaction log
             PratihariSebaAssignTransaction::create([
                 'pratihari_id' => $pratihariId,
                 'assigned_by' => $assigned_by,
                 'seba_id' => $sebaId,
                 'beddha_id' => $beddhaIdsString,
+                'year' => $year,
                 'date_time' => now('Asia/Kolkata'),
             ]);
         }
