@@ -357,7 +357,7 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #dc3545;">
                         <div class="d-flex align-items-center">
@@ -394,7 +394,7 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #198754;"> {{-- Bootstrap success green --}}
                         <div class="d-flex align-items-center">
@@ -428,7 +428,7 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                <div class="card user-list-card shadow-sm" >
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #dc3545;"> {{-- Bootstrap red --}}
                         <div class="d-flex align-items-center">
@@ -462,7 +462,7 @@
             </div>
 
             <div class="col-md-3">
-                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                <div class="card user-list-card shadow-sm" >
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #6f42c1;"> {{-- purple tone --}}
                         <div class="d-flex align-items-center">
