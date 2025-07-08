@@ -204,7 +204,7 @@
 
                 if (pratihari_id && year) {
                     const url =
-                        `{{ route('admin.savePratihariAssignSeba') }}?pratihari_id=${pratihari_id}&year=${year}`;
+                        `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
                     window.location.href = url;
                 }
             });
