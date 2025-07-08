@@ -496,7 +496,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="row mb-4 mt-4">

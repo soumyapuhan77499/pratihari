@@ -5,6 +5,9 @@
 
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
         .form-group {
             position: relative;
@@ -99,7 +102,7 @@
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label for="pratihari_id">Select Pratihari</label>
-                                <select name="pratihari_id" id="pratihari_id" class="form-control">
+                                <select name="pratihari_id" id="pratihari_id" class="form-control select2">
                                     <option value="">-- Select Pratihari --</option>
                                     @foreach ($pratiharis as $pratihari_id_option => $name)
                                         <option value="{{ $pratihari_id_option }}"
@@ -110,6 +113,7 @@
                                 </select>
                             </div>
                         </div>
+
 
                         @if (request('pratihari_id'))
                             <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
@@ -139,7 +143,6 @@
                                                 @endforeach
                                             </div>
                                         </div>
-
                                     @endforeach
                                 </div>
                             </div>
@@ -149,7 +152,6 @@
                                     <i class="fa fa-save"></i> Submit
                                 </button>
                             </div>
-
                         @endif
                     </form>
 
@@ -161,6 +163,12 @@
 @endsection
 
 @section('scripts')
+    <!-- jQuery (Required for Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             setTimeout(() => document.getElementById("successMessage")?.classList.add("d-none"), 5000);
@@ -189,4 +197,13 @@
     <!--Internal  Form-elements js-->
     <script src="{{ asset('assets/js/advanced-form-elements.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
+    <script>
+    $(document).ready(function() {
+        $('#pratihari_id').select2({
+            placeholder: '-- Select Pratihari --',
+            allowClear: true
+        });
+    });
+</script>
+
 @endsection
