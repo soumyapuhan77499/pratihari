@@ -120,7 +120,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +156,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -229,7 +229,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -304,7 +304,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -340,7 +340,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -378,7 +378,7 @@
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
+                                        <div class="text-muted small">{{ $user->phone_no }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -428,7 +428,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
@@ -497,7 +496,6 @@
                     </div>
                 </div>
             </div>
-
 
         </div>
 
