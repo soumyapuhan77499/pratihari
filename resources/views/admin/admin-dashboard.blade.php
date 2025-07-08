@@ -57,6 +57,9 @@
             border-radius: 12px;
             overflow: hidden;
             background: #fff;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
         }
 
         .user-list-item {
@@ -97,7 +100,7 @@
         <div class="row">
             <!-- Active Users -->
             <div class="col-md-3">
-                <div class="card user-list-card shadow-sm">
+                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #24960b;">
                         <div class="d-flex align-items-center">
@@ -106,17 +109,17 @@
                         <span class="badge bg-light text-dark">{{ count($totalActiveUsers) }}</span>
                     </div>
 
-                    <div class="card-body p-0">
+                    <div class="card-body p-0 overflow-auto" style="flex: 1 1 auto;">
                         @foreach ($totalActiveUsers->take(5) as $user)
                             <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ asset($user->profile_photo) }}" alt="Profile Photo"
-                                        class="user-img rounded-circle me-3">
+                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                        alt="Profile Photo" class="user-img rounded-circle me-3">
                                     <div>
                                         <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
                                             <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
                                         </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }} </div>
+                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -131,6 +134,7 @@
                     </div>
                 </div>
             </div>
+
 
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
