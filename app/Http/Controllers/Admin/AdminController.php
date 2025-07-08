@@ -91,6 +91,10 @@ class AdminController extends Controller
         ->where('status', 'active')
         ->get();
 
+        $approvedApplication = PratihariApplication::where('status', 'approved')->get();
+
+        $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
+
         $profile_name = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
 
         $user = Auth::user();
@@ -120,6 +124,8 @@ class AdminController extends Controller
             'profile_name',
             'todayApprovedProfiles',
             'todayRejectedProfiles',
+            'approvedApplication',
+            'rejectedApplication',
         ));
     }
 

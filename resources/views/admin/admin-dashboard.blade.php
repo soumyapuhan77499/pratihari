@@ -429,6 +429,73 @@
                 </div>
             </div>
 
+            <div class="col-md-3">
+                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #198754;"> {{-- Bootstrap success green --}}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-check-fill me-2 fs-5"></i> Approved Applications
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($approvedApplication) }}</span>
+                    </div>
+
+                    <div class="card-body p-0 overflow-auto" style="flex: 1 1 auto;">
+                        @foreach ($approvedApplication->take(5) as $app)
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-person me-3 fs-4 text-success"></i>
+                                    <div>
+                                        <div class="fw-semibold">{{ $app->applicant_name ?? 'N/A' }}</div>
+                                        <div class="text-muted small">{{ $app->application_id ?? 'App ID N/A' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.application.filter', 'approved') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #dc3545;"> {{-- Bootstrap red --}}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-x-fill me-2 fs-5"></i> Rejected Applications
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($rejectedApplication) }}</span>
+                    </div>
+
+                    <div class="card-body p-0 overflow-auto" style="flex: 1 1 auto;">
+                        @foreach ($rejectedApplication->take(5) as $app)
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-person me-3 fs-4 text-danger"></i>
+                                    <div>
+                                        <div class="fw-semibold">{{ $app->applicant_name ?? 'N/A' }}</div>
+                                        <div class="text-muted small">{{ $app->application_id ?? 'App ID N/A' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.application.filter', 'rejected') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
 
 
         </div>
