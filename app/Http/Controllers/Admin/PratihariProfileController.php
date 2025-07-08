@@ -300,6 +300,10 @@ class PratihariProfileController extends Controller
     {
         if ($filter === 'approved' || $filter === 'rejected' || $filter === 'updated' || $filter === 'pending') {
             $profiles = PratihariProfile::where('pratihari_status', $filter)->get();
+        } elseif ($filter === 'todayrejected') {
+            $profiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'rejected')->get();
+         } elseif ($filter === 'todayapproved') {
+            $profiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'approved')->get();
         } elseif ($filter === 'today') {
             $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
         } elseif ($filter === 'incomplete') {

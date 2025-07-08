@@ -275,7 +275,7 @@
                     </div>
 
                     <div class="card-footer bg-white text-center">
-                        <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}"
+                        <a href="{{ route('admin.pratihari.filterUsers', 'todayapproved') }}"
                             class="text-decoration-none fw-semibold">
                             View More &rarr;
                         </a>
@@ -312,7 +312,7 @@
                     </div>
 
                     <div class="card-footer bg-white text-center">
-                        <a href="{{ route('admin.pratihari.filterUsers', 'rejected') }}"
+                        <a href="{{ route('admin.pratihari.filterUsers', 'todayrejected') }}"
                             class="text-decoration-none fw-semibold">
                             View More &rarr;
                         </a>
