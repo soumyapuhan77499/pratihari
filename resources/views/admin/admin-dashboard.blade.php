@@ -104,7 +104,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #24960b;">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-person-check-fill me-2 fs-5"></i> Active Users
+                            <i class="bi bi-person-check-fill me-2 fs-5"></i> Active Profiles
                         </div>
                         <span class="badge bg-light text-dark">{{ count($totalActiveUsers) }}</span>
                     </div>
@@ -141,7 +141,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #faa409;">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Users
+                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Pending Profiles
                         </div>
                         <span class="badge bg-light text-dark">{{ count($pendingProfile) }}</span>
                     </div>
@@ -177,7 +177,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #dc3545;">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Rejected Users
+                            <i class="bi bi-person-x-fill me-2 fs-5"></i> Rejected Profiles
                         </div>
                         <span class="badge bg-light text-dark">{{ count($rejectedProfiles) }}</span>
                     </div>
@@ -324,7 +324,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #0d6efd;">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-check2-circle me-2 fs-5"></i> Today Approved
+                            <i class="bi bi-check2-circle me-2 fs-5"></i> Today Approved Profiles
                         </div>
                         <span class="badge bg-light text-dark">{{ count($todayApprovedProfiles) }}</span>
                     </div>
@@ -361,7 +361,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #dc3545;">
                         <div class="d-flex align-items-center">
-                            <i class="bi bi-x-circle-fill me-2 fs-5"></i> Today Rejected
+                            <i class="bi bi-x-circle-fill me-2 fs-5"></i> Today Rejected Profiles
                         </div>
                         <span class="badge bg-light text-dark">{{ count($todayRejectedProfiles) }}</span>
                     </div>
