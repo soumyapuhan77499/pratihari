@@ -112,6 +112,26 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-md-6">
+                                <label for="year" class="form-label">Year</label>
+                                <select class="form-select @error('year') is-invalid @enderror" id="year"
+                                    name="year" required>
+                                    <option value="">Select Year</option>
+                                    @for ($y = date('Y'); $y >= 2000; $y--)
+                                        @php
+                                            $display = $y . '-' . ($y + 1);
+                                        @endphp
+                                        <option value="{{ $display }}" {{ old('year') == $display ? 'selected' : '' }}>
+                                            {{ $display }}
+                                        </option>
+                                    @endfor
+                                </select>
+                                @error('year')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
                         </div>
 
 
@@ -198,12 +218,11 @@
     <script src="{{ asset('assets/js/advanced-form-elements.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
     <script>
-    $(document).ready(function() {
-        $('#pratihari_id').select2({
-            placeholder: '-- Select Pratihari --',
-            allowClear: true
+        $(document).ready(function() {
+            $('#pratihari_id').select2({
+                placeholder: '-- Select Pratihari --',
+                allowClear: true
+            });
         });
-    });
-</script>
-
+    </script>
 @endsection
