@@ -228,12 +228,5 @@
     <!--Internal  Form-elements js-->
     <script src="{{ asset('assets/js/advanced-form-elements.js') }}"></script>
     <script src="{{ asset('assets/js/select2.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            $('#pratihari_id').select2({
-                placeholder: '-- Select Pratihari --',
-                allowClear: true
-            });
-        });
-    </script>
+   
 @endsection
