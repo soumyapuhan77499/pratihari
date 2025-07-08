@@ -322,42 +322,6 @@
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
-                        style="background-color: #38075e;">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i> Today's Applications
-                        </div>
-                        <span class="badge bg-light text-dark">{{ count($todayApplications) }}</span>
-                    </div>
-
-                    <div class="card-body p-0">
-                        @foreach ($todayApplications->take(5) as $user)
-                            <div
-                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
-                                <div class="d-flex align-items-center">
-                                    <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
-                                        alt="Profile Photo" class="user-img rounded-circle me-3">
-                                    <div>
-                                        <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
-                                            <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}</div>
-                                        </a>
-                                        <div class="text-muted small">{{ $user->pratihari_id }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <div class="card-footer bg-white text-center">
-                        <a href="{{ route('admin.application.filter', 'today') }}" class="text-decoration-none fw-semibold">
-                            View More &rarr;
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card user-list-card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #0d6efd;">
                         <div class="d-flex align-items-center">
                             <i class="bi bi-check2-circle me-2 fs-5"></i> Today Approved
@@ -497,7 +461,39 @@
                 </div>
             </div>
 
+            <div class="col-md-3">
+                <div class="card user-list-card shadow-sm" style="height: 500px; display: flex; flex-direction: column;">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
+                        style="background-color: #6f42c1;"> {{-- purple tone --}}
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-calendar-check-fill me-2 fs-5"></i> Today’s Applications
+                        </div>
+                        <span class="badge bg-light text-dark">{{ count($todayApplications) }}</span>
+                    </div>
 
+                    <div class="card-body p-0 overflow-auto" style="flex: 1 1 auto;">
+                        @foreach ($todayApplications->take(5) as $app)
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-person me-3 fs-4 text-primary"></i>
+                                    <div>
+                                        <div class="fw-semibold">{{ $app->header ?? 'N/A' }}</div>
+                                        <div class="text-muted small">{{ $app->date ?? 'App ID N/A' }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="card-footer bg-white text-center">
+                        <a href="{{ route('admin.application.filter', 'today') }}"
+                            class="text-decoration-none fw-semibold">
+                            View More &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="row mb-4 mt-4">
