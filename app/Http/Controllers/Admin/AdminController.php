@@ -112,6 +112,34 @@ class AdminController extends Controller
             ];
         }
 
+         $today = Carbon::today();
+    $baseDate = Carbon::create(2025, 6, 6);
+    $endDate = Carbon::create(2050, 12, 31);
+    $events = [];
+
+    $sebas = PratihariSeba::with(['sebaMaster', 'pratihari']) // assumes relation to user
+        ->get();
+
+    foreach ($sebas as $seba) {
+        $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+        $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+
+        foreach ($beddhaIds as $beddhaId) {
+            $beddhaId = (int) trim($beddhaId);
+
+            if ($beddhaId >= 1 && $beddhaId <= 47) {
+                $start = $baseDate->copy()->addDays($beddhaId - 1);
+                while ($start->lte($endDate)) {
+                    if ($start->equalTo($today)) {
+                        $events["$sebaName | Beddha $beddhaId"][] = $seba->pratihari;
+                        break;
+                    }
+                    $start->addDays(47);
+                }
+            }
+        }
+    }
+
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
             'incompleteProfiles',
@@ -126,6 +154,8 @@ class AdminController extends Controller
             'todayRejectedProfiles',
             'approvedApplication',
             'rejectedApplication',
+            'events',
+            'today'
         ));
     }
 

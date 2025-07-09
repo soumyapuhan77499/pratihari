@@ -107,104 +107,39 @@
             <!-- Active Users -->
 
             <div class="col-12 mb-4">
-                <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
-                    <div class="card-header text-white"
+                <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
-                        <i class="bi bi-people-fill me-2"></i>
-                        <span class="fw-bold">Today Pratihari Seba</span>
-                        <span class="ms-3">
-                            <span id="today-date" class="badge bg-light text-dark"></span>
-                            <span id="current-time" class="badge bg-light text-dark"></span>
-                        </span>
-
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-people-fill me-2"></i>
+                            <span class="fw-bold fs-5">Today Pratihari Seba</span>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-light text-dark">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                            <span class="badge bg-light text-dark" id="current-time"></span>
+                        </div>
                     </div>
-                    <div class="card-body p-3" style="display: flex; gap: 1rem; overflow-x: auto;">
-                        <!-- Example static user cards -->
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 1</div>
-                            <div class="text-muted small">+91 99999 11111</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 2</div>
-                            <div class="text-muted small">+91 88888 22222</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 3</div>
-                            <div class="text-muted small">+91 77777 33333</div>
-                        </div>
-                          <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 1</div>
-                            <div class="text-muted small">+91 99999 11111</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 2</div>
-                            <div class="text-muted small">+91 88888 22222</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 3</div>
-                            <div class="text-muted small">+91 77777 33333</div>
-                        </div>
-                          <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 1</div>
-                            <div class="text-muted small">+91 99999 11111</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 2</div>
-                            <div class="text-muted small">+91 88888 22222</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 3</div>
-                            <div class="text-muted small">+91 77777 33333</div>
-                        </div>
-                          <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 1</div>
-                            <div class="text-muted small">+91 99999 11111</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 2</div>
-                            <div class="text-muted small">+91 88888 22222</div>
-                        </div>
-                        <div class="d-flex flex-column align-items-center p-3"
-                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="fw-semibold">User Name 3</div>
-                            <div class="text-muted small">+91 77777 33333</div>
-                        </div>
-                        <!-- Add more static user cards as needed -->
+
+                    <div class="card-body p-3">
+                        @forelse ($events as $label => $pratiharis)
+                            <div class="mb-3">
+                                <h6 class="fw-bold">{{ $label }}</h6>
+                                <div class="d-flex gap-3 flex-wrap">
+                                    @foreach ($pratiharis as $user)
+                                        <div class="d-flex flex-column align-items-center p-3"
+                                            style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                            <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                class="rounded-circle mb-2"
+                                                style="width: 60px; height: 60px; object-fit: cover;">
+                                            <div class="fw-semibold">{{ $user->first_name ?? 'User' }}</div>
+                                            <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-muted">No seba assigned for today.</p>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -296,8 +231,7 @@
 
                     <div class="card-body p-0 overflow-auto" style="flex: 1 1 auto;">
                         @foreach ($totalActiveUsers->take(5) as $user)
-                            <div
-                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
@@ -912,26 +846,12 @@
         });
     </script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateEl = document.getElementById('today-date');
-            const timeEl = document.getElementById('current-time');
-
-            const now = new Date();
-
-            const options = {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric'
-            };
-            dateEl.textContent = now.toLocaleDateString('en-US', options);
-
-            function updateTime() {
-                const current = new Date();
-                timeEl.textContent = current.toLocaleTimeString();
-            }
-
-            updateTime();
-            setInterval(updateTime, 1000);
-        });
+        setInterval(() => {
+            document.getElementById("current-time").textContent =
+                new Date().toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+        }, 1000);
     </script>
 @endsection
