@@ -128,7 +128,7 @@
                                     @foreach ($pratiharis as $user)
                                         <div class="d-flex flex-column align-items-center p-3"
                                             style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                            <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                            <img src="{{ optional($user)->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                                 class="rounded-circle mb-2"
                                                 style="width: 60px; height: 60px; object-fit: cover;">
                                             <div class="fw-semibold">{{ $user->first_name ?? 'User' }}</div>
