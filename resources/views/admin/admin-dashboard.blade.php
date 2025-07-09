@@ -108,17 +108,27 @@
 
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
-                    <div class="card-header d-flex justify-content-between align-items-center text-white"
-                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
+                    <div class="card-header d-flex justify-content-between align-items-center text-white position-relative"
+                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px;">
+
+                        <!-- Left Section -->
                         <div class="d-flex align-items-center">
                             <i class="bi bi-people-fill me-2"></i>
                             <span class="fw-bold fs-5">Today Pratihari Seba</span>
                         </div>
+
+                        <!-- Center Section (Beddha ID) -->
+                        <div class="position-absolute start-50 translate-middle-x">
+                            <span class="fw-bold fs-4 text-white">Beddha ID: {{ $currentBeddhaId ?? 'N/A' }}</span>
+                        </div>
+
+                        <!-- Right Section -->
                         <div class="d-flex gap-2">
                             <span class="badge bg-light text-dark">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
                             <span class="badge bg-light text-dark" id="current-time"></span>
                         </div>
                     </div>
+
 
                     <div class="card-body p-3">
                         @forelse ($events as $label => $pratiharis)
