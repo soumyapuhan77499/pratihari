@@ -390,7 +390,6 @@ public function getApplication()
 public function getPofileDataByPratihariId($pratihari_id)
 {
 
-    dd($pratihari_id);
     try {
         
         if (!$pratihari_id) {
