@@ -103,7 +103,13 @@
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
                     <div class="card-header text-white" style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
-                        <i class="bi bi-people-fill me-2"></i> Static User Card View
+                        <i class="bi bi-people-fill me-2"></i>
+                        <span class="fw-bold">Today Pratihari Seba</span>
+                        <span class="ms-3">
+                            <span id="today-date" class="badge bg-light text-dark"></span>
+                            <span id="current-time" class="badge bg-light text-dark"></span>
+                        </span>
+                       
                     </div>
                     <div class="card-body p-3" style="display: flex; gap: 1rem; overflow-x: auto;">
                         <!-- Example static user cards -->
@@ -827,4 +833,16 @@
             calendar.render();
         });
     </script>
+     <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                function updateDateTime() {
+                                    const now = new Date();
+                                    const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+                                    document.getElementById('today-date').textContent = now.toLocaleDateString(undefined, dateOptions);
+                                    document.getElementById('current-time').textContent = now.toLocaleTimeString();
+                                }
+                                updateDateTime();
+                                setInterval(updateDateTime, 1000);
+                            });
+                        </script>
 @endsection
