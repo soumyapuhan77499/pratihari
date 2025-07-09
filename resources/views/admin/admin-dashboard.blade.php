@@ -102,6 +102,7 @@
 
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
+
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #17c3ce;">
                         <div class="d-flex align-items-center">
@@ -133,6 +134,7 @@
                             View More &rarr;
                         </a>
                     </div>
+
                 </div>
             </div>
 
@@ -169,6 +171,7 @@
                             View More &rarr;
                         </a>
                     </div>
+
                 </div>
             </div>
 
@@ -211,6 +214,7 @@
 
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
+
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #efb86a;">
                         <div class="d-flex align-items-center">
@@ -218,7 +222,7 @@
                         </div>
                         <span class="badge bg-light text-dark">{{ count($incompleteProfiles) }}</span>
                     </div>
-
+                    
                     <div class="card-body p-0">
                         @foreach ($incompleteProfiles->take(5) as $user)
                             <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
@@ -242,10 +246,10 @@
                             View More &rarr;
                         </a>
                     </div>
+
                 </div>
             </div>
 
-           
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
@@ -356,7 +360,6 @@
                 </div>
             </div>
 
-
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
@@ -393,7 +396,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
@@ -550,8 +552,8 @@
                     </div>
                 </div>
             </div>
-
         </div>
+
         <!-- Modal -->
         <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -580,9 +582,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
-        <div class="col-lg-12">
+        {{-- <div class="col-lg-12">
             <div class="card custom-card overflow-hidden">
                 <div class="card-body">
                     <div class="table-responsive export-table">
@@ -671,7 +673,6 @@
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 
     <script>
         $(document).ready(function() {

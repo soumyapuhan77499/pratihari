@@ -154,6 +154,7 @@ public function getHomePage()
         ], 500);
     }
 }
+
 public function getAllData(Request $request)
 {
     try {
@@ -214,8 +215,8 @@ public function getAllData(Request $request)
 
         // Append full URLs to profile photos
         if ($profile) {
-            $profile->profile_photo_url = !empty($profile->profile_photo) ? $photoBaseUrl . '/' . ltrim($profile->profile_photo, '/') : null;
-            $profile->health_card_photo_url = !empty($profile->health_card_photo) ? $photoBaseUrl . '/' . ltrim($profile->health_card_photo, '/') : null;
+            $profile->profile_photo = !empty($profile->profile_photo) ? $photoBaseUrl . '/' . ltrim($profile->profile_photo, '/') : null;
+            $profile->healthcard_photo = !empty($profile->healthcard_photo) ? $photoBaseUrl . '/' . ltrim($profile->healthcard_photo, '/') : null;
         }
 
         return response()->json([
