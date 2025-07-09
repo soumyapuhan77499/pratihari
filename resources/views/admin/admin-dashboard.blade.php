@@ -120,7 +120,7 @@
                         </div>
                     </div>
 
-                    <div class="card-body p-3">
+                    <div class="card-body p-3" style="display: flex; gap: 1rem; overflow-x: auto;">
                         @forelse ($events as $label => $pratiharis)
                             <div class="mb-3">
                                 <h6 class="fw-bold">{{ $label }}</h6>
@@ -128,7 +128,7 @@
                                     @foreach ($pratiharis as $user)
                                         @if ($user)
                                             <div class="d-flex flex-column align-items-center p-3"
-                                                style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
                                                 <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                                     class="rounded-circle mb-2"
                                                     style="width: 60px; height: 60px; object-fit: cover;">
@@ -183,6 +183,48 @@
                             <div class="fw-semibold">User Name 3</div>
                             <div class="text-muted small">+91 77777 33333</div>
                         </div>
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
+                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="fw-semibold">User Name 1</div>
+                            <div class="text-muted small">+91 99999 11111</div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
+                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="fw-semibold">User Name 2</div>
+                            <div class="text-muted small">+91 88888 22222</div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="fw-semibold">User Name 3</div>
+                            <div class="text-muted small">+91 77777 33333</div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="fw-semibold">User Name 1</div>
+                            <div class="text-muted small">+91 99999 11111</div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="fw-semibold">User Name 2</div>
+                            <div class="text-muted small">+91 88888 22222</div>
+                        </div>
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                            <div class="fw-semibold">User Name 3</div>
+                            <div class="text-muted small">+91 77777 33333</div>
+                        </div>
 
                         <!-- Add more static user cards as needed -->
                     </div>
@@ -202,7 +244,8 @@
 
                     <div class="card-body p-0">
                         @foreach ($todayProfiles->take(5) as $user)
-                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
