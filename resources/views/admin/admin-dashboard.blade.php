@@ -124,14 +124,12 @@
                             </span>
                         </div>
 
-
                         <!-- Right Section -->
                         <div class="d-flex gap-2">
                             <span class="badge bg-light text-dark">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
                             <span class="badge bg-light text-dark" id="current-time"></span>
                         </div>
                     </div>
-
 
                     <div class="card-body p-3">
                         @forelse ($events as $label => $pratiharis)
@@ -145,7 +143,10 @@
                                                 <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                                     class="rounded-circle mb-2"
                                                     style="width: 60px; height: 60px; object-fit: cover;">
-                                                <div class="fw-semibold">{{ $user->first_name ?? 'User' }}</div>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                                    <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}
+                                                    </div>
+                                                </a>
                                                 <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
                                             </div>
                                         @endif
@@ -158,7 +159,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">

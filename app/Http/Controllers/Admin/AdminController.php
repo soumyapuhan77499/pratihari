@@ -152,8 +152,6 @@ foreach ($events as $label => $users) {
 $todayBeddhaIds = array_unique($todayBeddhaIds);
 $currentBeddhaDisplay = implode(', ', $todayBeddhaIds);
 
-
-
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
             'incompleteProfiles',
