@@ -76,6 +76,12 @@
             object-fit: cover;
             border: 2px solid #ccc;
         }
+
+        .card-header .badge {
+            font-size: 0.85rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
     </style>
 @endsection
 
@@ -102,29 +108,36 @@
 
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
-                    <div class="card-header text-white" style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
+                    <div class="card-header text-white"
+                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
                         <i class="bi bi-people-fill me-2"></i>
                         <span class="fw-bold">Today Pratihari Seba</span>
                         <span class="ms-3">
                             <span id="today-date" class="badge bg-light text-dark"></span>
                             <span id="current-time" class="badge bg-light text-dark"></span>
                         </span>
-                       
+
                     </div>
                     <div class="card-body p-3" style="display: flex; gap: 1rem; overflow-x: auto;">
                         <!-- Example static user cards -->
-                        <div class="d-flex flex-column align-items-center p-3" style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
+                                style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 1</div>
                             <div class="text-muted small">+91 99999 11111</div>
                         </div>
-                        <div class="d-flex flex-column align-items-center p-3" style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
+                                style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 2</div>
                             <div class="text-muted small">+91 88888 22222</div>
                         </div>
-                        <div class="d-flex flex-column align-items-center p-3" style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                        <div class="d-flex flex-column align-items-center p-3"
+                            style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
+                                style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 3</div>
                             <div class="text-muted small">+91 77777 33333</div>
                         </div>
@@ -208,7 +221,7 @@
                 </div>
             </div>
 
-             <div class="col-md-3">
+            <div class="col-md-3">
                 <div class="card user-list-card shadow-sm" style="height: 400px; display: flex; flex-direction: column;">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #24960b;">
@@ -255,10 +268,11 @@
                         </div>
                         <span class="badge bg-light text-dark">{{ count($incompleteProfiles) }}</span>
                     </div>
-                    
+
                     <div class="card-body p-0">
                         @foreach ($incompleteProfiles->take(5) as $user)
-                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
@@ -357,7 +371,7 @@
                 </div>
             </div>
 
-             <div class="col-md-3">
+            <div class="col-md-3">
                 <div class="card user-list-card shadow-sm">
                     <div class="card-header d-flex justify-content-between align-items-center text-white"
                         style="background-color: #ffc107;">
@@ -369,7 +383,8 @@
 
                     <div class="card-body p-0">
                         @foreach ($updatedProfiles->take(5) as $user)
-                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
@@ -833,16 +848,27 @@
             calendar.render();
         });
     </script>
-     <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                function updateDateTime() {
-                                    const now = new Date();
-                                    const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-                                    document.getElementById('today-date').textContent = now.toLocaleDateString(undefined, dateOptions);
-                                    document.getElementById('current-time').textContent = now.toLocaleTimeString();
-                                }
-                                updateDateTime();
-                                setInterval(updateDateTime, 1000);
-                            });
-                        </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateEl = document.getElementById('today-date');
+            const timeEl = document.getElementById('current-time');
+
+            const now = new Date();
+
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            };
+            dateEl.textContent = now.toLocaleDateString('en-US', options);
+
+            function updateTime() {
+                const current = new Date();
+                timeEl.textContent = current.toLocaleTimeString();
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
+    </script>
 @endsection
