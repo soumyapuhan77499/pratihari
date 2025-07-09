@@ -138,6 +138,11 @@
                             <small>Welcome to the admin dashboard. Manage users, view statistics, and monitor activities
                                 here.</small>
                         </div>
+
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-light text-dark">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                            <span class="badge bg-light text-dark" id="current-time"></span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -163,12 +168,7 @@
                                 Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
                             </span>
                         </div>
-
-                        <!-- Right Section -->
-                        <div class="d-flex gap-2">
-                            <span class="badge bg-light text-dark">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
-                            <span class="badge bg-light text-dark" id="current-time"></span>
-                        </div>
+                        
                     </div>
 
                     <div class="card-body p-3">
