@@ -113,7 +113,7 @@ class AdminController extends Controller
         }
 
          $today = Carbon::today();
-    $baseDate = Carbon::create(2025, 6, 1);
+    $baseDate = Carbon::create(2025, 5, 22);
     $endDate = Carbon::create(2050, 12, 31);
     $events = [];
 
