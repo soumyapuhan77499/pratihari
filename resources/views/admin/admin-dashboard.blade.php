@@ -120,15 +120,15 @@
                         </div>
                     </div>
 
-                    <div class="card-body p-3" style="display: flex; gap: 1rem; overflow-x: auto;">
+                    <div class="card-body p-3">
                         @forelse ($events as $label => $pratiharis)
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <h6 class="fw-bold">{{ $label }}</h6>
-                                <div class="d-flex gap-3 flex-wrap">
+                                <div class="d-flex overflow-auto" style="gap: 1rem; scroll-snap-type: x mandatory;">
                                     @foreach ($pratiharis as $user)
                                         @if ($user)
                                             <div class="d-flex flex-column align-items-center p-3"
-                                                style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); scroll-snap-align: start;">
                                                 <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                                     class="rounded-circle mb-2"
                                                     style="width: 60px; height: 60px; object-fit: cover;">
@@ -137,7 +137,6 @@
                                             </div>
                                         @endif
                                     @endforeach
-
                                 </div>
                             </div>
                         @empty
