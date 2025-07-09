@@ -180,8 +180,10 @@
                                         @if ($user)
                                             <div class="seba-user-card position-relative text-center">
                                                 <span class="online-indicator" title="Active"></span>
-                                                <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
-                                                    class="user-avatar">
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="text-decoration-none text-dark"><img
+                                                        src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                        class="user-avatar"></a>
                                                 <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
                                                     class="text-decoration-none text-dark">
                                                     <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}
@@ -245,8 +247,8 @@
                         </div>
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 2</div>
                             <div class="text-muted small">+91 88888 22222</div>
                         </div>
