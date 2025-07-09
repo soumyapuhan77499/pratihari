@@ -137,7 +137,7 @@
         }
 
         .banner-text small {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             font-style: italic;
             color: #4a4949;
         }
@@ -150,7 +150,7 @@
             border-radius: 6px;
             font-weight: 600;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9rem;
+            font-size: 25px;
         }
     </style>
 @endsection
