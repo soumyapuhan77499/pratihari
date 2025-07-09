@@ -126,7 +126,7 @@
         /* Dashboard Banner Card */
         .dashboard-banner {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
-            color: #ffffff;
+            color: #181717;
             border-radius: 10px;
         }
 
@@ -139,7 +139,7 @@
         .banner-text small {
             font-size: 0.9rem;
             font-style: italic;
-            color: #e4e4e4;
+            color: #4a4949;
         }
 
         /* Date & Time badge styling */
