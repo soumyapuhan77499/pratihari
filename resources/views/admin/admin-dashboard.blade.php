@@ -82,6 +82,46 @@
             border-radius: 0.5rem;
             font-weight: 500;
         }
+
+        .seba-user-list {
+            gap: 1rem;
+            scroll-snap-type: x mandatory;
+            padding-bottom: 1rem;
+        }
+
+        .seba-user-card {
+            min-width: 160px;
+            border-radius: 12px;
+            background: #e9f7ef;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1rem;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #28a745;
+            margin-bottom: 0.5rem;
+        }
+
+        .online-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 12px;
+            height: 12px;
+            background-color: #28a745;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        }
     </style>
 @endsection
 
@@ -135,15 +175,15 @@
                         @forelse ($events as $label => $pratiharis)
                             <div class="mb-4">
                                 <h6 class="fw-bold">{{ $label }}</h6>
-                                <div class="d-flex overflow-auto" style="gap: 1rem; scroll-snap-type: x mandatory;">
+                                <div class="d-flex overflow-auto seba-user-list">
                                     @foreach ($pratiharis as $user)
                                         @if ($user)
-                                            <div class="d-flex flex-column align-items-center p-3"
-                                                style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06); scroll-snap-align: start;">
+                                            <div class="seba-user-card position-relative text-center">
+                                                <span class="online-indicator" title="Active"></span>
                                                 <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
-                                                    class="rounded-circle mb-2"
-                                                    style="width: 60px; height: 60px; object-fit: cover;">
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}">
+                                                    class="user-avatar">
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="text-decoration-none text-dark">
                                                     <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}
                                                     </div>
                                                 </a>
@@ -152,6 +192,7 @@
                                         @endif
                                     @endforeach
                                 </div>
+
                             </div>
                         @empty
                             <p class="text-muted">No seba assigned for today.</p>
