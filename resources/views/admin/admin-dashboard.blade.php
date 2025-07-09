@@ -8,6 +8,7 @@
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         #custom-calendar {
@@ -77,10 +78,16 @@
             border: 2px solid #ccc;
         }
 
-        .card-header .badge {
+
+        .date-time-badge {
+            background-color: #ffffff;
+            color: #333333;
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
             font-size: 0.85rem;
-            border-radius: 0.5rem;
             font-weight: 500;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
         }
     </style>
 @endsection
@@ -108,16 +115,21 @@
 
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
-                    <div class="card-header text-white"
-                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
-                        <i class="bi bi-people-fill me-2"></i>
-                        <span class="fw-bold">Today Pratihari Seba</span>
-                        <span class="ms-3">
-                            <span id="today-date" class="badge bg-light text-dark"></span>
-                            <span id="current-time" class="badge bg-light text-dark"></span>
-                        </span>
+                    <div class="card-header text-white d-flex justify-content-between align-items-center flex-wrap"
+                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); padding: 1rem 1.25rem;">
 
+                        <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
+                            <i class="bi bi-people-fill fs-4"></i>
+                            <span class="fw-bold fs-5" style="font-family: 'Poppins', sans-serif;">Today Pratihari
+                                Seba</span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-center gap-3">
+                            <span id="today-date" class="date-time-badge">--</span>
+                            <span id="current-time" class="date-time-badge">--</span>
+                        </div>
                     </div>
+
                     <div class="card-body p-3" style="display: flex; gap: 1rem; overflow-x: auto;">
                         <!-- Example static user cards -->
                         <div class="d-flex flex-column align-items-center p-3"
