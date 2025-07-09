@@ -119,8 +119,11 @@
 
                         <!-- Center Section (Beddha ID) -->
                         <div class="position-absolute start-50 translate-middle-x">
-                            <span class="fw-bold fs-4 text-white">Beddha ID: {{ $currentBeddhaId ?? 'N/A' }}</span>
+                            <span class="fw-bold fs-4 text-white">
+                                Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
+                            </span>
                         </div>
+
 
                         <!-- Right Section -->
                         <div class="d-flex gap-2">

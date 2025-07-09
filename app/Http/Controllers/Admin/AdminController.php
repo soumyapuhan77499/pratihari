@@ -116,9 +116,15 @@ class AdminController extends Controller
 $today = Carbon::today();
 $baseDate = Carbon::create(2025, 5, 22);
 $endDate = Carbon::create(2050, 12, 31);
+$todayBeddhaIds = []; // collect beddha_ids used today
+
 $events = [];
 
 foreach ($sebas as $seba) {
+    $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+    $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+
+  foreach ($sebas as $seba) {
     $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
     $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
@@ -129,9 +135,9 @@ foreach ($sebas as $seba) {
             $start = $baseDate->copy()->addDays($beddhaId - 1);
             while ($start->lte($endDate)) {
                 if ($start->equalTo($today)) {
-                    // Only add if related pratihari exists
                     if ($seba->pratihari) {
                         $events["$sebaName | Beddha $beddhaId"][] = $seba->pratihari;
+                        $todayBeddhaIds[] = $beddhaId; // 👈 collect for display
                     }
                     break;
                 }
@@ -139,6 +145,13 @@ foreach ($sebas as $seba) {
             }
         }
     }
+}
+
+// Remove duplicates (optional)
+$todayBeddhaIds = array_unique($todayBeddhaIds);
+
+// You can format them as a string for the view
+$currentBeddhaDisplay = implode(', ', $todayBeddhaIds);
 }
 
         return view('admin.admin-dashboard', compact(
@@ -156,7 +169,8 @@ foreach ($sebas as $seba) {
             'approvedApplication',
             'rejectedApplication',
             'events',
-            'today'
+            'today',
+            'currentBeddhaDisplay'
         ));
     }
 
