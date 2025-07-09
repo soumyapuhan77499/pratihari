@@ -122,6 +122,36 @@
             border: 2px solid #fff;
             box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
         }
+
+        /* Dashboard Banner Card */
+        .dashboard-banner {
+            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
+            color: #ffffff;
+            border-radius: 10px;
+        }
+
+        /* Text block */
+        .banner-text h2 {
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .banner-text small {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #e4e4e4;
+        }
+
+        /* Date & Time badge styling */
+        .datetime-box .date-time-badge {
+            background-color: #ffffff;
+            color: #2c3e50;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+        }
     </style>
 @endsection
 
@@ -130,23 +160,26 @@
 
         <div class="row mb-4 mt-4">
             <div class="col-lg-12">
-                <div class="card custom-card"
-                    style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); color: #100f0f;">
-                    <div class="card-body d-flex align-items-center">
-                        <div>
-                            <h2 class="mb-0" style="font-weight: bold;">Pratihari Admin Dashboard</h2>
-                            <small>Welcome to the admin dashboard. Manage users, view statistics, and monitor activities
-                                here.</small>
+                <div class="card custom-card dashboard-banner">
+                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
+                        <!-- Left: Title -->
+                        <div class="banner-text">
+                            <h2 class="mb-0">Pratihari Admin Dashboard</h2>
+                            <small>
+                                Welcome to the admin dashboard. Manage users, view statistics, and monitor activities here.
+                            </small>
                         </div>
 
-                        <div class="d-flex gap-2">
-                            <span class="badge bg-light text-dark">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
-                            <span class="badge bg-light text-dark" id="current-time"></span>
+                        <!-- Right: Date & Time -->
+                        <div class="datetime-box d-flex gap-2 align-items-center">
+                            <span class="date-time-badge">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                            <span class="date-time-badge" id="current-time"></span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <div class="row">
             <!-- Active Users -->
