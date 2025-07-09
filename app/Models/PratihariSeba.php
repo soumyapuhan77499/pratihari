@@ -61,9 +61,9 @@ class PratihariSeba extends Model
     {
         $this->attributes['beddha_id'] = is_array($value) ? implode(',', $value) : $value;
     }
-
-public function pratihari() {
-    return $this->belongsTo(PratihariProfile::class, 'pratihari_id');
+public function pratihari()
+{
+    return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
 }
 
 }

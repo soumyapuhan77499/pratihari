@@ -112,12 +112,11 @@ class AdminController extends Controller
             ];
         }
 
-    $today = Carbon::today();
+   $sebas = PratihariSeba::with(['sebaMaster', 'pratihari'])->get();
+$today = Carbon::today();
 $baseDate = Carbon::create(2025, 5, 22);
 $endDate = Carbon::create(2050, 12, 31);
 $events = [];
-
-$sebas = PratihariSeba::with(['sebaMaster', 'pratihari'])->get();
 
 foreach ($sebas as $seba) {
     $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
@@ -130,7 +129,7 @@ foreach ($sebas as $seba) {
             $start = $baseDate->copy()->addDays($beddhaId - 1);
             while ($start->lte($endDate)) {
                 if ($start->equalTo($today)) {
-                    // Only add if pratihari is not null
+                    // Only add if related pratihari exists
                     if ($seba->pratihari) {
                         $events["$sebaName | Beddha $beddhaId"][] = $seba->pratihari;
                     }
@@ -141,7 +140,6 @@ foreach ($sebas as $seba) {
         }
     }
 }
-
 
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
