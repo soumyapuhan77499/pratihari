@@ -887,12 +887,26 @@
         });
     </script>
     <script>
-        setInterval(() => {
-            document.getElementById("current-time").textContent =
-                new Date().toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-        }, 1000);
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateEl = document.getElementById('today-date');
+            const timeEl = document.getElementById('current-time');
+
+            const now = new Date();
+
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            };
+            dateEl.textContent = now.toLocaleDateString('en-US', options);
+
+            function updateTime() {
+                const current = new Date();
+                timeEl.textContent = current.toLocaleTimeString();
+            }
+
+            updateTime();
+            setInterval(updateTime, 1000);
+        });
     </script>
 @endsection
