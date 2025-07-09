@@ -126,14 +126,16 @@
                                 <h6 class="fw-bold">{{ $label }}</h6>
                                 <div class="d-flex gap-3 flex-wrap">
                                     @foreach ($pratiharis as $user)
-                                        <div class="d-flex flex-column align-items-center p-3"
-                                            style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                                            <img src="{{ optional($user)->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
-                                                class="rounded-circle mb-2"
-                                                style="width: 60px; height: 60px; object-fit: cover;">
-                                            <div class="fw-semibold">{{ $user->first_name ?? 'User' }}</div>
-                                            <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
-                                        </div>
+                                        @if ($user)
+                                            <div class="d-flex flex-column align-items-center p-3"
+                                                style="min-width: 160px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                                                <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                    class="rounded-circle mb-2"
+                                                    style="width: 60px; height: 60px; object-fit: cover;">
+                                                <div class="fw-semibold">{{ $user->first_name ?? 'User' }}</div>
+                                                <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
+                                            </div>
+                                        @endif
                                     @endforeach
                                 </div>
                             </div>
@@ -144,7 +146,8 @@
                 </div>
             </div>
 
-              <div class="col-12 mb-4">
+
+            <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
                     <div class="card-header text-white"
                         style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);">
@@ -179,7 +182,7 @@
                             <div class="fw-semibold">User Name 3</div>
                             <div class="text-muted small">+91 77777 33333</div>
                         </div>
-                        
+
                         <!-- Add more static user cards as needed -->
                     </div>
                 </div>
@@ -235,7 +238,8 @@
 
                     <div class="card-body p-0">
                         @foreach ($pendingProfile->take(5) as $user)
-                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
@@ -272,7 +276,8 @@
 
                     <div class="card-body p-0 overflow-auto" style="flex: 1 1 auto;">
                         @foreach ($totalActiveUsers->take(5) as $user)
-                            <div class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <div
+                                class="user-list-item d-flex align-items-center justify-content-between p-3 border-bottom">
                                 <div class="d-flex align-items-center">
                                     <img src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
                                         alt="Profile Photo" class="user-img rounded-circle me-3">
