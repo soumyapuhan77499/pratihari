@@ -199,7 +199,7 @@
                                 <!-- Right (Optional, if needed) -->
                                 <div class="col-6 text-end">
                                     <span class="fw-bold fs-5 text-white">
-                                        Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                       Today Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
                                     </span>
                                 </div>
                             </div>
