@@ -150,26 +150,29 @@
 
         <div class="row">
             <!-- Active Users -->
-
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
-                    <div class="card-header d-flex justify-content-between align-items-center text-white position-relative"
-                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px;">
+                    <div class="card-header text-white"
+                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px; position: relative;">
 
-                        <!-- Left Section -->
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-people-fill me-2"></i>
-                            <span class="fw-bold fs-5">Today Pratihari Seba</span>
-                        </div>
+                        <div class="container-fluid">
+                            <div class="row align-items-center text-center">
+                                <!-- Left -->
+                                <div class="col-6 text-start d-flex align-items-center">
+                                    <i class="bi bi-people-fill me-2"></i>
+                                    <span class="fw-bold fs-5">Today Pratihari Seba</span>
+                                </div>
 
-                        <!-- Center Section (Beddha ID) -->
-                        <div class="position-absolute start-50 translate-middle-x">
-                            <span class="fw-bold fs-4 text-white">
-                                Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
-                            </span>
+                                <!-- Right (Optional, if needed) -->
+                                <div class="col-6 text-end">
+                                    <span class="fw-bold fs-5 text-white">
+                                        Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        
                     </div>
+
 
                     <div class="card-body p-3">
                         @forelse ($events as $label => $pratiharis)
