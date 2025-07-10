@@ -4,7 +4,7 @@
        
         <!-- Centered Heading -->
         <div class="flex-grow-1 d-flex justify-content-center align-items-center">
-            <h2 class="mb-0 text-center fw-bold" style="color: #fab876;">Pratihari Admin Dashboard</h2>
+            <h2 class="mb-0 text-center fw-bold" style="color: #100901;">Pratihari Admin Dashboard</h2>
         </div>
 
         <div class="main-header-right">

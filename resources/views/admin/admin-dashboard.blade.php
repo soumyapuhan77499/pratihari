@@ -157,29 +157,6 @@
 
 @section('content')
     <div class="container">
-
-        <div class="row mb-4 mt-4">
-            <div class="col-lg-12">
-                <div class="card custom-card dashboard-banner">
-                    <div class="card-body d-flex justify-content-between align-items-center flex-wrap">
-                        <!-- Left: Title -->
-                        <div class="banner-text">
-                            <h2 class="mb-0">Pratihari Admin Dashboard</h2>
-                            <small>
-                                Welcome to the admin dashboard. Manage users, view statistics, and monitor activities here.
-                            </small>
-                        </div>
-
-                        <!-- Right: Date & Time -->
-                        <div class="datetime-box d-flex gap-2 align-items-center">
-                            <span class="date-time-badge">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
-                            <span class="date-time-badge" id="current-time"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row">
             <!-- Active Users -->
             <div class="col-12 mb-4">
@@ -191,15 +168,14 @@
                             <div class="row align-items-center text-center">
                                 <!-- Left -->
                                 <div class="col-6 text-start d-flex align-items-center">
-                                    <i class="bi bi-people-fill me-2"></i>
-                                    <span class="fw-bold fs-5">Today Pratihari Seba</span>
+                                    <span class="fw-bold fs-5 text-white">
+                                        Today Beddha: {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                    </span>
                                 </div>
 
-                                <!-- Right (Optional, if needed) -->
-                                <div class="col-6 text-end">
-                                    <span class="fw-bold fs-5 text-white">
-                                        Today Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
-                                    </span>
+                                <div class="col-6 datetime-box d-flex gap-2 align-items-center">
+                                    <span class="date-time-badge">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                                    <span class="date-time-badge" id="current-time"></span>
                                 </div>
                             </div>
                         </div>
@@ -282,8 +258,8 @@
                         </div>
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
-                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
+                                style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 2</div>
                             <div class="text-muted small">+91 88888 22222</div>
                         </div>
