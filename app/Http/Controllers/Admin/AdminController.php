@@ -329,47 +329,55 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-    public function sebaDate(Request $request)
-    {
-        $pratihariId = $request->input('pratihari_id');
-        $events = [];
+   public function sebaDate(Request $request)
+{
+    $pratihariId = $request->input('pratihari_id');
+    $events = [];
 
-        if ($pratihariId) {
-            $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
+    if ($pratihariId) {
+        $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
 
-            foreach ($sebas as $seba) {
-                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                $beddhaIds = $seba->beddha_id;
+        foreach ($sebas as $seba) {
+            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
-                foreach ($beddhaIds as $beddhaId) {
-                    $beddhaId = (int) trim($beddhaId);
+            foreach ($beddhaIds as $beddhaId) {
+                $beddhaId = (int) trim($beddhaId);
 
-                    if ($beddhaId >= 1 && $beddhaId <= 47) {
-                        $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2050, 12, 31);
-                        $nextDate = $startDate->copy();
+                if ($beddhaId >= 1 && $beddhaId <= 47) {
+                    $baseDate = Carbon::create(2025, 5, 22);
+                    $endDate = Carbon::create(2050, 12, 31);
 
-                        while ($nextDate->lte($endDate)) {
-                            $events[] = [
-                                'title' => "$sebaName - $beddhaId",
-                                'start' => $nextDate->toDateString(),
-                                'extendedProps' => [
-                                    'sebaName' => $sebaName,
-                                    'beddhaId' => $beddhaId
-                                ]
-                            ];
-                            $nextDate->addDays(47);
-                        }
+                    // ✅ Special case for seba_id 9 (regardless of beddha_id)
+                    if ($seba->seba_id == 9) {
+                        $startDate = $baseDate->copy()->addDays(16);
+                    } else {
+                        $startDate = $baseDate->copy()->addDays($beddhaId - 1);
+                    }
+
+                    $nextDate = $startDate->copy();
+
+                    while ($nextDate->lte($endDate)) {
+                        $events[] = [
+                            'title' => "$sebaName - $beddhaId",
+                            'start' => $nextDate->toDateString(),
+                            'extendedProps' => [
+                                'sebaName' => $sebaName,
+                                'beddhaId' => $beddhaId
+                            ]
+                        ];
+                        $nextDate->addDays(47);
                     }
                 }
             }
         }
-
-        return response()->json($events);
     }
 
+    return response()->json($events);
+}
 
-  public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
+
+    public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
     {
         $phone = $request->input('phone');
         $phoneNumber = '+91' . $phone;
