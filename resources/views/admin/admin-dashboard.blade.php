@@ -213,7 +213,7 @@
                         </div>
                     </div>
 
-                    <div class="container-fluid px-0">
+                    <div class="container-fluid px-0 mt-2">
                         <ul class="nav nav-tabs custom-tabs justify-content-center mb-4" id="profileTabs" role="tablist">
                             <li class="nav-item px-2" role="presentation">
                                 <button class="nav-link active" id="pratihari-tab" data-bs-toggle="tab"
