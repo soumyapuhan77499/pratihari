@@ -20,9 +20,7 @@
 							</div>
 						</div>
 						<div class="main-header-right">
-							<button class="navbar-toggler navresponsive-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
-								<span class="navbar-toggler-icon fe fe-more-vertical "></span>
-							</button>
+						
 							<div class="mb-0 navbar navbar-expand-lg navbar-nav-right responsive-navbar navbar-dark p-0">
 								<div class="collapse navbar-collapse" id="navbarSupportedContent-4">
 									<ul class="nav nav-item header-icons navbar-nav-right ms-auto">
