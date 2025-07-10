@@ -157,46 +157,33 @@
             border-bottom: none;
         }
 
+        .custom-tabs .nav-item {
+            margin: 0 1rem;
+        }
+
         .custom-tabs .nav-link {
             font-weight: 600;
-            color: #6a11cb;
-            background: transparent;
+            color: #444;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
             font-size: 1.1rem;
-            padding: 0.75rem 2rem;
-            margin: 0 0.5rem;
-            border: 2px solid transparent;
+            padding: 0.7rem 2rem;
             border-radius: 10px;
             transition: all 0.3s ease-in-out;
-            box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
         .custom-tabs .nav-link:hover {
+            background-color: #f0eae1;
             color: #e96a01;
-            background: #f8f9fa;
-            box-shadow: inset 0 -2px 0 #e96a01;
+            border-color: #f8c66d;
         }
 
         .custom-tabs .nav-link.active {
             color: #fff;
             background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%);
-            border-color: #e96a01;
-            border-bottom: none;
-            box-shadow: 0 3px 10px rgba(249, 198, 109, 0.3);
-            border-radius: 12px 12px 0 0;
-        }
-
-        .custom-tab-content {
-            min-height: 320px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-            border-radius: 0 0 12px 12px;
-            background-color: #fff;
-            padding: 1.5rem;
-        }
-
-        /* Optional: Avatar user card spacing */
-        .seba-user-list {
-            gap: 1.5rem;
-            padding: 0 0.5rem;
+            border: none;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
         }
     </style>
 @endsection
@@ -226,17 +213,16 @@
                         </div>
                     </div>
 
-                    <!-- Tabs for Pratihari and Gochhikar -->
                     <div class="container-fluid px-0">
-                        <ul class="nav nav-tabs custom-tabs justify-content-center mb-3" id="profileTabs" role="tablist">
-                            <li class="nav-item me-2" role="presentation">
+                        <ul class="nav nav-tabs custom-tabs justify-content-center mb-4" id="profileTabs" role="tablist">
+                            <li class="nav-item px-2" role="presentation">
                                 <button class="nav-link active" id="pratihari-tab" data-bs-toggle="tab"
                                     data-bs-target="#pratihari" type="button" role="tab" aria-controls="pratihari"
                                     aria-selected="true">
                                     <i class="bi bi-person-badge me-1"></i> Pratihari
                                 </button>
                             </li>
-                            <li class="nav-item ms-2" role="presentation">
+                            <li class="nav-item px-2" role="presentation">
                                 <button class="nav-link" id="gochhikar-tab" data-bs-toggle="tab" data-bs-target="#gochhikar"
                                     type="button" role="tab" aria-controls="gochhikar" aria-selected="false">
                                     <i class="bi bi-person-lines-fill me-1"></i> Gochhikar
@@ -244,6 +230,7 @@
                             </li>
                         </ul>
                     </div>
+
 
 
                     <div class="card-body p-3">
