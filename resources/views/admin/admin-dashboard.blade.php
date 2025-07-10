@@ -241,34 +241,43 @@
 
 
                     <div class="card-body p-3">
-                        @forelse ($events as $label => $pratiharis)
-                            <div class="mb-4">
-                                <h6 class="fw-bold">{{ $label }}</h6>
-                                <div class="d-flex overflow-auto seba-user-list">
-                                    @foreach ($pratiharis as $user)
-                                        @if ($user)
-                                            <div class="seba-user-card position-relative text-center">
-                                                <span class="online-indicator" title="Active"></span>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
-                                                    class="text-decoration-none text-dark"><img
-                                                        src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
-                                                        class="user-avatar"></a>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
-                                                    class="text-decoration-none text-dark">
-                                                    <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}
-                                                    </div>
-                                                </a>
-                                                <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-
+                        <div class="tab-content mt-4" id="profileTabsContent">
+                            {{-- Pratihari Tab --}}
+                            <div class="tab-pane fade show active" id="pratihari" role="tabpanel"
+                                aria-labelledby="pratihari-tab">
+                                @forelse ($pratihariEvents as $label => $pratiharis)
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">{{ $label }}</h6>
+                                        <div class="d-flex overflow-auto seba-user-list">
+                                            @foreach ($pratiharis as $user)
+                                                @include('partials._user_card', ['user' => $user])
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-muted">No seba assigned for today.</p>
+                                @endforelse
                             </div>
-                        @empty
-                            <p class="text-muted">No seba assigned for today.</p>
-                        @endforelse
+
+                            {{-- Gochhikar Tab --}}
+                            <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
+                                @forelse ($gochhikarEvents as $label => $gochhikars)
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">{{ $label }}</h6>
+                                        <div class="d-flex overflow-auto seba-user-list">
+                                            @foreach ($gochhikars as $user)
+                                                @include('partials._user_card', ['user' => $user])
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-muted">No seba assigned for today.</p>
+                                @endforelse
+                            </div>
+                        </div>
                     </div>
+
+
                 </div>
             </div>
 

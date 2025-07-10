@@ -123,45 +123,51 @@ class AdminController extends Controller
             ];
         }
 
-        $sebas = PratihariSeba::with(['sebaMaster', 'pratihari'])->get();
-        $today = Carbon::today();
-        $baseDate = Carbon::create(2025, 5, 22);
-        $endDate = Carbon::create(2050, 12, 31);
-        $todayBeddhaIds = []; // collect beddha_ids used today
+      $sebas = PratihariSeba::with(['sebaMaster', 'pratihari'])->get();
+    $today = Carbon::today();
+    $baseDate = Carbon::create(2025, 5, 22);
+    $endDate = Carbon::create(2050, 12, 31);
+    $todayBeddhaIds = [];
 
-        $events = [];
-        foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+    $pratihariEvents = [];
+    $gochhikarEvents = [];
 
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId);
+    foreach ($sebas as $seba) {
+        $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+        $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
-                if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    $start = $baseDate->copy()->addDays($beddhaId - 1);
-                    while ($start->lte($endDate)) {
-                        if ($start->equalTo($today)) {
-                            if ($seba->pratihari) {
-                                $label = "$sebaName | Beddha $beddhaId";
-                                $events[$label][] = $seba->pratihari;
-                                $todayBeddhaIds[] = $beddhaId;
+        foreach ($beddhaIds as $beddhaId) {
+            $beddhaId = (int) trim($beddhaId);
+            if ($beddhaId >= 1 && $beddhaId <= 47) {
+                $start = $baseDate->copy()->addDays($beddhaId - 1);
+                while ($start->lte($endDate)) {
+                    if ($start->equalTo($today)) {
+                        if ($seba->pratihari) {
+                            $label = "$sebaName | Beddha $beddhaId";
+                            if ($seba->seba_id == 9) {
+                                $gochhikarEvents[$label][] = $seba->pratihari;
+                            } else {
+                                $pratihariEvents[$label][] = $seba->pratihari;
                             }
-                            break;
+                            $todayBeddhaIds[] = $beddhaId;
                         }
-                        $start->addDays(47);
+                        break;
                     }
+                    $start->addDays(47);
                 }
             }
         }
+    }
 
-        // ✅ Deduplicate users within each event group by pratihari_id
-        foreach ($events as $label => $users) {
-            $events[$label] = collect($users)->unique('pratihari_id')->values()->all();
-        }
+    // Remove duplicates
+    foreach ($pratihariEvents as $label => $users) {
+        $pratihariEvents[$label] = collect($users)->unique('pratihari_id')->values()->all();
+    }
+    foreach ($gochhikarEvents as $label => $users) {
+        $gochhikarEvents[$label] = collect($users)->unique('pratihari_id')->values()->all();
+    }
 
-        // Remove duplicate Beddha IDs
-        $todayBeddhaIds = array_unique($todayBeddhaIds);
-        $currentBeddhaDisplay = implode(', ', $todayBeddhaIds);
+    $currentBeddhaDisplay = implode(', ', array_unique($todayBeddhaIds));
 
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
@@ -180,7 +186,9 @@ class AdminController extends Controller
             'rejectedApplication',
             'events',
             'today',
-            'currentBeddhaDisplay'
+            'currentBeddhaDisplay',
+            'gochhikarEvents'
+
         ));
     }
 
