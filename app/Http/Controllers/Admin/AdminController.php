@@ -186,7 +186,8 @@ class AdminController extends Controller
             'rejectedApplication',
             'today',
             'currentBeddhaDisplay',
-            'gochhikarEvents'
+            'gochhikarEvents',
+            'pratihariEvents',
 
         ));
     }
