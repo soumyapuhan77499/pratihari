@@ -8,10 +8,7 @@
 									<span style="color: #fab876; font-size: 52px; font-weight: bold;"  class="mobile-logo dark-logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
 								</a>
 							</div>
-							<div class="app-sidebar__toggle" data-bs-toggle="sidebar">
-								<a class="open-toggle" href="javascript:void(0);"><i class="header-icon fe fe-align-left" ></i></a>
-								<a class="close-toggle" href="javascript:void(0);"><i class="header-icon fe fe-x"></i></a>
-							</div>
+						
 							<div class="logo-horizontal">
 								<a href="{{url('index')}}" class="header-logo">
 									<span style="color: #fab876; font-size: 52px; font-weight: bold;" class="mobile-logo logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
@@ -20,7 +17,9 @@
 							</div>
 						</div>
 						<div class="main-header-right">
-						
+							<button class="navbar-toggler navresponsive-toggler d-md-none ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="false" aria-label="Toggle navigation">
+								<span class="navbar-toggler-icon fe fe-more-vertical "></span>
+							</button>
 							<div class="mb-0 navbar navbar-expand-lg navbar-nav-right responsive-navbar navbar-dark p-0">
 								<div class="collapse navbar-collapse" id="navbarSupportedContent-4">
 									<ul class="nav nav-item header-icons navbar-nav-right ms-auto">
