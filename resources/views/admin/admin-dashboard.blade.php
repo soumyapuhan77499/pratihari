@@ -774,7 +774,7 @@
                     <div class="card-body">
                         <form method="GET" action="{{ url()->current() }}">
                             <div class="mb-3">
-                                <select class="form-select" name="gochhikar_id" onchange="this.form.submit()">
+                                <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
                                     <option value="">-- Select Gochhikar Name --</option>
                                     @foreach ($gochhikar_name as $gochhikar)
                                         <option value="{{ $gochhikar->pratihari_id }}"
