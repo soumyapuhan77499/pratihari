@@ -73,6 +73,7 @@ Route::controller(PratihariSebaApiController::class)->group(function () {
         Route::post('/save-seba', 'saveSeba');
         Route::post('/end-seba', 'endSeba');
         Route::post('/start-seba', 'startSeba');
+        Route::get('/pratihari-seba-dates',  'sebaDate');
     });
 
 });

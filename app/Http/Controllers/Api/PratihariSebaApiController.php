@@ -11,10 +11,9 @@ use App\Models\PratihariSebaManagement;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSebaMaster;
 use App\Models\PratihariBeddhaMaster;
-
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-use Illuminate\Support\Facades\Auth;
 
 class PratihariSebaApiController extends Controller
 {
@@ -247,61 +246,61 @@ class PratihariSebaApiController extends Controller
         ],200);
     }
 
-    public function sebaDate(Request $request)
-    {
-        try {
-            $pratihariId = $request->input('pratihari_id');
-            $events = [];
+    // public function sebaDate(Request $request)
+    // {
+    //     try {
+    //         $pratihariId = $request->input('pratihari_id');
+    //         $events = [];
 
-            if ($pratihariId) {
-                $sebas = PratihariSeba::with('sebaMaster')
-                    ->where('pratihari_id', $pratihariId)
-                    ->get();
+    //         if ($pratihariId) {
+    //             $sebas = PratihariSeba::with('sebaMaster')
+    //                 ->where('pratihari_id', $pratihariId)
+    //                 ->get();
 
-                foreach ($sebas as $seba) {
-                    $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                    $beddhaIds = $seba->beddha_id;
+    //             foreach ($sebas as $seba) {
+    //                 $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+    //                 $beddhaIds = $seba->beddha_id;
 
-                    foreach ($beddhaIds as $beddhaId) {
-                        $beddhaId = (int) trim($beddhaId);
+    //                 foreach ($beddhaIds as $beddhaId) {
+    //                     $beddhaId = (int) trim($beddhaId);
 
-                        if ($beddhaId >= 1 && $beddhaId <= 47) {
-                            $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
-                            $endDate = Carbon::create(2030, 12, 31);
-                            $nextDate = $startDate->copy();
+    //                     if ($beddhaId >= 1 && $beddhaId <= 47) {
+    //                         $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
+    //                         $endDate = Carbon::create(2030, 12, 31);
+    //                         $nextDate = $startDate->copy();
 
-                            while ($nextDate->lte($endDate)) {
-                                $events[] = [
-                                    'title' => "$sebaName - $beddhaId",
-                                    'start' => $nextDate->toDateString(),
-                                    'extendedProps' => [
-                                        'sebaName' => $sebaName,
-                                        'beddhaId' => $beddhaId
-                                    ]
-                                ];
-                                $nextDate->addDays(47);
-                            }
-                        }
-                    }
-                }
-            }
+    //                         while ($nextDate->lte($endDate)) {
+    //                             $events[] = [
+    //                                 'title' => "$sebaName - $beddhaId",
+    //                                 'start' => $nextDate->toDateString(),
+    //                                 'extendedProps' => [
+    //                                     'sebaName' => $sebaName,
+    //                                     'beddhaId' => $beddhaId
+    //                                 ]
+    //                             ];
+    //                             $nextDate->addDays(47);
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Events fetched successfully.',
-                'data' => $events
-            ], 200);
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Events fetched successfully.',
+    //             'data' => $events
+    //         ], 200);
 
-        } catch (\Exception $e) {
-            Log::error('Error fetching seba dates: ' . $e->getMessage());
+    //     } catch (\Exception $e) {
+    //         Log::error('Error fetching seba dates: ' . $e->getMessage());
 
-            return response()->json([
-                'status' => false,
-                'message' => 'Server Error. Please try again later.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Server Error. Please try again later.',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function todayBeddha()
     {
@@ -339,6 +338,64 @@ class PratihariSebaApiController extends Controller
             'beddha_ids_today' => $todayBeddhaIds,
             'beddha_ids_display' => $currentBeddhaDisplay,
         ]);
+    }
+
+    public function sebaDate()
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
+            }
+
+            $pratihariId = $user->pratihari_id;
+            $data = [];
+
+            $sebas = PratihariSeba::with('sebaMaster')
+                        ->where('pratihari_id', $pratihariId)
+                        ->get();
+
+            foreach ($sebas as $seba) {
+                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+                $sebaId = $seba->seba_id;
+                $beddhaIds = $seba->beddha_id;
+
+                foreach ($beddhaIds as $beddhaId) {
+                    $beddhaId = (int) trim($beddhaId);
+                    if ($beddhaId < 1 || $beddhaId > 47) continue;
+
+                    $intervalDays = ($sebaId == 9) ? 16 : 47;
+                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                    $endDate = Carbon::create(2050, 12, 31);
+                    $nextDate = $startDate->copy();
+
+                    while ($nextDate->lte($endDate)) {
+                        $dateStr = $nextDate->toDateString();
+
+                        $data[$dateStr][] = [
+                            'seba' => $sebaName,
+                            'beddha_id' => $beddhaId,
+                        ];
+
+                        $nextDate->addDays($intervalDays);
+                    }
+                }
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Seba data loaded successfully',
+                'data' => $data
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Server error',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 }
