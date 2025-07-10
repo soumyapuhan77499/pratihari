@@ -152,6 +152,43 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 25px;
         }
+
+         .custom-tabs .nav-link {
+                            font-weight: 600;
+                            color: #6a11cb;
+                            border: none;
+                            border-radius: 0;
+                            background: transparent;
+                            transition: color 0.2s, background 0.2s;
+                            font-size: 1.1rem;
+                            padding: 0.75rem 2rem;
+                        }
+                        .custom-tabs .nav-link.active {
+                            color: #fff;
+                            background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%);
+                            border-bottom: 2px solid #e96a01;
+                            border-radius: 12px 12px 0 0;
+                            box-shadow: 0 2px 8px rgba(249, 198, 109, 0.15);
+                        }
+                        .custom-tabs .nav-link:hover {
+                            color: #e96a01;
+                            background: #f8f9fa;
+                        }
+                        .custom-tab-content {
+                            min-height: 320px;
+                            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+                            border-top: none;
+                            border-radius: 0 0 12px 12px;
+                        }
+                        @media (max-width: 768px) {
+                            .custom-tabs .nav-link {
+                                font-size: 1rem;
+                                padding: 0.5rem 1rem;
+                            }
+                            .custom-tab-content {
+                                min-height: 200px;
+                            }
+                        }
     </style>
 @endsection
 
@@ -180,6 +217,89 @@
                         </div>
                     </div>
 
+                    <!-- Tabs for Pratihari and Gochhikar -->
+                    <div class="container-fluid px-0">
+                        <ul class="nav nav-tabs custom-tabs mb-3" id="profileTabs" role="tablist" style="border-bottom: 2px solid #f8c66d;">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="tab" data-bs-target="#pratihari"
+                                    type="button" role="tab" aria-controls="pratihari" aria-selected="true">
+                                    <i class="bi bi-person-badge me-1"></i> Pratihari
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="gochhikar-tab" data-bs-toggle="tab" data-bs-target="#gochhikar"
+                                    type="button" role="tab" aria-controls="gochhikar" aria-selected="false">
+                                    <i class="bi bi-person-lines-fill me-1"></i> Gochhikar
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content custom-tab-content" id="profileTabsContent" style="background: #fff; border-radius: 0 0 12px 12px;">
+                            <div class="tab-pane fade show active" id="pratihari" role="tabpanel" aria-labelledby="pratihari-tab">
+                                <div class="p-3">
+                                    <!-- Pratihari Content -->
+                                    @forelse ($events as $label => $pratiharis)
+                                        <div class="mb-4">
+                                            <h6 class="fw-bold">{{ $label }}</h6>
+                                            <div class="d-flex overflow-auto seba-user-list">
+                                                @foreach ($pratiharis as $user)
+                                                    @if ($user)
+                                                        <div class="seba-user-card position-relative text-center">
+                                                            <span class="online-indicator" title="Active"></span>
+                                                            <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                                class="text-decoration-none text-dark"><img
+                                                                    src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                                    class="user-avatar"></a>
+                                                            <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                                class="text-decoration-none text-dark">
+                                                                <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}
+                                                                </div>
+                                                            </a>
+                                                            <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <p class="text-muted">No seba assigned for today.</p>
+                                    @endforelse
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
+                                <div class="p-3">
+                                    <!-- Gochhikar Content -->
+                                    @if(isset($gochhikarEvents) && count($gochhikarEvents))
+                                        @foreach ($gochhikarEvents as $label => $gochhikars)
+                                            <div class="mb-4">
+                                                <h6 class="fw-bold">{{ $label }}</h6>
+                                                <div class="d-flex overflow-auto seba-user-list">
+                                                    @foreach ($gochhikars as $user)
+                                                        @if ($user)
+                                                            <div class="seba-user-card position-relative text-center">
+                                                                <span class="online-indicator" title="Active"></span>
+                                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                                    class="text-decoration-none text-dark"><img
+                                                                        src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                                        class="user-avatar"></a>
+                                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                                    class="text-decoration-none text-dark">
+                                                                    <div class="fw-semibold">{{ $user->first_name }} {{ $user->last_name }}
+                                                                    </div>
+                                                                </a>
+                                                                <div class="text-muted small">{{ $user->phone_no ?? '' }}</div>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted">No gochhikar seba assigned for today.</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="card-body p-3">
                         @forelse ($events as $label => $pratiharis)
