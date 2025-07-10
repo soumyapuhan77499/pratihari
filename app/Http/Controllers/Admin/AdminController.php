@@ -184,7 +184,6 @@ class AdminController extends Controller
             'todayRejectedProfiles',
             'approvedApplication',
             'rejectedApplication',
-            'events',
             'today',
             'currentBeddhaDisplay',
             'gochhikarEvents'
