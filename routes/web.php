@@ -35,6 +35,7 @@ Route::controller(AdminController::class)->group(function() {
     Route::get('/dashboard', 'dashboard')->name('admin.dashboard');
     Route::post('/logout',  'logout')->name('admin.logout');
     Route::get('admin/find-seba-date',  'sebaDate')->name('admin.sebaDate');
+    Route::get('admin/seba-calendar',  'sebaCalendar')->name('admin.sebaCalendar');
 });
 
 Route::controller(PratihariProfileController::class)->group(function() {
@@ -105,7 +106,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/pratihari-nijoga-seba-save', 'saveNijogaSeba')->name('admin.saveNijogaSeba');
         Route::post('/store-seba', 'storeSeba')->name('admin.storeSeba');
         Route::post('/store-nijoga', 'storeNijoga')->name('admin.storeNijoga');
-
         Route::get('/pratihari-seba-beddha', 'pratihariSebaBeddha')->name('admin.pratihariSebaBeddha');
         Route::post('/store-seba-beddha', 'saveSebaBeddha')->name('admin.saveSebaBeddha');
         Route::post('/store-beddha', 'storeBeddha')->name('admin.storeBeddha');

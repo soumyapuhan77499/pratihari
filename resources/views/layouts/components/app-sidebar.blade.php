@@ -85,10 +85,11 @@
                     </li>
 
                     <li class="slide">
-                        <a class="side-menu__item" href="{{ url('admin/manage-application') }}"><span
-                                class="side-menu__label"><img src="{{ asset('assets/img/brand/gallery.png') }}"
-                                    style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label"
-                                    style="margin-left: 10px">Manage Application</span></a>
+                        <a class="side-menu__item" href="{{ url('admin/manage-application') }}"><span  class="side-menu__label"><img src="{{ asset('assets/img/brand/gallery.png') }}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Manage Application</span></a>
+                    </li>
+
+                     <li class="slide">
+                        <a class="side-menu__item" href="{{ url('admin/seba-calendar') }}"><span  class="side-menu__label"><img src="{{ asset('assets/img/brand/gallery.png') }}" style="height: 20px;width: 20px" alt="logo"><span class="side-menu__label" style="margin-left: 10px">Seba Calendar</span></a>
                     </li>
 
                     @if (Auth::guard('super_admin')->check() && Auth::guard('super_admin')->user()->role === 'super_admin')

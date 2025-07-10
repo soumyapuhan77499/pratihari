@@ -349,47 +349,47 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-   public function sebaDate(Request $request)
-{
-    $pratihariId = $request->input('pratihari_id');
-    $events = [];
+    public function sebaDate(Request $request)
+    {
+        $pratihariId = $request->input('pratihari_id');
+        $events = [];
 
-    if ($pratihariId) {
-        $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
+        if ($pratihariId) {
+            $sebas = PratihariSeba::with('sebaMaster')->where('pratihari_id', $pratihariId)->get();
 
-        foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $sebaId = $seba->seba_id;
-            $beddhaIds = $seba->beddha_id;
+            foreach ($sebas as $seba) {
+                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+                $sebaId = $seba->seba_id;
+                $beddhaIds = $seba->beddha_id;
 
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId);
+                foreach ($beddhaIds as $beddhaId) {
+                    $beddhaId = (int) trim($beddhaId);
 
-                if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    $intervalDays = ($sebaId == 9) ? 16 : 47;
+                    if ($beddhaId >= 1 && $beddhaId <= 47) {
+                        $intervalDays = ($sebaId == 9) ? 16 : 47;
 
-                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                    $endDate = Carbon::create(2050, 12, 31);
-                    $nextDate = $startDate->copy();
+                        $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                        $endDate = Carbon::create(2050, 12, 31);
+                        $nextDate = $startDate->copy();
 
-                    while ($nextDate->lte($endDate)) {
-                        $events[] = [
-                            'title' => "$sebaName - $beddhaId",
-                            'start' => $nextDate->toDateString(),
-                            'extendedProps' => [
-                                'sebaName' => $sebaName,
-                                'beddhaId' => $beddhaId
-                            ]
-                        ];
-                        $nextDate->addDays($intervalDays);
+                        while ($nextDate->lte($endDate)) {
+                            $events[] = [
+                                'title' => "$sebaName - $beddhaId",
+                                'start' => $nextDate->toDateString(),
+                                'extendedProps' => [
+                                    'sebaName' => $sebaName,
+                                    'beddhaId' => $beddhaId
+                                ]
+                            ];
+                            $nextDate->addDays($intervalDays);
+                        }
                     }
                 }
             }
         }
-    }
 
-    return response()->json($events);
-}
+        return response()->json($events);
+    }
 
     public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
     {
@@ -452,6 +452,27 @@ class AdminController extends Controller
         }
 
         return back()->with('message', 'Invalid OTP.');
+    }
+
+    public function sebaCalendar()
+    {
+
+          $pratihariIds = PratihariSeba::whereIn('seba_id', [1,2,3,4,5,6,7,8])
+        ->pluck('pratihari_id')
+        ->unique();
+
+        // Get all unique Pratihari IDs with seba ID 9 (Gochhikar)
+        $gochhikarIds = PratihariSeba::where('seba_id', 9)
+        ->pluck('pratihari_id')
+        ->unique();
+
+        // Fetch profile details
+        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
+        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
+
+
+        return view('admin.seba-calendar', compact('profile_name','gochhikar_name'));
+            
     }
 
 }
