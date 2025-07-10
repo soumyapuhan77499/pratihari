@@ -95,7 +95,18 @@ class AdminController extends Controller
 
         $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
 
-        $profile_name = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
+        $pratihariIds = PratihariSeba::whereIn('seba_id', [1,2,3,4,5,6,7,8])
+        ->pluck('pratihari_id')
+        ->unique();
+
+        // Get all unique Pratihari IDs with seba ID 9 (Gochhikar)
+        $gochhikarIds = PratihariSeba::where('seba_id', 9)
+        ->pluck('pratihari_id')
+        ->unique();
+
+        // Fetch profile details
+        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
+        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
 
         $user = Auth::user();
 
@@ -162,6 +173,7 @@ class AdminController extends Controller
             'todayApplications',
             'profiles',
             'profile_name',
+            'gochhikar_name',
             'todayApprovedProfiles',
             'todayRejectedProfiles',
             'approvedApplication',

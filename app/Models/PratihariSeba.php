@@ -24,6 +24,12 @@ class PratihariSeba extends Model
         return $this->belongsTo(PratihariSebaMaster::class, 'seba_id', 'id');
     }
 
+        public function pratihari()
+    {
+        return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
+    }
+
+
     public function nijogaMaster()
     {
         return $this->belongsTo(PratihariNijogaMaster::class, 'nijoga_id', 'id');
@@ -61,9 +67,5 @@ class PratihariSeba extends Model
     {
         $this->attributes['beddha_id'] = is_array($value) ? implode(',', $value) : $value;
     }
-public function pratihari()
-{
-    return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
-}
 
 }
