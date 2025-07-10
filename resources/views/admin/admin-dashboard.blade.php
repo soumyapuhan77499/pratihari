@@ -198,7 +198,7 @@
                                 <!-- Right (Optional, if needed) -->
                                 <div class="col-6 text-end">
                                     <span class="fw-bold fs-5 text-white">
-                                       Today Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                        Today Beddha ID: {{ $currentBeddhaDisplay ?: 'N/A' }}
                                     </span>
                                 </div>
                             </div>
@@ -764,8 +764,10 @@
                         </form>
                     </div>
                 </div>
+            </div>
 
-                 <div class="card custom-card w-100">
+            <div class="col-lg-4 mb-4 mx-auto d-flex">
+                <div class="card custom-card w-100">
                     <div class="card-header text-white" style="background-color: #e96a01">
                         <i class="bi bi-filter me-2"></i>Filter by Gochhikar Name
                     </div>
@@ -777,7 +779,8 @@
                                     @foreach ($gochhikar_name as $gochhikar)
                                         <option value="{{ $gochhikar->pratihari_id }}"
                                             {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
-                                            {{ $gochhikar->first_name }} {{ $gochhikar->middle_name }} {{ $gochhikar->last_name }}
+                                            {{ $gochhikar->first_name }} {{ $gochhikar->middle_name }}
+                                            {{ $gochhikar->last_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -786,7 +789,7 @@
                     </div>
                 </div>
             </div>
-        
+
             <!-- Calendar -->
             <div class="col-lg-12 mb-4">
                 <div class="card custom-card">
