@@ -180,7 +180,6 @@
             </div>
         </div>
 
-
         <div class="row">
             <!-- Active Users -->
             <div class="col-12 mb-4">
