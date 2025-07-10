@@ -153,42 +153,51 @@
             font-size: 25px;
         }
 
-         .custom-tabs .nav-link {
-                            font-weight: 600;
-                            color: #6a11cb;
-                            border: none;
-                            border-radius: 0;
-                            background: transparent;
-                            transition: color 0.2s, background 0.2s;
-                            font-size: 1.1rem;
-                            padding: 0.75rem 2rem;
-                        }
-                        .custom-tabs .nav-link.active {
-                            color: #fff;
-                            background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%);
-                            border-bottom: 2px solid #e96a01;
-                            border-radius: 12px 12px 0 0;
-                            box-shadow: 0 2px 8px rgba(249, 198, 109, 0.15);
-                        }
-                        .custom-tabs .nav-link:hover {
-                            color: #e96a01;
-                            background: #f8f9fa;
-                        }
-                        .custom-tab-content {
-                            min-height: 320px;
-                            box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-                            border-top: none;
-                            border-radius: 0 0 12px 12px;
-                        }
-                        @media (max-width: 768px) {
-                            .custom-tabs .nav-link {
-                                font-size: 1rem;
-                                padding: 0.5rem 1rem;
-                            }
-                            .custom-tab-content {
-                                min-height: 200px;
-                            }
-                        }
+        .custom-tabs {
+            border-bottom: none;
+        }
+
+        .custom-tabs .nav-link {
+            font-weight: 600;
+            color: #6a11cb;
+            background: transparent;
+            font-size: 1.1rem;
+            padding: 0.75rem 2rem;
+            margin: 0 0.5rem;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
+        }
+
+        .custom-tabs .nav-link:hover {
+            color: #e96a01;
+            background: #f8f9fa;
+            box-shadow: inset 0 -2px 0 #e96a01;
+        }
+
+        .custom-tabs .nav-link.active {
+            color: #fff;
+            background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%);
+            border-color: #e96a01;
+            border-bottom: none;
+            box-shadow: 0 3px 10px rgba(249, 198, 109, 0.3);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .custom-tab-content {
+            min-height: 320px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            border-radius: 0 0 12px 12px;
+            background-color: #fff;
+            padding: 1.5rem;
+        }
+
+        /* Optional: Avatar user card spacing */
+        .seba-user-list {
+            gap: 1.5rem;
+            padding: 0 0.5rem;
+        }
     </style>
 @endsection
 
@@ -219,14 +228,15 @@
 
                     <!-- Tabs for Pratihari and Gochhikar -->
                     <div class="container-fluid px-0">
-                        <ul class="nav nav-tabs custom-tabs mb-3" id="profileTabs" role="tablist" style="border-bottom: 2px solid #f8c66d;">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="tab" data-bs-target="#pratihari"
-                                    type="button" role="tab" aria-controls="pratihari" aria-selected="true">
+                        <ul class="nav nav-tabs custom-tabs justify-content-center mb-3" id="profileTabs" role="tablist">
+                            <li class="nav-item me-2" role="presentation">
+                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="tab"
+                                    data-bs-target="#pratihari" type="button" role="tab" aria-controls="pratihari"
+                                    aria-selected="true">
                                     <i class="bi bi-person-badge me-1"></i> Pratihari
                                 </button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            <li class="nav-item ms-2" role="presentation">
                                 <button class="nav-link" id="gochhikar-tab" data-bs-toggle="tab" data-bs-target="#gochhikar"
                                     type="button" role="tab" aria-controls="gochhikar" aria-selected="false">
                                     <i class="bi bi-person-lines-fill me-1"></i> Gochhikar
@@ -234,6 +244,7 @@
                             </li>
                         </ul>
                     </div>
+
 
                     <div class="card-body p-3">
                         @forelse ($events as $label => $pratiharis)
@@ -297,22 +308,22 @@
                         </div>
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 3</div>
                             <div class="text-muted small">+91 77777 33333</div>
                         </div>
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 1</div>
                             <div class="text-muted small">+91 99999 11111</div>
                         </div>
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 2</div>
                             <div class="text-muted small">+91 88888 22222</div>
                         </div>
