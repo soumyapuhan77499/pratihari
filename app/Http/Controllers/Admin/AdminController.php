@@ -339,22 +339,17 @@ class AdminController extends Controller
 
         foreach ($sebas as $seba) {
             $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+            $sebaId = $seba->seba_id;
+            $beddhaIds = $seba->beddha_id;
 
             foreach ($beddhaIds as $beddhaId) {
                 $beddhaId = (int) trim($beddhaId);
 
                 if ($beddhaId >= 1 && $beddhaId <= 47) {
-                    $baseDate = Carbon::create(2025, 5, 22);
+                    $intervalDays = ($sebaId == 9) ? 16 : 47;
+
+                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
                     $endDate = Carbon::create(2050, 12, 31);
-
-                    // ✅ Special case for seba_id 9 (regardless of beddha_id)
-                    if ($seba->seba_id == 9) {
-                        $startDate = $baseDate->copy()->addDays(16);
-                    } else {
-                        $startDate = $baseDate->copy()->addDays($beddhaId - 1);
-                    }
-
                     $nextDate = $startDate->copy();
 
                     while ($nextDate->lte($endDate)) {
@@ -366,7 +361,7 @@ class AdminController extends Controller
                                 'beddhaId' => $beddhaId
                             ]
                         ];
-                        $nextDate->addDays(47);
+                        $nextDate->addDays($intervalDays);
                     }
                 }
             }
@@ -375,7 +370,6 @@ class AdminController extends Controller
 
     return response()->json($events);
 }
-
 
     public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
     {
