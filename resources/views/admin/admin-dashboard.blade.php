@@ -168,7 +168,7 @@
                                 <!-- Left -->
                                 <div class="col-6 text-start d-flex align-items-center">
                                     <span class="fw-bold fs-5 text-white">
-                                        Today Beddha: {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                        Today Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
                                     </span>
                                 </div>
 
