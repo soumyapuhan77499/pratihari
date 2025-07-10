@@ -1,19 +1,7 @@
 <!-- main-header -->
 <div class="main-header side-header sticky nav nav-item">
     <div class="main-container container-fluid">
-        <div class="main-header-left d-flex align-items-center">
-            <div class="responsive-logo">
-                <a href="{{url('index')}}" class="header-logo">
-                    <span style="color: #fab876; font-size: 52px; font-weight: bold;" class="mobile-logo logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
-                </a>
-            </div>
-            <div class="logo-horizontal d-none d-lg-block ms-3">
-                <a href="{{url('index')}}" class="header-logo">
-                    <span style="color: #fab876; font-size: 52px; font-weight: bold;" class="mobile-logo logo-1">ପ୍ରତିହାରୀ ନିଯୋଗ</span>
-                </a>
-            </div>
-        </div>
-
+       
         <!-- Centered Heading -->
         <div class="flex-grow-1 d-flex justify-content-center align-items-center">
             <h2 class="mb-0 text-center fw-bold" style="color: #fab876;">Pratihari Admin Dashboard</h2>
