@@ -153,37 +153,37 @@
             font-size: 25px;
         }
 
-        .custom-tabs {
-            border-bottom: none;
-        }
-
-        .custom-tabs .nav-item {
-            margin: 0 1rem;
-        }
-
-        .custom-tabs .nav-link {
-            font-weight: 600;
-            color: #444;
-            background-color: #f4f4f4;
-            border: 1px solid #ddd;
-            font-size: 1.1rem;
-            padding: 0.7rem 2rem;
-            border-radius: 10px;
+        .tab-wrapper {
+            background: linear-gradient(135deg, #fefefe, #f9f9f9);
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 16px;
             transition: all 0.3s ease-in-out;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
 
-        .custom-tabs .nav-link:hover {
-            background-color: #f0eae1;
-            color: #e96a01;
-            border-color: #f8c66d;
-        }
-
-        .custom-tabs .nav-link.active {
-            color: #fff;
-            background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%);
+        .tab-modern .nav-link {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #6c757d;
+            background-color: #f1f1f1;
+            padding: 0.75rem 2.5rem;
+            border-radius: 50px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: inset 0 0 0 rgba(0, 0, 0, 0);
             border: none;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-modern .nav-link:hover {
+            background-color: #e9ecef;
+            color: #e96a01;
+        }
+
+        .tab-modern .nav-link.active {
+            color: #fff;
+            background: linear-gradient(to right, #f8c66d, #e96a01);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            border: none;
         }
     </style>
 @endsection
@@ -213,24 +213,31 @@
                         </div>
                     </div>
 
-                    <div class="container-fluid px-0 mt-2">
-                        <ul class="nav nav-tabs custom-tabs justify-content-center mb-4" id="profileTabs" role="tablist">
-                            <li class="nav-item px-2" role="presentation">
-                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="tab"
-                                    data-bs-target="#pratihari" type="button" role="tab" aria-controls="pratihari"
-                                    aria-selected="true">
-                                    <i class="bi bi-person-badge me-1"></i> Pratihari
-                                </button>
-                            </li>
-                            <li class="nav-item px-2" role="presentation">
-                                <button class="nav-link" id="gochhikar-tab" data-bs-toggle="tab" data-bs-target="#gochhikar"
-                                    type="button" role="tab" aria-controls="gochhikar" aria-selected="false">
-                                    <i class="bi bi-person-lines-fill me-1"></i> Gochhikar
-                                </button>
-                            </li>
-                        </ul>
+                    <div class="container-fluid mt-4">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="tab-wrapper shadow-sm rounded-4 bg-white p-3">
+                                    <ul class="nav nav-pills justify-content-center tab-modern" id="profileTabs"
+                                        role="tablist">
+                                        <li class="nav-item me-3" role="presentation">
+                                            <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill"
+                                                data-bs-target="#pratihari" type="button" role="tab"
+                                                aria-controls="pratihari" aria-selected="true">
+                                                <i class="bi bi-person-badge me-2"></i> Pratihari
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="gochhikar-tab" data-bs-toggle="pill"
+                                                data-bs-target="#gochhikar" type="button" role="tab"
+                                                aria-controls="gochhikar" aria-selected="false">
+                                                <i class="bi bi-person-lines-fill me-2"></i> Gochhikar
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-
 
 
                     <div class="card-body p-3">
