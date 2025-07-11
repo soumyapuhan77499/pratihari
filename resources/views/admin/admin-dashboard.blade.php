@@ -317,7 +317,7 @@
                             </div>
 
                             {{-- Gochhikar Tab --}}
-                            <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
+                            {{-- <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
                                 @forelse ($gochhikarEvents as $label => $gochhikars)
                                     <div class="mb-4">
                                         <h6 class="fw-bold">{{ $label }}</h6>
@@ -330,7 +330,7 @@
                                 @empty
                                     <p class="text-muted">No seba assigned for today.</p>
                                 @endforelse
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
