@@ -3,9 +3,9 @@
     <div class="main-container container-fluid">
        
         <!-- Centered Heading -->
-        {{-- <div class="flex-grow-1 d-flex justify-content-center align-items-center">
-            <h2 class="mb-0 text-center" style="color: #100901;">Pratihari Admin Dashboard</h2>
-        </div> --}}
+        <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+            <h2 class="mb-0 text-center" style="color: #100901;"></h2>
+        </div>
 
         <div class="main-header-right">
             <button class="navbar-toggler navresponsive-toggler d-md-none ms-auto" type="button"
