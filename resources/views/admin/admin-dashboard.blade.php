@@ -297,6 +297,11 @@
 
                     <div class="card-body p-3">
                         <div class="mt-4">
+
+                            <div class="mb-3">
+                                <h5 class="fw-bold text-primary">Gochhikar</h5>
+                            </div>
+
                             {{-- Seba ID = 9, beddha status = 1 --}}
                             @forelse ($gochhikarEvents as $label => $users)
                                 <div class="mb-4">
@@ -310,6 +315,10 @@
                             @empty
                                 <p class="text-muted">No Gochhikar assigned (normal) for today.</p>
                             @endforelse
+
+                            <div class="mb-3">
+                                <h5 class="fw-bold text-primary">Nijoga Assign</h5>
+                            </div>
 
                             {{-- Seba ID = 9, beddha status = 0 --}}
                             @forelse ($nijogaGochhikarEvents as $label => $users)
