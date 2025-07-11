@@ -289,9 +289,9 @@
                         <div class="container-fluid">
                             <div class="row align-items-center justify-content-between">
                                 <!-- Left: Beddha Display -->
-                                <div class="col-6 d-flex align-items-center">
+                                <div class="col-12 d-flex align-items-center">
                                     <span class="fw-bold fs-5 text-white">
-                                        Today Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                        Gochhikar Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
                                     </span>
                                 </div>
                             </div>
