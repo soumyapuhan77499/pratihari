@@ -18,23 +18,26 @@ class PratihariSeba extends Model
         'beddha_id',
         'year'
     ];
+
+    public function beddhaAssigns()
+    {
+        return $this->hasMany(PratihariSebaBeddhaAssign::class, 'seba_id', 'seba_id');
+    }
     
     public function sebaMaster()
     {
         return $this->belongsTo(PratihariSebaMaster::class, 'seba_id', 'id');
     }
 
-        public function pratihari()
+    public function pratihari()
     {
         return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
     }
-
 
     public function nijogaMaster()
     {
         return $this->belongsTo(PratihariNijogaMaster::class, 'nijoga_id', 'id');
     }
-
 
     public function beddhaMaster()
     {

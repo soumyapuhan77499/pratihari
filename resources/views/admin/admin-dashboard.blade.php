@@ -201,7 +201,7 @@
                                 <!-- Left: Beddha Display -->
                                 <div class="col-6 d-flex align-items-center">
                                     <span class="fw-bold fs-5 text-white">
-                                        Today Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                        Pratihari Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
                                     </span>
                                 </div>
 
@@ -229,10 +229,10 @@
                                             </button>
                                         </li>
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="gochhikar-tab" data-bs-toggle="pill"
-                                                data-bs-target="#gochhikar" type="button" role="tab"
-                                                aria-controls="gochhikar" aria-selected="false">
-                                                <i class="bi bi-person-lines-fill me-2"></i> Gochhikar
+                                            <button class="nav-link" id="nojoga-tab" data-bs-toggle="pill"
+                                                data-bs-target="#nijoga_assign" type="button" role="tab"
+                                                aria-controls="nijoga_assign" aria-selected="false">
+                                                <i class="bi bi-person-lines-fill me-2"></i> Nijoga Assigned
                                             </button>
                                         </li>
                                     </ul>
@@ -262,12 +262,12 @@
                             </div>
 
                             {{-- Gochhikar Tab --}}
-                            <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
-                                @forelse ($gochhikarEvents as $label => $gochhikars)
+                            <div class="tab-pane fade" id="nijoga_assign" role="tabpanel" aria-labelledby="nijoga-tab">
+                                @forelse ($nijogaAssign as $label => $nojoga)
                                     <div class="mb-4">
                                         <h6 class="fw-bold">{{ $label }}</h6>
                                         <div class="d-flex overflow-auto seba-user-list">
-                                            @foreach ($gochhikars as $user)
+                                            @foreach ($nojoga as $user)
                                                 @include('partials._user_card', ['user' => $user])
                                             @endforeach
                                         </div>
@@ -278,8 +278,6 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
              <div class="col-4 mb-4">

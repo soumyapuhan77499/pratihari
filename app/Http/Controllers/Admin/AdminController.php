@@ -123,51 +123,66 @@ class AdminController extends Controller
             ];
         }
 
-      $sebas = PratihariSeba::with(['sebaMaster', 'pratihari'])->get();
-    $today = Carbon::today();
+       $today = Carbon::today();
     $baseDate = Carbon::create(2025, 5, 22);
     $endDate = Carbon::create(2050, 12, 31);
-    $todayBeddhaIds = [];
 
+    $todayBeddhaIds = [];
     $pratihariEvents = [];
-    $gochhikarEvents = [];
+    $nijogaAssign = [];
+
+    // Fetch all seba details
+    $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
 
     foreach ($sebas as $seba) {
-        $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-        $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+    $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+    $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
-        foreach ($beddhaIds as $beddhaId) {
-            $beddhaId = (int) trim($beddhaId);
-            if ($beddhaId >= 1 && $beddhaId <= 47) {
-                $start = $baseDate->copy()->addDays($beddhaId - 1);
-                while ($start->lte($endDate)) {
-                    if ($start->equalTo($today)) {
-                        if ($seba->pratihari) {
-                            $label = "$sebaName | Beddha $beddhaId";
-                            if ($seba->seba_id == 9) {
-                                $gochhikarEvents[$label][] = $seba->pratihari;
-                            } else {
-                                $pratihariEvents[$label][] = $seba->pratihari;
-                            }
-                            $todayBeddhaIds[] = $beddhaId;
+    foreach ($beddhaIds as $beddhaId) {
+        $beddhaId = (int) trim($beddhaId);
+
+        if ($beddhaId >= 1 && $beddhaId <= 47) {
+            $beddhaStatus = $seba->beddhaAssigns
+                ->where('beddha_id', $beddhaId)
+                ->first()
+                ->beddha_status ?? null;
+
+            if ($beddhaStatus === null) continue; // skip if no status found
+
+            $start = $baseDate->copy()->addDays($beddhaId - 1);
+            while ($start->lte($endDate)) {
+                if ($start->equalTo($today)) {
+                    if ($seba->pratihari) {
+                        $label = "$sebaName | Beddha $beddhaId";
+
+                        if ($beddhaStatus == 0) {
+                            $nijogaAssign[$label][] = $seba->pratihari;
+                        } else {
+                            $pratihariEvents[$label][] = $seba->pratihari;
                         }
-                        break;
+
+                        $todayBeddhaIds[] = $beddhaId;
                     }
-                    $start->addDays(47);
+                    break;
                 }
+                $start->addDays(47);
             }
         }
     }
+}
 
-    // Remove duplicates
+
+    // Remove duplicate entries
     foreach ($pratihariEvents as $label => $users) {
         $pratihariEvents[$label] = collect($users)->unique('pratihari_id')->values()->all();
     }
-    foreach ($gochhikarEvents as $label => $users) {
-        $gochhikarEvents[$label] = collect($users)->unique('pratihari_id')->values()->all();
+
+    foreach ($nijogaAssign as $label => $users) {
+        $nijogaAssign[$label] = collect($users)->unique('pratihari_id')->values()->all();
     }
 
     $currentBeddhaDisplay = implode(', ', array_unique($todayBeddhaIds));
+
 
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
@@ -186,9 +201,8 @@ class AdminController extends Controller
             'rejectedApplication',
             'today',
             'currentBeddhaDisplay',
-            'gochhikarEvents',
+            'nijogaAssign',
             'pratihariEvents',
-
         ));
     }
 
