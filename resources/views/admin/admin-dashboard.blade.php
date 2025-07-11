@@ -192,7 +192,7 @@
     <div class="container">
         <div class="row">
             <!-- Active Users -->
-            <div class="col-6 mb-4">
+            <div class="col-8 mb-4">
                 <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
                     <div class="card-header text-white mt-4"
                         style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px; position: relative;">
