@@ -282,6 +282,63 @@
 
                 </div>
             </div>
+             <div class="col-4 mb-4">
+                <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
+                    <div class="card-header text-white mt-4"
+                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px; position: relative;">
+                        <div class="container-fluid">
+                            <div class="row align-items-center justify-content-between">
+                                <!-- Left: Beddha Display -->
+                                <div class="col-6 d-flex align-items-center">
+                                    <span class="fw-bold fs-5 text-white">
+                                        Today Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card-body p-3">
+                        <div class="tab-content mt-4" id="profileTabsContent">
+                            {{-- Pratihari Tab --}}
+                            <div class="tab-pane fade show active" id="pratihari" role="tabpanel"
+                                aria-labelledby="pratihari-tab">
+                                @forelse ($pratihariEvents as $label => $pratiharis)
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">{{ $label }}</h6>
+                                        <div class="d-flex overflow-auto seba-user-list">
+                                            @foreach ($pratiharis as $user)
+                                                @include('partials._user_card', ['user' => $user])
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-muted">No seba assigned for today.</p>
+                                @endforelse
+                            </div>
+
+                            {{-- Gochhikar Tab --}}
+                            <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
+                                @forelse ($gochhikarEvents as $label => $gochhikars)
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">{{ $label }}</h6>
+                                        <div class="d-flex overflow-auto seba-user-list">
+                                            @foreach ($gochhikars as $user)
+                                                @include('partials._user_card', ['user' => $user])
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-muted">No seba assigned for today.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
 
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
