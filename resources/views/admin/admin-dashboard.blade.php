@@ -146,11 +146,11 @@
         .datetime-box .date-time-badge {
             background-color: #ffffff;
             color: #2c3e50;
-            padding: 5px 12px;
+            padding: 3px 6px;
             border-radius: 6px;
             font-weight: 600;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 25px;
+            font-size: 16px;
         }
 
         .tab-wrapper {
