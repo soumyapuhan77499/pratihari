@@ -125,63 +125,88 @@ class AdminController extends Controller
 
        $today = Carbon::today();
     $baseDate = Carbon::create(2025, 5, 22);
-    $endDate = Carbon::create(2050, 12, 31);
+$endDate = Carbon::create(2050, 12, 31);
+$today = Carbon::today();
 
-    $todayBeddhaIds = [];
-    $pratihariEvents = [];
-    $nijogaAssign = [];
+$currentBeddhaDisplay = '';
+$todayBeddhaIds = [];
 
-    // Fetch all seba details
-    $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
+$pratihariEvents = [];
+$nijogaAssign = [];
 
-    foreach ($sebas as $seba) {
+$gochhikarEvents = [];
+$nijogaGochhikarEvents = [];
+
+// Fetch all seba records
+$sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
+
+foreach ($sebas as $seba) {
+    $sebaId = $seba->seba_id;
     $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
     $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
     foreach ($beddhaIds as $beddhaId) {
         $beddhaId = (int) trim($beddhaId);
+        if ($beddhaId < 1 || $beddhaId > 47) continue;
 
-        if ($beddhaId >= 1 && $beddhaId <= 47) {
-            $beddhaStatus = $seba->beddhaAssigns
-                ->where('beddha_id', $beddhaId)
-                ->first()
-                ->beddha_status ?? null;
+        $beddhaStatus = $seba->beddhaAssigns->where('beddha_id', $beddhaId)->first()->beddha_status ?? null;
+        if ($beddhaStatus === null) continue;
 
-            if ($beddhaStatus === null) continue; // skip if no status found
+        $interval = ($sebaId == 9) ? 16 : 47;
+        $start = $baseDate->copy()->addDays($beddhaId - 1);
 
-            $start = $baseDate->copy()->addDays($beddhaId - 1);
-            while ($start->lte($endDate)) {
-                if ($start->equalTo($today)) {
-                    if ($seba->pratihari) {
-                        $label = "$sebaName | Beddha $beddhaId";
+        while ($start->lte($endDate)) {
+            if ($start->equalTo($today)) {
+                $label = "$sebaName | Beddha $beddhaId";
+                $user = $seba->pratihari;
 
+                if ($user) {
+                    $todayBeddhaIds[] = $beddhaId;
+
+                    // === Pratihari Section ===
+                    if ($sebaId != 9) {
                         if ($beddhaStatus == 0) {
-                            $nijogaAssign[$label][] = $seba->pratihari;
+                            $nijogaAssign[$label][] = $user;
                         } else {
-                            $pratihariEvents[$label][] = $seba->pratihari;
+                            $pratihariEvents[$label][] = $user;
                         }
-
-                        $todayBeddhaIds[] = $beddhaId;
                     }
-                    break;
+
+                    // === Gochhikar Section ===
+                    if ($sebaId == 9) {
+                        if ($beddhaStatus == 1) {
+                            $gochhikarEvents[$label][] = $user;
+                        } elseif ($beddhaStatus == 0) {
+                            $nijogaGochhikarEvents[$label][] = $user;
+                        }
+                    }
                 }
-                $start->addDays(47);
+
+                break;
             }
+            $start->addDays($interval);
         }
     }
 }
 
+// Remove duplicates by pratihari_id
+$pratihariEvents = collect($pratihariEvents)->map(function ($users) {
+    return collect($users)->unique('pratihari_id')->values()->all();
+})->toArray();
 
-    // Remove duplicate entries
-    foreach ($pratihariEvents as $label => $users) {
-        $pratihariEvents[$label] = collect($users)->unique('pratihari_id')->values()->all();
-    }
+$nijogaAssign = collect($nijogaAssign)->map(function ($users) {
+    return collect($users)->unique('pratihari_id')->values()->all();
+})->toArray();
 
-    foreach ($nijogaAssign as $label => $users) {
-        $nijogaAssign[$label] = collect($users)->unique('pratihari_id')->values()->all();
-    }
+$gochhikarEvents = collect($gochhikarEvents)->map(function ($users) {
+    return collect($users)->unique('pratihari_id')->values()->all();
+})->toArray();
 
-    $currentBeddhaDisplay = implode(', ', array_unique($todayBeddhaIds));
+$nijogaGochhikarEvents = collect($nijogaGochhikarEvents)->map(function ($users) {
+    return collect($users)->unique('pratihari_id')->values()->all();
+})->toArray();
+
+$currentBeddhaDisplay = implode(', ', array_unique($todayBeddhaIds));
 
 
         return view('admin.admin-dashboard', compact(
@@ -203,6 +228,8 @@ class AdminController extends Controller
             'currentBeddhaDisplay',
             'nijogaAssign',
             'pratihariEvents',
+            'gochhikarEvents',
+            'nijogaGochhikarEvents',
         ));
     }
 

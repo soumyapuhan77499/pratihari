@@ -280,63 +280,55 @@
                     </div>
                 </div>
             </div>
-             <div class="col-4 mb-4">
+            <div class="col-4 mb-4">
                 <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
                     <div class="card-header text-white mt-4"
-                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px; position: relative;">
+                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px;">
                         <div class="container-fluid">
                             <div class="row align-items-center justify-content-between">
-                                <!-- Left: Beddha Display -->
                                 <div class="col-12 d-flex align-items-center">
                                     <span class="fw-bold fs-5 text-white">
                                         Gochhikar Beddha : {{ $currentBeddhaDisplay ?: 'N/A' }}
                                     </span>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
                     <div class="card-body p-3">
-                        <div class="tab-content mt-4" id="profileTabsContent">
-                            {{-- Pratihari Tab --}}
-                            <div class="tab-pane fade show active" id="pratihari" role="tabpanel"
-                                aria-labelledby="pratihari-tab">
-                                @forelse ($pratihariEvents as $label => $pratiharis)
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold">{{ $label }}</h6>
-                                        <div class="d-flex overflow-auto seba-user-list">
-                                            @foreach ($pratiharis as $user)
-                                                @include('partials._user_card', ['user' => $user])
-                                            @endforeach
-                                        </div>
+                        <div class="mt-4">
+                            {{-- Seba ID = 9, beddha status = 1 --}}
+                            @forelse ($gochhikarEvents as $label => $users)
+                                <div class="mb-4">
+                                    <h6 class="fw-bold">{{ $label }}</h6>
+                                    <div class="d-flex overflow-auto seba-user-list">
+                                        @foreach ($users as $user)
+                                            @include('partials._user_card', ['user' => $user])
+                                        @endforeach
                                     </div>
-                                @empty
-                                    <p class="text-muted">No seba assigned for today.</p>
-                                @endforelse
-                            </div>
+                                </div>
+                            @empty
+                                <p class="text-muted">No Gochhikar assigned (normal) for today.</p>
+                            @endforelse
 
-                            {{-- Gochhikar Tab --}}
-                            {{-- <div class="tab-pane fade" id="gochhikar" role="tabpanel" aria-labelledby="gochhikar-tab">
-                                @forelse ($gochhikarEvents as $label => $gochhikars)
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold">{{ $label }}</h6>
-                                        <div class="d-flex overflow-auto seba-user-list">
-                                            @foreach ($gochhikars as $user)
-                                                @include('partials._user_card', ['user' => $user])
-                                            @endforeach
-                                        </div>
+                            {{-- Seba ID = 9, beddha status = 0 --}}
+                            @forelse ($nijogaGochhikarEvents as $label => $users)
+                                <div class="mb-4">
+                                    <h6 class="fw-bold">{{ $label }}</h6>
+                                    <div class="d-flex overflow-auto seba-user-list">
+                                        @foreach ($users as $user)
+                                            @include('partials._user_card', ['user' => $user])
+                                        @endforeach
                                     </div>
-                                @empty
-                                    <p class="text-muted">No seba assigned for today.</p>
-                                @endforelse
-                            </div> --}}
+                                </div>
+                            @empty
+                                <p class="text-muted">No Nijoga Gochhikar for today.</p>
+                            @endforelse
                         </div>
                     </div>
-
-
                 </div>
             </div>
+
 
             <div class="col-12 mb-4">
                 <div class="card shadow-sm" style="width: 100%; border-radius: 12px; overflow-x: auto; background: #fff;">
@@ -354,15 +346,15 @@
                         <!-- Example static user cards -->
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 1</div>
                             <div class="text-muted small">+91 99999 11111</div>
                         </div>
                         <div class="d-flex flex-column align-items-center p-3"
                             style="min-width: 180px; border-radius: 8px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User" class="rounded-circle mb-2"
-                                style="width: 60px; height: 60px; object-fit: cover;">
+                            <img src="{{ asset('assets/img/brand/monk.png') }}" alt="User"
+                                class="rounded-circle mb-2" style="width: 60px; height: 60px; object-fit: cover;">
                             <div class="fw-semibold">User Name 2</div>
                             <div class="text-muted small">+91 88888 22222</div>
                         </div>
