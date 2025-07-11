@@ -124,10 +124,10 @@ class AdminController extends Controller
         }
 
        $today = Carbon::today();
-        $baseDatePratihari = Carbon::create(2025, 5, 22);
+        $baseDatePratihari = Carbon::create(2025, 7, 1);
         $endDatePratihari = Carbon::create(2050, 12, 31);
 
-        $baseDateGochhikar = Carbon::create(2025, 7, 10);  // you can customize
+        $baseDateGochhikar = Carbon::create(2025, 7, 1);  // you can customize
         $endDateGochhikar = Carbon::create(2055, 12, 31);
 
         $today = Carbon::today();
@@ -419,12 +419,12 @@ class AdminController extends Controller
                 if ($sebaId == 9) {
                     // Gochhikar logic
                     $intervalDays = 16;
-                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                    $startDate = Carbon::create(2025, 7, 1)->addDays($beddhaId - 1);
                     $endDate = Carbon::create(2050, 12, 31);
                 } else {
                     // Pratihari logic
                     $intervalDays = 47;
-                    $startDate = Carbon::create(2025, 7, 10)->addDays($beddhaId - 1);
+                    $startDate = Carbon::create(2025, 7, 1)->addDays($beddhaId - 1);
                     $endDate = Carbon::create(2055, 12, 31);
                 }
 
