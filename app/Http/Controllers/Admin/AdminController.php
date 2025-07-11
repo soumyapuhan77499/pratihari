@@ -127,7 +127,7 @@ class AdminController extends Controller
     $baseDatePratihari = Carbon::create(2025, 5, 22);
     $endDatePratihari = Carbon::create(2050, 12, 31);
 
-    $baseDateGochhikar = Carbon::create(2024, 1, 1);  // you can customize
+    $baseDateGochhikar = Carbon::create(2025, 7, 10);  // you can customize
     $endDateGochhikar = Carbon::create(2055, 12, 31);
 
     $today = Carbon::today();
