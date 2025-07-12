@@ -86,9 +86,9 @@
                                 <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
                             </div>
                             <div class="card-body">
-                                <form method="GET" action="{{ url()->current() }}">
-                                    <div class="mb-3">
-                                        <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
+                                <form method="GET" action="{{ url()->current() }}" id="searchForm">
+                                    <div class="mb-3 d-flex align-items-center">
+                                        <select class="form-select me-2" name="pratihari_id" id="pratihariSelect">
                                             <option value="">-- Select Pratihari Name --</option>
                                             @foreach ($profile_name as $profile)
                                                 <option value="{{ $profile->pratihari_id }}"
@@ -98,8 +98,11 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        <button type="button" class="btn btn-primary"
+                                            onclick="submitSearch()">Search</button>
                                     </div>
                                 </form>
+
                             </div>
                         </div>
                     </div>
