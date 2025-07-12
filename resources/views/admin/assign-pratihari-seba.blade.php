@@ -2,7 +2,6 @@
 
 @section('styles')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
@@ -47,7 +46,7 @@
 
         .card-header {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
-            color: rgb(242, 245, 253);
+            color: rgb(51, 101, 251);
             font-size: 25px;
             font-weight: bold;
             text-align: center;
@@ -94,8 +93,7 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header">Pratihari Seba Assign</div>
-
+                <div class="card-header">🛕 Assign Seba to Pratihari</div>
                 <div class="card-body">
 
                     <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">
@@ -113,7 +111,6 @@
                                         </option>
                                     @endforeach
                                 </select>
-
                             </div>
 
                             <div class="col-md-6">
@@ -187,9 +184,6 @@
 @section('scripts')
     <!-- jQuery (Required for Select2) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{-- If not already included --}}
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 
     <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -218,16 +212,6 @@
             $('#pratihari_id').select2({
                 placeholder: '-- Select Pratihari --',
                 allowClear: true
-            });
-        });
-    </script>
-
-    <script>
-        $(document).ready(function() {
-            $('#pratihari_id').select2({
-                placeholder: "-- Select Pratihari --",
-                allowClear: true,
-                width: '100%'
             });
         });
     </script>
