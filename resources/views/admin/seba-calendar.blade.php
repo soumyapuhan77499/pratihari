@@ -80,7 +80,7 @@
                 </div>
                 <div class="row">
                     <!-- Filter by Pratihari Name -->
-                    <div class="col-lg-4 mb-4 mx-auto d-flex">
+                    <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
                         <div class="card custom-card w-100">
                             <div class="card-header text-white" style="background-color: #f8c66d">
                                 <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
@@ -104,7 +104,7 @@
                         </div>
                     </div>
 
-                    <div class="col-lg-4 mb-4 mx-auto d-flex">
+                    <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
                         <div class="card custom-card w-100">
                             <div class="card-header text-white" style="background-color: #f8c66d">
                                 <i class="bi bi-filter me-2"></i>Filter by Gochhikar Name
