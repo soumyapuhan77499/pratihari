@@ -27,6 +27,11 @@
 @endsection
 
 @section('content')
+ <div class="col-lg-12">
+            <div class="card custom-card overflow-hidden">
+                <div class="card-header">Manage Notice</div>
+            </div>
+        </div>
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
             <span class="main-content-title mg-b-0 mg-b-lg-1">Manage Notice</span>
@@ -42,11 +47,7 @@
 
     <!-- Row -->
     <div class="row row-sm">
-        <div class="col-lg-12">
-            <div class="card custom-card overflow-hidden">
-                <div class="card-header">Manage Notice</div>
-            </div>
-        </div>
+       
         <div class="col-lg-12">
             <div class="card custom-card overflow-hidden">
                 <div class="card-body">
