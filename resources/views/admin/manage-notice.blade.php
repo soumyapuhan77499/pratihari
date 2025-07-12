@@ -12,7 +12,7 @@
     <style>
          .card-header {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
-            color: rgb(51, 101, 251);
+            color: rgb(233, 234, 237);
             font-size: 25px;
             font-weight: bold;
             text-align: center;
