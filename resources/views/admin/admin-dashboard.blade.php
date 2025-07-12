@@ -843,7 +843,7 @@
             </div>
         </div>
 
-        <div class="row">
+        {{-- <div class="row">
             <!-- Filter by Pratihari Name -->
             <div class="col-lg-4 mb-4 mx-auto d-flex">
                 <div class="card custom-card w-100">
@@ -921,7 +921,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- <div class="col-lg-12 mb-3">
             <div class="card custom-card"
