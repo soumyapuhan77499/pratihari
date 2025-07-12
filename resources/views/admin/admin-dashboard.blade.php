@@ -185,6 +185,13 @@
             font-weight: bold;
             border: none;
         }
+
+        .nav-pills .nav-link {
+            font-size: 18px;
+            padding: 12px 0;
+            text-align: center;
+            border-radius: 8px;
+        }
     </style>
 @endsection
 
@@ -194,26 +201,29 @@
             <!-- Active Users -->
             <div class="col-8 mb-4">
                 <div class="card shadow-sm" style="border-radius: 12px; background: #fff;">
-                    <div class="card-header text-white mt-4"
-                        style="background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%); min-height: 60px; position: relative;">
-                        <div class="container-fluid">
-                            <div class="row align-items-center justify-content-between">
-                                <!-- Left: Beddha Display -->
-                                <div class="col-6 d-flex align-items-center">
-                                    <span class="fw-bold fs-5 text-white">
-                                        Pratihari Beddha : {{ $currentPratihariBeddhaDisplay ?: 'N/A' }}
-                                    </span>
-                                </div>
-
-                                <!-- Right: Date and Time aligned right -->
-                                <div class="col-6 d-flex justify-content-end gap-2 align-items-center datetime-box">
-                                    <span class="date-time-badge">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
-                                </div>
-
+                    <div class="container-fluid mt-4">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <ul class="nav nav-pills tab-modern row w-100 m-0" id="profileTabs" role="tablist">
+                                    <li class="nav-item col-6 p-1" role="presentation">
+                                        <button class="nav-link active w-100" id="pratihari-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pratihari" type="button" role="tab"
+                                            aria-controls="pratihari" aria-selected="true">
+                                            <i class="bi bi-person-badge me-2"></i> Pratihari
+                                        </button>
+                                    </li>
+                                    <li class="nav-item col-6 p-1" role="presentation">
+                                        <button class="nav-link w-100" id="nojoga-tab" data-bs-toggle="pill"
+                                            data-bs-target="#nijoga_assign" type="button" role="tab"
+                                            aria-controls="nijoga_assign" aria-selected="false">
+                                            <i class="bi bi-person-lines-fill me-2"></i> Nijoga Assigned
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
-
                         </div>
                     </div>
+
 
                     <div class="container-fluid mt-4">
                         <div class="row justify-content-center">
@@ -237,7 +247,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div class="card-body p-3">
                         <div class="tab-content mt-4" id="profileTabsContent">
