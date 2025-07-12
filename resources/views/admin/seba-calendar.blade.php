@@ -9,6 +9,9 @@
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
+    {{-- Select2 CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
         #custom-calendar {
             max-width: 100%;
@@ -86,9 +89,9 @@
                                 <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
                             </div>
                             <div class="card-body">
-                                <form method="GET" action="{{ url()->current() }}" id="searchForm">
-                                    <div class="mb-3 d-flex align-items-center">
-                                        <select class="form-select me-2" name="pratihari_id" id="pratihariSelect">
+                                <form method="GET" action="{{ url()->current() }}">
+                                    <div class="mb-3">
+                                        <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
                                             <option value="">-- Select Pratihari Name --</option>
                                             @foreach ($profile_name as $profile)
                                                 <option value="{{ $profile->pratihari_id }}"
@@ -98,11 +101,8 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                        <button type="button" class="btn btn-primary"
-                                            onclick="submitSearch()">Search</button>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>
@@ -217,15 +217,8 @@
         });
     </script>
     
-<script>
-    function submitSearch() {
-        const select = document.getElementById('pratihariSelect');
-        if (select.value !== '') {
-            document.getElementById('searchForm').submit();
-        } else {
-            alert('Please select a Pratihari name before searching.');
-        }
-    }
-</script>
+{{-- Select2 JS --}}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
 @endsection
