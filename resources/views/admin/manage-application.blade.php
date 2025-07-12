@@ -10,9 +10,25 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+          .card-header {
+            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
+            color: rgb(240, 242, 248);
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
 @endsection
 
 @section('content')
+<div class="card-header">Pratihari seba assign</div>
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
             <span class="main-content-title mg-b-0 mg-b-lg-1">Manage Application</span>
