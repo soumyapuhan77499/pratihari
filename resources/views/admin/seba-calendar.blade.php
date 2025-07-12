@@ -106,7 +106,7 @@
 
                     <div class="col-lg-4 mb-4 mx-auto d-flex">
                         <div class="card custom-card w-100">
-                            <div class="card-header text-white" style="background-color: #e96a01">
+                            <div class="card-header text-white" style="background-color: #f8c66d">
                                 <i class="bi bi-filter me-2"></i>Filter by Gochhikar Name
                             </div>
                             <div class="card-body">
