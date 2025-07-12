@@ -10,7 +10,7 @@
     <!-- Replace Bootstrap 5 CSS with Bootstrap 4 -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-         .card-header {
+        .card-header {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
             color: rgb(233, 234, 237);
             font-size: 25px;
@@ -22,16 +22,15 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-
     </style>
 @endsection
 
 @section('content')
- <div class="col-lg-12">
-            <div class="card custom-card overflow-hidden">
-                <div class="card-header">Manage Notice</div>
-            </div>
+    <div class="col-lg-12 mt-4">
+        <div class="card custom-card overflow-hidden">
+            <div class="card-header">Manage Notice</div>
         </div>
+    </div>
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
             <span class="main-content-title mg-b-0 mg-b-lg-1">Manage Notice</span>
@@ -47,7 +46,7 @@
 
     <!-- Row -->
     <div class="row row-sm">
-       
+
         <div class="col-lg-12">
             <div class="card custom-card overflow-hidden">
                 <div class="card-body">
