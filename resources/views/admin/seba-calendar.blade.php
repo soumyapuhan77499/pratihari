@@ -216,4 +216,16 @@
             calendar.render();
         });
     </script>
+    
+<script>
+    function submitSearch() {
+        const select = document.getElementById('pratihariSelect');
+        if (select.value !== '') {
+            document.getElementById('searchForm').submit();
+        } else {
+            alert('Please select a Pratihari name before searching.');
+        }
+    }
+</script>
+
 @endsection
