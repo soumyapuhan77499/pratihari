@@ -44,19 +44,7 @@
             gap: 12px;
         }
 
-        .card-header {
-            background: linear-gradient(135deg, #f8f19e, #dcf809);
-            color: rgb(51, 101, 251);
-            font-size: 25px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
+       
         .custom-gradient-btn {
             background: linear-gradient(135deg, #6a11cb, #2575fc);
             border: none;
@@ -93,7 +81,7 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header">🛕 Assign Seba to Pratihari</div>
+                <div class="card-header">Assign Seba to Pratihari</div>
                 <div class="card-body">
 
                     <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">

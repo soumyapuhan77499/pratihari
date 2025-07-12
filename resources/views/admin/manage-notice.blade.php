@@ -9,6 +9,21 @@
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
     <!-- Replace Bootstrap 5 CSS with Bootstrap 4 -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+         .card-header {
+            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
+            color: rgb(51, 101, 251);
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+    </style>
 @endsection
 
 @section('content')
@@ -27,6 +42,11 @@
 
     <!-- Row -->
     <div class="row row-sm">
+        <div class="col-lg-12">
+            <div class="card custom-card overflow-hidden">
+                <div class="card-header">Manage Notice</div>
+            </div>
+        </div>
         <div class="col-lg-12">
             <div class="card custom-card overflow-hidden">
                 <div class="card-body">

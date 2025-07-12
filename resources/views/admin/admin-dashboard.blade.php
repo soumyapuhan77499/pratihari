@@ -208,8 +208,8 @@
                                 <!-- Right: Date and Time aligned right -->
                                 <div class="col-6 d-flex justify-content-end gap-2 align-items-center datetime-box">
                                     <span class="date-time-badge">{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
-                                    <span class="date-time-badge" id="current-time"></span>
                                 </div>
+
                             </div>
 
                         </div>
