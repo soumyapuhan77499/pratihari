@@ -91,7 +91,8 @@
                             <div class="card-body">
                                 <form method="GET" action="{{ url()->current() }}">
                                     <div class="mb-3">
-                                        <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
+                                        <select class="form-select select2-search" name="pratihari_id"
+                                            onchange="this.form.submit()">
                                             <option value="">-- Select Pratihari Name --</option>
                                             @foreach ($profile_name as $profile)
                                                 <option value="{{ $profile->pratihari_id }}"
@@ -101,6 +102,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
+
                                     </div>
                                 </form>
                             </div>
@@ -216,9 +218,18 @@
             calendar.render();
         });
     </script>
-    
-{{-- Select2 JS --}}
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        $('.select2-search').select2({
+            placeholder: "-- Select Pratihari Name --",
+            allowClear: true,
+            width: '100%'
+        });
+    });
+</script>
 
 
+    {{-- Select2 JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 @endsection
