@@ -28,7 +28,7 @@
 @endsection
 
 @section('content')
-<div class="card-header">Pratihari seba assign</div>
+<div class="card-header mt-4">Pratihari Application</div>
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
             <span class="main-content-title mg-b-0 mg-b-lg-1">Manage Application</span>
