@@ -218,25 +218,22 @@
                     <div class="container-fluid mt-4">
                         <div class="row justify-content-center">
                             <div class="col-lg-10">
-                                <div class="tab-wrapper shadow-sm rounded-4 bg-white p-3">
-                                    <ul class="nav nav-pills justify-content-center tab-modern" id="profileTabs"
-                                        role="tablist">
-                                        <li class="nav-item me-3" role="presentation">
-                                            <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill"
-                                                data-bs-target="#pratihari" type="button" role="tab"
-                                                aria-controls="pratihari" aria-selected="true">
-                                                <i class="bi bi-person-badge me-2"></i> Pratihari
-                                            </button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="nojoga-tab" data-bs-toggle="pill"
-                                                data-bs-target="#nijoga_assign" type="button" role="tab"
-                                                aria-controls="nijoga_assign" aria-selected="false">
-                                                <i class="bi bi-person-lines-fill me-2"></i> Nijoga Assigned
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <ul class="nav nav-pills justify-content-center tab-modern" id="profileTabs" role="tablist">
+                                    <li class="nav-item me-3" role="presentation">
+                                        <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill"
+                                            data-bs-target="#pratihari" type="button" role="tab"
+                                            aria-controls="pratihari" aria-selected="true">
+                                            <i class="bi bi-person-badge me-2"></i> Pratihari
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="nojoga-tab" data-bs-toggle="pill"
+                                            data-bs-target="#nijoga_assign" type="button" role="tab"
+                                            aria-controls="nijoga_assign" aria-selected="false">
+                                            <i class="bi bi-person-lines-fill me-2"></i> Nijoga Assigned
+                                        </button>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
