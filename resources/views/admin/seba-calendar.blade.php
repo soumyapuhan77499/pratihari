@@ -53,7 +53,7 @@
             background-color: #f8f9fa;
         }
 
-        .card-header {
+        .card-headers {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
             color: rgb(233, 234, 237);
             font-size: 25px;
@@ -75,7 +75,7 @@
             <div class="card">
                 <div class="col-lg-12 mt-4">
                     <div class="card custom-card overflow-hidden">
-                        <div class="card-header">Seba Calendar</div>
+                        <div class="card-headers">Seba Calendar</div>
                     </div>
                 </div>
                 <div class="row">
