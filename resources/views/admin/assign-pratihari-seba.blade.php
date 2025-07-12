@@ -46,7 +46,7 @@
 
         .card-header {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
-            color: rgb(51, 101, 251);
+            color: rgb(242, 245, 253);
             font-size: 25px;
             font-weight: bold;
             text-align: center;
@@ -93,7 +93,7 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header">🛕 Assign Seba to Pratihari</div>
+                <div class="card-header">Pratuhari Seba Assign</div>
                 <div class="card-body">
 
                     <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">
