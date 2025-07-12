@@ -2,14 +2,8 @@
 
 @section('styles')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-
-    <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
+   
     <style>
         .form-group {
             position: relative;
@@ -114,7 +108,8 @@
                                         </option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> <!-- ✅ FIX: Closing div tag added -->
+
 
 
                             <div class="col-md-6">
@@ -184,62 +179,38 @@
         </div>
     </div>
 @endsection
-
 @section('scripts')
-    <!-- jQuery (Required for Select2) -->
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Select2 JS -->
+    <!-- Bootstrap (optional) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(() => document.getElementById("successMessage")?.classList.add("d-none"), 5000);
-            setTimeout(() => document.getElementById("errorMessage")?.classList.add("d-none"), 5000);
-        });
-    </script>
+        $(document).ready(function () {
+            // Flash message auto hide
+            setTimeout(() => $('#successMessage')?.addClass('d-none'), 5000);
+            setTimeout(() => $('#errorMessage')?.addClass('d-none'), 5000);
 
-    <!-- Include Select2 and reload logic -->
-    <script>
-        $(document).ready(function() {
-            // Initialize Select2 with search enabled
+            // Initialize Select2
             $('#pratihari_id').select2({
                 placeholder: '-- Select Pratihari --',
                 allowClear: true,
-                width: 'resolve'
+                width: '100%'
             });
 
-            // Handle dropdown change
-            $('#pratihari_id, #year').change(function() {
+            // Redirect on change
+            $('#pratihari_id, #year').change(function () {
                 let pratihari_id = $('#pratihari_id').val();
                 let year = $('#year').val();
 
                 if (pratihari_id && year) {
-                    let url =
-                        `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
-                    window.location.href = url;
+                    window.location.href = `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
                 }
             });
         });
     </script>
-
-    <!-- jQuery (required for Select2) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Select2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
-
-    <!-- Internal Select2 js-->
-    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-
-    <!--Internal  Form-elements js-->
-    <script src="{{ asset('assets/js/advanced-form-elements.js') }}"></script>
-    <script src="{{ asset('assets/js/select2.js') }}"></script>
 @endsection
