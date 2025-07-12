@@ -828,7 +828,7 @@
             </div>
         </div>
 
-        <div class="row mb-4 mt-4">
+        {{-- <div class="row mb-4 mt-4">
             <div class="col-lg-12">
                 <div class="card custom-card"
                     style="background: linear-gradient(90deg, #f8c66d 0%, #e96a01 100%); color: #1d1818;">
@@ -841,7 +841,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- <div class="row">
             <!-- Filter by Pratihari Name -->
