@@ -7,6 +7,8 @@
 
     <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <style>
         .form-group {
@@ -93,7 +95,7 @@
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header">🛕 Assign Seba to Pratihari</div>
+                <div class="card-header">Pratihari seba assign</div>
                 <div class="card-body">
 
                     <form method="POST" action="{{ route('admin.savePratihariAssignSeba') }}" id="assignSebaForm">
@@ -102,7 +104,8 @@
                         <div class="row align-items-end">
                             <div class="col-md-6">
                                 <label for="pratihari_id">Select Pratihari</label>
-                                <select name="pratihari_id" id="pratihari_id" class="form-control select2">
+                                <select name="pratihari_id" id="pratihari_id" class="form-control select2"
+                                    style="width: 100%;">
                                     <option value="">-- Select Pratihari --</option>
                                     @foreach ($pratiharis as $pratihari_id_option => $name)
                                         <option value="{{ $pratihari_id_option }}"
@@ -112,6 +115,7 @@
                                     @endforeach
                                 </select>
                             </div>
+
 
                             <div class="col-md-6">
                                 <label for="year" class="form-label">Year</label>
@@ -198,6 +202,14 @@
     <!-- Include Select2 and reload logic -->
     <script>
         $(document).ready(function() {
+            // Initialize Select2 with search enabled
+            $('#pratihari_id').select2({
+                placeholder: '-- Select Pratihari --',
+                allowClear: true,
+                width: 'resolve'
+            });
+
+            // Handle dropdown change
             $('#pratihari_id, #year').change(function() {
                 let pratihari_id = $('#pratihari_id').val();
                 let year = $('#year').val();
@@ -208,13 +220,15 @@
                     window.location.href = url;
                 }
             });
-
-            $('#pratihari_id').select2({
-                placeholder: '-- Select Pratihari --',
-                allowClear: true
-            });
         });
     </script>
+
+    <!-- jQuery (required for Select2) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
