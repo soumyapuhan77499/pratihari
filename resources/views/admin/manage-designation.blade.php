@@ -8,16 +8,37 @@
     <!-- INTERNAL Select2 css -->
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .card-header {
+            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
+            color: rgb(233, 234, 237);
+            font-size: 25px;
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
 @endsection
 
 @section('content')
+    <div class="col-lg-12 mt-4">
+        <div class="card custom-card overflow-hidden">
+            <div class="card-header">Manage Designation</div>
+        </div>
+    </div>
     <div class="breadcrumb-header justify-content-between">
         <div class="left-content">
             <span class="main-content-title mg-b-0 mg-b-lg-1">Manage Designation</span>
         </div>
         <div class="justify-content-center mt-2">
             <ol class="breadcrumb d-flex justify-content-between align-items-center">
-                <a href="{{ url('admin/add-designation') }}" class="breadcrumb-item tx-15 btn btn-warning">Add Designation</a>
+                <a href="{{ url('admin/add-designation') }}" class="breadcrumb-item tx-15 btn btn-warning">Add
+                    Designation</a>
                 <li class="breadcrumb-item tx-15"><a href="javascript:void(0);">Dashboard</a></li>
             </ol>
         </div>
