@@ -117,16 +117,18 @@
                             <div class="card-body">
                                 <form method="GET" action="{{ url()->current() }}">
                                     <div class="mb-3">
-                                        <select class="form-select" name="pratihari_id" onchange="this.form.submit()">
+                                        <select class="form-select select2-search" name="pratihari_id"
+                                            onchange="this.form.submit()">
                                             <option value="">-- Select Gochhikar Name --</option>
                                             @foreach ($gochhikar_name as $gochhikar)
                                                 <option value="{{ $gochhikar->pratihari_id }}"
-                                                    {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
+                                                    {{ request('pratihari_id') == $gochhikar->pratihari_id ? 'selected' : '' }}>
                                                     {{ $gochhikar->first_name }} {{ $gochhikar->middle_name }}
                                                     {{ $gochhikar->last_name }}
                                                 </option>
                                             @endforeach
                                         </select>
+
                                     </div>
                                 </form>
                             </div>
@@ -220,15 +222,24 @@
     </script>
 
     <script>
-    $(document).ready(function() {
-        $('.select2-search').select2({
-            placeholder: "-- Select Pratihari Name --",
-            allowClear: true,
-            width: '100%'
+        $(document).ready(function() {
+            $('.select2-search').select2({
+                placeholder: "-- Select Pratihari Name --",
+                allowClear: true,
+                width: '100%'
+            });
         });
-    });
-</script>
+    </script>
 
+    <script>
+        $(document).ready(function() {
+            $('.select2-search').select2({
+                placeholder: "-- Select Gochhikar Name --",
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
 
     {{-- Select2 JS --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
