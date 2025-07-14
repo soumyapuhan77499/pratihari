@@ -543,5 +543,87 @@ public function getApprovedProfiles()
         ], 500);
     }
 }
+public function updateProfile(Request $request, $pratihari_id)
+{
+    // Validate incoming request
+    $validator = Validator::make($request->all(), [
+        'first_name' => 'required|string|max:255',
+        // Add other validation rules as needed
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Validation failed',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    try {
+        // Find the existing profile by ID
+        $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihari_id)->firstOrFail();
+
+        // Update the profile data
+        $pratihariProfile->first_name = $request->first_name;
+        $pratihariProfile->middle_name = $request->middle_name;
+        $pratihariProfile->last_name = $request->last_name;
+        $pratihariProfile->alias_name = $request->alias_name;
+        $pratihariProfile->email = $request->email;
+        $pratihariProfile->whatsapp_no = $request->whatsapp_no;
+        $pratihariProfile->phone_no = $request->phone_no;
+        $pratihariProfile->blood_group = $request->blood_group;
+        $pratihariProfile->healthcard_no = $request->health_card_no;
+        $pratihariProfile->joining_date = $request->joining_date;
+        $pratihariProfile->date_of_birth = $request->date_of_birth;
+
+        if ($pratihariProfile->pratihari_status === 'rejected') {
+            $pratihariProfile->pratihari_status = 'updated';
+        }
+
+        // Handle health card photo upload
+        if ($request->hasFile('health_card_photo')) {
+            $healthCardPhoto = $request->file('health_card_photo');
+
+            if (!$healthCardPhoto->isValid()) {
+                throw new \Exception('Health card photo upload failed. Please try again.');
+            }
+
+            $healthCardImageName = 'health_card_photo_' . time() . '.' . $healthCardPhoto->getClientOriginalExtension();
+            $healthCardPhoto->move(public_path('uploads/health_card_photo'), $healthCardImageName);
+            $pratihariProfile->health_card_photo = 'uploads/health_card_photo/' . $healthCardImageName;
+        }
+
+        // Handle profile photo upload
+        if ($request->hasFile('profile_photo')) {
+            $profilePhoto = $request->file('profile_photo');
+
+            if (!$profilePhoto->isValid()) {
+                throw new \Exception('Profile photo upload failed. Please try again.');
+            }
+
+            $imageName = 'profile_' . time() . '.' . $profilePhoto->getClientOriginalExtension();
+            $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
+            $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
+        }
+
+        // Save updated profile
+        $pratihariProfile->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Profile updated successfully',
+            'data' => $pratihariProfile
+        ], 200);
+
+    } catch (\Exception $e) {
+        \Log::error('Error updating profile: ' . $e->getMessage());
+
+        return response()->json([
+            'status' => false,
+            'message' => 'An error occurred while updating the profile',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
 }

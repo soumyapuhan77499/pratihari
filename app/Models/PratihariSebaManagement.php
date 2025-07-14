@@ -9,7 +9,7 @@ class PratihariSebaManagement extends Model
 {
     use HasFactory;
 
-    protected $table = 'pratihari_seba_management';
+    protected $table = 'pratihari__seba_management';
 
     protected $fillable = [
         'pratihari_id',
