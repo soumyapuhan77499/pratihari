@@ -135,8 +135,8 @@ public function getHomePage()
         // === START: Beddha Calculation ===
         $today = \Carbon\Carbon::today();
 
-        $baseDatePratihari = \Carbon\Carbon::parse('2024-01-01');
-        $baseDateGochhikar = \Carbon\Carbon::parse('2024-01-01');
+        $baseDatePratihari = \Carbon\Carbon::parse('2025-07-01');
+        $baseDateGochhikar = \Carbon\Carbon::parse('2025-07-01');
 
         $todayPratihariBeddhaIds = [];
         $todayGochhikarBeddhaIds = [];
