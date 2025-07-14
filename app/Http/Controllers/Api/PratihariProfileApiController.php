@@ -99,7 +99,6 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
-
 public function getHomePage()
 {
     try {
@@ -132,50 +131,21 @@ public function getHomePage()
             'reason' => $profile->reject_reason ?? null,
         ];
 
-        // === START: Beddha Calculation ===
+        // === START: Pure Date-Based Beddha Calculation ===
         $today = \Carbon\Carbon::today();
-
         $baseDatePratihari = \Carbon\Carbon::parse('2025-07-01');
         $baseDateGochhikar = \Carbon\Carbon::parse('2025-07-01');
 
-        $todayPratihariBeddhaIds = [];
-        $todayGochhikarBeddhaIds = [];
+        // Pratihari: every 47 days
+        $diffPratihari = $baseDatePratihari->diffInDays($today);
+        $currentPratihariBeddhaId = ($diffPratihari % 47) + 1;
 
-        $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
+        // Gochhikar: every 16 days
+        $diffGochhikar = $baseDateGochhikar->diffInDays($today);
+        $currentGochhikarBeddhaId = ($diffGochhikar % 47) + 1;
 
-        foreach ($sebas as $seba) {
-            $sebaId = $seba->seba_id;
-            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
-
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId);
-                if ($beddhaId < 1 || $beddhaId > 47) continue;
-
-                $beddhaStatus = $seba->beddhaAssigns->where('beddha_id', $beddhaId)->first()->beddha_status ?? null;
-                if ($beddhaStatus === null) continue;
-
-                $offsetDays = $beddhaId - 1;
-
-                if ($sebaId == 9) {
-                    // Gochhikar logic (every 16 days)
-                    $startDate = $baseDateGochhikar->copy()->addDays($offsetDays);
-                    $diffDays = $startDate->diffInDays($today);
-                    if ($diffDays % 16 === 0 && $startDate->lte($today)) {
-                        $todayGochhikarBeddhaIds[] = $beddhaId;
-                    }
-                } else {
-                    // Pratihari logic (every 47 days)
-                    $startDate = $baseDatePratihari->copy()->addDays($offsetDays);
-                    $diffDays = $startDate->diffInDays($today);
-                    if ($diffDays % 47 === 0 && $startDate->lte($today)) {
-                        $todayPratihariBeddhaIds[] = $beddhaId;
-                    }
-                }
-            }
-        }
-
-        $currentPratihariBeddhaDisplay = implode(', ', array_unique($todayPratihariBeddhaIds));
-        $currentGochhikarBeddhaDisplay = implode(', ', array_unique($todayGochhikarBeddhaIds));
+        $currentPratihariBeddhaDisplay = "$currentPratihariBeddhaId";
+        $currentGochhikarBeddhaDisplay = "$currentGochhikarBeddhaId";
         // === END: Beddha Calculation ===
 
         return response()->json([
@@ -199,6 +169,7 @@ public function getHomePage()
         ], 500);
     }
 }
+
 
 public function getAllData(Request $request)
 {
