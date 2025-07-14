@@ -134,7 +134,7 @@ public function getHomePage()
         // === START: Pure Date-Based Beddha Calculation ===
         $today = \Carbon\Carbon::today();
         $baseDatePratihari = \Carbon\Carbon::parse('2025-07-01');
-        $baseDateGochhikar = \Carbon\Carbon::parse('2025-06-15');
+        $baseDateGochhikar = \Carbon\Carbon::parse('2025-06-16');
 
         // Pratihari: every 47 days
         $diffPratihari = $baseDatePratihari->diffInDays($today);
