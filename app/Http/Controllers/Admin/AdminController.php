@@ -327,7 +327,7 @@ class AdminController extends Controller
                     if ($sebaId == 9) {
                         // Gochhikar logic
                         $intervalDays = 16;
-                        $startDate = Carbon::create(2025, 7, 1)->addDays($beddhaId - 1);
+                        $startDate = Carbon::create(2025, 6, 16)->addDays($beddhaId - 1);
                         $endDate = Carbon::create(2050, 12, 31);
                     } else {
                         // Pratihari logic
@@ -423,7 +423,7 @@ class AdminController extends Controller
     public function sebaCalendar()
     {
 
-          $pratihariIds = PratihariSeba::whereIn('seba_id', [1,2,3,4,5,6,7,8])
+        $pratihariIds = PratihariSeba::whereIn('seba_id', [1,2,3,4,5,6,7,8])
         ->pluck('pratihari_id')
         ->unique();
 
