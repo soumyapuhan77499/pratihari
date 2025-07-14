@@ -68,6 +68,17 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
+
+          .card-headers {
+            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
+            color: rgb(233, 234, 237);
+            font-size: 20px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+        }
     </style>
 @endsection
 
@@ -85,7 +96,7 @@
                     <!-- Filter by Pratihari Name -->
                     <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
                         <div class="card custom-card w-100">
-                            <div class="card-header text-white" style="background-color: #f8c66d">
+                            <div class="card-headers text-white" style="background-color: #f8c66d">
                                 <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
                             </div>
                             <div class="card-body">
@@ -111,7 +122,7 @@
 
                     <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
                         <div class="card custom-card w-100">
-                            <div class="card-header text-white" style="background-color: #f8c66d">
+                            <div class="card-headers text-white" style="background-color: #f8c66d">
                                 <i class="bi bi-filter me-2"></i>Filter by Gochhikar Name
                             </div>
                             <div class="card-body">
