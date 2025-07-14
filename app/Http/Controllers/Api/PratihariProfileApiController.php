@@ -124,16 +124,59 @@ public function getHomePage()
         }
 
         $photoBaseUrl = rtrim(config('app.photo_url'), '/') . '/';
-
-        // Append profile photo URL
         $profile->profile_photo_url = $profile->profile_photo
             ? $photoBaseUrl . ltrim($profile->profile_photo, '/')
             : null;
 
-        // Prepare reject reason
         $rejectReason = [
             'reason' => $profile->reject_reason ?? null,
         ];
+
+        // === START: Beddha Calculation ===
+        $today = \Carbon\Carbon::today();
+
+        $baseDatePratihari = \Carbon\Carbon::parse('2024-01-01');
+        $baseDateGochhikar = \Carbon\Carbon::parse('2024-01-01');
+
+        $todayPratihariBeddhaIds = [];
+        $todayGochhikarBeddhaIds = [];
+
+        $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
+
+        foreach ($sebas as $seba) {
+            $sebaId = $seba->seba_id;
+            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+
+            foreach ($beddhaIds as $beddhaId) {
+                $beddhaId = (int) trim($beddhaId);
+                if ($beddhaId < 1 || $beddhaId > 47) continue;
+
+                $beddhaStatus = $seba->beddhaAssigns->where('beddha_id', $beddhaId)->first()->beddha_status ?? null;
+                if ($beddhaStatus === null) continue;
+
+                $offsetDays = $beddhaId - 1;
+
+                if ($sebaId == 9) {
+                    // Gochhikar logic (every 16 days)
+                    $startDate = $baseDateGochhikar->copy()->addDays($offsetDays);
+                    $diffDays = $startDate->diffInDays($today);
+                    if ($diffDays % 16 === 0 && $startDate->lte($today)) {
+                        $todayGochhikarBeddhaIds[] = $beddhaId;
+                    }
+                } else {
+                    // Pratihari logic (every 47 days)
+                    $startDate = $baseDatePratihari->copy()->addDays($offsetDays);
+                    $diffDays = $startDate->diffInDays($today);
+                    if ($diffDays % 47 === 0 && $startDate->lte($today)) {
+                        $todayPratihariBeddhaIds[] = $beddhaId;
+                    }
+                }
+            }
+        }
+
+        $currentPratihariBeddhaDisplay = implode(', ', array_unique($todayPratihariBeddhaIds));
+        $currentGochhikarBeddhaDisplay = implode(', ', array_unique($todayGochhikarBeddhaIds));
+        // === END: Beddha Calculation ===
 
         return response()->json([
             'status' => true,
@@ -141,6 +184,8 @@ public function getHomePage()
             'data' => [
                 'profile' => $profile,
                 'reject_reason' => $rejectReason,
+                'today_pratihari_beddha' => $currentPratihariBeddhaDisplay,
+                'today_gochhikar_beddha' => $currentGochhikarBeddhaDisplay,
             ]
         ], 200);
 

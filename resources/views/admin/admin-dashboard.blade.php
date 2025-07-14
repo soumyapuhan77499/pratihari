@@ -275,7 +275,7 @@
                                         </div>
                                     </div>
                                 @empty
-                                    <p class="text-muted">No seba assigned for today.</p>
+                                    <p class="text-muted">No nijoga seba assigned for today.</p>
                                 @endforelse
                             </div>
                         </div>

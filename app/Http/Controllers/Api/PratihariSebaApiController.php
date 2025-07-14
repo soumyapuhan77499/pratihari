@@ -14,7 +14,6 @@ use App\Models\PratihariBeddhaMaster;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
-
 class PratihariSebaApiController extends Controller
 {
 
@@ -394,6 +393,122 @@ class PratihariSebaApiController extends Controller
                 'status' => false,
                 'message' => 'Server error',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getTodaySebaAssignments(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user || !$user->pratihari_id) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized access: no associated pratihari_id.',
+                ], 403);
+            }
+
+            $pratihariId = $user->pratihari_id;
+            $today = Carbon::today();
+
+            $baseDatePratihari = Carbon::create(2025, 7, 1);
+            $endDatePratihari = Carbon::create(2050, 12, 31);
+
+            $baseDateGochhikar = Carbon::create(2025, 7, 1);
+            $endDateGochhikar = Carbon::create(2055, 12, 31);
+
+            $pratihariEvents = [];
+            $nijogaAssign = [];
+
+            $gochhikarEvents = [];
+            $nijogaGochhikarEvents = [];
+
+            $todayPratihariBeddhaIds = [];
+            $todayGochhikarBeddhaIds = [];
+
+            // ✅ Filter by logged-in pratihari only
+            $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
+                ->where('pratihari_id', $pratihariId)
+                ->get();
+
+            foreach ($sebas as $seba) {
+                $sebaId = $seba->seba_id;
+                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+                $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+
+                foreach ($beddhaIds as $beddhaId) {
+                    $beddhaId = (int) trim($beddhaId);
+                    if ($beddhaId < 1 || $beddhaId > 47) continue;
+
+                    $beddhaStatus = $seba->beddhaAssigns->where('beddha_id', $beddhaId)->first()->beddha_status ?? null;
+                    if ($beddhaStatus === null) continue;
+
+                    $assignedUser = $seba->pratihari;
+                    $interval = ($sebaId == 9) ? 16 : 47;
+
+                    if ($sebaId == 9) {
+                        $start = $baseDateGochhikar->copy()->addDays($beddhaId - 1);
+
+                        while ($start->lte($endDateGochhikar)) {
+                            if ($start->equalTo($today)) {
+                                $label = "$sebaName | Beddha $beddhaId";
+                                if ($assignedUser) {
+                                    if ($beddhaStatus == 1) {
+                                        $gochhikarEvents[$label][] = $assignedUser;
+                                    } else {
+                                        $nijogaGochhikarEvents[$label][] = $assignedUser;
+                                    }
+                                    $todayGochhikarBeddhaIds[] = $beddhaId;
+                                }
+                                break;
+                            }
+                            $start->addDays($interval);
+                        }
+                    } else {
+                        $start = $baseDatePratihari->copy()->addDays($beddhaId - 1);
+
+                        while ($start->lte($endDatePratihari)) {
+                            if ($start->equalTo($today)) {
+                                $label = "$sebaName | Beddha $beddhaId";
+                                if ($assignedUser) {
+                                    if ($beddhaStatus == 1) {
+                                        $pratihariEvents[$label][] = $assignedUser;
+                                    } else {
+                                        $nijogaAssign[$label][] = $assignedUser;
+                                    }
+                                    $todayPratihariBeddhaIds[] = $beddhaId;
+                                }
+                                break;
+                            }
+                            $start->addDays($interval);
+                        }
+                    }
+                }
+            }
+
+            // Deduplicate users
+            $pratihariEvents = collect($pratihariEvents)->map(fn($u) => collect($u)->unique('pratihari_id')->values())->toArray();
+            $nijogaAssign = collect($nijogaAssign)->map(fn($u) => collect($u)->unique('pratihari_id')->values())->toArray();
+            $gochhikarEvents = collect($gochhikarEvents)->map(fn($u) => collect($u)->unique('pratihari_id')->values())->toArray();
+            $nijogaGochhikarEvents = collect($nijogaGochhikarEvents)->map(fn($u) => collect($u)->unique('pratihari_id')->values())->toArray();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Today\'s seba assignments fetched successfully.',
+                'pratihari_events' => $pratihariEvents,
+                'nijoga_pratihari_events' => $nijogaAssign,
+                'gochhikar_events' => $gochhikarEvents,
+                'nijoga_gochhikar_events' => $nijogaGochhikarEvents,
+                'today_pratihari_beddhas' => array_unique($todayPratihariBeddhaIds),
+                'today_gochhikar_beddhas' => array_unique($todayGochhikarBeddhaIds),
+            ], 200);
+
+        } catch (\Throwable $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Error fetching seba assignments.',
+                'error' => $e->getMessage(), // Remove in production
             ], 500);
         }
     }
