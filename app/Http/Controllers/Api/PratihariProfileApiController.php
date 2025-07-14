@@ -142,7 +142,7 @@ public function getHomePage()
 
         // Gochhikar: every 16 days
         $diffGochhikar = $baseDateGochhikar->diffInDays($today);
-        $currentGochhikarBeddhaId = ($diffGochhikar % 47) + 1;
+        $currentGochhikarBeddhaId = ($diffGochhikar % 16) + 1;
 
         $currentPratihariBeddhaDisplay = "$currentPratihariBeddhaId";
         $currentGochhikarBeddhaDisplay = "$currentGochhikarBeddhaId";
