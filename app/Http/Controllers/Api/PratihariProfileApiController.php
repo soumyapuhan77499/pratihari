@@ -58,42 +58,36 @@ public function saveProfile(Request $request)
         $healthcard_no = $request->healthcard_no;
         $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
 
-        // --- FAMILY NUMBER (XXX) ---
-        $familyMembers = PratihariProfile::where('healthcard_no', 'like', $prefix . '%')
+        // --- FAMILY NUMBER (YYY) ---
+        // Only check for exact same healthcard_no
+        $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
             ->whereNotNull('nijoga_id')
             ->get();
 
-        if ($familyMembers->isEmpty()) {
-            $familyCount = 1;
+        if ($existingSameHealthcard->isEmpty()) {
+            $familyCount = 1; // Start at 001
         } else {
-            $matchingFamily = $familyMembers->firstWhere('healthcard_no', $healthcard_no);
+            $lastFamily = $existingSameHealthcard->map(function ($member) {
+                return (int) substr($member->nijoga_id, 5, 3); // Extract YYY
+            })->max();
 
-            if ($matchingFamily) {
-                // Reuse same family number
-                $familyCount = (int) substr($matchingFamily->nijoga_id, 5, 3);
-            } else {
-                // Increment last used family number for this prefix
-                $maxFamily = $familyMembers->map(function ($member) {
-                    return (int) substr($member->nijoga_id, 5, 3);
-                })->max();
-
-                $familyCount = $maxFamily + 1;
-            }
+            $familyCount = $lastFamily + 1;
         }
 
-        // --- GLOBAL SERIAL NUMBER (YYYY) ---
+        // --- GLOBAL SERIAL NUMBER (ZZZZ) ---
         $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
-            ->orderByDesc('id') // assuming serial increases with id
+            ->orderByDesc('id')
             ->get()
             ->map(function ($member) {
-                return (int) substr($member->nijoga_id, -4);
+                return (int) substr($member->nijoga_id, -4); // Extract ZZZZ
             })->max();
 
         $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
 
-        // --- COMBINE INTO NIJOGA ID ---
+        // --- FORMAT NIJOGA ID: XXXX-YYY-ZZZZ ---
         $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
         $pratihariProfile->nijoga_id = $nijoga_id;
+
 
         // --- FILE UPLOADS ---
         if ($request->hasFile('healthcard_photo')) {
