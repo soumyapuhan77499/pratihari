@@ -72,7 +72,7 @@
         }
 
         .beddha-items .form-check-label {
-            margin-left: 8px;
+            margin-left: 14px;
             font-size: 1.2rem;
             font-weight: 500;
         }
