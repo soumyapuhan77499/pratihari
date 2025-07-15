@@ -51,7 +51,6 @@ class PratihariSeba extends Model
         );
     }
 
-    
     // Instead of hasManyThrough, define a method to fetch related beddhas
     public function beddhas()
     {

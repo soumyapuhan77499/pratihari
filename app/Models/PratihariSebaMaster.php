@@ -13,5 +13,6 @@ class PratihariSebaMaster extends Model
 
     protected $fillable = [
         'seba_name',
+        'type'
     ];
 }

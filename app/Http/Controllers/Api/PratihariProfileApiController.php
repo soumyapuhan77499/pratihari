@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Config; // make sure this is at the top if needed
 
 class PratihariProfileApiController extends Controller
 {
-
 public function saveProfile(Request $request)
 {
     $user = Auth::user();
@@ -38,7 +37,7 @@ public function saveProfile(Request $request)
             'message' => 'Unauthorized. Please log in.',
         ], 401);
     }
-    
+
     try {
         $pratihariProfile = new PratihariProfile();
 
@@ -54,6 +53,49 @@ public function saveProfile(Request $request)
         $pratihariProfile->blood_group = $request->blood_group;
         $pratihariProfile->healthcard_no = $request->healthcard_no;
 
+        // --- NIJOGA ID GENERATION ---
+
+        $healthcard_no = $request->healthcard_no;
+        $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
+
+        // --- FAMILY NUMBER (XXX) ---
+        $familyMembers = PratihariProfile::where('healthcard_no', 'like', $prefix . '%')
+            ->whereNotNull('nijoga_id')
+            ->get();
+
+        if ($familyMembers->isEmpty()) {
+            $familyCount = 1;
+        } else {
+            $matchingFamily = $familyMembers->firstWhere('healthcard_no', $healthcard_no);
+
+            if ($matchingFamily) {
+                // Reuse same family number
+                $familyCount = (int) substr($matchingFamily->nijoga_id, 5, 3);
+            } else {
+                // Increment last used family number for this prefix
+                $maxFamily = $familyMembers->map(function ($member) {
+                    return (int) substr($member->nijoga_id, 5, 3);
+                })->max();
+
+                $familyCount = $maxFamily + 1;
+            }
+        }
+
+        // --- GLOBAL SERIAL NUMBER (YYYY) ---
+        $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
+            ->orderByDesc('id') // assuming serial increases with id
+            ->get()
+            ->map(function ($member) {
+                return (int) substr($member->nijoga_id, -4);
+            })->max();
+
+        $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
+
+        // --- COMBINE INTO NIJOGA ID ---
+        $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
+        $pratihariProfile->nijoga_id = $nijoga_id;
+
+        // --- FILE UPLOADS ---
         if ($request->hasFile('healthcard_photo')) {
             $file = $request->file('healthcard_photo');
             $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
@@ -68,7 +110,7 @@ public function saveProfile(Request $request)
             $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
         }
 
-        // Save joining date or year in separate fields (adjusted as per your model)
+        // --- JOINING DATE/YEAR ---
         if ($request->filled('joining_date')) {
             $pratihariProfile->joining_date = $request->joining_date;
             $pratihariProfile->joining_year = null;
@@ -80,8 +122,10 @@ public function saveProfile(Request $request)
             $pratihariProfile->joining_year = null;
         }
 
+        // --- DOB ---
         $pratihariProfile->date_of_birth = $request->date_of_birth;
 
+        // --- SAVE TO DB ---
         $pratihariProfile->save();
 
         return response()->json([
@@ -99,6 +143,7 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
+
 public function getHomePage()
 {
     try {

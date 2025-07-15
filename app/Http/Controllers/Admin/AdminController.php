@@ -13,6 +13,7 @@ use App\Models\PratihariSeba;
 use App\Models\PratihariSocialMedia;
 use App\Models\PratihariOccupation;
 use App\Models\PratihariApplication;
+use App\Models\PratihariSebaMaster;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Client;
@@ -94,16 +95,21 @@ class AdminController extends Controller
 
         $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
 
-        $pratihariIds = PratihariSeba::whereIn('seba_id', [1,2,3,4,5,6,7,8])
-        ->pluck('pratihari_id')
-        ->unique();
+        // Fetch seba IDs based on type from master__seba table
+        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
-        // Get all unique Pratihari IDs with seba ID 9 (Gochhikar)
-        $gochhikarIds = PratihariSeba::where('seba_id', 9)
-        ->pluck('pratihari_id')
-        ->unique();
+        // Get all unique Pratihari IDs linked to pratihari type
+        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
+            ->pluck('pratihari_id')
+            ->unique();
 
-        // Fetch profile details
+        // Get all unique Pratihari IDs linked to gochhikar type
+        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
+            ->pluck('pratihari_id')
+            ->unique();
+
+        // Fetch profile details for each group
         $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
         $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
 
@@ -143,7 +149,7 @@ class AdminController extends Controller
         $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
 
         foreach ($sebas as $seba) {
-            $sebaId = $seba->seba_id;
+            $sebaType = $seba->type;
             $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
             $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
@@ -155,10 +161,9 @@ class AdminController extends Controller
                 if ($beddhaStatus === null) continue;
 
                 $user = $seba->pratihari;
-                $interval = ($sebaId == 9) ? 16 : 47;
+                $interval = ($sebaType = "gochhikar") ? 16 : 47;
 
-                // === Gochhikar (seba_id == 9) ===
-                if ($sebaId == 9) {
+                if ($sebaId = "gochhikar") {
                     $start = $baseDateGochhikar->copy()->addDays($beddhaId - 1);
 
                     while ($start->lte($endDateGochhikar)) {
@@ -178,7 +183,6 @@ class AdminController extends Controller
                     }
                 }
 
-                // === Pratihari (seba_id != 9) ===
                 else {
                     $start = $baseDatePratihari->copy()->addDays($beddhaId - 1);
 
@@ -315,7 +319,7 @@ class AdminController extends Controller
 
             foreach ($sebas as $seba) {
                 $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                $sebaId = $seba->seba_id;
+                $sebaType = $seba->type;
                 $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
                 foreach ($beddhaIds as $beddhaId) {
@@ -324,7 +328,7 @@ class AdminController extends Controller
                     if ($beddhaId < 1 || $beddhaId > 47) continue;
 
                     // Determine interval and dates based on seba_id
-                    if ($sebaId == 9) {
+                    if ($sebaType == "gochhikar") {
                         // Gochhikar logic
                         $intervalDays = 16;
                         $startDate = Carbon::create(2025, 6, 16)->addDays($beddhaId - 1);
@@ -419,26 +423,32 @@ class AdminController extends Controller
 
         return back()->with('message', 'Invalid OTP.');
     }
-
+        
     public function sebaCalendar()
     {
+        // Get seba_ids where type is 'pratihari'
+        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')
+            ->pluck('id'); // Assuming 'id' is the primary key of master__seba
 
-        $pratihariIds = PratihariSeba::whereIn('seba_id', [1,2,3,4,5,6,7,8])
-        ->pluck('pratihari_id')
-        ->unique();
+        // Get seba_ids where type is 'gochhikar'
+        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')
+            ->pluck('id');
 
-        // Get all unique Pratihari IDs with seba ID 9 (Gochhikar)
-        $gochhikarIds = PratihariSeba::where('seba_id', 9)
-        ->pluck('pratihari_id')
-        ->unique();
+        // Get all unique Pratihari IDs for seba type 'pratihari'
+        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
+            ->pluck('pratihari_id')
+            ->unique();
+
+        // Get all unique Pratihari IDs for seba type 'gochhikar'
+        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
+            ->pluck('pratihari_id')
+            ->unique();
 
         // Fetch profile details
         $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
         $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
 
-
         return view('admin.seba-calendar', compact('profile_name','gochhikar_name'));
-            
     }
 
     
