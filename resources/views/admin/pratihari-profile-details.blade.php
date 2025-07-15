@@ -426,7 +426,6 @@
                                 </div>
                             </div>
 
-
                             <!-- Submit Button -->
                             <div class="col-12 text-center">
                                 <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn text-white">
@@ -435,8 +434,6 @@
                             </div>
                         </div>
                     </form>
-
-
 
                 </div>
             </div>

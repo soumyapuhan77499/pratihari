@@ -19,11 +19,13 @@ class PratihariSebaController extends Controller
    // Controller methods
     public function pratihariSeba()
     {
-        $sebas = PratihariSebaMaster::where('status', 'active')->get(); 
-            
+        $sebas = PratihariSebaMaster::where('status', 'active')
+            ->whereIn('type', ['pratihari', 'gochhikar'])
+            ->get();
+
         return view('admin.pratihari-seba-details', compact('sebas'));
     }
-    
+
     public function getBeddhaBySeba($seba_id)
     {
         $beddhas = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
