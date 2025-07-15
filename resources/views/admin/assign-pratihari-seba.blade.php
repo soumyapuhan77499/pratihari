@@ -3,7 +3,7 @@
 @section('styles')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-   
+
     <style>
         .form-group {
             position: relative;
@@ -70,6 +70,26 @@
             transform: translateY(-2px);
             box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
         }
+
+        .beddha-items .form-check-label {
+            font-size: 1.2rem;
+            /* adjust as needed */
+            font-weight: 500;
+        }
+
+        /* Resize checkboxes */
+        .beddha-items .form-check-input {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        /* Optional: space between checkbox and label */
+        .beddha-items .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 @endsection
 
@@ -109,9 +129,6 @@
                                     @endforeach
                                 </select>
                             </div> <!-- ✅ FIX: Closing div tag added -->
-
-
-
                             <div class="col-md-6">
                                 <label for="year" class="form-label">Year</label>
                                 <select class="form-select @error('year') is-invalid @enderror" id="year"
@@ -189,7 +206,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Flash message auto hide
             setTimeout(() => $('#successMessage')?.addClass('d-none'), 5000);
             setTimeout(() => $('#errorMessage')?.addClass('d-none'), 5000);
@@ -202,12 +219,13 @@
             });
 
             // Redirect on change
-            $('#pratihari_id, #year').change(function () {
+            $('#pratihari_id, #year').change(function() {
                 let pratihari_id = $('#pratihari_id').val();
                 let year = $('#year').val();
 
                 if (pratihari_id && year) {
-                    window.location.href = `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
+                    window.location.href =
+                        `{{ route('admin.PratihariSebaAssign') }}?pratihari_id=${pratihari_id}&year=${year}`;
                 }
             });
         });
