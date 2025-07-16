@@ -379,7 +379,6 @@ class OtpController extends Controller
 //         'token_type' => 'Bearer'
 //     ], 200);
 // }
-
 public function sendOtp(Request $request)
 {
     $request->validate([
@@ -388,12 +387,13 @@ public function sendOtp(Request $request)
 
     $otp = rand(100000, 999999);
     $phone = $request->phone;
+    $shortToken = Str::random(6); // Optional
 
-    // OPTIONAL: create a short token to map the OTP (if using short links)
-    $shortToken = Str::random(6); // e.g., "A1B2C3"
-
-    // Store $otp + $phone + $shortToken in DB or cache with expiry
-    // Example: Otp::create(['phone' => $phone, 'otp' => $otp, 'token' => $shortToken]);
+    // Update or create the user with new OTP
+    $user = User::updateOrCreate(
+        ['mobile_number' => $phone],
+        ['otp' => $otp]
+    );
 
     $payload = [
         "integrated_number" => "917327096968",
@@ -419,8 +419,7 @@ public function sendOtp(Request $request)
                             "button_1" => [
                                 "subtype" => "url",
                                 "type" => "text",
-                                // ✅ FIXED: only pass a short parameter (max 15 characters)
-                                "value" => $shortToken
+                                "value" => $shortToken // must be <= 15 chars
                             ]
                         ]
                     ]
@@ -437,35 +436,40 @@ public function sendOtp(Request $request)
     return response()->json([
         'success' => true,
         'message' => 'OTP sent successfully',
-        'otp' => $otp, // ⚠️ For testing only
-        'token' => $shortToken, // Optional: return for verification link
+        'otp' => $otp, // ❗️Remove in production
+        'token' => $shortToken,
         'api_response' => $response->json()
     ]);
 }
+   public function verifyOtp(Request $request)
+{
+    $request->validate([
+        'mobile_number' => 'required|string',
+        'otp' => 'required|string'
+    ]);
 
-    public function verifyOtp(Request $request)
-    {
-        $request->validate([
-            'mobile' => 'required|string',
-            'otp' => 'required|string'
-        ]);
+    $user = User::where('mobile_number', $request->mobile_number)
+                ->where('otp', $request->otp)
+                ->first();
 
-        $otpRecord = WhatsappOtp::where('mobile', $request->mobile)
-                        ->where('otp', $request->otp)
-                        ->where('is_verified', false)
-                        ->latest()
-                        ->first();
-
-        if (!$otpRecord) {
-            return response()->json(['message' => 'Invalid OTP'], 401);
-        }
-
-        $otpRecord->update(['is_verified' => true]);
-
-        // Proceed with login logic or token creation
-        // You can create a user here or log them in if they exist
-
-        return response()->json(['message' => 'OTP verified successfully']);
+    if (!$user) {
+        return response()->json([
+            'message' => 'Invalid OTP or mobile number.'
+        ], 401);
     }
+
+    // Clear OTP after verification
+    $user->otp = null;
+    $user->save();
+
+    // Generate Sanctum token
+    $token = $user->createToken('API Token')->plainTextToken;
+
+    return response()->json([
+        'message' => 'User authenticated successfully.',
+        'token' => $token,
+        'token_type' => 'Bearer'
+    ], 200);
+}
 
 }
