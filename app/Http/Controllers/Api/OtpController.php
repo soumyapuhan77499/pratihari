@@ -306,75 +306,157 @@ class OtpController extends Controller
 //     }
 // }
 
-public function sendOtp(Request $request)
-{
-    if (!$request->expectsJson() && !$request->isJson()) {
-        return response()->json(['message' => 'Only JSON requests are allowed'], 406);
+// public function sendOtp(Request $request)
+// {
+//     if (!$request->expectsJson() && !$request->isJson()) {
+//         return response()->json(['message' => 'Only JSON requests are allowed'], 406);
+//     }
+
+//     $phoneNumber = $request->input('phone');
+
+//     if (!$phoneNumber) {
+//         return response()->json(['message' => 'Phone number is required.'], 422);
+//     }
+
+//     $fullPhone = '+91' . $phoneNumber;
+
+//     // Lookup user with static OTP
+//     $user = User::where('mobile_number', $fullPhone)->first();
+
+//     if (!$user || !$user->otp) {
+//         return response()->json(['message' => 'This number is not registered or OTP not set.'], 404);
+//     }
+
+//     // Store phone & OTP in session for verification
+//     session(['otp_phone' => $fullPhone]);
+//     session(['otp' => $user->otp]);
+
+//     return response()->json([
+//         'message' => 'OTP is preset in the database. Use it to verify.',
+//         'phone' => $phoneNumber
+//     ], 200);
+// }
+
+// public function verifyOtp(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'otp'   => 'required|digits:6',
+//         'phone' => 'required|string',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['message' => $validator->errors()->first()], 422);
+//     }
+
+//     $phone = $request->input('phone');
+//     $inputOtp = $request->input('otp');
+//     $fullPhone = '+91' . $phone;
+
+//     // Lookup user with matching phone and OTP (both must match)
+//     $user = User::where('mobile_number', $fullPhone)
+//                 ->where('otp', $inputOtp)
+//                 ->first();
+
+//     if (!$user) {
+//         return response()->json(['message' => 'Invalid mobile number or OTP.'], 400);
+//     }
+
+//     // Create API token
+//     $token = $user->createToken('API Token')->plainTextToken;
+
+//     return response()->json([
+//         'message' => 'User authenticated successfully.',
+//         'user' => [
+//             'id' => $user->id,
+//             'pratihari_id' => $user->pratihari_id,
+//             'mobile_number' => $user->mobile_number,
+//             // add any other user fields you want here
+//         ],
+//         'token' => $token,
+//         'token_type' => 'Bearer'
+//     ], 200);
+// }
+
+ public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'mobile' => 'required|string|min:10',
+        ]);
+
+        $otp = rand(100000, 999999);
+        $mobile = $request->mobile;
+
+        // Store OTP in DB
+        WhatsappOtp::create([
+            'mobile' => $mobile,
+            'otp' => $otp,
+        ]);
+
+        // Prepare WhatsApp payload
+        $payload = [
+            "integrated_number" => env('MSG91_WA_NUMBER'),
+            "content_type" => "template",
+            "payload" => [
+                "messaging_product" => "whatsapp",
+                "type" => "template",
+                "template" => [
+                    "name" => env('MSG91_WA_TEMPLATE'),
+                    "language" => [
+                        "code" => "en",
+                        "policy" => "deterministic"
+                    ],
+                    "namespace" => env('MSG91_WA_NAMESPACE'),
+                    "to_and_components" => [
+                        [
+                            "to" => [$mobile],
+                            "components" => [
+                                [
+                                    "type" => "body",
+                                    "parameters" => [
+                                        ["type" => "text", "text" => $otp]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey' => env('MSG91_AUTH_KEY'),
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
+
+        return response()->json([
+            'message' => 'OTP sent via WhatsApp',
+            'response' => $response->json(),
+        ]);
     }
 
-    $phoneNumber = $request->input('phone');
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'mobile' => 'required|string',
+            'otp' => 'required|string'
+        ]);
 
-    if (!$phoneNumber) {
-        return response()->json(['message' => 'Phone number is required.'], 422);
+        $otpRecord = WhatsappOtp::where('mobile', $request->mobile)
+                        ->where('otp', $request->otp)
+                        ->where('is_verified', false)
+                        ->latest()
+                        ->first();
+
+        if (!$otpRecord) {
+            return response()->json(['message' => 'Invalid OTP'], 401);
+        }
+
+        $otpRecord->update(['is_verified' => true]);
+
+        // Proceed with login logic or token creation
+        // You can create a user here or log them in if they exist
+
+        return response()->json(['message' => 'OTP verified successfully']);
     }
-
-    $fullPhone = '+91' . $phoneNumber;
-
-    // Lookup user with static OTP
-    $user = User::where('mobile_number', $fullPhone)->first();
-
-    if (!$user || !$user->otp) {
-        return response()->json(['message' => 'This number is not registered or OTP not set.'], 404);
-    }
-
-    // Store phone & OTP in session for verification
-    session(['otp_phone' => $fullPhone]);
-    session(['otp' => $user->otp]);
-
-    return response()->json([
-        'message' => 'OTP is preset in the database. Use it to verify.',
-        'phone' => $phoneNumber
-    ], 200);
-}
-
-public function verifyOtp(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'otp'   => 'required|digits:6',
-        'phone' => 'required|string',
-    ]);
-
-    if ($validator->fails()) {
-        return response()->json(['message' => $validator->errors()->first()], 422);
-    }
-
-    $phone = $request->input('phone');
-    $inputOtp = $request->input('otp');
-    $fullPhone = '+91' . $phone;
-
-    // Lookup user with matching phone and OTP (both must match)
-    $user = User::where('mobile_number', $fullPhone)
-                ->where('otp', $inputOtp)
-                ->first();
-
-    if (!$user) {
-        return response()->json(['message' => 'Invalid mobile number or OTP.'], 400);
-    }
-
-    // Create API token
-    $token = $user->createToken('API Token')->plainTextToken;
-
-    return response()->json([
-        'message' => 'User authenticated successfully.',
-        'user' => [
-            'id' => $user->id,
-            'pratihari_id' => $user->pratihari_id,
-            'mobile_number' => $user->mobile_number,
-            // add any other user fields you want here
-        ],
-        'token' => $token,
-        'token_type' => 'Bearer'
-    ], 200);
-}
 
 }

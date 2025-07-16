@@ -514,7 +514,7 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-     public function storeDateBeddhaMapping(Request $request)
+    public function storeDateBeddhaMapping(Request $request)
     {
         $startDate = Carbon::create('2025', '01', '01');
         $endDate = Carbon::create('2030', '12', '31'); // UPDATED END DATE
