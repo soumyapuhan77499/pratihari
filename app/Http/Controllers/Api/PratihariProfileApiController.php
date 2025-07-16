@@ -28,7 +28,6 @@ class PratihariProfileApiController extends Controller
 public function saveProfile(Request $request)
 {
     $user = Auth::user();
-
     $pratihariId = $user->pratihari_id;
 
     if (!$pratihariId) {
@@ -39,9 +38,18 @@ public function saveProfile(Request $request)
     }
 
     try {
-        $pratihariProfile = new PratihariProfile();
+        // Find or create profile
+        $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihariId)->first();
 
-        $pratihariProfile->pratihari_id = $pratihariId;
+        $isNew = false;
+
+        if (!$pratihariProfile) {
+            $isNew = true;
+            $pratihariProfile = new PratihariProfile();
+            $pratihariProfile->pratihari_id = $pratihariId;
+        }
+
+        // Assign profile fields
         $pratihariProfile->first_name = $request->first_name;
         $pratihariProfile->middle_name = $request->middle_name;
         $pratihariProfile->last_name = $request->last_name;
@@ -53,43 +61,41 @@ public function saveProfile(Request $request)
         $pratihariProfile->blood_group = $request->blood_group;
         $pratihariProfile->healthcard_no = $request->healthcard_no;
 
-        // --- NIJOGA ID GENERATION ---
+        // --- Generate nijoga_id only for new users ---
+        if ($isNew) {
+            $healthcard_no = $request->healthcard_no;
+            $prefix = strtoupper(substr($healthcard_no, 0, 4));
 
-        $healthcard_no = $request->healthcard_no;
-        $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
+            // Family sequence (YYY)
+            $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
+                ->whereNotNull('nijoga_id')
+                ->get();
 
-        // --- FAMILY NUMBER (YYY) ---
-        // Only check for exact same healthcard_no
-        $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
-            ->whereNotNull('nijoga_id')
-            ->get();
+            if ($existingSameHealthcard->isEmpty()) {
+                $familyCount = 1;
+            } else {
+                $lastFamily = $existingSameHealthcard->map(function ($member) {
+                    return (int) substr($member->nijoga_id, 5, 3);
+                })->max();
+                $familyCount = $lastFamily + 1;
+            }
 
-        if ($existingSameHealthcard->isEmpty()) {
-            $familyCount = 1; // Start at 001
-        } else {
-            $lastFamily = $existingSameHealthcard->map(function ($member) {
-                return (int) substr($member->nijoga_id, 5, 3); // Extract YYY
-            })->max();
+            // Global serial (ZZZZ)
+            $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
+                ->orderByDesc('id')
+                ->get()
+                ->map(function ($member) {
+                    return (int) substr($member->nijoga_id, -4);
+                })->max();
 
-            $familyCount = $lastFamily + 1;
+            $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
+
+            // Final nijoga_id
+            $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
+            $pratihariProfile->nijoga_id = $nijoga_id;
         }
 
-        // --- GLOBAL SERIAL NUMBER (ZZZZ) ---
-        $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
-            ->orderByDesc('id')
-            ->get()
-            ->map(function ($member) {
-                return (int) substr($member->nijoga_id, -4); // Extract ZZZZ
-            })->max();
-
-        $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
-
-        // --- FORMAT NIJOGA ID: XXXX-YYY-ZZZZ ---
-        $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
-        $pratihariProfile->nijoga_id = $nijoga_id;
-
-
-        // --- FILE UPLOADS ---
+        // --- File Uploads ---
         if ($request->hasFile('healthcard_photo')) {
             $file = $request->file('healthcard_photo');
             $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
@@ -104,7 +110,7 @@ public function saveProfile(Request $request)
             $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
         }
 
-        // --- JOINING DATE/YEAR ---
+        // --- Joining Date/Year ---
         if ($request->filled('joining_date')) {
             $pratihariProfile->joining_date = $request->joining_date;
             $pratihariProfile->joining_year = null;
@@ -119,12 +125,12 @@ public function saveProfile(Request $request)
         // --- DOB ---
         $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-        // --- SAVE TO DB ---
+        // Save
         $pratihariProfile->save();
 
         return response()->json([
             'status' => 200,
-            'message' => 'User profile created successfully.',
+            'message' => $isNew ? 'User profile created successfully.' : 'User profile updated successfully.',
             'data' => $pratihariProfile,
         ], 200);
 
@@ -137,6 +143,7 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
+
 
 public function getHomePage()
 {
@@ -208,7 +215,6 @@ public function getHomePage()
         ], 500);
     }
 }
-
 
 public function getAllData(Request $request)
 {
@@ -582,6 +588,7 @@ public function getApprovedProfiles()
         ], 500);
     }
 }
+
 public function updateProfile(Request $request, $pratihari_id)
 {
     // Validate incoming request
