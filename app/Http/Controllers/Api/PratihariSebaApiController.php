@@ -11,6 +11,7 @@ use App\Models\PratihariSebaManagement;
 use App\Models\PratihariSeba;
 use App\Models\PratihariSebaMaster;
 use App\Models\PratihariBeddhaMaster;
+use App\Models\DateBeddhaMapping;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -511,6 +512,34 @@ class PratihariSebaApiController extends Controller
                 'error' => $e->getMessage(), // Remove in production
             ], 500);
         }
+    }
+
+     public function storeDateBeddhaMapping(Request $request)
+    {
+        $startDate = Carbon::create('2025', '01', '01');
+        $endDate = Carbon::create('2025', '12', '31');
+
+        $beddhaId = 33;
+        $insertData = [];
+
+        while ($startDate->lte($endDate)) {
+            $insertData[] = [
+                'date' => $startDate->toDateString(),
+                'pratihari_beddha' => $beddhaId
+            ];
+
+            // Increment and loop beddha_id
+            $beddhaId = ($beddhaId % 47) + 1;
+            $startDate->addDay();
+        }
+
+        // Optional: Clear existing data for 2025 to avoid duplication
+        DateBeddhaMapping::whereYear('date', 2025)->delete();
+
+        // Insert all at once
+        DateBeddhaMapping::insert($insertData);
+
+        return response()->json(['message' => 'Date-Beddha mapping for 2025 created successfully.']);
     }
 
 }

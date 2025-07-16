@@ -68,6 +68,7 @@ Route::controller(PratihariSebaApiController::class)->group(function () {
     Route::get('/sebas/{nijoga_id}', 'getSebaByNijoga');
     Route::get('/beddhas', 'getBeddha');
     Route::get('/today-beddha', 'todayBeddha');
+    Route::post('/store-beddha-map', 'storeDateBeddhaMapping');
 
     // Authenticated routes
     Route::middleware('auth:sanctum')->group(function () {
