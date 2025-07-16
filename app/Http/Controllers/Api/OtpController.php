@@ -378,45 +378,40 @@ class OtpController extends Controller
 //         'token_type' => 'Bearer'
 //     ], 200);
 // }
-
- public function sendOtp(Request $request)
+public function sendOtp(Request $request)
     {
         $request->validate([
-            'mobile' => 'required|string|min:10',
+            'phone' => 'required|string',
         ]);
 
-        $otp = rand(100000, 999999);
-        $mobile = $request->mobile;
+        $otp = rand(100000, 999999); // You may want to store this in DB or session
+        $phone = $request->phone;
 
-        // Store OTP in DB
-        WhatsappOtp::create([
-            'mobile' => $mobile,
-            'otp' => $otp,
-        ]);
-
-        // Prepare WhatsApp payload
         $payload = [
-            "integrated_number" => env('MSG91_WA_NUMBER'),
+            "integrated_number" => "917327096968",
             "content_type" => "template",
             "payload" => [
                 "messaging_product" => "whatsapp",
                 "type" => "template",
                 "template" => [
-                    "name" => env('MSG91_WA_TEMPLATE'),
+                    "name" => "nitiapp",
                     "language" => [
                         "code" => "en",
                         "policy" => "deterministic"
                     ],
-                    "namespace" => env('MSG91_WA_NAMESPACE'),
+                    "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
                     "to_and_components" => [
                         [
-                            "to" => [$mobile],
+                            "to" => [$phone],
                             "components" => [
-                                [
-                                    "type" => "body",
-                                    "parameters" => [
-                                        ["type" => "text", "text" => $otp]
-                                    ]
+                                "body_1" => [
+                                    "type" => "text",
+                                    "value" => (string) $otp
+                                ],
+                                "button_1" => [
+                                    "subtype" => "url",
+                                    "type" => "text",
+                                    "value" => "https://yourdomain.com/verify?otp=" . $otp
                                 ]
                             ]
                         ]
@@ -427,15 +422,16 @@ class OtpController extends Controller
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'authkey' => env('MSG91_AUTH_KEY'),
+            'authkey' => env('MSG91_AUTHKEY'),
         ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
 
         return response()->json([
-            'message' => 'OTP sent via WhatsApp',
-            'response' => $response->json(),
+            'success' => true,
+            'message' => 'OTP sent successfully',
+            'otp' => $otp, // Remove in production
+            'api_response' => $response->json()
         ]);
     }
-
     public function verifyOtp(Request $request)
     {
         $request->validate([
