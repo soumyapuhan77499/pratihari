@@ -517,7 +517,7 @@ class PratihariSebaApiController extends Controller
      public function storeDateBeddhaMapping(Request $request)
     {
         $startDate = Carbon::create('2025', '01', '01');
-        $endDate = Carbon::create('2025', '12', '31');
+        $endDate = Carbon::create('2030', '12', '31'); // UPDATED END DATE
 
         $beddhaId = 33;
         $insertData = [];
@@ -533,13 +533,12 @@ class PratihariSebaApiController extends Controller
             $startDate->addDay();
         }
 
-        // Optional: Clear existing data for 2025 to avoid duplication
-        DateBeddhaMapping::whereYear('date', 2025)->delete();
+        // Optional: Clear existing date range to avoid duplication
+        DateBeddhaMapping::whereBetween('date', ['2025-01-01', '2030-12-31'])->delete();
 
-        // Insert all at once
+        // Insert all at once (can be chunked for performance if needed)
         DateBeddhaMapping::insert($insertData);
 
-        return response()->json(['message' => 'Date-Beddha mapping for 2025 created successfully.']);
+        return response()->json(['message' => 'Date-Beddha mapping from 2025 to 2030 created successfully.']);
     }
-
 }

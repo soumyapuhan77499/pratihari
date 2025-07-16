@@ -13,7 +13,8 @@ class DateBeddhaMapping extends Model
     
     protected $fillable = [
         'date',
-        'pratihari_beddha'
+        'pratihari_beddha',
+        'gochhikar_beddha'
     ];
 
     public function pratihariBeddha()
