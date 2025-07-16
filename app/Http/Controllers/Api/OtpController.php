@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Exception\RequestException;
 use App\Services\WhatsappService;
 use Illuminate\Support\Facades\Http; 
+use Illuminate\Support\Str;
 
 class OtpController extends Controller
 {
@@ -378,60 +379,70 @@ class OtpController extends Controller
 //         'token_type' => 'Bearer'
 //     ], 200);
 // }
+
 public function sendOtp(Request $request)
-    {
-        $request->validate([
-            'phone' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'phone' => 'required|string',
+    ]);
 
-        $otp = rand(100000, 999999); // You may want to store this in DB or session
-        $phone = $request->phone;
+    $otp = rand(100000, 999999);
+    $phone = $request->phone;
 
-        $payload = [
-            "integrated_number" => "917327096968",
-            "content_type" => "template",
-            "payload" => [
-                "messaging_product" => "whatsapp",
-                "type" => "template",
-                "template" => [
-                    "name" => "nitiapp",
-                    "language" => [
-                        "code" => "en",
-                        "policy" => "deterministic"
-                    ],
-                    "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
-                    "to_and_components" => [
-                        [
-                            "to" => [$phone],
-                            "components" => [
-                                "body_1" => [
-                                    "type" => "text",
-                                    "value" => (string) $otp
-                                ],
-                                "button_1" => [
-                                    "subtype" => "url",
-                                    "type" => "text",
-                                    "value" => "https://yourdomain.com/verify?otp=" . $otp
-                                ]
+    // OPTIONAL: create a short token to map the OTP (if using short links)
+    $shortToken = Str::random(6); // e.g., "A1B2C3"
+
+    // Store $otp + $phone + $shortToken in DB or cache with expiry
+    // Example: Otp::create(['phone' => $phone, 'otp' => $otp, 'token' => $shortToken]);
+
+    $payload = [
+        "integrated_number" => "917327096968",
+        "content_type" => "template",
+        "payload" => [
+            "messaging_product" => "whatsapp",
+            "type" => "template",
+            "template" => [
+                "name" => "nitiapp",
+                "language" => [
+                    "code" => "en",
+                    "policy" => "deterministic"
+                ],
+                "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
+                "to_and_components" => [
+                    [
+                        "to" => [$phone],
+                        "components" => [
+                            "body_1" => [
+                                "type" => "text",
+                                "value" => (string) $otp
+                            ],
+                            "button_1" => [
+                                "subtype" => "url",
+                                "type" => "text",
+                                // ✅ FIXED: only pass a short parameter (max 15 characters)
+                                "value" => $shortToken
                             ]
                         ]
                     ]
                 ]
             ]
-        ];
+        ]
+    ];
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'authkey' => env('MSG91_AUTHKEY'),
-        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
+    $response = Http::withHeaders([
+        'Content-Type' => 'application/json',
+        'authkey' => env('MSG91_AUTHKEY'),
+    ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'OTP sent successfully',
-            'otp' => $otp, // Remove in production
-            'api_response' => $response->json()
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'message' => 'OTP sent successfully',
+        'otp' => $otp, // ⚠️ For testing only
+        'token' => $shortToken, // Optional: return for verification link
+        'api_response' => $response->json()
+    ]);
+}
+
     public function verifyOtp(Request $request)
     {
         $request->validate([
