@@ -12,7 +12,8 @@ use App\Models\WhatsappOtp;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Exception\RequestException;
-    use App\Services\WhatsappService;
+use App\Services\WhatsappService;
+use Illuminate\Support\Facades\Http; 
 
 class OtpController extends Controller
 {
