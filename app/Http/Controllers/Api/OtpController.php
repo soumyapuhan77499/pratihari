@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\UserDevice;
+use App\Models\WhatsappOtp;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use GuzzleHttp\Exception\RequestException;
