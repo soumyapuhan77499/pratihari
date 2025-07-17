@@ -11,12 +11,14 @@ use App\Models\PratihariSeba;
 use App\Models\PratihariSebaMaster;
 use App\Models\PratihariBeddhaMaster;
 use App\Models\PratihariProfile;
+use App\Models\PratihariSebaMapping;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\PratihariSebaAssignTransaction;
 use Illuminate\Support\Facades\Auth;
 
 class PratihariSebaController extends Controller
 {
-   // Controller methods
     public function pratihariSeba()
     {
         $sebas = PratihariSebaMaster::where('status', 'active')
@@ -43,21 +45,23 @@ class PratihariSebaController extends Controller
     public function saveSeba(Request $request)
     {
         try {
+            DB::beginTransaction(); // Start DB transaction
+
             $sebaIds = $request->seba_id;
             $beddhaIds = $request->beddha_id ?? [];
             $pratihariId = $request->pratihari_id;
 
+            // Prepare data for PratihariSeba
             foreach ($sebaIds as $sebaId) {
-                // Get corresponding Beddha IDs for this Seba ID
                 $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
 
-                // Skip if no Beddha IDs are provided
                 if (empty($beddhaList)) {
                     continue;
                 }
 
                 $beddhaIdsString = implode(',', $beddhaList);
 
+                // Save into PratihariSeba
                 PratihariSeba::create([
                     'pratihari_id' => $pratihariId,
                     'seba_id' => $sebaId,
@@ -65,16 +69,80 @@ class PratihariSebaController extends Controller
                 ]);
             }
 
+            // Prepare mapping record for PratihariSebaMapping
+            $mappingData = ['pratihari_id' => $pratihariId];
+
+            foreach ($sebaIds as $sebaId) {
+                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+
+                if (empty($beddhaList)) {
+                    continue;
+                }
+
+                $beddhaIdsString = implode(',', $beddhaList);
+
+                // Only process for seba_ids 1–5 (pratihari) and 8 (gochhikar)
+                if (in_array($sebaId, [1, 2, 3, 4, 5, 8])) {
+                    $mappingData[(string)$sebaId] = $beddhaIdsString;
+                }
+            }
+
+            // Save to PratihariSebaMapping table
+            PratihariSebaMapping::updateOrCreate(
+                ['pratihari_id' => $pratihariId],
+                $mappingData
+            );
+
+            DB::commit(); // Commit transaction
+
             return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
                             ->with('success', 'Pratihari Seba details saved successfully');
 
         } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
             return redirect()->back()->withErrors($e->validator)->withInput();
 
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
+    // public function saveSeba(Request $request)
+    // {
+    //     try {
+    //         $sebaIds = $request->seba_id;
+    //         $beddhaIds = $request->beddha_id ?? [];
+    //         $pratihariId = $request->pratihari_id;
+
+    //         foreach ($sebaIds as $sebaId) {
+    //             // Get corresponding Beddha IDs for this Seba ID
+    //             $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+
+    //             // Skip if no Beddha IDs are provided
+    //             if (empty($beddhaList)) {
+    //                 continue;
+    //             }
+
+    //             $beddhaIdsString = implode(',', $beddhaList);
+
+    //             PratihariSeba::create([
+    //                 'pratihari_id' => $pratihariId,
+    //                 'seba_id' => $sebaId,
+    //                 'beddha_id' => $beddhaIdsString,
+    //             ]);
+    //         }
+
+    //         return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
+    //                         ->with('success', 'Pratihari Seba details saved successfully');
+
+    //     } catch (\Illuminate\Validation\ValidationException $e) {
+    //         return redirect()->back()->withErrors($e->validator)->withInput();
+
+    //     } catch (\Exception $e) {
+    //         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+    //     }
+    // }
 
     public function edit($pratihari_id)
     {

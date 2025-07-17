@@ -379,97 +379,99 @@ class OtpController extends Controller
 //         'token_type' => 'Bearer'
 //     ], 200);
 // }
-public function sendOtp(Request $request)
-{
-    $request->validate([
-        'phone' => 'required|string',
-    ]);
 
-    $otp = rand(100000, 999999);
-    $phone = $request->phone;
-    $shortToken = Str::random(6); // Optional
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+        ]);
 
-    // Update or create the user with new OTP
-    $user = User::updateOrCreate(
-        ['mobile_number' => $phone],
-        ['otp' => $otp]
-    );
+        $otp = rand(100000, 999999);
+        $phone = $request->phone;
+        $shortToken = Str::random(6); // Optional
 
-    $payload = [
-        "integrated_number" => "917327096968",
-        "content_type" => "template",
-        "payload" => [
-            "messaging_product" => "whatsapp",
-            "type" => "template",
-            "template" => [
-                "name" => "nitiapp",
-                "language" => [
-                    "code" => "en",
-                    "policy" => "deterministic"
-                ],
-                "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
-                "to_and_components" => [
-                    [
-                        "to" => [$phone],
-                        "components" => [
-                            "body_1" => [
-                                "type" => "text",
-                                "value" => (string) $otp
-                            ],
-                            "button_1" => [
-                                "subtype" => "url",
-                                "type" => "text",
-                                "value" => $shortToken // must be <= 15 chars
+        // Update or create the user with new OTP
+        $user = User::updateOrCreate(
+            ['mobile_number' => $phone],
+            ['otp' => $otp]
+        );
+
+        $payload = [
+            "integrated_number" => "917327096968",
+            "content_type" => "template",
+            "payload" => [
+                "messaging_product" => "whatsapp",
+                "type" => "template",
+                "template" => [
+                    "name" => "nitiapp",
+                    "language" => [
+                        "code" => "en",
+                        "policy" => "deterministic"
+                    ],
+                    "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
+                    "to_and_components" => [
+                        [
+                            "to" => [$phone],
+                            "components" => [
+                                "body_1" => [
+                                    "type" => "text",
+                                    "value" => (string) $otp
+                                ],
+                                "button_1" => [
+                                    "subtype" => "url",
+                                    "type" => "text",
+                                    "value" => $shortToken // must be <= 15 chars
+                                ]
                             ]
                         ]
                     ]
                 ]
             ]
-        ]
-    ];
+        ];
 
-    $response = Http::withHeaders([
-        'Content-Type' => 'application/json',
-        'authkey' => env('MSG91_AUTHKEY'),
-    ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey' => env('MSG91_AUTHKEY'),
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
 
-    return response()->json([
-        'success' => true,
-        'message' => 'OTP sent successfully',
-        'otp' => $otp, // ❗️Remove in production
-        'token' => $shortToken,
-        'api_response' => $response->json()
-    ]);
-}
-   public function verifyOtp(Request $request)
-{
-    $request->validate([
-        'mobile_number' => 'required|string',
-        'otp' => 'required|string'
-    ]);
-
-    $user = User::where('mobile_number', $request->mobile_number)
-                ->where('otp', $request->otp)
-                ->first();
-
-    if (!$user) {
         return response()->json([
-            'message' => 'Invalid OTP or mobile number.'
-        ], 401);
+            'success' => true,
+            'message' => 'OTP sent successfully',
+            'otp' => $otp, // ❗️Remove in production
+            'token' => $shortToken,
+            'api_response' => $response->json()
+        ]);
     }
 
-    // Clear OTP after verification
-    $user->otp = null;
-    $user->save();
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'mobile_number' => 'required|string',
+            'otp' => 'required|string'
+        ]);
 
-    // Generate Sanctum token
-    $token = $user->createToken('API Token')->plainTextToken;
+        $user = User::where('mobile_number', $request->mobile_number)
+                    ->where('otp', $request->otp)
+                    ->first();
 
-    return response()->json([
-        'message' => 'User authenticated successfully.',
-        'token' => $token,
-        'token_type' => 'Bearer'
-    ], 200);
-}
+        if (!$user) {
+            return response()->json([
+                'message' => 'Invalid OTP or mobile number.'
+            ], 401);
+        }
+
+        // Clear OTP after verification
+        $user->otp = null;
+        $user->save();
+
+        // Generate Sanctum token
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User authenticated successfully.',
+            'token' => $token,
+            'token_type' => 'Bearer'
+        ], 200);
+    }
 
 }
