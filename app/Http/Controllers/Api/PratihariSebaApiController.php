@@ -180,86 +180,6 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-    public function startSeba(Request $request)
-    {
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not authenticated'], 400);
-        }
-
-        $pratihariId = $user->pratihari_id;
-        $now = Carbon::now('Asia/Kolkata');
-        $today = $now->toDateString();
-
-        // ❗ Check for duplicate entry
-        $existing = PratihariSebaManagement::where('pratihari_id', $pratihariId)
-            ->where('seba_id', $request->seba_id)
-            ->where('beddha_id', $request->beddha_id)
-            ->where('date', $today)
-            ->first();
-
-        if ($existing) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Seba already started for this Beddha and Seba today.'
-            ], 400); // HTTP 409 Conflict
-        }
-
-        // ✅ Create new entry
-        $record = PratihariSebaManagement::create([
-            'pratihari_id' => $pratihariId,
-            'seba_id'      => $request->seba_id,
-            'beddha_id'    => $request->beddha_id,
-            'date'         => $today,
-            'start_time'   => $now->format('H:i:s'),
-            'seba_status'  => 'started',
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Seba started successfully',
-            'data' => $record
-        ], 200);
-    }
-
-    public function endSeba(Request $request)
-    {
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json(['error' => 'User not authenticated'], 400);
-        }
-
-        $pratihariId = $user->pratihari_id;
-        $today = Carbon::now('Asia/Kolkata')->toDateString();
-
-        $record = PratihariSebaManagement::where('pratihari_id', $pratihariId)
-            ->where('seba_id', $request->seba_id)
-            ->where('beddha_id', $request->beddha_id)
-            ->where('date', $today)
-            ->where('seba_status', 'started')
-            ->first();
-
-        if (!$record) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Seba already started for this Beddha and Seba today.' 
-            ], 400);
-        }
-
-        $record->update([
-            'end_time' => Carbon::now('Asia/Kolkata')->format('H:i:s'),
-            'seba_status' => 'completed',
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Seba ended successfully.',
-            'data' => $record
-        ],200);
-    }
-
     // public function sebaDate(Request $request)
     // {
     //     try {
@@ -554,6 +474,104 @@ class PratihariSebaApiController extends Controller
         DateBeddhaMapping::insert($insertData);
 
         return response()->json(['message' => 'Date-Beddha mapping from 2025 to 2030 created successfully.']);
+    }
+
+    public function startSeba(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated'], 400);
+            }
+
+            $pratihariId = $user->pratihari_id;
+            $now = Carbon::now('Asia/Kolkata');
+            $today = $now->toDateString();
+
+            // ❗ Check for duplicate entry
+            $existing = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+                ->where('seba_id', $request->seba_id)
+                ->where('beddha_id', $request->beddha_id)
+                ->where('date', $today)
+                ->first();
+
+            if ($existing) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Seba already started for this Beddha and Seba today.'
+                ], 400); // HTTP 400 Bad Request
+            }
+
+            // ✅ Create new entry
+            $record = PratihariSebaManagement::create([
+                'pratihari_id' => $pratihariId,
+                'seba_id'      => $request->seba_id,
+                'beddha_id'    => $request->beddha_id,
+                'date'         => $today,
+                'start_time'   => $now->format('H:i:s'),
+                'seba_status'  => 'started',
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Seba started successfully',
+                'data' => $record
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong while starting Seba.',
+                'error' => $e->getMessage()
+            ], 500); // HTTP 500 Internal Server Error
+        }
+    }
+
+    public function endSeba(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated'], 400);
+            }
+
+            $pratihariId = $user->pratihari_id;
+            $today = Carbon::now('Asia/Kolkata')->toDateString();
+
+            $record = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+                ->where('seba_id', $request->seba_id)
+                ->where('beddha_id', $request->beddha_id)
+                ->where('date', $today)
+                ->where('seba_status', 'started')
+                ->first();
+
+            if (!$record) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No active Seba found for this Beddha and Seba today.'
+                ], 400);
+            }
+
+            $record->update([
+                'end_time' => Carbon::now('Asia/Kolkata')->format('H:i:s'),
+                'seba_status' => 'completed',
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Seba ended successfully.',
+                'data' => $record
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something went wrong while ending Seba.',
+                'error' => $e->getMessage()
+            ], 500); // HTTP 500 Internal Server Error
+        }
     }
 
 }
