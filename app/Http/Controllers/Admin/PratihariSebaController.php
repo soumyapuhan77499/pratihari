@@ -186,21 +186,40 @@ class PratihariSebaController extends Controller
             $sebaIds = $request->seba_id;
             $beddhaIds = $request->beddha_id ?? [];
 
+            // 🔄 Step 1: Delete old entries
             PratihariSeba::where('pratihari_id', $pratihariId)->delete();
+
+            // 🔁 Step 2: Recreate PratihariSeba and prepare mapping data
+            $mappingData = ['pratihari_id' => $pratihariId];
 
             foreach ($sebaIds as $sebaId) {
                 $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
                 $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
+                // Save to PratihariSeba
                 PratihariSeba::create([
                     'pratihari_id' => $pratihariId,
                     'seba_id' => $sebaId,
                     'beddha_id' => $beddhaIdsString,
                 ]);
+
+                // Populate mappingData for seba_ids 1–5 and 8
+                if (in_array((int)$sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
+                    $mappingData[(string)$sebaId] = $beddhaIdsString;
+                }
+            }
+
+            // 🔄 Step 3: Update or insert PratihariSebaMapping
+            if (count($mappingData) > 1) { // At least one seba_id + pratihari_id
+                PratihariSebaMapping::updateOrCreate(
+                    ['pratihari_id' => $pratihariId],
+                    $mappingData
+                );
             }
 
             return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
                             ->with('success', 'Pratihari Seba details updated successfully');
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             return redirect()->back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
@@ -236,7 +255,7 @@ class PratihariSebaController extends Controller
             // ← Fetch assigned beddhas for specific pratihari, seba, and year
             $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
                 ->where('seba_id', $seba_id)
-                ->where('year', $year)
+                // ->where('year', $year)
                 ->value('beddha_id');
 
             $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
