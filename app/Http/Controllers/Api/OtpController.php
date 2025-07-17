@@ -443,53 +443,52 @@ class OtpController extends Controller
         ]);
     }
 
-public function verifyOtp(Request $request)
-{
-    $request->validate([
-        'mobile_number' => 'required|string',
-        'otp' => 'required|string'
-    ]);
-
-    // Check if user exists by mobile number
-    $user = User::where('mobile_number', $request->mobile_number)->first();
-
-    if ($user) {
-        // ✅ Existing user: verify OTP
-        if ($user->otp !== $request->otp) {
-            return response()->json([
-                'message' => 'Invalid OTP or mobile number.'
-            ], 401);
-        }
-
-        // ✅ OTP is correct, clear it
-        $user->otp = null;
-
-        // Generate pratihari_id if not already set
-        if (empty($user->pratihari_id)) {
-            $user->pratihari_id = 'PRATIHARI' . rand(10000, 99999);
-        }
-
-        $user->save();
-
-    } else {
-        // ✅ New user: create with new pratihari_id
-        $user = User::create([
-            'mobile_number' => $request->mobile_number,
-            'otp' => null, // OTP already verified
-            'pratihari_id' => 'PRATIHARI' . rand(10000, 99999)
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'mobile_number' => 'required|string',
+            'otp' => 'required|string'
         ]);
+
+        // Check if user exists by mobile number
+        $user = User::where('mobile_number', $request->mobile_number)->first();
+
+        if ($user) {
+            // ✅ Existing user: verify OTP
+            if ($user->otp !== $request->otp) {
+                return response()->json([
+                    'message' => 'Invalid OTP or mobile number.'
+                ], 401);
+            }
+
+            // ✅ OTP is correct, clear it
+            $user->otp = null;
+
+            // Generate pratihari_id if not already set
+            if (empty($user->pratihari_id)) {
+                $user->pratihari_id = 'PRATIHARI' . rand(10000, 99999);
+            }
+
+            $user->save();
+
+        } else {
+            // ✅ New user: create with new pratihari_id
+            $user = User::create([
+                'mobile_number' => $request->mobile_number,
+                'otp' => null, // OTP already verified
+                'pratihari_id' => 'PRATIHARI' . rand(10000, 99999)
+            ]);
+        }
+
+        // ✅ Create Sanctum token
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User authenticated successfully.',
+            'token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $user
+        ], 200);
     }
-
-    // ✅ Create Sanctum token
-    $token = $user->createToken('API Token')->plainTextToken;
-
-    return response()->json([
-        'message' => 'User authenticated successfully.',
-        'token' => $token,
-        'token_type' => 'Bearer',
-        'user' => $user
-    ], 200);
-}
-
 
 }
