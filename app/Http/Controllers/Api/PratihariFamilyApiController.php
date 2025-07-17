@@ -69,29 +69,27 @@ class PratihariFamilyApiController extends Controller
 
         $childrenData = [];
 
-        if ($request->has('children_name')) {
-            foreach ($request->children_name as $index => $name) {
-                if ($name) {
-                    $childData = new PratihariChildren();
-                    $childData->pratihari_id = $pratihariId;
-                    $childData->children_name = $name;
-                    $childData->date_of_birth = $request->children_dob[$index] ?? null;
-                    $childData->gender = $request->children_gender[$index] ?? null;
+       if ($request->has('children_name')) {
+    foreach ($request->children_name as $index => $name) {
+        if ($name) {
+            $childData = new PratihariChildren();
+            $childData->pratihari_id = $pratihariId;
+            $childData->children_name = $name;
+            $childData->date_of_birth = $request->children_dob[$index] ?? null;
+            $childData->gender = $request->children_gender[$index] ?? null;
 
-                    // Check for file upload field: children_photo_{index}
-                    $fieldName = "children_photo_$index";
-                    if ($request->hasFile($fieldName)) {
-                        $childPhoto = $request->file($fieldName);
-                        $childPhotoName = time() . "_child_$index." . $childPhoto->getClientOriginalExtension();
-                        $childPhoto->move(public_path('uploads/children'), $childPhotoName);
-                        $childData->photo = 'uploads/children/' . $childPhotoName;
-                    }
-
-                    $childData->save();
-                    $childrenData[] = $childData;
-                }
+            if ($request->hasFile('children_photo') && isset($request->file('children_photo')[$index])) {
+                $childPhoto = $request->file('children_photo')[$index];
+                $childPhotoName = time() . "_child_$index." . $childPhoto->getClientOriginalExtension();
+                $childPhoto->move(public_path('uploads/children'), $childPhotoName);
+                $childData->photo = 'uploads/children/' . $childPhotoName;
             }
+
+            $childData->save();
+            $childrenData[] = $childData;
         }
+    }
+}
 
         return response()->json([
             'status' => 200,

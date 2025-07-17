@@ -14,9 +14,9 @@ class PratihariChildren extends Model
     protected $fillable = [
         'pratihari_id',
         'children_name',
-         'date_of_birth',
-         'gender',
-         'photo',
+        'date_of_birth',
+        'gender',
+        'photo',
     ];
 
     public function family()
