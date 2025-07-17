@@ -22,12 +22,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Config; // make sure this is at the top if needed
 
-
 class PratihariProfileApiController extends Controller
 {
+
 public function saveProfile(Request $request)
 {
     $user = Auth::user();
+
     $pratihariId = $user->pratihari_id;
 
     if (!$pratihariId) {
@@ -143,7 +144,6 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
-
 
 public function getHomePage()
 {
