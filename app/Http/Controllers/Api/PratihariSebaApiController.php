@@ -123,7 +123,6 @@ class PratihariSebaApiController extends Controller
             ], 401);
         }
 
-        $nijogaId = $request->nijoga_type;
         $sebaIds = $request->seba_id;
         $beddhaIds = $request->beddha_id ?? [];
 
@@ -137,7 +136,6 @@ class PratihariSebaApiController extends Controller
             // Save to main seba table
             $seba = PratihariSeba::create([
                 'pratihari_id' => $user->pratihari_id,
-                'nijoga_id'    => $nijogaId,
                 'seba_id'      => $sebaId,
                 'beddha_id'    => $beddhaIdsString,
             ]);

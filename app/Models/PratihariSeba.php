@@ -13,10 +13,8 @@ class PratihariSeba extends Model
 
     protected $fillable = [
         'pratihari_id',
-        'nijoga_id',
         'seba_id',
         'beddha_id',
-        'year'
     ];
 
     public function beddhaAssigns()
