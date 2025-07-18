@@ -1,33 +1,3 @@
-<!-- main-header -->
-
-<style>
-    .dropdown-menu.show {
-        z-index: 9999 !important;
-    }
-
-    input[type="file"] {
-        display: none;
-    }
-
-    .main-img-user {
-        position: relative;
-    }
-
-    .main-img-user:hover::after {
-        content: 'Change';
-        position: absolute;
-        bottom: 2px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        background: rgba(0, 0, 0, 0.5);
-        color: #fff;
-        font-size: 10px;
-        padding: 2px;
-        border-radius: 0 0 50% 50%;
-    }
-</style>
-
 <div class="main-header side-header sticky nav nav-item">
     <div class="main-container container-fluid">
 
@@ -84,49 +54,63 @@
                             </form>
                         </li>
 
-                        <li class="dropdown main-profile-menu nav nav-item nav-link ps-lg-2">
-                            <a class="new nav-link profile-user d-flex" href="#" data-bs-toggle="dropdown">
+                        <li class="dropdown main-profile-menu nav nav-item nav-link ps-lg-2"
+                            style="position: relative;">
+                            <a class="new nav-link profile-user d-flex" href="#" data-bs-toggle="dropdown"
+                                aria-expanded="false" style="cursor: pointer;">
                                 <img alt="profile"
                                     src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
-                                    class="profile-img" id="currentProfileImage">
+                                    class="profile-img" id="currentProfileImage"
+                                    style="border-radius: 50%; width: 40px; height: 40px;">
                             </a>
-                            <div class="dropdown-menu">
-                                <!-- Profile Photo Upload Dropdown -->
 
-                                <div class="menu-header-content p-3 border-bottom">
+                            <div class="dropdown-menu show"
+                                style="position: absolute; top: 100%; left: auto; right: 0; display: block; min-width: 250px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.15); border-radius: 6px; padding: 0; z-index: 9999;">
+
+                                <!-- Profile Photo Upload Dropdown -->
+                                <div class="menu-header-content p-3 border-bottom"
+                                    style="border-bottom: 1px solid #eee;">
                                     <div class="d-flex wd-100p align-items-center">
 
                                         <!-- Hidden File Input -->
                                         <form id="photoUploadForm" action="{{ route('admin.profile.photo.update') }}"
-                                            method="POST" enctype="multipart/form-data">
+                                            method="POST" enctype="multipart/form-data" style="margin-bottom: 0;">
                                             @csrf
-                                            <label for="photoInput" class="main-img-user" style="cursor:pointer;">
+                                            <label for="photoInput" class="main-img-user"
+                                                style="cursor:pointer; position: relative; display: inline-block;">
                                                 <img id="profilePreview"
                                                     src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
-                                                    class="profile-img" alt="profile" />
+                                                    class="profile-img" alt="profile"
+                                                    style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;" />
+                                                <span
+                                                    style="position: absolute; bottom: 0; left: 0; right: 0; text-align: center; background: rgba(0, 0, 0, 0.5); color: white; font-size: 10px; padding: 2px; border-radius: 0 0 50% 50%;">Change</span>
                                             </label>
-                                            <input type="file" name="photo" id="photoInput" accept="image/*">
+                                            <input type="file" name="photo" id="photoInput" accept="image/*"
+                                                style="display:none;">
                                         </form>
 
-                                        <div class="ms-3 my-auto">
-                                            <h6 class="tx-15 font-weight-semibold mb-0">
+                                        <div class="ms-3 my-auto" style="margin-left: 12px;">
+                                            <h6 class="tx-15 font-weight-semibold mb-0"
+                                                style="margin: 0; font-size: 14px;">
                                                 {{ Auth::guard('admins')->user()->first_name ?? '' }}
                                                 {{ Auth::guard('admins')->user()->last_name ?? '' }}
                                             </h6>
-                                            <span class="dropdown-title-text subtext op-6 tx-12">Premium Member</span>
+                                            <span class="dropdown-title-text subtext op-6 tx-12"
+                                                style="font-size: 12px; color: #777;">Premium Member</span>
                                         </div>
                                     </div>
                                 </div>
 
-
-                                <a class="dropdown-item" href="{{ url('/admin/pratihari-profile') }}">
-                                    <i class="far fa-user-circle"></i> Profile
+                                <a class="dropdown-item" href="{{ url('/admin/pratihari-profile') }}"
+                                    style="padding: 10px 15px; display: flex; align-items: center; font-size: 14px; color: #333; text-decoration: none;">
+                                    <i class="far fa-user-circle me-2"></i> Profile
                                 </a>
 
                                 <form method="POST" action="{{ route('admin.logout') }}" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="far fa-arrow-alt-circle-left"></i> Sign Out
+                                    <button type="submit" class="dropdown-item"
+                                        style="padding: 10px 15px; width: 100%; text-align: left; font-size: 14px; background: none; border: none; color: #333;">
+                                        <i class="far fa-arrow-alt-circle-left me-2"></i> Sign Out
                                     </button>
                                 </form>
                             </div>
