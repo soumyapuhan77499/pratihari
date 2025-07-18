@@ -306,32 +306,39 @@ class AdminController extends Controller
         ]
     ];
 
-    try {
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'authkey' => env('MSG91_AUTHKEY'),
-        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
+   try {
+    $response = Http::withHeaders([
+        'Content-Type' => 'application/json',
+        'authkey' => env('MSG91_AUTHKEY'),
+    ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
 
-        $result = $response->json();
+    $result = $response->json();
 
-        if ($response->status() === 401 || ($result['status'] ?? '') === 'fail') {
-            return redirect()->back()->with([
-                'error' => 'Failed to send OTP. Please try again later.'
-            ]);
-        }
+    // 🔍 Log full response for debugging
+    \Log::info('MSG91 OTP Response:', $result);
 
+    if ($response->status() !== 200 || ($result['status'] ?? '') !== 'success') {
         return redirect()->back()->with([
-            'otp_sent' => true,
-            'otp_phone' => $phone,
-            'message' => 'OTP sent to your WhatsApp.'
+            'error' => 'Failed to send OTP. MSG91 error: ' . ($result['errors'] ?? 'Unknown error'),
+            'debug' => $result // Optional: Remove in production
         ]);
-
-    } catch (\Exception $e) {
-        return redirect()->back()->with([
-            'error' => 'Server error. Please try again later.',
-            'debug_error' => $e->getMessage() // Optional: remove in production
-        ])->withInput();
     }
+
+    return redirect()->back()->with([
+        'otp_sent' => true,
+        'otp_phone' => $phone,
+        'message' => 'OTP sent to your WhatsApp.'
+    ]);
+
+} catch (\Exception $e) {
+    \Log::error('MSG91 OTP Exception: ' . $e->getMessage());
+
+    return redirect()->back()->with([
+        'error' => 'Server error. Please try again later.',
+        'debug_error' => $e->getMessage()
+    ])->withInput();
+}
+
 }
 
 
