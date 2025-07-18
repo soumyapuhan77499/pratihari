@@ -180,52 +180,56 @@ class PratihariSebaController extends Controller
         ));
     }
 
-    public function update(Request $request, $pratihariId)
-    {
-        try {
-            $sebaIds = $request->seba_id;
-            $beddhaIds = $request->beddha_id ?? [];
+   public function update(Request $request, $pratihariId)
+{
+    try {
+        $sebaIds = $request->seba_id;
+        $beddhaIds = $request->beddha_id ?? [];
 
-            // 🔄 Step 1: Delete old entries
-            PratihariSeba::where('pratihari_id', $pratihariId)->delete();
+        // 🔄 Step 1: Delete old entries
+        PratihariSeba::where('pratihari_id', $pratihariId)->delete();
 
-            // 🔁 Step 2: Recreate PratihariSeba and prepare mapping data
-            $mappingData = ['pratihari_id' => $pratihariId];
+        // 🔁 Step 2: Recreate PratihariSeba and prepare mapping data
+        $mappingData = [];
 
-            foreach ($sebaIds as $sebaId) {
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-                $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
+        foreach ($sebaIds as $sebaId) {
+            $sebaId = (int) $sebaId; // Ensure it's an integer
 
-                // Save to PratihariSeba
-                PratihariSeba::create([
-                    'pratihari_id' => $pratihariId,
-                    'seba_id' => $sebaId,
-                    'beddha_id' => $beddhaIdsString,
-                ]);
+            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+            $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
-                // Populate mappingData for seba_ids 1–5 and 8
-                if (in_array((int)$sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
-                    $mappingData[(string)$sebaId] = $beddhaIdsString;
-                }
+            // Save to PratihariSeba
+            PratihariSeba::create([
+                'pratihari_id' => $pratihariId,
+                'seba_id' => $sebaId,
+                'beddha_id' => $beddhaIdsString,
+            ]);
+
+            // For mapping table — only for specific seba IDs
+            if (in_array($sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
+                $mappingData[(string)$sebaId] = $beddhaIdsString;
             }
-
-            // 🔄 Step 3: Update or insert PratihariSebaMapping
-            if (count($mappingData) > 1) { // At least one seba_id + pratihari_id
-                PratihariSebaMapping::updateOrCreate(
-                    ['pratihari_id' => $pratihariId],
-                    $mappingData
-                );
-            }
-
-            return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
-                            ->with('success', 'Pratihari Seba details updated successfully');
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return redirect()->back()->withErrors($e->validator)->withInput();
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
+
+        // 🔄 Step 3: Update or insert into PratihariSebaMapping
+        if (!empty($mappingData)) {
+            $mappingData['pratihari_id'] = $pratihariId;
+
+            PratihariSebaMapping::updateOrCreate(
+                ['pratihari_id' => $pratihariId],
+                $mappingData
+            );
+        }
+
+        return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
+                         ->with('success', 'Pratihari Seba details updated successfully');
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return redirect()->back()->withErrors($e->validator)->withInput();
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
+}
 
     public function PratihariSebaAssign(Request $request)
     {
