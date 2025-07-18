@@ -54,25 +54,27 @@
                             </form>
                         </li>
 
-                        <li class="dropdown main-profile-menu nav nav-item nav-link ps-lg-2"
+                        <li class="dropdown main-profile-menu nav nav-item nav-link ps-lg-2" id="profileDropdown"
                             style="position: relative;">
-                            <a class="new nav-link profile-user d-flex" href="#" data-bs-toggle="dropdown"
-                                aria-expanded="false" style="cursor: pointer;">
+                            <!-- Profile Image Toggle Button -->
+                            <a href="javascript:void(0);" class="new nav-link profile-user d-flex"
+                                id="toggleProfileDropdown" style="cursor: pointer;">
                                 <img alt="profile"
                                     src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
                                     class="profile-img" id="currentProfileImage"
                                     style="border-radius: 50%; width: 40px; height: 40px;">
                             </a>
 
-                            <div class="dropdown-menu show"
-                                style="position: absolute; top: 100%; left: auto; right: 0; display: block; min-width: 250px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.15); border-radius: 6px; padding: 0; z-index: 9999;">
+                            <!-- Dropdown Menu -->
+                            <div class="dropdown-menu" id="profileDropdownMenu"
+                                style="display: none; position: absolute; top: 100%; left: auto; right: 0; min-width: 250px; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.15); border-radius: 6px; padding: 0; z-index: 9999;">
 
-                                <!-- Profile Photo Upload Dropdown -->
+                                <!-- Profile Photo Upload Section -->
                                 <div class="menu-header-content p-3 border-bottom"
                                     style="border-bottom: 1px solid #eee;">
                                     <div class="d-flex wd-100p align-items-center">
 
-                                        <!-- Hidden File Input -->
+                                        <!-- Upload Form -->
                                         <form id="photoUploadForm" action="{{ route('admin.profile.photo.update') }}"
                                             method="POST" enctype="multipart/form-data" style="margin-bottom: 0;">
                                             @csrf
@@ -116,6 +118,7 @@
                             </div>
                         </li>
 
+
                     </ul>
                 </div>
             </div>
@@ -123,22 +126,37 @@
     </div>
 </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        const dropdownToggle = document.getElementById('toggleProfileDropdown');
+        const dropdownMenu = document.getElementById('profileDropdownMenu');
         const input = document.getElementById('photoInput');
         const preview = document.getElementById('profilePreview');
         const form = document.getElementById('photoUploadForm');
 
-        input.addEventListener('change', function() {
-            if (input.files && input.files[0]) {
+        // Toggle dropdown visibility
+        dropdownToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            dropdownMenu.style.display = (dropdownMenu.style.display === 'block') ? 'none' : 'block';
+        });
+
+        // Close dropdown if clicking outside
+        document.addEventListener('click', function (e) {
+            if (!dropdownToggle.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+
+        // Photo preview and auto-submit
+        input.addEventListener('change', function () {
+            if (input.files.length > 0) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     preview.src = e.target.result;
                 };
                 reader.readAsDataURL(input.files[0]);
-
-                // Delay submission to allow preview
                 setTimeout(() => form.submit(), 500);
             }
         });
     });
 </script>
+
