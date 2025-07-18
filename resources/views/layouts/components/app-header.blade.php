@@ -1,4 +1,33 @@
 <!-- main-header -->
+
+<style>
+    .dropdown-menu.show {
+        z-index: 9999 !important;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .main-img-user {
+        position: relative;
+    }
+
+    .main-img-user:hover::after {
+        content: 'Change';
+        position: absolute;
+        bottom: 2px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.5);
+        color: #fff;
+        font-size: 10px;
+        padding: 2px;
+        border-radius: 0 0 50% 50%;
+    }
+</style>
+
 <div class="main-header side-header sticky nav nav-item">
     <div class="main-container container-fluid">
 
@@ -63,22 +92,21 @@
                             </a>
                             <div class="dropdown-menu">
                                 <!-- Profile Photo Upload Dropdown -->
+
                                 <div class="menu-header-content p-3 border-bottom">
                                     <div class="d-flex wd-100p align-items-center">
 
-                                        <!-- Hidden Form -->
+                                        <!-- Hidden File Input -->
                                         <form id="photoUploadForm" action="{{ route('admin.profile.photo.update') }}"
-                                            method="POST" enctype="multipart/form-data" style="display: none;">
+                                            method="POST" enctype="multipart/form-data">
                                             @csrf
+                                            <label for="photoInput" class="main-img-user" style="cursor:pointer;">
+                                                <img id="profilePreview"
+                                                    src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
+                                                    class="profile-img" alt="profile" />
+                                            </label>
                                             <input type="file" name="photo" id="photoInput" accept="image/*">
                                         </form>
-
-                                        <!-- Clickable Image -->
-                                        <div id="photoTrigger" style="cursor:pointer;" class="main-img-user">
-                                            <img id="profilePreview"
-                                                src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
-                                                class="profile-img" alt="profile" />
-                                        </div>
 
                                         <div class="ms-3 my-auto">
                                             <h6 class="tx-15 font-weight-semibold mb-0">
@@ -89,6 +117,7 @@
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <a class="dropdown-item" href="{{ url('/admin/pratihari-profile') }}">
                                     <i class="far fa-user-circle"></i> Profile
@@ -109,39 +138,23 @@
         </div>
     </div>
 </div>
-
 <script>
-    // Ensure DOM is loaded before binding
-    document.addEventListener('DOMContentLoaded', function () {
-        const trigger = document.getElementById('photoTrigger');
-        const fileInput = document.getElementById('photoInput');
-        const previewImg = document.getElementById('profilePreview');
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('photoInput');
+        const preview = document.getElementById('profilePreview');
         const form = document.getElementById('photoUploadForm');
 
-        if (trigger && fileInput && previewImg && form) {
-            // 1. When profile image is clicked, trigger input
-            trigger.addEventListener('click', function () {
-                fileInput.click();
-            });
+        input.addEventListener('change', function() {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
 
-            // 2. Preview and auto-submit
-            fileInput.addEventListener('change', function () {
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        previewImg.src = e.target.result;
-                    };
-                    reader.readAsDataURL(file);
-
-                    // Submit after short delay
-                    setTimeout(() => form.submit(), 400);
-                }
-            });
-        } else {
-            console.error('Photo upload elements not found');
-        }
+                // Delay submission to allow preview
+                setTimeout(() => form.submit(), 500);
+            }
+        });
     });
 </script>
-
