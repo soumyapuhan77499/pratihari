@@ -102,36 +102,39 @@
     @endsection
 
     @section('scripts')
-       <!-- Include SweetAlert2 JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.9.0/sweetalert2.all.min.js"></script>
+        <!-- Include SweetAlert2 JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.9.0/sweetalert2.all.min.js"></script>
 
-<script>
-    // Show SweetAlert for flash messages
-    @if (session('message'))
-        Swal.fire({
-            icon: 'success',
-            title: 'Success',
-            text: @json(session('message')),
-            timer: 3000,
-            showConfirmButton: false
-        });
-    @elseif (session('error'))
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: @json(session('error')),
-            timer: 3000,
-            showConfirmButton: false
-        });
-    @endif
+        <script>
+            @if (session('message'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: @json(session('message')),
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @elseif (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: @json(session('error')),
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
 
-    // Optional: enable phone editing in OTP screen
-    function enablePhoneEdit() {
-        let phoneInput = document.getElementById("phone");
-        phoneInput.removeAttribute("readonly");
-        phoneInput.focus();
-    }
-</script>
+            // Show Laravel validation errors (if any)
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: `{!! implode('<br>', $errors->all()) !!}`,
+                    showConfirmButton: true
+                });
+            @endif
+        </script>
+
 
 
         <!-- OneSignal Push Notification -->
