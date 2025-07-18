@@ -39,12 +39,6 @@
     <div class="bg-primary">
     @endsection
 
-@if (session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-@endif
-
     @section('content')
         <div class="page-single">
             <div class="container">
@@ -108,34 +102,37 @@
     @endsection
 
     @section('scripts')
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.9.0/sweetalert2.all.min.js"></script>
-        <script>
-            // SweetAlert2 for success/error messages
-            @if (session('message'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: "{{ session('message') }}",
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            @elseif (session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: "{{ session('error') }}",
-                    timer: 3000,
-                    showConfirmButton: false
-                });
-            @endif
+       <!-- Include SweetAlert2 JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.9.0/sweetalert2.all.min.js"></script>
 
-            // Enable phone edit on OTP screen
-            function enablePhoneEdit() {
-                let phoneInput = document.getElementById("phone");
-                phoneInput.removeAttribute("readonly");
-                phoneInput.focus();
-            }
-        </script>
+<script>
+    // Show SweetAlert for flash messages
+    @if (session('message'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: @json(session('message')),
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @elseif (session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: @json(session('error')),
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
+
+    // Optional: enable phone editing in OTP screen
+    function enablePhoneEdit() {
+        let phoneInput = document.getElementById("phone");
+        phoneInput.removeAttribute("readonly");
+        phoneInput.focus();
+    }
+</script>
+
 
         <!-- OneSignal Push Notification -->
         <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
