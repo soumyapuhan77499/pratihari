@@ -13,7 +13,7 @@ class PratihariSebaMapping extends Model
 
     protected $fillable = [
         'pratihari_id',
-        '1', '2', '3', '4', '5', '8'
+        'seba_1', 'seba_2', 'seba_3', 'seba_4', 'seba_5', 'seba_8'
     ];
 }
 

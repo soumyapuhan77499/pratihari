@@ -186,32 +186,32 @@ class PratihariSebaController extends Controller
         $sebaIds = $request->seba_id;
         $beddhaIds = $request->beddha_id ?? [];
 
-        // 🔄 Step 1: Delete old entries
+        // 🔄 Step 1: Delete old seba entries
         PratihariSeba::where('pratihari_id', $pratihariId)->delete();
 
         // 🔁 Step 2: Recreate PratihariSeba and prepare mapping data
         $mappingData = [];
 
         foreach ($sebaIds as $sebaId) {
-            $sebaId = (int) $sebaId; // Ensure it's an integer
+            $sebaId = (int) $sebaId;
 
-            $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+            $beddhaList = $beddhaIds[$sebaId] ?? [];
             $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
-            // Save to PratihariSeba
+            // Save to PratihariSeba table
             PratihariSeba::create([
                 'pratihari_id' => $pratihariId,
                 'seba_id' => $sebaId,
                 'beddha_id' => $beddhaIdsString,
             ]);
 
-            // For mapping table — only for specific seba IDs
+            // 💡 Map to correct seba_X columns only
             if (in_array($sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
-                $mappingData[(string)$sebaId] = $beddhaIdsString;
+                $mappingData["seba_$sebaId"] = $beddhaIdsString;
             }
         }
 
-        // 🔄 Step 3: Update or insert into PratihariSebaMapping
+        // 🔄 Step 3: Update or insert PratihariSebaMapping
         if (!empty($mappingData)) {
             $mappingData['pratihari_id'] = $pratihariId;
 
@@ -223,13 +223,14 @@ class PratihariSebaController extends Controller
 
         return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
                          ->with('success', 'Pratihari Seba details updated successfully');
-
+                         
     } catch (\Illuminate\Validation\ValidationException $e) {
         return redirect()->back()->withErrors($e->validator)->withInput();
     } catch (\Exception $e) {
         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
 }
+
 
     public function PratihariSebaAssign(Request $request)
     {
