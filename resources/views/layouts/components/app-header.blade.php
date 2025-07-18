@@ -59,23 +59,21 @@
                             <a class="new nav-link profile-user d-flex" href="#" data-bs-toggle="dropdown">
                                 <img alt="profile"
                                     src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
-                                    class="profile-img">
+                                    class="profile-img" id="currentProfileImage">
                             </a>
                             <div class="dropdown-menu">
                                 <div class="menu-header-content p-3 border-bottom">
-                                    <div class="d-flex wd-100p">
-                                        <!-- Profile Image Upload -->
+                                    <div class="d-flex wd-100p align-items-center">
+
+                                        <!-- Hidden Form for Photo Upload -->
                                         <form id="photoUploadForm" action="{{ route('admin.profile.photo.update') }}"
                                             method="POST" enctype="multipart/form-data" style="display: none;">
                                             @csrf
-                                            <input type="file" name="photo" id="photoInput"
-                                                onchange="document.getElementById('photoUploadForm').submit();"
-                                                accept="image/*">
+                                            <input type="file" name="photo" id="photoInput" accept="image/*">
                                         </form>
 
-                                        <div class="main-img-user"
-                                            onclick="document.getElementById('photoInput').click()"
-                                            style="cursor:pointer;">
+                                        <!-- Clickable Profile Image -->
+                                        <div class="main-img-user" id="photoTrigger" style="cursor: pointer;">
                                             <img alt="profile"
                                                 src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
                                                 class="profile-img" id="profilePreview">
@@ -90,15 +88,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a class="dropdown-item" href="{{ url('/admin/pratihari-profile') }}"><i
-                                        class="far fa-user-circle"></i> Profile</a>
+
+                                <a class="dropdown-item" href="{{ url('/admin/pratihari-profile') }}">
+                                    <i class="far fa-user-circle"></i> Profile
+                                </a>
+
                                 <form method="POST" action="{{ route('admin.logout') }}" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="dropdown-item"><i
-                                            class="far fa-arrow-alt-circle-left"></i> Sign Out</button>
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="far fa-arrow-alt-circle-left"></i> Sign Out
+                                    </button>
                                 </form>
                             </div>
                         </li>
+
                     </ul>
                 </div>
             </div>
@@ -106,12 +109,23 @@
     </div>
 </div>
 <script>
-    document.getElementById('photoInput').addEventListener('change', function(event){
-        if(event.target.files.length > 0){
-            const src = URL.createObjectURL(event.target.files[0]);
-            document.getElementById('profilePreview').src = src;
+    // Click image to open file input
+    document.getElementById('photoTrigger').addEventListener('click', function () {
+        document.getElementById('photoInput').click();
+    });
+
+    // Update preview and auto-submit form
+    document.getElementById('photoInput').addEventListener('change', function (event) {
+        if (event.target.files.length > 0) {
+            const file = event.target.files[0];
+            const previewUrl = URL.createObjectURL(file);
+            document.getElementById('profilePreview').src = previewUrl;
+
+            // Optional delay to show preview before upload
+            setTimeout(() => {
+                document.getElementById('photoUploadForm').submit();
+            }, 300);
         }
     });
 </script>
 
-<!-- /main-header -->
