@@ -273,38 +273,45 @@ class AdminController extends Controller
     $admin->save();
 
     // WhatsApp Payload
-    $payload = [
-        "integrated_number" => "917327096968",
-        "content_type" => "template",
-        "payload" => [
-            "messaging_product" => "whatsapp",
-            "type" => "template",
-            "template" => [
-                "name" => "nitiapp",
-                "language" => [
-                    "code" => "en",
-                    "policy" => "deterministic"
+  $payload = [
+    "integrated_number" => "917327096968",
+    "content_type" => "template",
+    "payload" => [
+        "messaging_product" => "whatsapp",
+        "to" => $phone,
+        "type" => "template",
+        "template" => [
+            "name" => "nitiapp",
+            "language" => [
+                "code" => "en",
+                "policy" => "deterministic"
+            ],
+            "components" => [
+                [
+                    "type" => "body",
+                    "parameters" => [
+                        [
+                            "type" => "text",
+                            "text" => (string) $otp
+                        ]
+                    ]
                 ],
-                "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
-                "to_and_components" => [
-                    [
-                        "to" => [$phone],
-                        "components" => [
-                            "body_1" => [
-                                "type" => "text",
-                                "value" => (string) $otp
-                            ],
-                            "button_1" => [
-                                "subtype" => "url",
-                                "type" => "text",
-                                "value" => $shortToken
-                            ]
+                [
+                    "type" => "button",
+                    "sub_type" => "url",
+                    "index" => "0",
+                    "parameters" => [
+                        [
+                            "type" => "text",
+                            "text" => $shortToken
                         ]
                     ]
                 ]
             ]
         ]
-    ];
+    ]
+];
+
 
    try {
     $response = Http::withHeaders([
