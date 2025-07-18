@@ -179,56 +179,56 @@ class PratihariSebaController extends Controller
         ));
     }
 
-   public function update(Request $request, $pratihariId)
-{
-    try {
-        $sebaIds = $request->seba_id;
-        $beddhaIds = $request->beddha_id ?? [];
+    public function update(Request $request, $pratihariId)
+    {
+        try {
+            $sebaIds = $request->seba_id;
+            $beddhaIds = $request->beddha_id ?? [];
 
-        // 🔄 Step 1: Delete old seba entries
-        PratihariSeba::where('pratihari_id', $pratihariId)->delete();
+            // 🔄 Step 1: Delete old seba entries
+            PratihariSeba::where('pratihari_id', $pratihariId)->delete();
 
-        // 🔁 Step 2: Recreate PratihariSeba and prepare mapping data
-        $mappingData = [];
+            // 🔁 Step 2: Recreate PratihariSeba and prepare mapping data
+            $mappingData = [];
 
-        foreach ($sebaIds as $sebaId) {
-            $sebaId = (int) $sebaId;
+            foreach ($sebaIds as $sebaId) {
+                $sebaId = (int) $sebaId;
 
-            $beddhaList = $beddhaIds[$sebaId] ?? [];
-            $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
+                $beddhaList = $beddhaIds[$sebaId] ?? [];
+                $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
-            // Save to PratihariSeba table
-            PratihariSeba::create([
-                'pratihari_id' => $pratihariId,
-                'seba_id' => $sebaId,
-                'beddha_id' => $beddhaIdsString,
-            ]);
+                // Save to PratihariSeba table
+                PratihariSeba::create([
+                    'pratihari_id' => $pratihariId,
+                    'seba_id' => $sebaId,
+                    'beddha_id' => $beddhaIdsString,
+                ]);
 
-            // 💡 Map to correct seba_X columns only
-            if (in_array($sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
-                $mappingData["seba_$sebaId"] = $beddhaIdsString;
+                // 💡 Map to correct seba_X columns only
+                if (in_array($sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
+                    $mappingData["seba_$sebaId"] = $beddhaIdsString;
+                }
             }
+
+            // 🔄 Step 3: Update or insert PratihariSebaMapping
+            if (!empty($mappingData)) {
+                $mappingData['pratihari_id'] = $pratihariId;
+
+                PratihariSebaMapping::updateOrCreate(
+                    ['pratihari_id' => $pratihariId],
+                    $mappingData
+                );
+            }
+
+            return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
+                            ->with('success', 'Pratihari Seba details updated successfully');
+                            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return redirect()->back()->withErrors($e->validator)->withInput();
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
-
-        // 🔄 Step 3: Update or insert PratihariSebaMapping
-        if (!empty($mappingData)) {
-            $mappingData['pratihari_id'] = $pratihariId;
-
-            PratihariSebaMapping::updateOrCreate(
-                ['pratihari_id' => $pratihariId],
-                $mappingData
-            );
-        }
-
-        return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihariId])
-                         ->with('success', 'Pratihari Seba details updated successfully');
-                         
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()->withErrors($e->validator)->withInput();
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
     }
-}
 
 
     public function PratihariSebaAssign(Request $request)
@@ -339,7 +339,6 @@ class PratihariSebaController extends Controller
         }
     }
 
-    
 //     public function getBeddha($sebaId)
 // {
 //     $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $sebaId)->pluck('beddha_id');

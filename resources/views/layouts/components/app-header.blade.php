@@ -64,11 +64,23 @@
                             <div class="dropdown-menu">
                                 <div class="menu-header-content p-3 border-bottom">
                                     <div class="d-flex wd-100p">
-                                        <div class="main-img-user">
+                                        <!-- Profile Image Upload -->
+                                        <form id="photoUploadForm" action="{{ route('admin.profile.photo.update') }}"
+                                            method="POST" enctype="multipart/form-data" style="display: none;">
+                                            @csrf
+                                            <input type="file" name="photo" id="photoInput"
+                                                onchange="document.getElementById('photoUploadForm').submit();"
+                                                accept="image/*">
+                                        </form>
+
+                                        <div class="main-img-user"
+                                            onclick="document.getElementById('photoInput').click()"
+                                            style="cursor:pointer;">
                                             <img alt="profile"
                                                 src="{{ asset(Auth::guard('admins')->user()->photo ?? 'assets/img/faces/default.png') }}"
-                                                class="profile-img">
+                                                class="profile-img" id="profilePreview">
                                         </div>
+
                                         <div class="ms-3 my-auto">
                                             <h6 class="tx-15 font-weight-semibold mb-0">
                                                 {{ Auth::guard('admins')->user()->first_name ?? '' }}
@@ -93,4 +105,13 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('photoInput').addEventListener('change', function(event){
+        if(event.target.files.length > 0){
+            const src = URL.createObjectURL(event.target.files[0]);
+            document.getElementById('profilePreview').src = src;
+        }
+    });
+</script>
+
 <!-- /main-header -->

@@ -36,7 +36,7 @@ class AdminController extends Controller
     {
         return view('admin.admin-login');
     }
-    
+
     public function dashboard()
     {
         $todayProfiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
@@ -84,7 +84,7 @@ class AdminController extends Controller
         $updatedProfiles = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->get();
 
         $pendingProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'pending')->get();
-                                                                    
+
         $rejectedProfiles = PratihariProfile::where('pratihari_status', 'rejected')->get();
 
         $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
@@ -134,7 +134,7 @@ class AdminController extends Controller
         $baseDatePratihari = Carbon::create(2025, 7, 1);
         $endDatePratihari = Carbon::create(2050, 12, 31);
 
-        $baseDateGochhikar = Carbon::create(2025, 7, 1);  // you can customize
+        $baseDateGochhikar = Carbon::create(2025, 7, 1);
         $endDateGochhikar = Carbon::create(2055, 12, 31);
 
         $today = Carbon::today();
@@ -167,7 +167,6 @@ class AdminController extends Controller
 
                 if ($sebaId = "gochhikar") {
                     $start = $baseDateGochhikar->copy()->addDays($beddhaId - 1);
-
                     while ($start->lte($endDateGochhikar)) {
                         if ($start->equalTo($today)) {
                             $label = "$sebaName | Beddha $beddhaId";
@@ -187,7 +186,6 @@ class AdminController extends Controller
 
                 else {
                     $start = $baseDatePratihari->copy()->addDays($beddhaId - 1);
-
                     while ($start->lte($endDatePratihari)) {
                         if ($start->equalTo($today)) {
                             $label = "$sebaName | Beddha $beddhaId";
@@ -204,6 +202,7 @@ class AdminController extends Controller
                         $start->addDays($interval);
                     }
                 }
+
             }
         }
 
@@ -216,7 +215,6 @@ class AdminController extends Controller
         // Separate beddha display
         $currentPratihariBeddhaDisplay = implode(', ', array_unique($todayPratihariBeddhaIds));
         $currentGochhikarBeddhaDisplay = implode(', ', array_unique($todayGochhikarBeddhaIds));
-
 
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
@@ -390,6 +388,28 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
+    public function sebaCalendar()
+    {
+        // Get seba_ids by type
+        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
+
+        // Get unique pratihari_ids
+        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
+            ->distinct()
+            ->pluck('pratihari_id');
+
+        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
+            ->distinct()
+            ->pluck('pratihari_id');
+
+        // Fetch profile names
+        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
+        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
+
+        return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
+    }
+
     public function sebaDate(Request $request)
     {
         $pratihariId = $request->input('pratihari_id');
@@ -440,28 +460,6 @@ class AdminController extends Controller
         }
 
         return response()->json($events);
-    }
-
-    public function sebaCalendar()
-    {
-        // Get seba_ids by type
-        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
-        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
-
-        // Get unique pratihari_ids
-        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
-            ->distinct()
-            ->pluck('pratihari_id');
-
-        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
-            ->distinct()
-            ->pluck('pratihari_id');
-
-        // Fetch profile names
-        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
-        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
-
-        return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
     }
 
 }

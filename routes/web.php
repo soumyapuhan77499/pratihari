@@ -26,6 +26,7 @@ Route::prefix('super-admin')->controller(SuperAdminController::class)->group(fun
     Route::post('/saveAdminRegister', 'saveAdminRegister')->name('superadmin.saveAdminRegister');
     Route::post('/update/{id}', 'update')->name('admin.update');
     Route::post('/delete/{id}', 'softDelete')->name('admin.delete');
+    Route::post('/admin/profile/photo','updatePhoto')->name('admin.profile.photo.update');
 });
 
 Route::controller(AdminController::class)->group(function() {

@@ -127,6 +127,25 @@ class SuperAdminController extends Controller
     
         return response()->json(['success' => true, 'message' => 'Admin marked as deleted']);
     }
+
+     public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $admin = Auth::guard('admins')->user();
+
+        if ($request->hasFile('photo')) {
+            $adminPhoto = $request->file('photo');
+            $imageName = time() . '.' . $adminPhoto->getClientOriginalExtension();
+            $adminPhoto->move(public_path('uploads/admin_photo'), $imageName);
+            $admin->photo = 'uploads/admin_photo/' . $imageName;
+            $admin->save();
+        }
+
+        return back()->with('success', 'Profile photo updated successfully.');
+    }
     
 
 
