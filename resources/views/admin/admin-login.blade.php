@@ -47,34 +47,35 @@
                         <div class="card-sigin-main">
                             <div class="text-center">
                                 <div class="text-center">
-                                    <a href="#"><img src="{{ asset('assets/img/brand/nijoga-logo.jpg') }}" style = "height: 170px;width: 280px" alt="logo"></a>
+                                    <a href="#"><img src="{{ asset('assets/img/brand/nijoga-logo.jpg') }}"
+                                            style = "height: 170px;width: 280px" alt="logo"></a>
                                 </div>
                             </div>
                             <div class="main-signup-header">
                                 <h3 class="text-center mb-3">Login to continue</h3>
+
                                 @if (session('otp_sent'))
                                     <!-- OTP Verification Form -->
                                     <form action="{{ route('admin.verifyOtp') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
                                             <label>Mobile Number</label>
-                                            <div class="d-flex align-items-center">
-                                                <input type="text" id="phone" class="form-control me-2"
-                                                    name="phone" value="{{ session('otp_phone') }}" readonly>
-                                            </div>
+                                            <input type="text" name="mobile_no" class="form-control me-2"
+                                                value="{{ session('otp_phone') }}" readonly>
                                         </div>
-                                        <input type="hidden" name="order_id" value="{{ session('otp_order_id') }}">
+
                                         <div class="form-group">
                                             <label>Enter OTP</label>
                                             <input type="text" class="form-control" name="otp"
                                                 placeholder="Enter OTP" required>
                                         </div>
-                                        <button type="submit" class="btn"
-                                            style="background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);width: 100%;color: white;font-weight: bold">Verify
-                                            OTP</button>
+
+                                        <button type="submit" class="btn btn-block btn-warning font-weight-bold">
+                                            Verify OTP
+                                        </button>
                                     </form>
                                 @else
-                                    <!-- Phone Number Input Form -->
+                                    <!-- Phone Input Form -->
                                     <form action="{{ route('admin.sendOtp') }}" method="POST">
                                         @csrf
                                         <div class="form-group">
@@ -82,19 +83,18 @@
                                             <input type="text" class="form-control" name="phone"
                                                 placeholder="Enter your phone number" required>
                                         </div>
-                                        <button type="submit" class="btn"
-                                            style="background-image: linear-gradient(170deg, #FBAB7E 0%, #F7CE68 100%);width: 100%;color: white;font-weight: bold">Send
-                                            OTP</button>
-                                    </form>
 
-                                    <div class="main-signup-footer mt-3 text-center">
-                                        <p>Super Admin<a href="{{ route('superadmin.login') }}"> Login</a></p>
-                                    </div>
+                                        <button type="submit" class="btn btn-block btn-warning font-weight-bold">
+                                            Send OTP
+                                        </button>
+                                    </form>
                                 @endif
 
-                                <!-- Hidden input for OneSignal player ID -->
-                                <input type="hidden" id="onesignal_player_id" name="onesignal_player_id">
+                                <div class="main-signup-footer mt-3 text-center">
+                                    <p>Super Admin <a href="{{ route('superadmin.login') }}">Login</a></p>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
