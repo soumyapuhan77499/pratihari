@@ -38,6 +38,12 @@
 @section('class')
     <div class="bg-primary">
     @endsection
+    
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
 
     @section('content')
         <div class="page-single">
