@@ -38,7 +38,7 @@
 @section('class')
     <div class="bg-primary">
     @endsection
-    
+
 @if (session('success'))
     <div class="alert alert-success">
         {{ session('success') }}
@@ -89,7 +89,6 @@
                                             <input type="text" class="form-control" name="phone"
                                                 placeholder="Enter your phone number" required>
                                         </div>
-
                                         <button type="submit" class="btn btn-block btn-warning font-weight-bold">
                                             Send OTP
                                         </button>
