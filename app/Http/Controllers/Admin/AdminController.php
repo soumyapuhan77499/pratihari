@@ -251,7 +251,6 @@ class AdminController extends Controller
 
     public function sendOtp(Request $request)
     {
-        dd($request->all());
         $request->validate([
             'phone' => 'required|string',
         ]);
