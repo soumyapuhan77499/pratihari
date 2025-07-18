@@ -250,92 +250,92 @@ class AdminController extends Controller
     }
 
     public function sendOtp(Request $request)
-    {
-        $request->validate([
-            'phone' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'phone' => 'required|string',
+    ]);
 
-        $phone = $request->phone;
-        $otp = rand(100000, 999999);
-        $shortToken = Str::random(6); // WhatsApp button value (max 15 chars)
+    $phone = $request->phone;
+    $otp = rand(100000, 999999);
+    $shortToken = Str::random(6); // WhatsApp button value (<= 15 chars)
 
-        // Check if admin exists
-        $admin = Admin::where('mobile_no', $phone)->first();
+    // Check if admin exists
+    $admin = Admin::where('mobile_no', $phone)->first();
 
-        if (!$admin) {
-            return back()->withErrors([
-                'phone' => 'Mobile number not registered. Please contact super admin.'
-            ])->withInput();
-        }
+    if (!$admin) {
+        return back()->withErrors([
+            'phone' => 'Mobile number not registered. Please contact super admin.'
+        ])->withInput();
+    }
 
-        // Update OTP
-        $admin->otp = $otp;
-        $admin->save();
+    // Update OTP
+    $admin->otp = $otp;
+    $admin->save();
 
-        // WhatsApp payload
-        $payload = [
-            "integrated_number" => "917327096968",
-            "content_type" => "template",
-            "payload" => [
-                "messaging_product" => "whatsapp",
-                "type" => "template",
-                "template" => [
-                    "name" => "nitiapp",
-                    "language" => [
-                        "code" => "en",
-                        "policy" => "deterministic"
-                    ],
-                    "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
-                    "to_and_components" => [
-                        [
-                            "to" => [$phone],
-                            "components" => [
-                                "body_1" => [
-                                    "type" => "text",
-                                    "value" => (string) $otp
-                                ],
-                                "button_1" => [
-                                    "subtype" => "url",
-                                    "type" => "text",
-                                    "value" => $shortToken
-                                ]
+    // WhatsApp payload
+    $payload = [
+        "integrated_number" => "917327096968",
+        "content_type" => "template",
+        "payload" => [
+            "messaging_product" => "whatsapp",
+            "type" => "template",
+            "template" => [
+                "name" => "nitiapp",
+                "language" => [
+                    "code" => "en",
+                    "policy" => "deterministic"
+                ],
+                "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
+                "to_and_components" => [
+                    [
+                        "to" => [$phone],
+                        "components" => [
+                            "body_1" => [
+                                "type" => "text",
+                                "value" => (string) $otp
+                            ],
+                            "button_1" => [
+                                "subtype" => "url",
+                                "type" => "text",
+                                "value" => $shortToken
                             ]
                         ]
                     ]
                 ]
             ]
-        ];
+        ]
+    ];
 
-        try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'authkey' => env('MSG91_AUTHKEY'),
-            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
+    try {
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey' => env('MSG91_AUTHKEY'),
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
 
-            $result = $response->json();
+        $result = $response->json();
 
-            if ($response->status() === 401 || ($result['status'] ?? '') === 'fail') {
-                return back()->withErrors([
-                    'phone' => 'Failed to send OTP. Please try again later.'
-                ])->withInput();
-            }
-
-            // ✅ Store session
-            session([
-                'otp_sent' => true,
-                'otp_phone' => $phone,
-            ]);
-
-            return redirect()->back()->with('success', 'OTP sent to your WhatsApp.');
-
-        } catch (\Exception $e) {
+        if ($response->status() === 401 || ($result['status'] ?? '') === 'fail') {
             return back()->withErrors([
-                'phone' => 'Server error. Please try again later.',
-                'exception' => $e->getMessage()
+                'phone' => 'Failed to send OTP. Please try again later.'
             ])->withInput();
         }
+
+        // ✅ Flash session and redirect back
+        return redirect()->back()->with([
+            'otp_sent' => true,
+            'otp_phone' => $phone,
+            'success' => 'OTP sent to your WhatsApp.'
+        ]);
+
+    } catch (\Exception $e) {
+        return back()->withErrors([
+            'phone' => 'Server error. Please try again later.',
+            'exception' => $e->getMessage()
+        ])->withInput();
     }
-    
+}
+
+
     public function verifyOtp(Request $request)
     {
         $request->validate([
