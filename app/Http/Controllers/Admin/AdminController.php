@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use App\Models\Admin;
 use App\Models\PratihariProfile;
 use App\Models\PratihariFamily;
@@ -249,56 +251,127 @@ class AdminController extends Controller
 
     public function sendOtp(Request $request)
     {
-        $phoneNumber = '+91' . $request->input('phone');
-
-        // Check if admin exists with this mobile number and static OTP set
-        $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-        if (!$admin || !$admin->otp) {
-            return back()->with('message', 'Your number is not registered or OTP not set. Please contact the Super Admin.');
-        }
-
-        // Store phone and OTP in session for verification
-        Session::put('otp_phone', $phoneNumber);
-        Session::put('otp', $admin->otp);
-
-        return back()->with([
-            'otp_sent' => true,
-            'message' => 'OTP is preset in the system. Please enter it to verify.'
+        $request->validate([
+            'phone' => 'required|string',
         ]);
-    }
 
-    public function verifyOtp(Request $request)
-    {
-        $inputOtp = $request->input('otp');
-        $phoneNumber = Session::get('otp_phone');
-        $storedOtp = Session::get('otp');
+        $phone = $request->phone;
+        $otp = rand(100000, 999999);
+        $shortToken = Str::random(6); // WhatsApp button value (max 15 chars)
 
-        if (!$phoneNumber || !$storedOtp) {
-            return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
-        }
-
-        if ($inputOtp !== $storedOtp) {
-            return redirect()->back()->with('message', 'Invalid OTP.');
-        }
-
-        // Lookup admin again to ensure valid
-        $admin = Admin::where('mobile_no', $phoneNumber)
-                    ->where('otp', $inputOtp)
-                    ->first();
+        // Check if admin exists
+        $admin = Admin::where('mobile_no', $phone)->first();
 
         if (!$admin) {
-            return redirect()->back()->with('message', 'Admin not found or OTP mismatch.');
+            return back()->withErrors([
+                'phone' => 'Mobile number not registered. Please contact super admin.'
+            ])->withInput();
         }
 
-        // Log in admin
+        // Update OTP
+        $admin->otp = $otp;
+        $admin->save();
+
+        // WhatsApp payload
+        $payload = [
+            "integrated_number" => "917327096968",
+            "content_type" => "template",
+            "payload" => [
+                "messaging_product" => "whatsapp",
+                "type" => "template",
+                "template" => [
+                    "name" => "nitiapp",
+                    "language" => [
+                        "code" => "en",
+                        "policy" => "deterministic"
+                    ],
+                    "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
+                    "to_and_components" => [
+                        [
+                            "to" => [$phone],
+                            "components" => [
+                                "body_1" => [
+                                    "type" => "text",
+                                    "value" => (string) $otp
+                                ],
+                                "button_1" => [
+                                    "subtype" => "url",
+                                    "type" => "text",
+                                    "value" => $shortToken
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'authkey' => env('MSG91_AUTHKEY'),
+            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
+
+            $result = $response->json();
+
+            if ($response->status() === 401 || ($result['status'] ?? '') === 'fail') {
+                return back()->withErrors([
+                    'phone' => 'Failed to send OTP. Please try again later.'
+                ])->withInput();
+            }
+
+            // ✅ Store session
+            session([
+                'otp_sent' => true,
+                'otp_phone' => $phone,
+            ]);
+
+            return redirect()->back()->with('success', 'OTP sent to your WhatsApp.');
+
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'phone' => 'Server error. Please try again later.',
+                'exception' => $e->getMessage()
+            ])->withInput();
+        }
+    }
+    
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'mobile_no' => 'required|string',
+            'otp' => 'required|string'
+        ]);
+
+        $admin = Admin::where('mobile_no', $request->mobile_no)->first();
+
+        if (!$admin) {
+            return back()->withErrors([
+                'mobile_no' => 'Mobile number not found. Please contact super admin.'
+            ])->withInput();
+        }
+
+        if ($admin->otp !== $request->otp) {
+            return back()->withErrors([
+                'otp' => 'Invalid OTP. Please try again.'
+            ])->withInput();
+        }
+
+        // OTP is valid
+        $admin->otp = null;
+
+        if (empty($admin->admin_id)) {
+            $admin->admin_id = 'ADMIN' . rand(10000, 99999);
+        }
+
+        $admin->save();
+
+        // Log in
         Auth::guard('admins')->login($admin);
 
-        // Clear session
-        Session::forget(['otp_phone', 'otp']);
-
-        return redirect()->route('admin.dashboard')->with('success', 'Admin authenticated successfully.');
+        return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
     }
+
 
     public function logout()
     {
@@ -360,70 +433,7 @@ class AdminController extends Controller
 
         return response()->json($events);
     }
-
-    public function sendWhatsappOtp(Request $request, WhatsappService $whatsappService)
-    {
-        $phone = $request->input('phone');
-        $phoneNumber = '+91' . $phone;
-
-        // Check if admin exists
-        $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-        if (!$admin) {
-            return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
-        }
-
-        $otp = rand(100000, 999999); // 6-digit OTP
-
-        // Store in session
-        Session::put('otp', $otp);
-        Session::put('otp_phone', $phoneNumber);
-
-        // Send OTP via WhatsApp
-        $sent = $whatsappService->sendOtp($phone, $otp); // phone without +91
-
-        if ($sent) {
-            return back()->with(['otp_sent' => true, 'message' => 'OTP sent via WhatsApp.']);
-        } else {
-            return back()->with('message', 'Failed to send OTP via WhatsApp.');
-        }
-    }
-
-    // Verify OTP
-    public function verifyWhatsappOtp(Request $request)
-    {
-        $inputOtp = $request->input('otp');
-        $storedOtp = Session::get('otp');
-        $phoneNumber = Session::get('otp_phone');
-
-        if (!$storedOtp || !$phoneNumber) {
-            return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
-        }
-
-        if ($inputOtp == $storedOtp) {
-            // Check if admin exists
-            $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-            if (!$admin) {
-                // Optional: auto-create admin (if needed)
-                $admin = Admin::firstOrCreate(
-                    ['mobile_no' => $phoneNumber],
-                    ['admin' => 'ADMIN' . rand(10000, 99999)]
-                );
-            }
-
-            // Authenticate
-            Auth::guard('admins')->login($admin);
-
-            // Clear session
-            Session::forget(['otp', 'otp_phone']);
-
-            return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
-        }
-
-        return back()->with('message', 'Invalid OTP.');
-    }
-        
+ 
     public function sebaCalendar()
     {
         // Get seba_ids where type is 'pratihari'
@@ -450,97 +460,5 @@ class AdminController extends Controller
 
         return view('admin.seba-calendar', compact('profile_name','gochhikar_name'));
     }
-
-    
-    // public function sendOtp(Request $request)
-    // {
-    //     $phoneNumber = '+91' . $request->input('phone');
-    //     $admin = Admin::where('mobile_no', $phoneNumber)->first();
-
-    //     if (!$admin) {
-    //         return back()->with('message', 'Your number is not registered. Please contact the Super Admin.');
-    //     }
-
-    //     try {
-    //         $client = new Client();
-    //         $response = $client->post("{$this->apiUrl}/auth/otp/v1/send", [
-    //             'headers' => [
-    //                 'Content-Type'  => 'application/json',
-    //                 'clientId'      => $this->clientId,
-    //                 'clientSecret'  => $this->clientSecret,
-    //             ],
-    //             'json' => ['phoneNumber' => $phoneNumber],
-    //         ]);
-
-    //         $body = json_decode($response->getBody(), true);
-
-    //         if (!isset($body['orderId'])) {
-    //             return back()->with('message', 'Failed to send OTP. No Order ID received.');
-    //         }
-
-    //         // Store phone number and order ID in session
-    //         Session::put('otp_phone', $phoneNumber);
-    //         Session::put('otp_order_id', $body['orderId']);
-
-    //         return back()->with(['otp_sent' => true, 'message' => 'OTP sent successfully.']);
-    //     } catch (RequestException $e) {
-    //         return back()->with('message', 'Failed to send OTP due to an error.');
-    //     }
-    // }
-
-    // public function verifyOtp(Request $request)
-    // {
-    //     $otp = $request->input('otp');
-    //     $phoneNumber = session('otp_phone');
-    //     $orderId = session('otp_order_id'); // Ensure this is set in sendOtp
-    
-    //     if (!$orderId || !$phoneNumber) {
-    //         return redirect()->back()->with('message', 'Session expired. Please request OTP again.');
-    //     }
-    
-    //     $client = new Client();
-    //     $url = rtrim($this->apiUrl, '/') . '/auth/otp/v1/verify';
-    
-    //     try {
-    //         $response = $client->post($url, [
-    //             'headers' => [
-    //                 'Content-Type' => 'application/json',
-    //                 'clientId' => $this->clientId,
-    //                 'clientSecret' => $this->clientSecret,
-    //             ],
-    //             'json' => [
-    //                 'orderId' => $orderId,
-    //                 'otp' => $otp,
-    //                 'phoneNumber' => $phoneNumber,
-    //             ],
-    //         ]);
-    
-    //         $body = json_decode($response->getBody(), true);
-    
-    //         if (isset($body['isOTPVerified']) && $body['isOTPVerified']) {
-    //             $admin = Admin::where('mobile_no', $phoneNumber)->first();
-    
-    //             if (!$admin) {
-    //                 // Create new admin record
-    //                 $admin = Admin::firstOrCreate(
-    //                     ['mobile_no' => $phoneNumber],
-    //                     ['admin' => 'ADMIN' . rand(10000, 99999), 'order_id' => $orderId]
-    //                 );
-    //             }
-    
-    //             // Login user
-    //             Auth::guard('admins')->login($admin);
-    
-    //             // Clear session values
-    //             Session::forget(['otp_phone', 'otp_order_id']);
-    
-    //             return redirect()->route('admin.dashboard')->with('success', 'User authenticated successfully.');
-    //         } else {
-    //             return redirect()->back()->with('message', $body['message'] ?? 'Invalid OTP');
-    //         }
-    //     } catch (RequestException $e) {
-    //         return redirect()->back()->with('message', 'Failed to verify OTP due to an error.');
-    //     }
-    // }
 
 }
