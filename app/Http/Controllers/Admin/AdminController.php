@@ -216,6 +216,13 @@ class AdminController extends Controller
         $currentPratihariBeddhaDisplay = implode(', ', array_unique($todayPratihariBeddhaIds));
         $currentGochhikarBeddhaDisplay = implode(', ', array_unique($todayGochhikarBeddhaIds));
 
+         $today = Carbon::today()->toDateString(); // e.g., '2025-07-18'
+
+    $beddhaMapping = DateBeddhaMapping::where('date', $today)->first();
+
+    $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
+    $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
+
         return view('admin.admin-dashboard', compact(
             'todayProfiles',
             'incompleteProfiles',
@@ -238,6 +245,8 @@ class AdminController extends Controller
             'pratihariEvents',
             'gochhikarEvents',
             'nijogaGochhikarEvents',
+            'pratihariBeddha',
+            'gochhikarBeddha',
         ));
     }
 
