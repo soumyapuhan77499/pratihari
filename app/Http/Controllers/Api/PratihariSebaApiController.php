@@ -116,7 +116,7 @@ class PratihariSebaApiController extends Controller
     public function saveSeba(Request $request)
     {
         try {
-            $user = Auth::user(); 
+            $user = Auth::user();
 
             if (!$user) {
                 return response()->json([
@@ -129,13 +129,13 @@ class PratihariSebaApiController extends Controller
             $beddhaIds = $request->beddha_id ?? [];
 
             $savedData = []; // Store created records
-            $mappingData = ['pratihari_id' => $user->pratihari_id]; // Mapping array
+            $mappingData = ['pratihari_id' => $user->pratihari_id];
 
             foreach ($sebaIds as $sebaId) {
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+                $beddhaList = $beddhaIds[$sebaId] ?? [];
                 $beddhaIdsString = !empty($beddhaList) ? implode(',', $beddhaList) : null;
 
-                // Save to main seba table
+                // Save each entry in the PratihariSeba table
                 $seba = PratihariSeba::create([
                     'pratihari_id' => $user->pratihari_id,
                     'seba_id'      => $sebaId,
@@ -144,14 +144,14 @@ class PratihariSebaApiController extends Controller
 
                 $savedData[] = $seba;
 
-                // Also build mapping data for seba_ids 1–5 (pratihari) and 8 (gochhikar)
+                // Map to correct seba_x column if seba_id is 1–5 or 8
                 if (in_array((int)$sebaId, [1, 2, 3, 4, 5, 8]) && $beddhaIdsString) {
-                    $mappingData[(string)$sebaId] = $beddhaIdsString;
+                    $mappingData["seba_$sebaId"] = $beddhaIdsString;
                 }
             }
 
-            // Save or update PratihariSebaMapping
-            if (count($mappingData) > 1) { // At least one seba_id mapping + pratihari_id
+            // Save to mapping table if there's data
+            if (count($mappingData) > 1) {
                 PratihariSebaMapping::updateOrCreate(
                     ['pratihari_id' => $user->pratihari_id],
                     $mappingData
@@ -162,21 +162,21 @@ class PratihariSebaApiController extends Controller
                 'status' => 200,
                 'message' => 'Pratihari Seba details saved successfully',
                 'data' => $savedData,
-            ], 200);
+            ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'status' => 422,
                 'message' => 'Validation error',
                 'errors' => $e->errors(),
-            ], 422);
-        
+            ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 500,
                 'message' => 'An error occurred',
                 'error' => $e->getMessage(),
-            ], 500);
+            ]);
         }
     }
 

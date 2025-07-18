@@ -27,6 +27,7 @@ class PratihariSeba extends Model
         return $this->belongsTo(PratihariSebaMaster::class, 'seba_id', 'id');
     }
 
+
     public function pratihari()
     {
         return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');

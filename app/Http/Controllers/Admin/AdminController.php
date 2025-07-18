@@ -249,105 +249,103 @@ class AdminController extends Controller
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
 
-   public function sendOtp(Request $request)
-{
-    $request->validate([
-        'phone' => 'required|string',
-    ]);
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+        ]);
 
-    $phone = $request->phone;
-    $otp = rand(100000, 999999);
-    $shortToken = Str::random(6);
+        $phone = $request->phone;
+        $otp = rand(100000, 999999);
+        $shortToken = Str::random(6);
 
-    // Check if admin exists
-    $admin = Admin::where('mobile_no', $phone)->first();
+        // Check if admin exists
+        $admin = Admin::where('mobile_no', $phone)->first();
 
-    if (!$admin) {
-        return redirect()->back()->with([
-            'error' => 'Mobile number not registered. Please contact super admin.'
-        ])->withInput();
-    }
+        if (!$admin) {
+            return redirect()->back()->with([
+                'error' => 'Mobile number not registered. Please contact super admin.'
+            ])->withInput();
+        }
 
-    // Save OTP
-    $admin->otp = $otp;
-    $admin->save();
+        // Save OTP
+        $admin->otp = $otp;
+        $admin->save();
 
-    // WhatsApp Payload
-  $payload = [
-    "integrated_number" => "917327096968",
-    "content_type" => "template",
-    "payload" => [
-        "messaging_product" => "whatsapp",
-        "to" => $phone,
-        "type" => "template",
-        "template" => [
-            "name" => "nitiapp",
-            "language" => [
-                "code" => "en",
-                "policy" => "deterministic"
-            ],
-            "components" => [
-                [
-                    "type" => "body",
-                    "parameters" => [
+        // WhatsApp Payload
+        $payload = [
+            "integrated_number" => "917327096968",
+            "content_type" => "template",
+            "payload" => [
+                "messaging_product" => "whatsapp",
+                "to" => $phone,
+                "type" => "template",
+                "template" => [
+                    "name" => "nitiapp",
+                    "language" => [
+                        "code" => "en",
+                        "policy" => "deterministic"
+                    ],
+                    "components" => [
                         [
-                            "type" => "text",
-                            "text" => (string) $otp
-                        ]
-                    ]
-                ],
-                [
-                    "type" => "button",
-                    "sub_type" => "url",
-                    "index" => "0",
-                    "parameters" => [
+                            "type" => "body",
+                            "parameters" => [
+                                [
+                                    "type" => "text",
+                                    "text" => (string) $otp
+                                ]
+                            ]
+                        ],
                         [
-                            "type" => "text",
-                            "text" => $shortToken
+                            "type" => "button",
+                            "sub_type" => "url",
+                            "index" => "0",
+                            "parameters" => [
+                                [
+                                    "type" => "text",
+                                    "text" => $shortToken
+                                ]
+                            ]
                         ]
                     ]
                 ]
             ]
-        ]
-    ]
-];
+        ];
 
+     try {
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+            'authkey' => env('MSG91_AUTHKEY'),
+        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
 
-   try {
-    $response = Http::withHeaders([
-        'Content-Type' => 'application/json',
-        'authkey' => env('MSG91_AUTHKEY'),
-    ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
+        $result = $response->json();
 
-    $result = $response->json();
+        // 🔍 Log full response for debugging
+        \Log::info('MSG91 OTP Response:', $result);
 
-    // 🔍 Log full response for debugging
-    \Log::info('MSG91 OTP Response:', $result);
+        if ($response->status() !== 200 || ($result['status'] ?? '') !== 'success') {
+            return redirect()->back()->with([
+                'error' => 'Failed to send OTP. MSG91 error: ' . ($result['errors'] ?? 'Unknown error'),
+                'debug' => $result // Optional: Remove in production
+            ]);
+        }
 
-    if ($response->status() !== 200 || ($result['status'] ?? '') !== 'success') {
         return redirect()->back()->with([
-            'error' => 'Failed to send OTP. MSG91 error: ' . ($result['errors'] ?? 'Unknown error'),
-            'debug' => $result // Optional: Remove in production
+            'otp_sent' => true,
+            'otp_phone' => $phone,
+            'message' => 'OTP sent to your WhatsApp.'
         ]);
+
+        } catch (\Exception $e) {
+            \Log::error('MSG91 OTP Exception: ' . $e->getMessage());
+
+            return redirect()->back()->with([
+                'error' => 'Server error. Please try again later.',
+                'debug_error' => $e->getMessage()
+            ])->withInput();
+        }
+
     }
-
-    return redirect()->back()->with([
-        'otp_sent' => true,
-        'otp_phone' => $phone,
-        'message' => 'OTP sent to your WhatsApp.'
-    ]);
-
-} catch (\Exception $e) {
-    \Log::error('MSG91 OTP Exception: ' . $e->getMessage());
-
-    return redirect()->back()->with([
-        'error' => 'Server error. Please try again later.',
-        'debug_error' => $e->getMessage()
-    ])->withInput();
-}
-
-}
-
 
     public function verifyOtp(Request $request)
     {
@@ -392,59 +390,58 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-    public function sebaDate(Request $request)
-    {
-        $pratihariId = $request->input('pratihari_id');
-        $events = [];
+   public function sebaDate(Request $request)
+{
+    $pratihariId = $request->input('pratihari_id');
+    $events = [];
 
-        if ($pratihariId) {
-            $sebas = PratihariSeba::with('sebaMaster')
-                ->where('pratihari_id', $pratihariId)
-                ->get();
+    if ($pratihariId) {
+        $sebas = PratihariSeba::with('sebaMaster')
+            ->where('pratihari_id', $pratihariId)
+            ->get();
 
-            foreach ($sebas as $seba) {
-                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                $sebaType = $seba->type;
-                $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+        foreach ($sebas as $seba) {
+            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+            $sebaType = $seba->sebaMaster->type ?? null; // Fetch from master__seba.type
+            $sebaId = $seba->seba_id;
+            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
-                foreach ($beddhaIds as $beddhaId) {
-                    $beddhaId = (int) trim($beddhaId);
+            foreach ($beddhaIds as $beddhaId) {
+                $beddhaId = (int) trim($beddhaId);
 
-                    if ($beddhaId < 1 || $beddhaId > 47) continue;
+                if ($beddhaId < 1 || $beddhaId > 47) continue;
 
-                    // Determine interval and dates based on seba_id
-                    if ($sebaType == "gochhikar") {
-                        // Gochhikar logic
-                        $intervalDays = 16;
-                        $startDate = Carbon::create(2025, 6, 16)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2050, 12, 31);
-                    } else {
-                        // Pratihari logic
-                        $intervalDays = 47;
-                        $startDate = Carbon::create(2025, 7, 1)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2055, 12, 31);
-                    }
+                if ($sebaType === 'gochhikar') {
+                    $intervalDays = 16;
+                    $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
+                    $endDate = Carbon::create(2055, 12, 31);
+                } else {
+                    $intervalDays = 47;
+                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                    $endDate = Carbon::create(2050, 12, 31);
+                }
 
-                    $nextDate = $startDate->copy();
+                $nextDate = $startDate->copy();
 
-                    while ($nextDate->lte($endDate)) {
-                        $events[] = [
-                            'title' => "$sebaName - Beddha $beddhaId",
-                            'start' => $nextDate->toDateString(),
-                            'extendedProps' => [
-                                'sebaName' => $sebaName,
-                                'beddhaId' => $beddhaId,
-                                'sebaId' => $sebaId
-                            ]
-                        ];
-                        $nextDate->addDays($intervalDays);
-                    }
+                while ($nextDate->lte($endDate)) {
+                    $events[] = [
+                        'title' => "$sebaName - Beddha $beddhaId",
+                        'start' => $nextDate->toDateString(),
+                        'extendedProps' => [
+                            'sebaName' => $sebaName,
+                            'beddhaId' => $beddhaId,
+                            'sebaId' => $sebaId
+                        ]
+                    ];
+                    $nextDate->addDays($intervalDays);
                 }
             }
         }
-
-        return response()->json($events);
     }
+
+    return response()->json($events);
+}
+
  
     public function sebaCalendar()
     {

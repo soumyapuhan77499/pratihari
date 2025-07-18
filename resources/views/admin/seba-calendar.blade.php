@@ -69,7 +69,7 @@
             text-transform: uppercase;
         }
 
-          .card-headers {
+        .card-headers {
             background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
             color: rgb(233, 234, 237);
             font-size: 20px;
@@ -128,7 +128,7 @@
                             <div class="card-body">
                                 <form method="GET" action="{{ url()->current() }}">
                                     <div class="mb-3">
-                                        <select class="form-select select2-search" name="pratihari_id"
+                                        <select class="form-control select2" name="pratihari_id"
                                             onchange="this.form.submit()">
                                             <option value="">-- Select Gochhikar Name --</option>
                                             @foreach ($gochhikar_name as $gochhikar)
@@ -201,11 +201,8 @@
                     if (pratihariId) {
                         fetch(
                                 `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`
-                            )
-                            .then(response => {
-                                if (!response.ok) throw new Error("Failed to load events");
-                                return response.json();
-                            })
+                                )
+                            .then(response => response.json())
                             .then(data => successCallback(data))
                             .catch(error => {
                                 console.error("Error loading events:", error);
@@ -216,16 +213,14 @@
                     }
                 },
                 eventClick: function(info) {
-                    const sebaName = info.event.extendedProps.sebaName;
-                    const beddhaId = info.event.extendedProps.beddhaId;
-
-                    document.getElementById('modalSebaName').innerText = sebaName;
-                    document.getElementById('modalBeddhaId').innerText = beddhaId;
+                    document.getElementById('modalSebaName').innerText = info.event.extendedProps
+                        .sebaName;
+                    document.getElementById('modalBeddhaId').innerText = info.event.extendedProps
+                        .beddhaId;
 
                     const modal = new bootstrap.Modal(document.getElementById('eventModal'));
                     modal.show();
                 }
-
             });
 
             calendar.render();
@@ -241,16 +236,15 @@
             });
         });
     </script>
-
-    <script>
-        $(document).ready(function() {
-            $('.select2-search').select2({
-                placeholder: "-- Select Gochhikar Name --",
-                allowClear: true,
-                width: '100%'
-            });
+<script>
+    $(document).ready(function () {
+        $('.select2').select2({
+            placeholder: "Search Gochhikar",
+            allowClear: true,
+            width: '100%'
         });
-    </script>
+    });
+</script>
 
     {{-- Select2 JS --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
