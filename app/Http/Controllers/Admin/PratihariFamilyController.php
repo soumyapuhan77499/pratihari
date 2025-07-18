@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\PratihariFamily;
 use App\Models\PratihariChildren;
 
-
 class PratihariFamilyController extends Controller
 {
-
 
 public function pratihariFamily()
 {

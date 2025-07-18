@@ -62,34 +62,32 @@ class PratihariFamilyApiController extends Controller
 
         $family->save();
 
-        // ===== Children Logic =====
-
         // Delete old children for this pratihari_id (if updating)
         PratihariChildren::where('pratihari_id', $pratihariId)->delete();
 
         $childrenData = [];
 
-       if ($request->has('children_name')) {
-    foreach ($request->children_name as $index => $name) {
-        if ($name) {
-            $childData = new PratihariChildren();
-            $childData->pratihari_id = $pratihariId;
-            $childData->children_name = $name;
-            $childData->date_of_birth = $request->children_dob[$index] ?? null;
-            $childData->gender = $request->children_gender[$index] ?? null;
+        if ($request->has('children_name')) {
+            foreach ($request->children_name as $index => $name) {
+                if ($name) {
+                    $childData = new PratihariChildren();
+                    $childData->pratihari_id = $pratihariId;
+                    $childData->children_name = $name;
+                    $childData->date_of_birth = $request->children_dob[$index] ?? null;
+                    $childData->gender = $request->children_gender[$index] ?? null;
 
-            if ($request->hasFile('children_photo') && isset($request->file('children_photo')[$index])) {
-                $childPhoto = $request->file('children_photo')[$index];
-                $childPhotoName = time() . "_child_$index." . $childPhoto->getClientOriginalExtension();
-                $childPhoto->move(public_path('uploads/children'), $childPhotoName);
-                $childData->photo = 'uploads/children/' . $childPhotoName;
+                    if ($request->hasFile('children_photo') && isset($request->file('children_photo')[$index])) {
+                        $childPhoto = $request->file('children_photo')[$index];
+                        $childPhotoName = time() . "_child_$index." . $childPhoto->getClientOriginalExtension();
+                        $childPhoto->move(public_path('uploads/children'), $childPhotoName);
+                        $childData->photo = 'uploads/children/' . $childPhotoName;
+                    }
+
+                    $childData->save();
+                    $childrenData[] = $childData;
+                }
             }
-
-            $childData->save();
-            $childrenData[] = $childData;
         }
-    }
-}
 
         return response()->json([
             'status' => 200,
