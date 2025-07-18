@@ -51,9 +51,9 @@ class PratihariSebaController extends Controller
             $beddhaIds = $request->beddha_id ?? [];
             $pratihariId = $request->pratihari_id;
 
-            // Prepare data for PratihariSeba
+            // 🔁 Save all selected seba+beddha pairs
             foreach ($sebaIds as $sebaId) {
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+                $beddhaList = $beddhaIds[$sebaId] ?? [];
 
                 if (empty($beddhaList)) {
                     continue;
@@ -61,7 +61,6 @@ class PratihariSebaController extends Controller
 
                 $beddhaIdsString = implode(',', $beddhaList);
 
-                // Save into PratihariSeba
                 PratihariSeba::create([
                     'pratihari_id' => $pratihariId,
                     'seba_id' => $sebaId,
@@ -69,11 +68,11 @@ class PratihariSebaController extends Controller
                 ]);
             }
 
-            // Prepare mapping record for PratihariSebaMapping
+            // 🔁 Prepare mapping data for pratihari__seba_mapping
             $mappingData = ['pratihari_id' => $pratihariId];
 
             foreach ($sebaIds as $sebaId) {
-                $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
+                $beddhaList = $beddhaIds[$sebaId] ?? [];
 
                 if (empty($beddhaList)) {
                     continue;
@@ -81,23 +80,23 @@ class PratihariSebaController extends Controller
 
                 $beddhaIdsString = implode(',', $beddhaList);
 
-                // Only process for seba_ids 1–5 (pratihari) and 8 (gochhikar)
-                if (in_array($sebaId, [1, 2, 3, 4, 5, 8])) {
-                    $mappingData[(string)$sebaId] = $beddhaIdsString;
+                if (in_array((int)$sebaId, [1, 2, 3, 4, 5, 8])) {
+                    // ✅ Use correct column names like 'seba_1', 'seba_2', ...
+                    $mappingData["seba_$sebaId"] = $beddhaIdsString;
                 }
             }
 
-            // Save to PratihariSebaMapping table
+            // ✅ Save or update PratihariSebaMapping
             PratihariSebaMapping::updateOrCreate(
                 ['pratihari_id' => $pratihariId],
                 $mappingData
             );
 
-            DB::commit(); // Commit transaction
+            DB::commit();
 
             return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
                             ->with('success', 'Pratihari Seba details saved successfully');
-
+                            
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
             return redirect()->back()->withErrors($e->validator)->withInput();
