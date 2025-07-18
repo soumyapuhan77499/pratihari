@@ -93,16 +93,16 @@
                     </div>
                 </div>
                 <div class="row">
-                    <!-- Filter by Pratihari Name -->
+                    <!-- Pratihari Dropdown -->
                     <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
                         <div class="card custom-card w-100">
-                            <div class="card-headers text-white" style="background-color: #f8c66d">
-                                <i class="bi bi-filter me-2"></i>Filter by Pratihari Name
+                            <div class="card-header text-white" style="background-color: #f8c66d">
+                                <i class="bi bi-filter me-2"></i> Filter by Pratihari Name
                             </div>
                             <div class="card-body">
                                 <form method="GET" action="{{ url()->current() }}">
                                     <div class="mb-3">
-                                        <select class="form-select select2-search" name="pratihari_id"
+                                        <select class="form-control select2" name="pratihari_id"
                                             onchange="this.form.submit()">
                                             <option value="">-- Select Pratihari Name --</option>
                                             @foreach ($profile_name as $profile)
@@ -113,17 +113,17 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Gochhikar Dropdown -->
                     <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
                         <div class="card custom-card w-100">
-                            <div class="card-headers text-white" style="background-color: #f8c66d">
-                                <i class="bi bi-filter me-2"></i>Filter by Gochhikar Name
+                            <div class="card-header text-white" style="background-color: #e96a01">
+                                <i class="bi bi-filter me-2"></i> Filter by Gochhikar Name
                             </div>
                             <div class="card-body">
                                 <form method="GET" action="{{ url()->current() }}">
@@ -139,45 +139,46 @@
                                                 </option>
                                             @endforeach
                                         </select>
-
                                     </div>
                                 </form>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Calendar -->
-                    <div class="col-lg-12 mb-4">
-                        <div class="card custom-card">
-                            <div class="card-header text-white" style="background-color: #f8c66d">
-                                <i class="bi bi-calendar-event me-2"></i>Custom Calendar
-                            </div>
-                            <div class="card-body">
-                                <div id="custom-calendar"></div>
-                            </div>
+
+                <!-- Calendar -->
+                <div class="col-lg-12 mb-4">
+                    <div class="card custom-card">
+                        <div class="card-header text-white" style="background-color: #f8c66d">
+                            <i class="bi bi-calendar-event me-2"></i>Custom Calendar
+                        </div>
+                        <div class="card-body">
+                            <div id="custom-calendar"></div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Modal -->
-                <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header bg-primary text-white">
-                                <h5 class="modal-title" id="eventModalLabel">Seba Details</h5>
-                                <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>Seba Name:</strong> <span id="modalSebaName"></span></p>
-                                <p><strong>Beddha ID:</strong> <span id="modalBeddhaId"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="eventModalLabel">Seba Details</h5>
+                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Seba Name:</strong> <span id="modalSebaName"></span></p>
+                            <p><strong>Beddha ID:</strong> <span id="modalBeddhaId"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </div>
     </div>
 @endsection
 
@@ -201,7 +202,7 @@
                     if (pratihariId) {
                         fetch(
                                 `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`
-                                )
+                            )
                             .then(response => response.json())
                             .then(data => successCallback(data))
                             .catch(error => {
@@ -236,15 +237,15 @@
             });
         });
     </script>
-<script>
-    $(document).ready(function () {
-        $('.select2').select2({
-            placeholder: "Search Gochhikar",
-            allowClear: true,
-            width: '100%'
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                placeholder: "Search Gochhikar",
+                allowClear: true,
+                width: '100%'
+            });
         });
-    });
-</script>
+    </script>
 
     {{-- Select2 JS --}}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

@@ -390,84 +390,78 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-   public function sebaDate(Request $request)
-{
-    $pratihariId = $request->input('pratihari_id');
-    $events = [];
+    public function sebaDate(Request $request)
+    {
+        $pratihariId = $request->input('pratihari_id');
+        $events = [];
 
-    if ($pratihariId) {
-        $sebas = PratihariSeba::with('sebaMaster')
-            ->where('pratihari_id', $pratihariId)
-            ->get();
+        if ($pratihariId) {
+            $sebas = PratihariSeba::with('sebaMaster')
+                ->where('pratihari_id', $pratihariId)
+                ->get();
 
-        foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $sebaType = $seba->sebaMaster->type ?? null; // Fetch from master__seba.type
-            $sebaId = $seba->seba_id;
-            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+            foreach ($sebas as $seba) {
+                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+                $sebaType = $seba->sebaMaster->type ?? null; // Fetch from master__seba.type
+                $sebaId = $seba->seba_id;
+                $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
 
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId);
+                foreach ($beddhaIds as $beddhaId) {
+                    $beddhaId = (int) trim($beddhaId);
 
-                if ($beddhaId < 1 || $beddhaId > 47) continue;
+                    if ($beddhaId < 1 || $beddhaId > 47) continue;
 
-                if ($sebaType === 'gochhikar') {
-                    $intervalDays = 16;
-                    $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
-                    $endDate = Carbon::create(2055, 12, 31);
-                } else {
-                    $intervalDays = 47;
-                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                    $endDate = Carbon::create(2050, 12, 31);
-                }
+                    if ($sebaType === 'gochhikar') {
+                        $intervalDays = 16;
+                        $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
+                        $endDate = Carbon::create(2055, 12, 31);
+                    } else {
+                        $intervalDays = 47;
+                        $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                        $endDate = Carbon::create(2050, 12, 31);
+                    }
 
-                $nextDate = $startDate->copy();
+                    $nextDate = $startDate->copy();
 
-                while ($nextDate->lte($endDate)) {
-                    $events[] = [
-                        'title' => "$sebaName - Beddha $beddhaId",
-                        'start' => $nextDate->toDateString(),
-                        'extendedProps' => [
-                            'sebaName' => $sebaName,
-                            'beddhaId' => $beddhaId,
-                            'sebaId' => $sebaId
-                        ]
-                    ];
-                    $nextDate->addDays($intervalDays);
+                    while ($nextDate->lte($endDate)) {
+                        $events[] = [
+                            'title' => "$sebaName - Beddha $beddhaId",
+                            'start' => $nextDate->toDateString(),
+                            'extendedProps' => [
+                                'sebaName' => $sebaName,
+                                'beddhaId' => $beddhaId,
+                                'sebaId' => $sebaId
+                            ]
+                        ];
+                        $nextDate->addDays($intervalDays);
+                    }
                 }
             }
         }
+
+        return response()->json($events);
     }
 
-    return response()->json($events);
-}
-
- 
     public function sebaCalendar()
     {
-        // Get seba_ids where type is 'pratihari'
-        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')
-            ->pluck('id'); // Assuming 'id' is the primary key of master__seba
+        // Get seba_ids by type
+        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
-        // Get seba_ids where type is 'gochhikar'
-        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')
-            ->pluck('id');
-
-        // Get all unique Pratihari IDs for seba type 'pratihari'
+        // Get unique pratihari_ids
         $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
-            ->pluck('pratihari_id')
-            ->unique();
+            ->distinct()
+            ->pluck('pratihari_id');
 
-        // Get all unique Pratihari IDs for seba type 'gochhikar'
         $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
-            ->pluck('pratihari_id')
-            ->unique();
+            ->distinct()
+            ->pluck('pratihari_id');
 
-        // Fetch profile details
+        // Fetch profile names
         $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
         $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
 
-        return view('admin.seba-calendar', compact('profile_name','gochhikar_name'));
+        return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
     }
 
 }
