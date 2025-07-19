@@ -219,37 +219,37 @@ class AdminController extends Controller
 
          $today = Carbon::today()->toDateString(); // e.g., '2025-07-18'
 
-    $beddhaMapping = DateBeddhaMapping::where('date', $today)->first();
+        $beddhaMapping = DateBeddhaMapping::where('date', $today)->first();
 
-    $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
-    $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
+        $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
+        $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
 
-        return view('admin.admin-dashboard', compact(
-            'todayProfiles',
-            'incompleteProfiles',
-            'totalActiveUsers',
-            'rejectedProfiles',
-            'updatedProfiles',
-            'pendingProfile',
-            'todayApplications',
-            'profiles',
-            'profile_name',
-            'gochhikar_name',
-            'todayApprovedProfiles',
-            'todayRejectedProfiles',
-            'approvedApplication',
-            'rejectedApplication',
-            'today',
-            'currentPratihariBeddhaDisplay',
-            'currentGochhikarBeddhaDisplay',
-            'nijogaAssign',
-            'pratihariEvents',
-            'gochhikarEvents',
-            'nijogaGochhikarEvents',
-            'pratihariBeddha',
-            'gochhikarBeddha',
-        ));
-    }
+            return view('admin.admin-dashboard', compact(
+                'todayProfiles',
+                'incompleteProfiles',
+                'totalActiveUsers',
+                'rejectedProfiles',
+                'updatedProfiles',
+                'pendingProfile',
+                'todayApplications',
+                'profiles',
+                'profile_name',
+                'gochhikar_name',
+                'todayApprovedProfiles',
+                'todayRejectedProfiles',
+                'approvedApplication',
+                'rejectedApplication',
+                'today',
+                'currentPratihariBeddhaDisplay',
+                'currentGochhikarBeddhaDisplay',
+                'nijogaAssign',
+                'pratihariEvents',
+                'gochhikarEvents',
+                'nijogaGochhikarEvents',
+                'pratihariBeddha',
+                'gochhikarBeddha',
+            ));
+        }
 
     public function pratihariManageProfile()
     {

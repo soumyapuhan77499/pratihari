@@ -16,6 +16,7 @@ use App\Models\MasterNijogaSeba;
 use App\Models\PratihariDesignation;
 use App\Models\PratihariNotice;
 use App\Models\PratihariApplication;
+use App\Models\DateBeddhaMapping;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -182,17 +183,12 @@ public function getHomePage()
         $baseDatePratihari = \Carbon\Carbon::parse('2025-07-01');
         $baseDateGochhikar = \Carbon\Carbon::parse('2025-06-16');
 
-        // Pratihari: every 47 days
-        $diffPratihari = $baseDatePratihari->diffInDays($today);
-        $currentPratihariBeddhaId = ($diffPratihari % 47) + 1;
+          $today = Carbon::today()->toDateString(); // e.g., '2025-07-18'
 
-        // Gochhikar: every 16 days
-        $diffGochhikar = $baseDateGochhikar->diffInDays($today);
-        $currentGochhikarBeddhaId = ($diffGochhikar % 16) + 1;
+        $beddhaMapping = DateBeddhaMapping::where('date', $today)->first();
 
-        $currentPratihariBeddhaDisplay = "$currentPratihariBeddhaId";
-        $currentGochhikarBeddhaDisplay = "$currentGochhikarBeddhaId";
-        // === END: Beddha Calculation ===
+        $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
+        $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
 
         return response()->json([
             'status' => true,
@@ -200,8 +196,8 @@ public function getHomePage()
             'data' => [
                 'profile' => $profile,
                 'reject_reason' => $rejectReason,
-                'today_pratihari_beddha' => $currentPratihariBeddhaDisplay,
-                'today_gochhikar_beddha' => $currentGochhikarBeddhaDisplay,
+                'today_pratihari_beddha' => $pratihariBeddha,
+                'today_gochhikar_beddha' => $gochhikarBeddha,
             ]
         ], 200);
 

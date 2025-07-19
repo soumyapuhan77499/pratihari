@@ -448,39 +448,38 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-   public function storeDateBeddhaMapping(Request $request)
-{
-    $startDate = Carbon::create('2025', '01', '01');
-    $endDate = Carbon::create('2030', '12', '31'); // full 6-year range
+    public function storeDateBeddhaMapping(Request $request)
+    {
+        $startDate = Carbon::create('2025', '01', '01');
+        $endDate = Carbon::create('2030', '12', '31'); // full 6-year range
 
-    $pratihariBeddhaId = 33;
-    $gochhikarBeddhaId = 16;
+        $pratihariBeddhaId = 33;
+        $gochhikarBeddhaId = 16;
 
-    $insertData = [];
+        $insertData = [];
 
-    while ($startDate->lte($endDate)) {
-        $insertData[] = [
-            'date' => $startDate->toDateString(),
-            'pratihari_beddha' => $pratihariBeddhaId,
-            'gochhikar_beddha' => $gochhikarBeddhaId
-        ];
+        while ($startDate->lte($endDate)) {
+            $insertData[] = [
+                'date' => $startDate->toDateString(),
+                'pratihari_beddha' => $pratihariBeddhaId,
+                'gochhikar_beddha' => $gochhikarBeddhaId
+            ];
 
-        // Cycle both beddha IDs
-        $pratihariBeddhaId = ($pratihariBeddhaId % 47) + 1;
-        $gochhikarBeddhaId = ($gochhikarBeddhaId % 16) + 1;
+            // Cycle both beddha IDs
+            $pratihariBeddhaId = ($pratihariBeddhaId % 47) + 1;
+            $gochhikarBeddhaId = ($gochhikarBeddhaId % 16) + 1;
 
-        $startDate->addDay();
+            $startDate->addDay();
+        }
+
+        // Clear data only in this range to prevent duplication
+        DateBeddhaMapping::whereBetween('date', ['2025-01-01', '2030-12-31'])->delete();
+
+        // Insert all mappings
+        DateBeddhaMapping::insert($insertData);
+
+        return response()->json(['message' => 'Date-Beddha mapping with Pratihari (47-cycle) and Gochhikar (16-cycle) from 2025 to 2030 created successfully.']);
     }
-
-    // Clear data only in this range to prevent duplication
-    DateBeddhaMapping::whereBetween('date', ['2025-01-01', '2030-12-31'])->delete();
-
-    // Insert all mappings
-    DateBeddhaMapping::insert($insertData);
-
-    return response()->json(['message' => 'Date-Beddha mapping with Pratihari (47-cycle) and Gochhikar (16-cycle) from 2025 to 2030 created successfully.']);
-}
-
 
     public function startSeba(Request $request)
     {
