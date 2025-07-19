@@ -16,4 +16,3 @@ class PratihariSebaMapping extends Model
         'seba_1', 'seba_2', 'seba_3', 'seba_4', 'seba_5', 'seba_8'
     ];
 }
-

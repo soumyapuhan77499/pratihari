@@ -23,6 +23,3 @@ class DateBeddhaMapping extends Model
     }
 
 }
-
-
-    

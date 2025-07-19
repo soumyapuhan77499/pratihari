@@ -275,77 +275,143 @@ class PratihariSebaApiController extends Controller
     }
 
     public function sebaDateList()
-    {
-        try {
-            $user = Auth::user();
+{
+    try {
+        $user = Auth::user();
 
-            if (!$user) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
-            }
-
-            $pratihariId = $user->pratihari_id;
-            $data = [];
-
-            $sebas = PratihariSeba::with('sebaMaster')
-                ->where('pratihari_id', $pratihariId)
-                ->get();
-
-            foreach ($sebas as $seba) {
-                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                $sebaType = $seba->sebaMaster->type ?? 'pratihari';
-
-                $beddhaIds = is_array($seba->beddha_id)
-                    ? $seba->beddha_id
-                    : explode(',', $seba->beddha_id);
-
-                foreach ($beddhaIds as $beddhaId) {
-                    $beddhaId = (int) trim($beddhaId);
-
-                    if ($beddhaId < 1 || $beddhaId > 47) {
-                        continue;
-                    }
-
-                    // Define start, end, and interval for the calendar loop
-                    if ($sebaType === 'gochhikar') {
-                        $intervalDays = 16;
-                        $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2055, 12, 31);
-                    } else { // pratihari
-                        $intervalDays = 47;
-                        $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2050, 12, 31);
-                    }
-
-                    $nextDate = $startDate->copy();
-
-                    while ($nextDate->lte($endDate)) {
-                        $dateStr = $nextDate->toDateString();
-
-                        $data[$dateStr][] = [
-                            'seba' => $sebaName,
-                            'beddha_id' => $beddhaId,
-                            'type' => $sebaType,
-                        ];
-
-                        $nextDate->addDays($intervalDays);
-                    }
-                }
-            }
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Seba data loaded successfully',
-                'data' => $data
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Server error',
-                'error' => $e->getMessage()
-            ], 500);
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
         }
+
+        $pratihariId = $user->pratihari_id;
+
+        // Fetch Pratihari Seba Mapping
+        $sebaMapping = PratihariSebaMapping::where('pratihari_id', $pratihariId)->first();
+
+        if (!$sebaMapping) {
+            return response()->json(['status' => false, 'message' => 'No seba mapping found.'], 404);
+        }
+
+        $dateWiseEvents = [];
+
+        // Loop over seba columns (seba_1 to seba_8)
+        foreach ($sebaMapping->getAttributes() as $column => $beddhaId) {
+            if (!str_starts_with($column, 'seba_') || !$beddhaId) continue;
+
+            $sebaMasterId = (int) str_replace('seba_', '', $column);
+
+            // Get seba name and type from master
+            $sebaMaster = PratihariSebaMaster::find($sebaMasterId);
+            if (!$sebaMaster) continue;
+
+            $sebaName = $sebaMaster->seba_name;
+            $sebaType = $sebaMaster->type; // 'pratihari' or 'gochhikar'
+
+            // Match date rows from DateBeddhaMapping
+            $queryColumn = $sebaType === 'gochhikar' ? 'gochhikar_beddha' : 'pratihari_beddha';
+
+            $dates = DateBeddhaMapping::where($queryColumn, $beddhaId)->get();
+
+            foreach ($dates as $dateEntry) {
+                $dateKey = $dateEntry->date;
+
+                $dateWiseEvents[$dateKey][] = [
+                    'seba' => $sebaName,
+                    'beddha_id' => $beddhaId,
+                    'type' => $sebaType
+                ];
+            }
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Seba dates loaded successfully',
+            'data' => $dateWiseEvents
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Server Error',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
+    // public function sebaDateList()
+    // {
+    //     try {
+    //         $user = Auth::user();
+
+    //         if (!$user) {
+    //             return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
+    //         }
+
+    //         $pratihariId = $user->pratihari_id;
+    //         $data = [];
+
+    //         $sebas = PratihariSeba::with('sebaMaster')
+    //             ->where('pratihari_id', $pratihariId)
+    //             ->get();
+
+    //         foreach ($sebas as $seba) {
+    //             $sebaId = $seba->sebaMaster->id ?? 'Unknown Seba';
+    //             $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+    //             $sebaType = $seba->sebaMaster->type ?? 'pratihari';
+
+    //             $beddhaIds = is_array($seba->beddha_id)
+    //                 ? $seba->beddha_id
+    //                 : explode(',', $seba->beddha_id);
+
+    //             foreach ($beddhaIds as $beddhaId) {
+    //                 $beddhaId = (int) trim($beddhaId);
+
+    //                 if ($beddhaId < 1 || $beddhaId > 47) {
+    //                     continue;
+    //                 }
+
+    //                 // Define start, end, and interval for the calendar loop
+    //                 if ($sebaType === 'gochhikar') {
+    //                     $intervalDays = 16;
+    //                     $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
+    //                     $endDate = Carbon::create(2055, 12, 31);
+    //                 } else { // pratihari
+    //                     $intervalDays = 47;
+    //                     $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+    //                     $endDate = Carbon::create(2050, 12, 31);
+    //                 }
+
+    //                 $nextDate = $startDate->copy();
+
+    //                 while ($nextDate->lte($endDate)) {
+    //                     $dateStr = $nextDate->toDateString();
+
+    //                     $data[$dateStr][] = [
+    //                         'sebaId' => $sebaId,
+    //                         'seba' => $sebaName,
+    //                         'beddha_id' => $beddhaId,
+    //                         'type' => $sebaType,
+    //                     ];
+
+    //                     $nextDate->addDays($intervalDays);
+    //                 }
+    //             }
+    //         }
+
+    //         return response()->json([
+    //             'status' => true,
+    //             'message' => 'Seba data loaded successfully',
+    //             'data' => $data
+    //         ], 200);
+
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Server error',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function getTodaySebaAssignments(Request $request)
     {
