@@ -294,32 +294,40 @@ class PratihariSebaApiController extends Controller
 
         $dateWiseEvents = [];
 
-        // Loop over seba columns (seba_1 to seba_8)
-        foreach ($sebaMapping->getAttributes() as $column => $beddhaId) {
-            if (!str_starts_with($column, 'seba_') || !$beddhaId) continue;
+        // Loop through defined seba columns (seba_1, seba_2, ..., seba_8)
+        foreach ($sebaMapping->getAttributes() as $column => $beddhaIds) {
+            if (!str_starts_with($column, 'seba_') || empty($beddhaIds)) {
+                continue;
+            }
 
-            $sebaMasterId = (int) str_replace('seba_', '', $column);
+            // Extract seba_id (e.g., seba_1 => 1)
+            $sebaId = (int) str_replace('seba_', '', $column);
 
-            // Get seba name and type from master
-            $sebaMaster = PratihariSebaMaster::find($sebaMasterId);
+            $sebaMaster = PratihariSebaMaster::find($sebaId);
             if (!$sebaMaster) continue;
 
             $sebaName = $sebaMaster->seba_name;
-            $sebaType = $sebaMaster->type; // 'pratihari' or 'gochhikar'
+            $sebaType = $sebaMaster->type;
 
-            // Match date rows from DateBeddhaMapping
+            // Which column to query in date_beddha_mapping
             $queryColumn = $sebaType === 'gochhikar' ? 'gochhikar_beddha' : 'pratihari_beddha';
 
-            $dates = DateBeddhaMapping::where($queryColumn, $beddhaId)->get();
+            // Multiple beddha ids can be comma-separated, so split them
+            $beddhaIdArray = explode(',', $beddhaIds);
 
-            foreach ($dates as $dateEntry) {
-                $dateKey = $dateEntry->date;
+            // Find matching dates for each beddha_id
+            foreach ($beddhaIdArray as $beddhaId) {
+                $dates = DateBeddhaMapping::where($queryColumn, $beddhaId)->get();
 
-                $dateWiseEvents[$dateKey][] = [
-                    'seba' => $sebaName,
-                    'beddha_id' => $beddhaId,
-                    'type' => $sebaType
-                ];
+                foreach ($dates as $dateEntry) {
+                    $dateKey = $dateEntry->date;
+
+                    $dateWiseEvents[$dateKey][] = [
+                        'seba' => $sebaName,
+                        'beddha_id' => $beddhaId,
+                        'type' => $sebaType
+                    ];
+                }
             }
         }
 
@@ -337,6 +345,7 @@ class PratihariSebaApiController extends Controller
         ], 500);
     }
 }
+
 
     // public function sebaDateList()
     // {
