@@ -274,7 +274,7 @@ class PratihariSebaApiController extends Controller
         ]);
     }
 
-    public function sebaDate()
+    public function sebaDateList()
     {
         try {
             $user = Auth::user();
@@ -287,21 +287,35 @@ class PratihariSebaApiController extends Controller
             $data = [];
 
             $sebas = PratihariSeba::with('sebaMaster')
-                        ->where('pratihari_id', $pratihariId)
-                        ->get();
+                ->where('pratihari_id', $pratihariId)
+                ->get();
 
             foreach ($sebas as $seba) {
                 $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                $sebaId = $seba->seba_id;
-                $beddhaIds = $seba->beddha_id;
+                $sebaType = $seba->sebaMaster->type ?? 'pratihari';
+
+                $beddhaIds = is_array($seba->beddha_id)
+                    ? $seba->beddha_id
+                    : explode(',', $seba->beddha_id);
 
                 foreach ($beddhaIds as $beddhaId) {
                     $beddhaId = (int) trim($beddhaId);
-                    if ($beddhaId < 1 || $beddhaId > 47) continue;
 
-                    $intervalDays = ($sebaId == 9) ? 16 : 47;
-                    $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                    $endDate = Carbon::create(2050, 12, 31);
+                    if ($beddhaId < 1 || $beddhaId > 47) {
+                        continue;
+                    }
+
+                    // Define start, end, and interval for the calendar loop
+                    if ($sebaType === 'gochhikar') {
+                        $intervalDays = 16;
+                        $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
+                        $endDate = Carbon::create(2055, 12, 31);
+                    } else { // pratihari
+                        $intervalDays = 47;
+                        $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                        $endDate = Carbon::create(2050, 12, 31);
+                    }
+
                     $nextDate = $startDate->copy();
 
                     while ($nextDate->lte($endDate)) {
@@ -310,6 +324,7 @@ class PratihariSebaApiController extends Controller
                         $data[$dateStr][] = [
                             'seba' => $sebaName,
                             'beddha_id' => $beddhaId,
+                            'type' => $sebaType,
                         ];
 
                         $nextDate->addDays($intervalDays);
@@ -359,9 +374,6 @@ class PratihariSebaApiController extends Controller
             $gochhikarEvents = [];
             $nijogaGochhikarEvents = [];
 
-            $todayPratihariBeddhaIds = [];
-            $todayGochhikarBeddhaIds = [];
-
             // ✅ Filter by logged-in pratihari only
             $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
                 ->where('pratihari_id', $pratihariId)
@@ -394,7 +406,6 @@ class PratihariSebaApiController extends Controller
                                     } else {
                                         $nijogaGochhikarEvents[$label][] = $assignedUser;
                                     }
-                                    $todayGochhikarBeddhaIds[] = $beddhaId;
                                 }
                                 break;
                             }
@@ -412,7 +423,6 @@ class PratihariSebaApiController extends Controller
                                     } else {
                                         $nijogaAssign[$label][] = $assignedUser;
                                     }
-                                    $todayPratihariBeddhaIds[] = $beddhaId;
                                 }
                                 break;
                             }
@@ -435,8 +445,7 @@ class PratihariSebaApiController extends Controller
                 'nijoga_pratihari_events' => $nijogaAssign,
                 'gochhikar_events' => $gochhikarEvents,
                 'nijoga_gochhikar_events' => $nijogaGochhikarEvents,
-                'today_pratihari_beddhas' => array_unique($todayPratihariBeddhaIds),
-                'today_gochhikar_beddhas' => array_unique($todayGochhikarBeddhaIds),
+               
             ], 200);
 
         } catch (\Throwable $e) {
