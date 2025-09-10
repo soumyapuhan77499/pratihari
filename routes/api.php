@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\PratihariSebaApiController;
 use App\Http\Controllers\Api\PratihariNoticeController;
 use App\Http\Controllers\Api\StatusController;
 
-Route::match(['post'], '/send-otp', [OtpController::class, 'sendOtp'])->withoutMiddleware('auth');
+Route::any('/send-otp', [OtpController::class, 'sendOtp'])->withoutMiddleware('auth');
 Route::match(['post'], '/verify-otp', [OtpController::class, 'verifyOtp'])->name('admin.verifyOtp');
 
 
