@@ -53,6 +53,7 @@ class OtpController extends Controller
 
     public function sendOtp(Request $request)
     {
+        dd("soumya");
         $request->validate([
             'phone' => 'required|string',
         ]);
