@@ -50,24 +50,24 @@ class OtpController extends Controller
             return response()->json(['message' => 'An error occurred while logging out.'], 500);
         }
     }
-    
+
     public function sendOtp(Request $request)
     {
         $request->validate([
-            'phone' => 'required|string',
+            'mobile_number' => 'required|string',
         ]);
 
         $otp = rand(100000, 999999);
-        $phone = $request->phone;
-        $shortToken = Str::random(6); // Optional
+        $phone = $request->mobile_number;
+        $shortToken = Str::random(6);
 
-        // Update or create the user with new OTP
+        // Update or create user
         $user = User::updateOrCreate(
             ['mobile_number' => $phone],
             ['otp' => $otp]
         );
 
-        // 🔑 Pull values from .env
+        // 🔑 Env values
         $authKey   = env('MSG91_AUTHKEY');
         $waNumber  = env('MSG91_WA_NUMBER');
         $template  = env('MSG91_WA_TEMPLATE');
@@ -97,7 +97,7 @@ class OtpController extends Controller
                                 "button_1" => [
                                     "subtype" => "url",
                                     "type" => "text",
-                                    "value" => $shortToken // must be <= 15 chars
+                                    "value" => $shortToken
                                 ]
                             ]
                         ]
@@ -117,7 +117,7 @@ class OtpController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'OTP sent successfully',
-            'otp' => $otp, // ⚠️ Remove in production
+            'otp' => $otp, // ⚠️ only for testing
             'token' => $shortToken,
             'api_response' => $response->json()
         ]);
@@ -130,37 +130,25 @@ class OtpController extends Controller
             'otp' => 'required|string'
         ]);
 
-        // Check if user exists by mobile number
         $user = User::where('mobile_number', $request->mobile_number)->first();
 
-        if ($user) {
-            // ✅ Existing user: verify OTP
-            if ($user->otp !== $request->otp) {
-                return response()->json([
-                    'message' => 'Invalid OTP or mobile number.'
-                ], 401);
-            }
-
-            // ✅ OTP is correct, clear it
-            $user->otp = null;
-
-            // Generate pratihari_id if not already set
-            if (empty($user->pratihari_id)) {
-                $user->pratihari_id = 'PRATIHARI' . rand(10000, 99999);
-            }
-
-            $user->save();
-
-        } else {
-            // ✅ New user: create with new pratihari_id
-            $user = User::create([
-                'mobile_number' => $request->mobile_number,
-                'otp' => null, // OTP already verified
-                'pratihari_id' => 'PRATIHARI' . rand(10000, 99999)
-            ]);
+        if (!$user || $user->otp !== $request->otp) {
+            return response()->json([
+                'message' => 'Invalid OTP or mobile number.'
+            ], 401);
         }
 
-        // ✅ Create Sanctum token
+        // Clear OTP
+        $user->otp = null;
+
+        // Assign pratihari_id if not already set
+        if (empty($user->pratihari_id)) {
+            $user->pratihari_id = 'PRATIHARI' . rand(10000, 99999);
+        }
+
+        $user->save();
+
+        // Create Sanctum token
         $token = $user->createToken('API Token')->plainTextToken;
 
         return response()->json([
@@ -170,5 +158,4 @@ class OtpController extends Controller
             'user' => $user
         ], 200);
     }
-
 }
