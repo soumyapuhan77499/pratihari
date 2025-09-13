@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
+// Controllers
 use App\Http\Controllers\Api\OtpController;
 use App\Http\Controllers\Api\PratihariProfileApiController;
 use App\Http\Controllers\Api\PratihariFamilyApiController;
@@ -10,14 +12,25 @@ use App\Http\Controllers\Api\PratihariAddressApiController;
 use App\Http\Controllers\Api\PratihariOccupationApiController;
 use App\Http\Controllers\Api\PratihariSocialMediaApiController;
 use App\Http\Controllers\Api\PratihariSebaApiController;
+use App\Http\Controllers\Api\SebaApiController;
 use App\Http\Controllers\Api\PratihariNoticeController;
 use App\Http\Controllers\Api\StatusController;
 
-// Route::post('/send-otp', [OtpController::class, 'sendOtp'])->withoutMiddleware('auth');
-Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('admin.verifyOtp');
+/*
+|--------------------------------------------------------------------------
+| Authentication & OTP Routes
+|--------------------------------------------------------------------------
+*/
+Route::post('/pratihari/send-otp', [OtpController::class, 'sendOtp']);
+Route::post('/pratihari/verify-otp', [OtpController::class, 'verifyOtp'])
+    ->name('admin.verifyOtp');
 
+/*
+|--------------------------------------------------------------------------
+| Pratihari Profile Routes
+|--------------------------------------------------------------------------
+*/
 Route::controller(PratihariProfileApiController::class)->group(function () {
-
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/save-profile', 'saveProfile');
         Route::get('/get-home-page', 'getHomePage');
@@ -25,16 +38,19 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
         Route::post('/application/save', 'saveApplication');
         Route::get('/get-application', 'getApplication');
     });
-    
+
     Route::post('/update-profile/{pratihari_id}', 'updateProfile');
     Route::get('/designations', 'manageDesignation');
     Route::get('/get-profile-by-id/{pratihari_id}', 'getPofileDataByPratihariId');
-    Route::get('/approved-pratihari-profiles',  'getApprovedProfiles');
-
+    Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Pratihari Family, ID Card, Address, Occupation, Social Media
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::controller(PratihariFamilyApiController::class)->group(function () {
         Route::post('/save-family', 'saveFamily');
     });
@@ -55,11 +71,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/save-socialmedia', 'saveSocialMedia');
         Route::get('/get-socialmedia', 'getSocialMedia');
     });
-
 });
 
+/*
+|--------------------------------------------------------------------------
+| Pratihari Seba Routes
+|--------------------------------------------------------------------------
+*/
 Route::controller(PratihariSebaApiController::class)->group(function () {
-
     // Public (no auth)
     Route::get('/nijogas', 'getNijogas');
     Route::get('/sebas/{nijoga_id}', 'getSebaByNijoga');
@@ -67,25 +86,40 @@ Route::controller(PratihariSebaApiController::class)->group(function () {
     Route::get('/today-beddha', 'todayBeddha');
     Route::post('/store-beddha-map', 'storeDateBeddhaMapping');
 
-    // Authenticated routes
+    // Authenticated
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/save-seba', 'saveSeba');
         Route::post('/end-seba', 'endSeba');
         Route::post('/start-seba', 'startSeba');
-        Route::get('/pratihari-seba-dates',  'sebaDateList');
+        Route::get('/pratihari-seba-dates', 'sebaDateList');
     });
-
 });
 
+/*
+|--------------------------------------------------------------------------
+| Seba Routes (General)
+|--------------------------------------------------------------------------
+*/
 Route::controller(SebaApiController::class)->group(function () {
     Route::get('/seba-dates', 'sebaDate');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Notice Routes
+|--------------------------------------------------------------------------
+*/
 Route::controller(PratihariNoticeController::class)->group(function () {
     Route::get('/pratihari-notice', 'getNotice');
 });
 
-// Authenticated routes
-Route::middleware('auth:sanctum')->controller(StatusController::class)->group(function () {
-    Route::get('/pratihari/status', 'checkCompletionStatus');
-});
+/*
+|--------------------------------------------------------------------------
+| Status Routes (Authenticated)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')
+    ->controller(StatusController::class)
+    ->group(function () {
+        Route::get('/pratihari/status', 'checkCompletionStatus');
+    });

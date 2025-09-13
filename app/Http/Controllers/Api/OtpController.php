@@ -50,10 +50,9 @@ class OtpController extends Controller
             return response()->json(['message' => 'An error occurred while logging out.'], 500);
         }
     }
-
+    
     public function sendOtp(Request $request)
     {
-        dd("soumya");
         $request->validate([
             'phone' => 'required|string',
         ]);
@@ -68,19 +67,25 @@ class OtpController extends Controller
             ['otp' => $otp]
         );
 
+        // 🔑 Pull values from .env
+        $authKey   = env('MSG91_AUTHKEY');
+        $waNumber  = env('MSG91_WA_NUMBER');
+        $template  = env('MSG91_WA_TEMPLATE');
+        $namespace = env('MSG91_WA_NAMESPACE');
+
         $payload = [
-            "integrated_number" => "917327096968",
+            "integrated_number" => $waNumber,
             "content_type" => "template",
             "payload" => [
                 "messaging_product" => "whatsapp",
                 "type" => "template",
                 "template" => [
-                    "name" => "nitiapp",
+                    "name" => $template,
                     "language" => [
                         "code" => "en",
                         "policy" => "deterministic"
                     ],
-                    "namespace" => "056c4901_e898_4095_b785_35dfb2274255",
+                    "namespace" => $namespace,
                     "to_and_components" => [
                         [
                             "to" => [$phone],
@@ -103,13 +108,16 @@ class OtpController extends Controller
 
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-            'authkey' => env('MSG91_AUTHKEY'),
-        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
+            'authkey' => $authKey,
+        ])->post(
+            'https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/',
+            $payload
+        );
 
         return response()->json([
             'success' => true,
             'message' => 'OTP sent successfully',
-            'otp' => $otp, // ❗️Remove in production
+            'otp' => $otp, // ⚠️ Remove in production
             'token' => $shortToken,
             'api_response' => $response->json()
         ]);
