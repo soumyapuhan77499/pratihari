@@ -196,16 +196,13 @@ class OtpController extends Controller
         if (!$user || !$user->otp) {
             return response()->json(['message' => 'OTP not found. Please request a new one.'], 404);
         }
-        if (!empty($user->otp_expires_at) && now()->greaterThan(Carbon::parse($user->otp_expires_at))) {
-            return response()->json(['message' => 'OTP has expired. Please request a new one.'], 410);
-        }
+        
         if ($user->otp !== $request->otp) {
             return response()->json(['message' => 'Invalid OTP.'], 401);
         }
 
         // Clear OTP
         $user->otp = null;
-        $user->otp_expires_at = null;
 
         // Assign pratihari_id if missing
         if (empty($user->pratihari_id)) {
