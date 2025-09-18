@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Config; // make sure this is at the top if needed
 
 class PratihariProfileApiController extends Controller
 {
-    
+
 public function saveProfile(Request $request)
 {
     $user = Auth::user();
@@ -225,7 +225,6 @@ public function saveProfile(Request $request)
         ], 500);
     }
 }
-
 
 public function getHomePage()
 {
