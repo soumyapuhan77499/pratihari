@@ -26,126 +26,206 @@ use Illuminate\Support\Facades\Config; // make sure this is at the top if needed
 
 class PratihariProfileApiController extends Controller
 {
-
+    
 public function saveProfile(Request $request)
 {
     $user = Auth::user();
-
-    $pratihariId = $user->pratihari_id;
+    $pratihariId = optional($user)->pratihari_id;
 
     if (!$pratihariId) {
         return response()->json([
-            'status' => 401,
+            'status'  => 401,
             'message' => 'Unauthorized. Please log in.',
         ], 401);
     }
 
+    // ---------- VALIDATION (focus on image uploads) ----------
+    // Tune size/dimensions/mimes to your needs.
+    $validator = Validator::make($request->all(), [
+        // non-file fields you care about (optional)
+        'email'            => ['nullable','email'],
+        'healthcard_no'    => ['nullable','string','min:4'],
+
+        // images
+        'healthcard_photo' => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
+        'original_photo'   => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
+    ], [
+        'healthcard_photo.image'       => 'Health card photo must be an image.',
+        'healthcard_photo.mimes'       => 'Health card photo must be a JPG, PNG, or WEBP.',
+        'healthcard_photo.max'         => 'Health card photo may not be greater than 2MB.',
+        'healthcard_photo.dimensions'  => 'Health card photo must be at least 200×200.',
+        'original_photo.image'         => 'Profile photo must be an image.',
+        'original_photo.mimes'         => 'Profile photo must be a JPG, PNG, or WEBP.',
+        'original_photo.max'           => 'Profile photo may not be greater than 2MB.',
+        'original_photo.dimensions'    => 'Profile photo must be at least 200×200.',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status'  => 422,
+            'message' => 'Validation error.',
+            'errors'  => $validator->errors(),
+        ], 422);
+    }
+
+    // We’ll keep track of any new files saved so we can clean them up on failure
+    $newStoredPaths = [];
+
     try {
-        // Find or create profile
-        $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihariId)->first();
+        return DB::transaction(function () use ($request, $pratihariId, &$newStoredPaths) {
+            // Find or create
+            $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihariId)->first();
+            $isNew = false;
 
-        $isNew = false;
-
-        if (!$pratihariProfile) {
-            $isNew = true;
-            $pratihariProfile = new PratihariProfile();
-            $pratihariProfile->pratihari_id = $pratihariId;
-        }
-
-        // Assign profile fields
-        $pratihariProfile->first_name = $request->first_name;
-        $pratihariProfile->middle_name = $request->middle_name;
-        $pratihariProfile->last_name = $request->last_name;
-        $pratihariProfile->alias_name = $request->alias_name;
-        $pratihariProfile->email = $request->email;
-        $pratihariProfile->whatsapp_no = $request->whatsapp_no;
-        $pratihariProfile->phone_no = $request->phone_no;
-        $pratihariProfile->alt_phone_no = $request->alt_phone_no;
-        $pratihariProfile->blood_group = $request->blood_group;
-        $pratihariProfile->healthcard_no = $request->healthcard_no;
-
-        // --- Generate nijoga_id only for new users ---
-        if ($isNew) {
-            $healthcard_no = $request->healthcard_no;
-            $prefix = strtoupper(substr($healthcard_no, 0, 4));
-
-            // Family sequence (YYY)
-            $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
-                ->whereNotNull('nijoga_id')
-                ->get();
-
-            if ($existingSameHealthcard->isEmpty()) {
-                $familyCount = 1;
-            } else {
-                $lastFamily = $existingSameHealthcard->map(function ($member) {
-                    return (int) substr($member->nijoga_id, 5, 3);
-                })->max();
-                $familyCount = $lastFamily + 1;
+            if (!$pratihariProfile) {
+                $isNew = true;
+                $pratihariProfile = new PratihariProfile();
+                $pratihariProfile->pratihari_id = $pratihariId;
             }
 
-            // Global serial (ZZZZ)
-            $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
-                ->orderByDesc('id')
-                ->get()
-                ->map(function ($member) {
-                    return (int) substr($member->nijoga_id, -4);
-                })->max();
+            // Assign basic fields (trim where sensible)
+            $pratihariProfile->first_name     = $request->input('first_name');
+            $pratihariProfile->middle_name    = $request->input('middle_name');
+            $pratihariProfile->last_name      = $request->input('last_name');
+            $pratihariProfile->alias_name     = $request->input('alias_name');
+            $pratihariProfile->email          = $request->input('email');
+            $pratihariProfile->whatsapp_no    = $request->input('whatsapp_no');
+            $pratihariProfile->phone_no       = $request->input('phone_no');
+            $pratihariProfile->alt_phone_no   = $request->input('alt_phone_no');
+            $pratihariProfile->blood_group    = $request->input('blood_group');
+            $pratihariProfile->healthcard_no  = $request->input('healthcard_no');
 
-            $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
+            // --- Generate nijoga_id only for new users ---
+            if ($isNew) {
+                $healthcard_no = (string) $request->input('healthcard_no', '');
+                $prefix = strtoupper(substr($healthcard_no, 0, 4));
 
-            // Final nijoga_id
-            $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
-            $pratihariProfile->nijoga_id = $nijoga_id;
+                // if healthcard_no is too short, fail nicely
+                if (strlen($prefix) < 4) {
+                    return response()->json([
+                        'status'  => 422,
+                        'message' => 'Validation error.',
+                        'errors'  => ['healthcard_no' => ['healthcard_no must be at least 4 characters to generate nijoga_id.']],
+                    ], 422);
+                }
+
+                // Family sequence (YYY)
+                $lastFamily = PratihariProfile::where('healthcard_no', $healthcard_no)
+                    ->whereNotNull('nijoga_id')
+                    ->selectRaw("MAX(CAST(SUBSTRING(nijoga_id, 6, 3) AS UNSIGNED)) as max_family")
+                    ->value('max_family');
+
+                $familyCount = $lastFamily ? ((int)$lastFamily + 1) : 1;
+
+                // Global serial (ZZZZ)
+                $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
+                    ->selectRaw("MAX(CAST(RIGHT(nijoga_id, 4) AS UNSIGNED)) as max_serial")
+                    ->value('max_serial');
+
+                $serialNumber = $lastSerial ? ((int)$lastSerial + 1) : 1;
+
+                $pratihariProfile->nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
+            }
+
+            // --- File Uploads (with explicit error handling) ---
+            // Use Storage disk 'public'; files will be accessible at /storage/...
+            if ($request->hasFile('healthcard_photo')) {
+                $file = $request->file('healthcard_photo');
+
+                if (!$file->isValid()) {
+                    return response()->json([
+                        'status'  => 422,
+                        'message' => 'Validation error.',
+                        'errors'  => ['healthcard_photo' => ['The uploaded health card photo is not valid.']],
+                    ], 422);
+                }
+
+                $ext = strtolower($file->getClientOriginalExtension());
+                $safeName = 'healthcard_' . Str::uuid()->toString() . '.' . $ext;
+
+                $stored = Storage::disk('public')->putFileAs('uploads/healthcard_photo', $file, $safeName);
+                if (!$stored) {
+                    return response()->json([
+                        'status'  => 500,
+                        'message' => 'Failed to store health card photo.',
+                    ], 500);
+                }
+
+                $path = 'storage/uploads/healthcard_photo/' . $safeName;
+                $newStoredPaths[] = $path; // track to cleanup on later failure
+                $pratihariProfile->healthcard_photo = $path;
+            }
+
+            if ($request->hasFile('original_photo')) {
+                $file = $request->file('original_photo');
+
+                if (!$file->isValid()) {
+                    return response()->json([
+                        'status'  => 422,
+                        'message' => 'Validation error.',
+                        'errors'  => ['original_photo' => ['The uploaded profile photo is not valid.']],
+                    ], 422);
+                }
+
+                $ext = strtolower($file->getClientOriginalExtension());
+                $safeName = 'profile_' . Str::uuid()->toString() . '.' . $ext;
+
+                $stored = Storage::disk('public')->putFileAs('uploads/profile_photos', $file, $safeName);
+                if (!$stored) {
+                    return response()->json([
+                        'status'  => 500,
+                        'message' => 'Failed to store profile photo.',
+                    ], 500);
+                }
+
+                $path = 'storage/uploads/profile_photos/' . $safeName;
+                $newStoredPaths[] = $path;
+                $pratihariProfile->profile_photo = $path;
+            }
+
+            // --- Joining Date/Year ---
+            if ($request->filled('joining_date')) {
+                $pratihariProfile->joining_date = $request->input('joining_date');
+                $pratihariProfile->joining_year = null;
+            } elseif ($request->filled('joining_year')) {
+                $pratihariProfile->joining_year = $request->input('joining_year');
+                $pratihariProfile->joining_date = null;
+            } else {
+                $pratihariProfile->joining_date = null;
+                $pratihariProfile->joining_year = null;
+            }
+
+            // --- DOB ---
+            $pratihariProfile->date_of_birth = $request->input('date_of_birth');
+
+            // Save model
+            $pratihariProfile->save();
+
+            return response()->json([
+                'status'  =>  $isNew ? 201 : 200,
+                'message' =>  $isNew ? 'User profile created successfully.' : 'User profile updated successfully.',
+                'data'    =>  $pratihariProfile,
+            ], $isNew ? 201 : 200);
+        });
+    } catch (\Throwable $e) {
+        // Best-effort cleanup of any new files if something failed after storing them
+        foreach ($newStoredPaths as $publicPath) {
+            // convert "storage/..." to "public/..." for the disk
+            $diskPath = preg_replace('#^storage/#', '', $publicPath);
+            if ($diskPath) {
+                Storage::disk('public')->delete($diskPath);
+            }
         }
 
-        // --- File Uploads ---
-        if ($request->hasFile('healthcard_photo')) {
-            $file = $request->file('healthcard_photo');
-            $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/healthcard_photo'), $filename);
-            $pratihariProfile->healthcard_photo = 'uploads/healthcard_photo/' . $filename;
-        }
-
-        if ($request->hasFile('original_photo')) {
-            $file = $request->file('original_photo');
-            $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/profile_photos'), $filename);
-            $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
-        }
-
-        // --- Joining Date/Year ---
-        if ($request->filled('joining_date')) {
-            $pratihariProfile->joining_date = $request->joining_date;
-            $pratihariProfile->joining_year = null;
-        } elseif ($request->filled('joining_year')) {
-            $pratihariProfile->joining_year = $request->joining_year;
-            $pratihariProfile->joining_date = null;
-        } else {
-            $pratihariProfile->joining_date = null;
-            $pratihariProfile->joining_year = null;
-        }
-
-        // --- DOB ---
-        $pratihariProfile->date_of_birth = $request->date_of_birth;
-
-        // Save
-        $pratihariProfile->save();
+        Log::error('Error in saving profile: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
         return response()->json([
-            'status' => 200,
-            'message' => $isNew ? 'User profile created successfully.' : 'User profile updated successfully.',
-            'data' => $pratihariProfile,
-        ], 200);
-
-    } catch (\Exception $e) {
-        \Log::error('Error in saving profile: ' . $e->getMessage());
-
-        return response()->json([
-            'status' => 500,
-            'message' => 'Error: ' . $e->getMessage(),
+            'status'  => 500,
+            'message' => 'Error: '.$e->getMessage(),
         ], 500);
     }
 }
+
 
 public function getHomePage()
 {
