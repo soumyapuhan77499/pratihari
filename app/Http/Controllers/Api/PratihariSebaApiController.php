@@ -661,4 +661,39 @@ class PratihariSebaApiController extends Controller
         }
     }
 
+    public function sebaHistory()
+{
+    try {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'User not authenticated'
+            ], 401); // Unauthorized
+        }
+
+        $pratihariId = $user->pratihari_id;
+
+        // Fetch records for this pratihari_id
+        $history = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+                    ->orderBy('date', 'desc')
+                    ->get();
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'History fetched successfully',
+            'data'    => $history,
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Something went wrong',
+            'error'   => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
 }

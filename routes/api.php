@@ -92,6 +92,7 @@ Route::controller(PratihariSebaApiController::class)->group(function () {
 
     // Authenticated
     Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/seba-history', 'sebaHistory');
         Route::post('/save-seba', 'saveSeba');
         Route::post('/end-seba', 'endSeba');
         Route::post('/start-seba', 'startSeba');
