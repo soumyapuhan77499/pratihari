@@ -48,6 +48,17 @@ class PratihariAddressApiController extends Controller
             $address->same_as_permanent_address = $sameAddress;
 
             if ($sameAddress) {
+                 // Use separate permanent address
+                $address->per_address = $request->per_address;
+                $address->per_sahi = $request->per_sahi;
+                $address->per_landmark = $request->per_landmark;
+                $address->per_post = $request->per_post;
+                $address->per_police_station = $request->per_police_station;
+                $address->per_pincode = $request->per_pincode;
+                $address->per_district = $request->per_district;
+                $address->per_state = $request->per_state;
+                $address->per_country = $request->per_country;
+            } else {
                 // Copy present address to permanent
                 $address->per_address = $request->address;
                 $address->per_sahi = $request->sahi;
@@ -58,17 +69,6 @@ class PratihariAddressApiController extends Controller
                 $address->per_district = $request->district;
                 $address->per_state = $request->state;
                 $address->per_country = $request->country;
-            } else {
-                // Use separate permanent address
-                $address->per_address = $request->per_address;
-                $address->per_sahi = $request->per_sahi;
-                $address->per_landmark = $request->per_landmark;
-                $address->per_post = $request->per_post;
-                $address->per_police_station = $request->per_police_station;
-                $address->per_pincode = $request->per_pincode;
-                $address->per_district = $request->per_district;
-                $address->per_state = $request->per_state;
-                $address->per_country = $request->per_country;
             }
 
             // Save address
