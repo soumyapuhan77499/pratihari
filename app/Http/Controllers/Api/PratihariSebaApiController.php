@@ -692,21 +692,20 @@ class PratihariSebaApiController extends Controller
                     ->orderBy('date', 'desc')
                     ->get();
 
-        // If you want to flatten the response (bring seba_name to top-level), uncomment:
-        // $history = $history->map(function ($row) {
-        //     return [
-        //         'id'          => $row->id ?? null,
-        //         'pratihari_id'=> $row->pratihari_id,
-        //         'seba_id'     => $row->seba_id,
-        //         'seba_name'   => optional($row->seba)->seba_name,
-        //         'type'        => optional($row->seba)->type,
-        //         'beddha_id'   => $row->beddha_id,
-        //         'date'        => $row->date,
-        //         'start_time'  => $row->start_time,
-        //         'end_time'    => $row->end_time,
-        //         'seba_status' => $row->seba_status,
-        //     ];
-        // });
+        $history = $history->map(function ($row) {
+            return [
+                'id'          => $row->id ?? null,
+                'pratihari_id'=> $row->pratihari_id,
+                'seba_id'     => $row->seba_id,
+                'seba_name'   => optional($row->seba)->seba_name,
+                'type'        => optional($row->seba)->type,
+                'beddha_id'   => $row->beddha_id,
+                'date'        => $row->date,
+                'start_time'  => $row->start_time,
+                'end_time'    => $row->end_time,
+                'seba_status' => $row->seba_status,
+            ];
+        });
 
         return response()->json([
             'status'  => true,
