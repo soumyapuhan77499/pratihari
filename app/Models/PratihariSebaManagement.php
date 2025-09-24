@@ -21,4 +21,9 @@ class PratihariSebaManagement extends Model
         'seba_status',
     ];
 
+     public function seba()
+    {
+        return $this->belongsTo(PratihariSebaMaster::class, 'seba_id', 'seba_id');
+    }
+
 }
