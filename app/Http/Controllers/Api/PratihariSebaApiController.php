@@ -305,6 +305,7 @@ class PratihariSebaApiController extends Controller
                 $sebaMaster = PratihariSebaMaster::find($sebaId);
                 if (!$sebaMaster) continue;
 
+                $sebaId = $sebaMaster->seba_id;
                 $sebaName = $sebaMaster->seba_name;
                 $sebaType = $sebaMaster->type;
 
@@ -322,6 +323,7 @@ class PratihariSebaApiController extends Controller
                         $dateKey = $dateEntry->date;
 
                         $dateWiseEvents[$dateKey][] = [
+                            'seba_id' => $sebaId,
                             'seba' => $sebaName,
                             'beddha_id' => $beddhaId,
                             'type' => $sebaType
@@ -662,38 +664,37 @@ class PratihariSebaApiController extends Controller
     }
 
     public function sebaHistory()
-{
-    try {
-        $user = Auth::user();
+    {
+        try {
+            $user = Auth::user();
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'User not authenticated'
+                ], 401); // Unauthorized
+            }
+
+            $pratihariId = $user->pratihari_id;
+
+            // Fetch records for this pratihari_id
+            $history = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+                        ->orderBy('date', 'desc')
+                        ->get();
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'History fetched successfully',
+                'data'    => $history,
+            ], 200);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'status'  => false,
-                'message' => 'User not authenticated'
-            ], 401); // Unauthorized
+                'message' => 'Something went wrong',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
-
-        $pratihariId = $user->pratihari_id;
-
-        // Fetch records for this pratihari_id
-        $history = PratihariSebaManagement::where('pratihari_id', $pratihariId)
-                    ->orderBy('date', 'desc')
-                    ->get();
-
-        return response()->json([
-            'status'  => true,
-            'message' => 'History fetched successfully',
-            'data'    => $history,
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status'  => false,
-            'message' => 'Something went wrong',
-            'error'   => $e->getMessage(),
-        ], 500);
     }
-}
-
 
 }
