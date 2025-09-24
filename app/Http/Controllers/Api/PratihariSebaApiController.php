@@ -274,78 +274,89 @@ class PratihariSebaApiController extends Controller
     }
 
     public function sebaDateList()
-    {
-        try {
-            $user = Auth::user();
+{
+    try {
+        $user = Auth::user();
 
-            if (!$user) {
-                return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
-            }
-
-            $pratihariId = $user->pratihari_id;
-
-            // Fetch Pratihari Seba Mapping
-            $sebaMapping = PratihariSebaMapping::where('pratihari_id', $pratihariId)->first();
-
-            if (!$sebaMapping) {
-                return response()->json(['status' => false, 'message' => 'No seba mapping found.'], 404);
-            }
-
-            $dateWiseEvents = [];
-
-            // Loop through defined seba columns (seba_1, seba_2, ..., seba_8)
-            foreach ($sebaMapping->getAttributes() as $column => $beddhaIds) {
-                if (!str_starts_with($column, 'seba_') || empty($beddhaIds)) {
-                    continue;
-                }
-
-                // Extract seba_id (e.g., seba_1 => 1)
-                $sebaId = (int) str_replace('seba_', '', $column);
-
-                $sebaMaster = PratihariSebaMaster::find($sebaId);
-                if (!$sebaMaster) continue;
-
-                $sebaId = $sebaMaster->seba_id;
-                $sebaName = $sebaMaster->seba_name;
-                $sebaType = $sebaMaster->type;
-
-                // Which column to query in date_beddha_mapping
-                $queryColumn = $sebaType === 'gochhikar' ? 'gochhikar_beddha' : 'pratihari_beddha';
-
-                // Multiple beddha ids can be comma-separated, so split them
-                $beddhaIdArray = explode(',', $beddhaIds);
-
-                // Find matching dates for each beddha_id
-                foreach ($beddhaIdArray as $beddhaId) {
-                    $dates = DateBeddhaMapping::where($queryColumn, $beddhaId)->get();
-
-                    foreach ($dates as $dateEntry) {
-                        $dateKey = $dateEntry->date;
-
-                        $dateWiseEvents[$dateKey][] = [
-                            'seba_id' => $sebaId,
-                            'seba' => $sebaName,
-                            'beddha_id' => $beddhaId,
-                            'type' => $sebaType
-                        ];
-                    }
-                }
-            }
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Seba dates loaded successfully',
-                'data' => $dateWiseEvents
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Server Error',
-                'error' => $e->getMessage()
-            ], 500);
+        if (!$user) {
+            return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
         }
+
+        $pratihariId = $user->pratihari_id;
+
+        // Fetch Pratihari Seba Mapping
+        $sebaMapping = PratihariSebaMapping::where('pratihari_id', $pratihariId)->first();
+
+        if (!$sebaMapping) {
+            return response()->json(['status' => false, 'message' => 'No seba mapping found.'], 404);
+        }
+
+        $dateWiseEvents = [];
+
+        // Loop through defined seba columns (seba_1, seba_2, ..., seba_8)
+        foreach ($sebaMapping->getAttributes() as $column => $beddhaIds) {
+            if (!str_starts_with($column, 'seba_') || empty($beddhaIds)) {
+                continue;
+            }
+
+            // Extract seba_id (e.g., seba_1 => 1)
+            $sebaId = (int) str_replace('seba_', '', $column);
+
+            $sebaMaster = PratihariSebaMaster::find($sebaId);
+            if (!$sebaMaster) continue;
+
+            $sebaId   = $sebaMaster->seba_id;
+            $sebaName = $sebaMaster->seba_name;
+            $sebaType = $sebaMaster->type;
+
+            // Which column to query in date_beddha_mapping
+            $queryColumn = $sebaType === 'gochhikar' ? 'gochhikar_beddha' : 'pratihari_beddha';
+
+            // Multiple beddha ids can be comma-separated, so split them
+            $beddhaIdArray = explode(',', $beddhaIds);
+
+            // Find matching dates for each beddha_id
+            foreach ($beddhaIdArray as $beddhaId) {
+                $dates = DateBeddhaMapping::where($queryColumn, $beddhaId)->get();
+
+                foreach ($dates as $dateEntry) {
+                    $dateKey = $dateEntry->date;
+
+                    // Check if there's a record in seba management for this pratihari_id + seba_id + beddha_id + date
+                    $sebaManagement = PratihariSebaManagement::where('pratihari_id', $pratihariId)
+                        ->where('seba_id', $sebaId)
+                        ->where('beddha_id', $beddhaId)
+                        ->where('date', $dateKey)
+                        ->first();
+
+                    $sebaStatus = $sebaManagement ? $sebaManagement->seba_status : null;
+
+                    $dateWiseEvents[$dateKey][] = [
+                        'seba_id'    => $sebaId,
+                        'seba'       => $sebaName,
+                        'beddha_id'  => $beddhaId,
+                        'type'       => $sebaType,
+                        'seba_status'=> $sebaStatus
+                    ];
+                }
+            }
+        }
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Seba dates loaded successfully',
+            'data'    => $dateWiseEvents
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Server Error',
+            'error'   => $e->getMessage()
+        ], 500);
     }
+}
+
 
     // public function sebaDateList()
     // {
