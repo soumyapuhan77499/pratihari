@@ -18,11 +18,16 @@ use App\Models\PratihariNotice;
 use App\Models\PratihariApplication;
 use App\Models\DateBeddhaMapping;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Config; // make sure this is at the top if needed
+use Illuminate\Support\Facades\Config;
+
+// ✅ add these two:
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PratihariProfileApiController extends Controller
 {
