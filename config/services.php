@@ -29,5 +29,11 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    
+ 'msg91' => [
+        'auth_key'    => env('MSG91_AUTH_KEY'),        // <-- matches .env
+        'wa_template' => env('MSG91_WA_TEMPLATE'),
+        'wa_namespace'=> env('MSG91_WA_NAMESPACE'),
+        'wa_number'   => env('MSG91_WA_NUMBER'),       // e.g. +917327096968
+    ],
 ];

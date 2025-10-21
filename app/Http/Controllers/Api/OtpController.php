@@ -15,35 +15,35 @@ use Carbon\Carbon;
 
 class OtpController extends Controller
 {
-    // ==== Helpers ===========================================================
     /** Normalize a phone number to E.164 without "+" (MSG91 style: 9198xxxxxxxx). */
-    private function normalizeMsisdn(string $raw, string $defaultCountryCode = '91'): string
+    private function normalizeMsisdn(?string $raw, string $defaultCountryCode = '91'): string
     {
-        // keep only digits
-        $digits = preg_replace('/\D+/', '', $raw ?? '');
-        if (!$digits) return '';
+        $digits = preg_replace('/\D+/', '', (string) $raw);
+        if ($digits === '') return '';
 
-        // If 10 digits and default country provided, prefix
+        // 10 digits -> assume local, prefix country code
         if (strlen($digits) === 10 && $defaultCountryCode) {
             return $defaultCountryCode . $digits;
         }
 
-        // If starts with 0 and length 11 (common local formats), strip leading 0 then prefix
+        // 11 digits starting with 0 -> strip 0, then prefix country code
         if (strlen($digits) === 11 && $digits[0] === '0' && $defaultCountryCode) {
             return $defaultCountryCode . substr($digits, 1);
         }
 
-        // Otherwise return as-is (assume already has country code)
+        // Already has country code
         return $digits;
     }
 
-    /** Build MSG91 WhatsApp template payload */
-    private function buildMsg91Payload(string $fromIntegrated, string $toMsisdn, string $template, string $namespace, string $otp, string $shortToken): array
-    {
-        // NOTE: This "components" shape matches your earlier working code.
-        // Keep it aligned with your approved template variables:
-        // - body_1 -> {{1}} in body
-        // - button_1 -> first URL button param (if your template has it)
+    /** Build MSG91 WhatsApp Template payload (align with your approved template variables). */
+    private function buildMsg91Payload(
+        string $fromIntegrated,
+        string $toMsisdn,
+        string $template,
+        string $namespace,
+        string $otp,
+        string $shortToken
+    ): array {
         return [
             "integrated_number" => $fromIntegrated,         // e.g., 919124420330
             "content_type"      => "template",
@@ -51,12 +51,15 @@ class OtpController extends Controller
                 "messaging_product" => "whatsapp",
                 "type"              => "template",
                 "template" => [
-                    "name"      => $template,              // e.g., 33_crores_flowerdelivery
+                    "name"      => $template,              // e.g., nitiapp
                     "language"  => ["code" => "en", "policy" => "deterministic"],
                     "namespace" => $namespace,
                     "to_and_components" => [[
                         "to" => [$toMsisdn],              // e.g., 9197xxxxxxxx
                         "components" => [
+                            // Map to your template placeholders:
+                            // body_1 -> {{1}} in body
+                            // button_1 (URL) -> {{1}} on first URL button (if exists)
                             "body_1"   => ["type" => "text", "value" => (string) $otp],
                             "button_1" => ["subtype" => "url", "type" => "text", "value" => $shortToken],
                         ]
@@ -71,11 +74,13 @@ class OtpController extends Controller
     {
         return Http::withHeaders([
             'Content-Type' => 'application/json',
+            'Accept'       => 'application/json',
+            // IMPORTANT: matches .env key below (MSG91_AUTH_KEY)
             'authkey'      => $authKey,
         ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $payload);
     }
 
-    // ==== Logout (unchanged) ===============================================
+    // ==== Logout ============================================================
     public function userLogout(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
@@ -107,7 +112,7 @@ class OtpController extends Controller
 
             return response()->json(['message' => 'User logged out successfully.'], 200);
         } catch (\Throwable $e) {
-            Log::error("Logout Error: " . $e->getMessage());
+            Log::error("Logout Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['message' => 'An error occurred while logging out.'], 500);
         }
     }
@@ -126,7 +131,7 @@ class OtpController extends Controller
 
         // Normalize numbers to MSG91-expected form (no "+")
         $toMsisdn       = $this->normalizeMsisdn($request->mobile_number, '91');
-        $integratedFrom = $this->normalizeMsisdn((string) env('MSG91_WA_NUMBER'), '91');
+        $integratedFrom = $this->normalizeMsisdn((string) config('services.msg91.wa_number'), '91');
 
         if (!$toMsisdn || !$integratedFrom) {
             return response()->json(['message' => 'Phone number format is invalid.'], 422);
@@ -138,7 +143,7 @@ class OtpController extends Controller
 
         // Persist OTP (+ expiry)
         $user = User::updateOrCreate(
-            ['mobile_number' => $toMsisdn],                     // store normalized number
+            ['mobile_number' => $toMsisdn],
             ['otp' => $otp, 'otp_expires_at' => $expiresAt]
         );
 
@@ -146,23 +151,31 @@ class OtpController extends Controller
         $payload = $this->buildMsg91Payload(
             $integratedFrom,
             $toMsisdn,
-            (string) env('MSG91_WA_TEMPLATE'),
-            (string) env('MSG91_WA_NAMESPACE'),
+            (string) config('services.msg91.wa_template'),
+            (string) config('services.msg91.wa_namespace'),
             $otp,
             $shortToken
         );
 
         try {
-            $resp = $this->sendViaMsg91($payload, (string) env('MSG91_AUTHKEY'));
+            $resp = $this->sendViaMsg91($payload, (string) config('services.msg91.auth_key'));
 
-            // Some MSG91 failures still return 200—check body if available
+            // Log status & body either way
+            Log::info('MSG91 response', [
+                'status' => $resp->status(),
+                'body'   => $resp->json() ?: $resp->body(),
+            ]);
+
             if (!$resp->successful()) {
-                Log::error('MSG91 send error', ['status' => $resp->status(), 'body' => $resp->body()]);
                 return response()->json(['message' => 'Failed to send OTP. Please try again.'], 502);
             }
 
             $json = $resp->json();
-            Log::info('MSG91 send ok', ['api_result' => $json]);
+
+            // Some MSG91 failures can be logical errors inside 200; check a common success flag if present
+            if (is_array($json) && isset($json['type']) && $json['type'] === 'error') {
+                return response()->json(['message' => 'OTP could not be sent. MSG91 error.'], 502);
+            }
 
             return response()->json([
                 'success' => true,
@@ -172,7 +185,7 @@ class OtpController extends Controller
             ], 200);
 
         } catch (\Throwable $e) {
-            Log::error('MSG91 exception: ' . $e->getMessage());
+            Log::error('MSG91 exception: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['message' => 'OTP service unavailable. Please try again.'], 503);
         }
     }
@@ -196,13 +209,22 @@ class OtpController extends Controller
         if (!$user || !$user->otp) {
             return response()->json(['message' => 'OTP not found. Please request a new one.'], 404);
         }
-        
-        if ($user->otp !== $request->otp) {
+
+        // Enforce expiry
+        if ($user->otp_expires_at && Carbon::parse($user->otp_expires_at)->isPast()) {
+            // clear expired OTP to avoid reuse
+            $user->otp = null;
+            $user->save();
+            return response()->json(['message' => 'OTP expired. Please request a new one.'], 410);
+        }
+
+        if (!hash_equals((string) $user->otp, (string) $request->otp)) {
             return response()->json(['message' => 'Invalid OTP.'], 401);
         }
 
         // Clear OTP
         $user->otp = null;
+        $user->otp_expires_at = null;
 
         // Assign pratihari_id if missing
         if (empty($user->pratihari_id)) {
