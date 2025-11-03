@@ -20,8 +20,8 @@
 
     <style>
         /* =========================
-               Colorful Design Tokens
-            ========================= */
+                   Colorful Design Tokens
+                ========================= */
         :root {
             /* Brand gradient */
             --brand-a: #7c3aed;
@@ -76,8 +76,8 @@
         }
 
         /* =========================
-               App Shell
-            ========================= */
+                   App Shell
+                ========================= */
         html,
         body {
             height: 100%;
@@ -345,8 +345,8 @@
         }
 
         /* =========================
-               COLORFUL KPI CARDS
-            ========================= */
+                   COLORFUL KPI CARDS
+                ========================= */
         .kpi {
             position: relative;
             background: var(--panel);
@@ -618,13 +618,35 @@
             <!-- Left: Pratihari Seba & Nijoga -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
-                    <div class="panel-head d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="section-title">Today’s Pratihari Seba</div>
-                            <div class="subtle">Assigned Seba users and Nijoga (if any).</div>
+                    <!-- Compact gradient sub-header -->
+                    <div class="px-3 pt-3">
+                        <div class="rounded-3 p-3 text-white"
+                            style="background: var(--g-brand); box-shadow: var(--shadow);">
+                            <div class="d-flex align-items-center gap-2">
+                                <!-- Transparent icon tile -->
+                                <span class="icon-hero"
+                                    style="background: transparent; border-color: rgba(255,255,255,.35); color:#fff;">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold" style="letter-spacing:.2px;">Today’s Pratihari Seba</div>
+                                    <div class="small" style="opacity:.9;">Assigned Seba users and Nijoga (if any)</div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-light text-dark border-0">
+                                        {{ collect($pratihariEvents)->flatten(1)->count() }} Pratihari
+                                    </span>
+                                    <span class="badge bg-light text-dark border-0">
+                                        {{ collect($nijogaAssign)->flatten(1)->count() }} Nijoga
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="p-3">
+
+                    <!-- Subtle gradient page section background -->
+                    <div class="p-3"
+                        style="background: linear-gradient(180deg, rgba(124,58,237,.06), rgba(6,182,212,.06)); border-bottom-left-radius:18px; border-bottom-right-radius:18px;">
                         <!-- Tabs -->
                         <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
                             <li class="nav-item" role="presentation">
@@ -649,7 +671,8 @@
                                 @forelse ($pratihariEvents as $label => $pratiharis)
                                     <div class="mb-3">
                                         <!-- header row aligned consistently -->
-                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                        <div
+                                            class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-bold">{{ $label }}</span>
                                                 <span class="badge text-bg-light border">{{ count($pratiharis) }}</span>
@@ -703,6 +726,7 @@
                     </div>
                 </div>
             </div>
+
 
             <!-- Right: Gochhikar Today + Quick Actions -->
             <div class="col-12 col-xl-4">
