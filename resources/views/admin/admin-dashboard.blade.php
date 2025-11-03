@@ -218,6 +218,31 @@
         /* Helpers */
         .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
+        /* EXTRA: Better user card (used in partial) */
+        .seba-user-card{
+            position:relative; text-align:center; padding:12px 10px;
+        }
+        .seba-user-card .user-avatar{
+            width:64px; height:64px; border-radius:50%;
+            object-fit:cover; border:2px solid var(--panel);
+            box-shadow: var(--shadow);
+        }
+        .seba-user-card .name{
+            font-weight:800; margin-top:6px; color:var(--ink);
+            text-decoration:none;
+        }
+        .seba-user-card .meta{ color:var(--muted); font-size:.85rem; }
+        .online-indicator{
+            position:absolute; top:6px; right:10px; width:10px; height:10px;
+            border-radius:50%; background:var(--ok); box-shadow:0 0 0 2px var(--panel);
+        }
+        .seba-actions{
+            display:flex; justify-content:center; gap:6px; margin-top:8px;
+        }
+        .seba-actions .btn{
+            --bs-btn-padding-y:.25rem; --bs-btn-padding-x:.5rem; --bs-btn-font-size:.8rem;
+        }
+
         /* Responsive tweaks */
         @media (max-width: 576px){
             .header-actions{ margin-top: 12px; }
@@ -343,7 +368,7 @@
                                 @endforelse
                             </div>
 
-                            <!-- Nijoga -->
+                            <!-- Nijoga (FIXED markup + improved heading row) -->
                             <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
                                 @forelse ($nijogaAssign as $label => $nojoga)
                                     <div class="mb-3">
@@ -371,8 +396,9 @@
                 </div>
             </div>
 
-            <!-- Right: Quick Actions & System Health -->
+            <!-- Right: Quick Actions & Assign Pratihari Seba & System Health -->
             <div class="col-12 col-xl-4">
+                <!-- Quick Actions -->
                 <div class="panel mb-3">
                     <div class="panel-head d-flex align-items-center justify-content-between">
                         <div>
@@ -396,6 +422,60 @@
                     </div>
                 </div>
 
+                <!-- NEW: Assign Pratihari Seba (side panel) -->
+                <div class="panel mb-3">
+                    <div class="panel-head d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="section-title">Assign Pratihari Seba</div>
+                            <div class="subtle">Quick-create an assignment</div>
+                        </div>
+                        <span class="chip ok"><i class="bi bi-plus-circle"></i> New</span>
+                    </div>
+                    <div class="p-3">
+                        <form action="{{ route('admin.pratihari.assignSeba') }}" method="POST" class="row g-3">
+                            @csrf
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">User</label>
+                                {{-- If you pass $allUsers (Collection), we’ll render options. Otherwise, show a free text field. --}}
+                                @isset($allUsers)
+                                    <select class="form-select" name="user_id" id="sebaUserSelect">
+                                        <option value="">Select user…</option>
+                                        @foreach ($allUsers as $u)
+                                            <option value="{{ $u->pratihari_id }}">
+                                                {{ $u->first_name }} {{ $u->last_name }} — {{ $u->phone_no }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                @else
+                                    <input type="text" class="form-control" name="user_lookup" placeholder="Search name / phone">
+                                @endisset
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold">Date</label>
+                                <input type="date" class="form-control" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label fw-semibold">Time</label>
+                                <input type="time" class="form-control" name="time">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Label / Slot</label>
+                                <input type="text" class="form-control" name="label" placeholder="e.g., Morning Seba">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Notes</label>
+                                <textarea class="form-control" rows="2" name="notes" placeholder="Optional note…"></textarea>
+                            </div>
+                            <div class="col-12 d-flex gap-2">
+                                <button class="btn btn-primary"><i class="bi bi-send"></i> Assign</button>
+                                <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- System Health -->
                 <div class="panel">
                     <div class="panel-head d-flex align-items-center justify-content-between">
                         <div>
@@ -751,7 +831,7 @@
 @endsection
 
 @section('scripts')
-    <!-- Vendors (if you use DataTables elsewhere on the page, keep these; otherwise safe to remove) -->
+    <!-- Vendors (keep if you use them elsewhere on the page) -->
     <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
@@ -765,6 +845,8 @@
     <script src="{{ asset('assets/plugins/datatable/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/responsive.bootstrap5.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
+    <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet" />
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Bootstrap JS -->
@@ -825,6 +907,14 @@
 
         // Enable tooltips if any appear in included partials
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+
+        // Select2 for "Assign Pratihari Seba" user field (if present)
+        if (window.jQuery && $("#sebaUserSelect").length) {
+            $("#sebaUserSelect").select2({
+                width: '100%',
+                placeholder: "Select user…"
+            });
+        }
 
         // Approve / Reject handlers
         document.addEventListener('click', function (e) {
