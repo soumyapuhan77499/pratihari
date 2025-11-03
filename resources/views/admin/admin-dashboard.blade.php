@@ -432,7 +432,7 @@
                         <span class="chip ok"><i class="bi bi-plus-circle"></i> New</span>
                     </div>
                     <div class="p-3">
-                        <form action="{{ route('admin.pratihari.assignSeba') }}" method="POST" class="row g-3">
+                        <form action="{{ route('admin.PratihariSebaAssign') }}" method="POST" class="row g-3">
                             @csrf
                             <div class="col-12">
                                 <label class="form-label fw-semibold">User</label>
