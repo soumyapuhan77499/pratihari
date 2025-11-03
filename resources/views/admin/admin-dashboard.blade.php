@@ -16,12 +16,12 @@
            Colorful Design Tokens
         ========================= */
         :root{
-            /* Core brand gradient */
+            /* Brand gradient */
             --brand-a:#7c3aed;  /* violet-600 */
             --brand-b:#06b6d4;  /* cyan-500 */
 
-            /* Vibrant palette for KPIs & badges */
-            --c-violet:#7c3aed;
+            /* Vibrant palette for KPIs & chips */
+            --c-violet:#8b5cf6;
             --c-cyan:#06b6d4;
             --c-emerald:#10b981;
             --c-amber:#f59e0b;
@@ -42,9 +42,9 @@
 
             --surface:#ffffff;
             --surface-2:#f7f8fb;   /* page bg */
-            --panel:#ffffff;       /* cards/panels */
+            --panel:#ffffff;       /* card bg */
             --border:rgba(2,6,23,.08);
-            --ring:rgba(14,182,212,.35);
+            --ring:rgba(6,182,212,.35);
             --shadow:0 12px 34px rgba(2,6,23,.10);
 
             --g-brand:linear-gradient(90deg, var(--brand-a), var(--brand-b));
@@ -83,6 +83,7 @@
                 var(--surface) fixed;
         }
         * { outline-color: var(--brand-b); }
+        :is(a,button,.panel,.kpi,.pill,.nav-link,.chip):focus-visible{ box-shadow:0 0 0 4px var(--ring); }
 
         /* Sticky app bar */
         .appbar{
@@ -103,16 +104,6 @@
             transition: transform .15s ease, box-shadow .15s ease;
         }
         .btn-theme:hover{ transform:translateY(-1px); box-shadow: var(--shadow); }
-        :is(a,button,.kpi,.badge-pill,.nav-link):focus-visible{ box-shadow:0 0 0 4px var(--ring); }
-
-        /* Overview banner pills */
-        .pill{
-            display:inline-flex; align-items:center; gap:10px;
-            padding:10px 14px; border-radius:999px; font-weight:700;
-            border:1px solid var(--border); background:var(--panel);
-            color:var(--ink-soft);
-        }
-        .pill .dot{ width:8px; height:8px; border-radius:999px; background:var(--brand-a); }
 
         /* Panels */
         .panel{
@@ -127,6 +118,20 @@
         }
         .section-title{ font-weight:800; letter-spacing:.2px; }
         .subtle{ color:var(--muted); }
+        .divider{ height:1px; background:var(--border); }
+
+        /* Overview pills */
+        .pill{
+            display:inline-flex; align-items:center; gap:10px;
+            padding:10px 14px; border-radius:999px; font-weight:700;
+            border:1px solid var(--border); background:var(--panel);
+            color:var(--ink-soft);
+        }
+        .pill .dot{ width:8px; height:8px; border-radius:999px; background:var(--brand-a); }
+
+        /* Tabs */
+        .tabs .nav-link{ border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); font-weight:800; border-radius:12px; padding:.55rem 1rem; }
+        .tabs .nav-link.active{ color:#fff; background: var(--g-brand); border-color: transparent; }
 
         /* Horizontal people strip */
         .strip{
@@ -148,10 +153,6 @@
         .chip.warn{ color:var(--warn); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.25); }
         .chip.danger{ color:var(--danger); background:rgba(244,63,94,.12); border-color:rgba(244,63,94,.25); }
 
-        /* Tabs */
-        .tabs .nav-link{ border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); font-weight:800; border-radius:12px; padding:.55rem 1rem; }
-        .tabs .nav-link.active{ color:#fff; background: var(--g-brand); border-color: transparent; }
-
         /* Scrollbars */
         .strip::-webkit-scrollbar, .list-max::-webkit-scrollbar { height:8px; width:8px; }
         .strip::-webkit-scrollbar-thumb, .list-max::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
@@ -169,29 +170,27 @@
             box-shadow: var(--shadow);
             overflow:hidden;
         }
-        /* Gradient ribbon at top */
+        /* Gradient ribbon */
         .kpi::before{
             content:'';
             position:absolute; inset:0 0 auto 0; height:6px;
             background: var(--kpi-grad, var(--g-brand));
         }
-        /* soft background waves */
+        /* Soft wave */
         .kpi::after{
             content:'';
             position:absolute; inset:auto -20% -20% -20%; height:60%;
-            background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent,#7c3aed) 26%, transparent), transparent 70%);
+            background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent,#7c3aed) 28%, transparent), transparent 70%);
             opacity:.35;
         }
         .kpi .meta{ display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink-soft); }
-        .kpi .meta i{ /* icon bubble */ display:inline-grid; place-items:center; width:34px; height:34px; border-radius:10px; background: var(--kpi-icon-bg, #eee); color: var(--kpi-icon, #444); }
+        .kpi .meta i{ display:inline-grid; place-items:center; width:34px; height:34px; border-radius:10px; background: var(--kpi-icon-bg, #eee); color: var(--kpi-icon, #444); }
         .kpi .value{ font-size: clamp(1.8rem, 2.6vw, 2.3rem); font-weight:800; letter-spacing:-.4px; color: var(--ink); }
         .kpi .subtle{ color: var(--muted); }
-
         .list-max{ max-height:320px; overflow:auto; }
         .list-row:hover{ background: color-mix(in oklab, var(--panel) 85%, var(--surface-2)); }
-        .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-        /* KPI theme modifiers (colorful) */
+        /* KPI color themes */
         .kpi.violet  { --kpi-grad: linear-gradient(90deg, #8b5cf6, #a78bfa); --kpi-icon-bg: rgba(139,92,246,.12); --kpi-icon:#8b5cf6; --kpi-accent:#8b5cf6; }
         .kpi.cyan    { --kpi-grad: linear-gradient(90deg, #06b6d4, #22d3ee); --kpi-icon-bg: rgba(6,182,212,.12);  --kpi-icon:#06b6d4; --kpi-accent:#06b6d4; }
         .kpi.emerald { --kpi-grad: linear-gradient(90deg, #10b981, #34d399); --kpi-icon-bg: rgba(16,185,129,.12); --kpi-icon:#10b981; --kpi-accent:#10b981; }
@@ -201,13 +200,12 @@
         .kpi.indigo  { --kpi-grad: linear-gradient(90deg, #4f46e5, #818cf8); --kpi-icon-bg: rgba(79,70,229,.12);   --kpi-icon:#4f46e5; --kpi-accent:#4f46e5; }
         .kpi.fuchsia { --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc); --kpi-icon-bg: rgba(217,70,239,.12);  --kpi-icon:#d946ef; --kpi-accent:#d946ef; }
 
-        /* small progress bar (optional adornment, used on some cards) */
-        .kpi-progress{
-            height:6px; background:rgba(148,163,184,.3); border-radius:999px; overflow:hidden; margin-top:10px;
-        }
-        .kpi-progress > span{
-            display:block; height:100%; width:var(--p, 40%); background: var(--kpi-grad); border-radius:999px;
-        }
+        /* Optional micro progress */
+        .kpi-progress{ height:6px; background:rgba(148,163,184,.3); border-radius:999px; overflow:hidden; margin-top:10px; }
+        .kpi-progress > span{ display:block; height:100%; width:var(--p, 40%); background: var(--kpi-grad); border-radius:999px; }
+
+        /* Helpers */
+        .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
     </style>
 @endsection
 
@@ -250,7 +248,7 @@
 
         <!-- Main Grid -->
         <div class="row g-3">
-            <!-- Left column -->
+            <!-- Left: Pratihari Seba -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
                     <div class="panel-head d-flex align-items-center justify-content-between">
@@ -327,7 +325,7 @@
                 </div>
             </div>
 
-            <!-- Right column -->
+            <!-- Right: Gochhikar Today -->
             <div class="col-12 col-xl-4">
                 <div class="panel h-100">
                     <div class="panel-head">
@@ -358,7 +356,7 @@
                             @endforelse
                         </div>
 
-                        <div class="border-top my-3"></div>
+                        <div class="divider my-3"></div>
 
                         <div class="mb-2">
                             <div class="d-flex align-items-center justify-content-between mb-2">
