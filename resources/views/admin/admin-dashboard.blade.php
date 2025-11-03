@@ -8,40 +8,47 @@
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Professional fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+    <!-- Friendly, legible fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
 
     <style>
         /* =========================
-           Design Tokens
+           Colorful Design Tokens
         ========================= */
         :root{
-            /* Brand */
-            --brand-1:#4f46e5; /* indigo-600 */
-            --brand-2:#0ea5e9; /* sky-500 */
-            --brand-3:#22c55e; /* green-500 */
+            /* Core brand gradient */
+            --brand-a:#7c3aed;  /* violet-600 */
+            --brand-b:#06b6d4;  /* cyan-500 */
 
-            /* Accents */
+            /* Vibrant palette for KPIs & badges */
+            --c-violet:#7c3aed;
+            --c-cyan:#06b6d4;
+            --c-emerald:#10b981;
+            --c-amber:#f59e0b;
+            --c-rose:#f43f5e;
+            --c-blue:#3b82f6;
+            --c-indigo:#4f46e5;
+            --c-fuchsia:#d946ef;
+
+            /* Semantics */
             --ok:#16a34a;
             --warn:#f59e0b;
             --danger:#ef4444;
 
-            /* Text */
-            --ink:#0b1220;         /* slate-950 */
-            --ink-soft:#334155;    /* slate-600 */
-            --muted:#64748b;       /* slate-500 */
+            /* Typography & surfaces */
+            --ink:#0b1220;
+            --ink-soft:#334155;
+            --muted:#64748b;
 
-            /* Surfaces (light) */
             --surface:#ffffff;
-            --surface-2:#f6f7fb;   /* app bg */
-            --surface-3:#f0f3ff;   /* panel tint */
+            --surface-2:#f7f8fb;   /* page bg */
+            --panel:#ffffff;       /* cards/panels */
             --border:rgba(2,6,23,.08);
-            --ring:rgba(79,70,229,.35);
-            --shadow:0 10px 30px rgba(2,6,23,.08);
+            --ring:rgba(14,182,212,.35);
+            --shadow:0 12px 34px rgba(2,6,23,.10);
 
-            /* Gradients */
-            --g-brand:linear-gradient(90deg, var(--brand-1), var(--brand-2));
-            --g-soft:linear-gradient(180deg, rgba(79,70,229,.06), rgba(14,165,233,.06));
+            --g-brand:linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            --g-soft:linear-gradient(180deg, rgba(124,58,237,.08), rgba(6,182,212,.08));
         }
 
         html.dark{
@@ -49,12 +56,12 @@
             --ink-soft:#cbd5e1;
             --muted:#94a3b8;
 
-            --surface:#0b1020;
-            --surface-2:#0a0f1c;
-            --surface-3:#0f172a;
+            --surface:#0a0f1d;
+            --surface-2:#070b14;
+            --panel:#0f172a;
             --border:rgba(148,163,184,.18);
-            --ring:rgba(56,189,248,.35);
-            --shadow:0 12px 36px rgba(0,0,0,.35);
+            --ring:rgba(59,130,246,.35);
+            --shadow:0 16px 38px rgba(0,0,0,.45);
         }
 
         /* =========================
@@ -64,147 +71,143 @@
         body{
             font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
             background:
-                radial-gradient(1200px 600px at -10% -10%, rgba(79,70,229,.08), transparent 60%),
-                radial-gradient(1200px 600px at 110% -10%, rgba(14,165,233,.08), transparent 60%),
+                radial-gradient(1100px 540px at -10% -10%, rgba(124,58,237,.10), transparent 60%),
+                radial-gradient(1100px 540px at 110% -10%, rgba(6,182,212,.10), transparent 60%),
                 var(--surface-2) fixed;
             color:var(--ink);
         }
         html.dark body{
             background:
-                radial-gradient(1200px 600px at -10% -10%, rgba(79,70,229,.18), transparent 60%),
-                radial-gradient(1200px 600px at 110% -10%, rgba(14,165,233,.14), transparent 60%),
-                #070b14 fixed;
+                radial-gradient(1100px 540px at -10% -10%, rgba(124,58,237,.20), transparent 60%),
+                radial-gradient(1100px 540px at 110% -10%, rgba(6,182,212,.16), transparent 60%),
+                var(--surface) fixed;
         }
-        * { outline-color: var(--brand-2); }
+        * { outline-color: var(--brand-b); }
 
-        /* =========================
-           Top App Bar
-        ========================= */
+        /* Sticky app bar */
         .appbar{
             position: sticky; top: 0; z-index: 40;
             backdrop-filter: blur(10px);
-            background: color-mix(in oklab, var(--surface) 70%, transparent);
-            border-bottom: 1px solid var(--border);
+            background: color-mix(in oklab, var(--panel) 80%, transparent);
+            border-bottom:1px solid var(--border);
         }
         .brand{
-            font-weight: 800;
-            letter-spacing:.2px;
+            font-weight:800; letter-spacing:.3px;
             background: var(--g-brand);
-            -webkit-background-clip: text; background-clip: text; color: transparent;
+            -webkit-background-clip:text; background-clip:text; color:transparent;
         }
         .btn-theme{
             display:inline-flex; align-items:center; gap:8px;
-            border:1px solid var(--border); background: var(--surface);
+            border:1px solid var(--border); background: var(--panel);
             border-radius: 999px; padding:8px 12px; font-weight:700;
             transition: transform .15s ease, box-shadow .15s ease;
         }
-        .btn-theme:hover{ transform: translateY(-1px); box-shadow: var(--shadow); }
+        .btn-theme:hover{ transform:translateY(-1px); box-shadow: var(--shadow); }
+        :is(a,button,.kpi,.badge-pill,.nav-link):focus-visible{ box-shadow:0 0 0 4px var(--ring); }
 
-        /* =========================
-           Panels & Sections
-        ========================= */
-        .panel{
-            background: var(--surface);
-            border:1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-        }
-        .panel-head{
-            padding: 14px 16px;
-            border-bottom:1px solid var(--border);
-            background: var(--g-soft);
-            border-top-left-radius: 16px; border-top-right-radius: 16px;
-        }
-        .section-title{
-            font-weight:800; letter-spacing:.2px;
-        }
-        .subtle{ color:var(--muted); }
-
-        /* =========================
-           Banner / Overview
-        ========================= */
-        .overview{
-            background: var(--surface);
-            border:1px solid var(--border);
-            border-radius:16px;
-            padding:16px;
-            box-shadow: var(--shadow);
-        }
+        /* Overview banner pills */
         .pill{
-            display:inline-flex; align-items:center; gap:8px;
-            padding:8px 12px; border-radius:999px; font-weight:700;
-            border:1px solid var(--border);
-            background: var(--surface);
+            display:inline-flex; align-items:center; gap:10px;
+            padding:10px 14px; border-radius:999px; font-weight:700;
+            border:1px solid var(--border); background:var(--panel);
             color:var(--ink-soft);
         }
-        .pill .dot{
-            width:8px; height:8px; border-radius:50%;
-            background: var(--brand-1);
-        }
+        .pill .dot{ width:8px; height:8px; border-radius:999px; background:var(--brand-a); }
 
-        /* =========================
-           Cards & Lists
-        ========================= */
+        /* Panels */
+        .panel{
+            background:var(--panel); border:1px solid var(--border);
+            border-radius:18px; box-shadow: var(--shadow);
+        }
+        .panel-head{
+            padding:14px 16px;
+            border-bottom:1px solid var(--border);
+            background: var(--g-soft);
+            border-top-left-radius:18px; border-top-right-radius:18px;
+        }
+        .section-title{ font-weight:800; letter-spacing:.2px; }
+        .subtle{ color:var(--muted); }
+
+        /* Horizontal people strip */
         .strip{
             display:grid; grid-auto-flow:column; grid-auto-columns:max-content;
-            gap:14px; overflow-x:auto; padding-bottom:6px; scroll-snap-type:x mandatory;
+            gap:14px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory;
         }
         .mini-card{
             scroll-snap-align:start; min-width:220px;
-            background: color-mix(in oklab, var(--surface) 80%, var(--surface-3));
+            background: color-mix(in oklab, var(--panel) 90%, var(--surface-2));
             border:1px solid var(--border); border-radius:14px; padding:12px;
             transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
         }
-        .mini-card:hover{ transform:translateY(-2px); box-shadow: var(--shadow); border-color: rgba(79,70,229,.35); }
-        .avatar{
-            width:48px; height:48px; border-radius:50%; object-fit:cover;
-            border:2px solid var(--surface); box-shadow: var(--shadow);
-        }
-        .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:.8rem; font-weight:700; border:1px solid var(--border); background:var(--surface); color:var(--ink-soft); }
-        .chip.ok{ color:var(--ok); background:rgba(22,163,74,.08); border-color:rgba(22,163,74,.25); }
-        .chip.warn{ color:var(--warn); background:rgba(245,158,11,.10); border-color:rgba(245,158,11,.25); }
-        .chip.danger{ color:var(--danger); background:rgba(239,68,68,.10); border-color:rgba(239,68,68,.25); }
-        .list-max{ max-height:320px; overflow:auto; }
-        .list-row:hover{ background: color-mix(in oklab, var(--surface) 85%, var(--surface-3)); }
+        .mini-card:hover{ transform:translateY(-2px); box-shadow: var(--shadow); border-color: rgba(124,58,237,.35); }
+        .avatar{ width:44px; height:44px; border-radius:50%; object-fit:cover; border:2px solid var(--panel); box-shadow: var(--shadow); }
 
-        /* =========================
-           KPIs
-        ========================= */
-        .kpi{
-            background: var(--surface);
-            border:1px solid var(--border);
-            border-radius:14px;
-            padding:16px;
-            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-        }
-        .kpi:hover{ transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(79,70,229,.25); }
-        .kpi .meta{ display:flex; align-items:center; gap:8px; font-weight:700; color:var(--ink-soft); }
-        .kpi .value{ font-size: clamp(1.8rem, 2.6vw, 2.3rem); font-weight:800; letter-spacing:-.5px; }
+        /* Chips */
+        .chip{ display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:.8rem; font-weight:700; border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); }
+        .chip.ok{ color:var(--ok); background:rgba(16,185,129,.10); border-color:rgba(16,185,129,.25); }
+        .chip.warn{ color:var(--warn); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.25); }
+        .chip.danger{ color:var(--danger); background:rgba(244,63,94,.12); border-color:rgba(244,63,94,.25); }
 
-        /* =========================
-           Tabs
-        ========================= */
-        .tabs .nav-link{
-            border:1px solid var(--border); background:var(--surface);
-            color:var(--ink-soft); font-weight:800; letter-spacing:.2px;
-            border-radius:12px; padding:.55rem 1rem;
-        }
-        .tabs .nav-link.active{
-            color:#fff; background: var(--g-brand); border-color: transparent;
-        }
-
-        /* =========================
-           Utilities
-        ========================= */
-        .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-        .divider{ height:1px; background:var(--border); }
-        .text-gradient{ background: var(--g-brand); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        :is(a,button,.kpi,.mini-card,.chip,.nav-link,.form-control):focus-visible{ box-shadow: 0 0 0 4px var(--ring); }
+        /* Tabs */
+        .tabs .nav-link{ border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); font-weight:800; border-radius:12px; padding:.55rem 1rem; }
+        .tabs .nav-link.active{ color:#fff; background: var(--g-brand); border-color: transparent; }
 
         /* Scrollbars */
         .strip::-webkit-scrollbar, .list-max::-webkit-scrollbar { height:8px; width:8px; }
         .strip::-webkit-scrollbar-thumb, .list-max::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
         html.dark .strip::-webkit-scrollbar-thumb, html.dark .list-max::-webkit-scrollbar-thumb { background:#475569; }
+
+        /* =========================
+           COLORFUL KPI CARDS
+        ========================= */
+        .kpi{
+            position:relative;
+            background:var(--panel);
+            border:1px solid var(--border);
+            border-radius:16px;
+            padding:16px 16px 14px;
+            box-shadow: var(--shadow);
+            overflow:hidden;
+        }
+        /* Gradient ribbon at top */
+        .kpi::before{
+            content:'';
+            position:absolute; inset:0 0 auto 0; height:6px;
+            background: var(--kpi-grad, var(--g-brand));
+        }
+        /* soft background waves */
+        .kpi::after{
+            content:'';
+            position:absolute; inset:auto -20% -20% -20%; height:60%;
+            background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent,#7c3aed) 26%, transparent), transparent 70%);
+            opacity:.35;
+        }
+        .kpi .meta{ display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink-soft); }
+        .kpi .meta i{ /* icon bubble */ display:inline-grid; place-items:center; width:34px; height:34px; border-radius:10px; background: var(--kpi-icon-bg, #eee); color: var(--kpi-icon, #444); }
+        .kpi .value{ font-size: clamp(1.8rem, 2.6vw, 2.3rem); font-weight:800; letter-spacing:-.4px; color: var(--ink); }
+        .kpi .subtle{ color: var(--muted); }
+
+        .list-max{ max-height:320px; overflow:auto; }
+        .list-row:hover{ background: color-mix(in oklab, var(--panel) 85%, var(--surface-2)); }
+        .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+        /* KPI theme modifiers (colorful) */
+        .kpi.violet  { --kpi-grad: linear-gradient(90deg, #8b5cf6, #a78bfa); --kpi-icon-bg: rgba(139,92,246,.12); --kpi-icon:#8b5cf6; --kpi-accent:#8b5cf6; }
+        .kpi.cyan    { --kpi-grad: linear-gradient(90deg, #06b6d4, #22d3ee); --kpi-icon-bg: rgba(6,182,212,.12);  --kpi-icon:#06b6d4; --kpi-accent:#06b6d4; }
+        .kpi.emerald { --kpi-grad: linear-gradient(90deg, #10b981, #34d399); --kpi-icon-bg: rgba(16,185,129,.12); --kpi-icon:#10b981; --kpi-accent:#10b981; }
+        .kpi.amber   { --kpi-grad: linear-gradient(90deg, #f59e0b, #fbbf24); --kpi-icon-bg: rgba(245,158,11,.12);  --kpi-icon:#f59e0b; --kpi-accent:#f59e0b; }
+        .kpi.rose    { --kpi-grad: linear-gradient(90deg, #f43f5e, #fb7185); --kpi-icon-bg: rgba(244,63,94,.12);  --kpi-icon:#f43f5e; --kpi-accent:#f43f5e; }
+        .kpi.blue    { --kpi-grad: linear-gradient(90deg, #3b82f6, #60a5fa); --kpi-icon-bg: rgba(59,130,246,.12);  --kpi-icon:#3b82f6; --kpi-accent:#3b82f6; }
+        .kpi.indigo  { --kpi-grad: linear-gradient(90deg, #4f46e5, #818cf8); --kpi-icon-bg: rgba(79,70,229,.12);   --kpi-icon:#4f46e5; --kpi-accent:#4f46e5; }
+        .kpi.fuchsia { --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc); --kpi-icon-bg: rgba(217,70,239,.12);  --kpi-icon:#d946ef; --kpi-accent:#d946ef; }
+
+        /* small progress bar (optional adornment, used on some cards) */
+        .kpi-progress{
+            height:6px; background:rgba(148,163,184,.3); border-radius:999px; overflow:hidden; margin-top:10px;
+        }
+        .kpi-progress > span{
+            display:block; height:100%; width:var(--p, 40%); background: var(--kpi-grad); border-radius:999px;
+        }
     </style>
 @endsection
 
@@ -214,10 +217,7 @@
         <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-3">
                 <span class="brand fs-4">Pratihari Admin</span>
-                <span class="pill d-none d-md-inline">
-                    <span class="dot"></span>
-                    {{ \Carbon\Carbon::now()->format('d M Y') }}
-                </span>
+                <span class="pill d-none d-md-inline"><span class="dot"></span>{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
             </div>
             <div class="d-flex align-items-center gap-2">
                 <div class="d-none d-sm-flex align-items-center gap-2 subtle mono">
@@ -234,21 +234,17 @@
 
     <div class="container-fluid py-3">
         <!-- Overview -->
-        <div class="overview mb-3">
-            <div class="row g-2 align-items-center">
-                <div class="col-12 col-lg">
-                    <div class="d-flex flex-wrap align-items-center gap-2">
-                        <span class="pill"><i class="bi bi-badge-ad"></i> <span class="fw-bold text-gradient">Pratihari Beddha:</span> <span class="ms-1">{{ $pratihariBeddha ?: 'N/A' }}</span></span>
-                        <span class="pill"><i class="bi bi-people"></i> <span class="fw-bold text-gradient">Gochhikar Beddha:</span> <span class="ms-1">{{ $gochhikarBeddha ?: 'N/A' }}</span></span>
-                    </div>
-                </div>
-                <div class="col-12 col-lg-auto">
-                    <div class="d-flex gap-2">
-                        <a class="btn btn-outline-primary fw-bold" href="{{ route('admin.pratihari.filterUsers', 'today') }}"><i class="bi bi-funnel"></i> Today</a>
-                        <a class="btn btn-outline-secondary fw-bold" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"><i class="bi bi-check2-circle"></i> Approved</a>
-                        <a class="btn btn-outline-warning fw-bold" href="{{ route('admin.pratihari.filterUsers', 'pending') }}"><i class="bi bi-hourglass-split"></i> Pending</a>
-                    </div>
-                </div>
+        <div class="panel mb-3">
+            <div class="panel-head">
+                <div class="section-title">Overview</div>
+                <div class="subtle">Colorful, icon-based summary for quick scanning</div>
+            </div>
+            <div class="p-3 d-flex flex-wrap align-items-center gap-2">
+                <span class="pill"><i class="bi bi-badge-ad"></i><span class="fw-bold"> Pratihari Beddha:</span> <span class="ms-1">{{ $pratihariBeddha ?: 'N/A' }}</span></span>
+                <span class="pill"><i class="bi bi-people"></i><span class="fw-bold"> Gochhikar Beddha:</span> <span class="ms-1">{{ $gochhikarBeddha ?: 'N/A' }}</span></span>
+                <a class="btn btn-sm btn-outline-primary fw-bold ms-auto" href="{{ route('admin.pratihari.filterUsers', 'today') }}"><i class="bi bi-funnel"></i> Today</a>
+                <a class="btn btn-sm btn-outline-success fw-bold" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"><i class="bi bi-check2-circle"></i> Approved</a>
+                <a class="btn btn-sm btn-outline-warning fw-bold" href="{{ route('admin.pratihari.filterUsers', 'pending') }}"><i class="bi bi-hourglass-split"></i> Pending</a>
             </div>
         </div>
 
@@ -362,7 +358,7 @@
                             @endforelse
                         </div>
 
-                        <div class="divider my-3"></div>
+                        <div class="border-top my-3"></div>
 
                         <div class="mb-2">
                             <div class="d-flex align-items-center justify-content-between mb-2">
@@ -390,18 +386,22 @@
                 </div>
             </div>
 
-            <!-- KPIs -->
+            <!-- =========================
+                 COLORFUL KPI GRID
+            ========================= -->
             <div class="col-12 mt-1">
                 <div class="row g-3">
                     <!-- Today’s Registrations -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi violet h-100">
                             <div class="meta">
-                                <i class="bi bi-person-plus"></i> Today’s Registrations
+                                <i class="bi bi-person-plus"></i>
+                                Today’s Registrations
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'today') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayProfiles) }}</div>
                             <div class="subtle">New profiles created</div>
+                            <div class="kpi-progress"><span style="--p: 38%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayProfiles->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -420,13 +420,15 @@
 
                     <!-- Pending Profiles -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi amber h-100">
                             <div class="meta">
-                                <i class="bi bi-hourglass-split"></i> Pending Profiles
+                                <i class="bi bi-hourglass-split"></i>
+                                Pending Profiles
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($pendingProfile) }}</div>
                             <div class="subtle">Awaiting review</div>
+                            <div class="kpi-progress"><span style="--p: 62%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($pendingProfile->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -449,13 +451,15 @@
 
                     <!-- Active Profiles -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi emerald h-100">
                             <div class="meta">
-                                <i class="bi bi-person-check"></i> Active Profiles
+                                <i class="bi bi-person-check"></i>
+                                Active Profiles
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($totalActiveUsers) }}</div>
                             <div class="subtle">Approved & active</div>
+                            <div class="kpi-progress"><span style="--p: 74%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($totalActiveUsers->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -474,13 +478,15 @@
 
                     <!-- Incomplete Profiles -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi cyan h-100">
                             <div class="meta">
-                                <i class="bi bi-clipboard2-data"></i> Incomplete Profiles
+                                <i class="bi bi-clipboard2-data"></i>
+                                Incomplete Profiles
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($incompleteProfiles) }}</div>
                             <div class="subtle">Need more info</div>
+                            <div class="kpi-progress"><span style="--p: 45%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($incompleteProfiles->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -499,20 +505,22 @@
 
                     <!-- Today Approved -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi blue h-100">
                             <div class="meta">
-                                <i class="bi bi-check2-circle"></i> Today Approved
+                                <i class="bi bi-check2-circle"></i>
+                                Today Approved
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'todayapproved') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayApprovedProfiles) }}</div>
                             <div class="subtle">Approved today</div>
+                            <div class="kpi-progress"><span style="--p: 52%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayApprovedProfiles->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
                                             <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
                                             <div>
-                            <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -524,13 +532,15 @@
 
                     <!-- Today Rejected -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi rose h-100">
                             <div class="meta">
-                                <i class="bi bi-x-circle"></i> Today Rejected
+                                <i class="bi bi-x-circle"></i>
+                                Today Rejected
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'todayrejected') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayRejectedProfiles) }}</div>
                             <div class="subtle">Rejected today</div>
+                            <div class="kpi-progress"><span style="--p: 30%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayRejectedProfiles->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -549,13 +559,15 @@
 
                     <!-- Updated Profiles -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi indigo h-100">
                             <div class="meta">
-                                <i class="bi bi-arrow-repeat"></i> Updated Profiles
+                                <i class="bi bi-arrow-repeat"></i>
+                                Updated Profiles
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'updated') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($updatedProfiles) }}</div>
                             <div class="subtle">Recently modified</div>
+                            <div class="kpi-progress"><span style="--p: 66%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($updatedProfiles->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -574,13 +586,15 @@
 
                     <!-- Total Rejected -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi fuchsia h-100">
                             <div class="meta">
-                                <i class="bi bi-emoji-frown"></i> Total Rejected
+                                <i class="bi bi-emoji-frown"></i>
+                                Total Rejected
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'rejected') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($rejectedProfiles) }}</div>
                             <div class="subtle">All-time rejected</div>
+                            <div class="kpi-progress"><span style="--p: 22%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($rejectedProfiles->take(5) as $user)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -599,13 +613,15 @@
 
                     <!-- Applications: Today -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi cyan h-100">
                             <div class="meta">
-                                <i class="bi bi-calendar-check"></i> Today’s Applications
+                                <i class="bi bi-calendar-check"></i>
+                                Today’s Applications
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.application.filter', 'today') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayApplications) }}</div>
                             <div class="subtle">Submitted today</div>
+                            <div class="kpi-progress"><span style="--p: 48%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayApplications->take(5) as $app)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -624,13 +640,15 @@
 
                     <!-- Applications: Approved -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi emerald h-100">
                             <div class="meta">
-                                <i class="bi bi-file-earmark-check"></i> Approved Applications
+                                <i class="bi bi-file-earmark-check"></i>
+                                Approved Applications
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.application.filter', 'approved') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($approvedApplication) }}</div>
                             <div class="subtle">Accepted</div>
+                            <div class="kpi-progress"><span style="--p: 70%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($approvedApplication->take(5) as $app)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -649,13 +667,15 @@
 
                     <!-- Applications: Rejected -->
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi h-100">
+                        <div class="kpi rose h-100">
                             <div class="meta">
-                                <i class="bi bi-file-earmark-x"></i> Rejected Applications
+                                <i class="bi bi-file-earmark-x"></i>
+                                Rejected Applications
                                 <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.application.filter', 'rejected') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($rejectedApplication) }}</div>
                             <div class="subtle">Declined</div>
+                            <div class="kpi-progress"><span style="--p: 28%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($rejectedApplication->take(5) as $app)
                                     <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -698,14 +718,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Live time
+        // Live clock
         (function tick() {
             const el = document.getElementById('live-time');
             if (el) el.textContent = new Date().toLocaleTimeString();
             setTimeout(tick, 1000);
         })();
 
-        // Theme toggle
+        // Theme toggle with persistence
         (function themeInit(){
             const html = document.documentElement;
             const saved = localStorage.getItem('theme') || '';
