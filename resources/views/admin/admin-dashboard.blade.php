@@ -410,102 +410,103 @@
 
             <!-- Right: Gochhikar Today + Quick Actions -->
             <div class="col-12 col-xl-4">
-                <!-- Gochhikar Today -->
-                <div class="panel h-100 mb-3">
-                    <div class="panel-head">
-                        <div class="section-title">Gochhikar Today</div>
-                        <div class="subtle">Normal & Nijoga assignments</div>
+    <!-- Gochhikar Today -->
+    <div class="panel h-100 mb-3">
+        <!-- Compact gradient sub-header -->
+        <div class="px-3 pt-3">
+            <div class="rounded-3 p-3 text-white" style="background: var(--g-brand); box-shadow: var(--shadow);">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="icon-hero" style="border-color: rgba(255,255,255,.35);"><i class="bi bi-people"></i></span>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold" style="letter-spacing:.2px;">Gochhikar Today</div>
+                        <div class="small" style="opacity:.9;">Normal &amp; Nijoga assignments</div>
                     </div>
-                    <div class="p-3">
-                        <!-- Normal -->
-                        <div class="mb-3">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-bold">Gochhikar</span>
-                                    <span class="badge text-bg-light border">{{ collect($gochhikarEvents)->flatten(1)->count() }}</span>
-                                </div>
-                                <span class="chip ok"><i class="bi bi-check2-circle"></i> Normal</span>
-                            </div>
-                            @forelse ($gochhikarEvents as $label => $users)
-                                <div class="mb-2">
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div class="small fw-semibold">{{ $label }}</div>
-                                        <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
-                                    </div>
-                                    <div class="strip">
-                                        @foreach ($users as $user)
-                                            <div class="mini-card">
-                                                @include('partials._user_card', ['user' => $user])
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="alert alert-light border" role="alert">
-                                    No Gochhikar assigned (normal) for today.
-                                </div>
-                            @endforelse
-                        </div>
-
-                        <div class="divider my-3"></div>
-
-                        <!-- Nijoga -->
-                        <div class="mb-2">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-bold">Nijoga Assign</span>
-                                    <span class="badge text-bg-light border">{{ collect($nijogaGochhikarEvents)->flatten(1)->count() }}</span>
-                                </div>
-                                <span class="chip warn"><i class="bi bi-exclamation-circle"></i> Nijoga</span>
-                            </div>
-                            @forelse ($nijogaGochhikarEvents as $label => $users)
-                                <div class="mb-2">
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div class="small fw-semibold">{{ $label }}</div>
-                                        <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
-                                    </div>
-                                    <div class="strip">
-                                        @foreach ($users as $user)
-                                            <div class="mini-card">
-                                                @include('partials._user_card', ['user' => $user])
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="alert alert-light border" role="alert">
-                                    No Nijoga Gochhikar for today.
-                                </div>
-                            @endforelse
-                        </div>
-                    </div>
+                    <span class="badge bg-light text-dark border-0">
+                        {{ collect($gochhikarEvents)->flatten(1)->count() + collect($nijogaGochhikarEvents)->flatten(1)->count() }} total
+                    </span>
                 </div>
-
-                <!-- Quick Actions -->
-                <div class="panel mb-3">
-                    <div class="panel-head d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="section-title">Quick Actions</div>
-                            <div class="subtle">Frequently used filters & links.</div>
-                        </div>
-                    </div>
-                    <div class="p-3 d-grid gap-2">
-                        <a class="btn btn-outline-primary d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'today') }}">
-                            <span><i class="bi bi-funnel me-2"></i> Filter Today</span>
-                            <i class="bi bi-arrow-right-short fs-5"></i>
-                        </a>
-                        <a class="btn btn-outline-success d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
-                            <span><i class="bi bi-check2-circle me-2"></i> View Approved</span>
-                            <i class="bi bi-arrow-right-short fs-5"></i>
-                        </a>
-                        <a class="btn btn-outline-warning d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
-                            <span><i class="bi bi-hourglass-split me-2"></i> View Pending</span>
-                            <i class="bi bi-arrow-right-short fs-5"></i>
-                        </a>
-                    </div>
-                </div>
-
             </div>
+        </div>
+
+        <div class="p-3">
+            <!-- Normal -->
+            <div class="mb-3">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold">Gochhikar</span>
+                        <span class="badge text-bg-light border">
+                            {{ collect($gochhikarEvents)->flatten(1)->count() }}
+                        </span>
+                    </div>
+                    <span class="chip ok">
+                        <i class="bi bi-check2-circle"></i> Normal
+                    </span>
+                </div>
+
+                @forelse ($gochhikarEvents as $label => $users)
+                    <div class="mb-2">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="small fw-semibold">{{ $label }}</div>
+                            <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                        </div>
+                        <div class="strip">
+                            @foreach ($users as $user)
+                                <div class="mini-card">
+                                    @include('partials._user_card', ['user' => $user])
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @empty
+                    <div class="alert alert-light border d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No Gochhikar assigned (normal) for today.
+                    </div>
+                @endforelse
+            </div>
+
+            <div class="divider my-3"></div>
+
+            <!-- Nijoga -->
+            <div class="mb-2">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="fw-bold">Nijoga Assign</span>
+                        <span class="badge text-bg-light border">
+                            {{ collect($nijogaGochhikarEvents)->flatten(1)->count() }}
+                        </span>
+                    </div>
+                    <span class="chip warn">
+                        <i class="bi bi-exclamation-circle"></i> Nijoga
+                    </span>
+                </div>
+
+                @forelse ($nijogaGochhikarEvents as $label => $users)
+                    <div class="mb-2">
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <div class="small fw-semibold">{{ $label }}</div>
+                            <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                        </div>
+                        <div class="strip">
+                            @foreach ($users as $user)
+                                <div class="mini-card">
+                                    @include('partials._user_card', ['user' => $user])
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @empty
+                    <div class="alert alert-light border d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        No Nijoga Gochhikar for today.
+                    </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+</div>
+
 
             <!-- ===== KPI GRID ===== -->
             <div class="col-12 mt-1">
