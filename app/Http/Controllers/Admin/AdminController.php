@@ -40,6 +40,7 @@ class AdminController extends Controller
 
     public function dashboard()
     {
+
         $todayProfiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
 
         $todayApprovedProfiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'approved')->get();
@@ -249,27 +250,26 @@ class AdminController extends Controller
                 'pratihariBeddha',
                 'gochhikarBeddha',
             ));
-        }
+    }
 
     public function pratihariManageProfile()
     {
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
-
+        
     public function sendOtp(Request $request)
     {
         $request->validate([
             'phone' => 'required|string',
         ]);
 
-        $phone = $request->phone;
-        $otp = rand(100000, 999999);
-        $shortToken = Str::random(6);
+        $phone = trim($request->phone);
+        $otp = (string) random_int(100000, 999999); // crypto-safe + keep as string
+        $shortToken = Str::upper(Str::random(6));   // token for URL button
 
         // Check if admin exists
         $admin = Admin::where('mobile_no', $phone)->first();
-
         if (!$admin) {
             return redirect()->back()->with([
                 'error' => 'Mobile number not registered. Please contact super admin.'
@@ -280,107 +280,125 @@ class AdminController extends Controller
         $admin->otp = $otp;
         $admin->save();
 
-        // WhatsApp Payload
+        // --- MSG91 config from ENV ---
+        $authKey   = env('MSG91_AUTHKEY');
+        $tplName   = env('MSG91_WA_TEMPLATE');
+        $namespace = env('MSG91_WA_NAMESPACE');     // optional but we’ll include if present
+        $waNumber  = env('MSG91_WA_NUMBER', '');
+
+        // Integrated number must be digits only, with country code (e.g. "91xxxxxxxxxx")
+        $integratedNumber = preg_replace('/\D+/', '', (string) $waNumber);
+        if (!Str::startsWith($integratedNumber, '91')) {
+            // If no country code provided, assume India
+            $integratedNumber = '91' . ltrim($integratedNumber, '0');
+        }
+
+        // Build WhatsApp Template payload
+        $template = [
+            'name'     => $tplName,
+            'language' => [
+                'code'   => 'en',
+                'policy' => 'deterministic',
+            ],
+            // include namespace only if present
+        ];
+        if (!empty($namespace)) {
+            $template['namespace'] = $namespace;
+        }
+
         $payload = [
-            "integrated_number" => "917327096968",
-            "content_type" => "template",
-            "payload" => [
-                "messaging_product" => "whatsapp",
-                "to" => $phone,
-                "type" => "template",
-                "template" => [
-                    "name" => "nitiapp",
-                    "language" => [
-                        "code" => "en",
-                        "policy" => "deterministic"
-                    ],
-                    "components" => [
+            'integrated_number' => $integratedNumber,
+            'content_type'      => 'template',
+            'payload'           => [
+                'messaging_product' => 'whatsapp',
+                'to'   => $phone,
+                'type' => 'template',
+                'template' => $template + [
+                    'components' => [
                         [
-                            "type" => "body",
-                            "parameters" => [
-                                [
-                                    "type" => "text",
-                                    "text" => (string) $otp
-                                ]
-                            ]
+                            'type'       => 'body',
+                            'parameters' => [
+                                [ 'type' => 'text', 'text' => $otp ],
+                            ],
                         ],
                         [
-                            "type" => "button",
-                            "sub_type" => "url",
-                            "index" => "0",
-                            "parameters" => [
-                                [
-                                    "type" => "text",
-                                    "text" => $shortToken
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                            'type'     => 'button',
+                            'sub_type' => 'url',
+                            'index'    => '0',
+                            'parameters' => [
+                                [ 'type' => 'text', 'text' => $shortToken ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
 
-     try {
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'authkey' => env('MSG91_AUTHKEY'),
-        ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'authkey'      => $authKey, // MSG91 header
+            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
 
-        $result = $response->json();
+            $result = $response->json() ?? [];
+            \Log::info('MSG91 OTP Response:', ['status' => $response->status(), 'body' => $result]);
 
-        // 🔍 Log full response for debugging
-        \Log::info('MSG91 OTP Response:', $result);
+            $ok = $response->status() === 200 && (($result['status'] ?? '') === 'success');
 
-        if ($response->status() !== 200 || ($result['status'] ?? '') !== 'success') {
+            if (!$ok) {
+                // Try to surface MSG91 errors if present
+                $errMsg = $result['errors'] ?? ($result['message'] ?? 'Unknown error');
+                return redirect()->back()->with([
+                    'error' => 'Failed to send OTP. MSG91 error: ' . (is_string($errMsg) ? $errMsg : json_encode($errMsg)),
+                    // 'debug' => $result, // uncomment if you need to inspect in dev
+                ])->withInput();
+            }
+
             return redirect()->back()->with([
-                'error' => 'Failed to send OTP. MSG91 error: ' . ($result['errors'] ?? 'Unknown error'),
-                'debug' => $result // Optional: Remove in production
+                'otp_sent'  => true,
+                'otp_phone' => $phone,
+                'message'   => 'OTP sent to your WhatsApp.',
             ]);
-        }
 
-        return redirect()->back()->with([
-            'otp_sent' => true,
-            'otp_phone' => $phone,
-            'message' => 'OTP sent to your WhatsApp.'
-        ]);
-
-        } catch (\Exception $e) {
-            \Log::error('MSG91 OTP Exception: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            \Log::error('MSG91 OTP Exception: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
 
             return redirect()->back()->with([
-                'error' => 'Server error. Please try again later.',
-                'debug_error' => $e->getMessage()
+                'error'       => 'Server error. Please try again later.',
+                // 'debug_error' => $e->getMessage(), // uncomment if you need to inspect in dev
             ])->withInput();
         }
-
     }
 
     public function verifyOtp(Request $request)
     {
         $request->validate([
             'mobile_no' => 'required|string',
-            'otp' => 'required|string'
+            'otp'       => 'required|string',
         ]);
 
         $admin = Admin::where('mobile_no', $request->mobile_no)->first();
-
         if (!$admin) {
             return back()->withErrors([
-                'mobile_no' => 'Mobile number not found. Please contact super admin.'
+                'mobile_no' => 'Mobile number not found. Please contact super admin.',
             ])->withInput();
         }
 
-        if ($admin->otp !== $request->otp) {
+        // trim to be safe
+        $sentOtp = trim((string) $request->otp);
+        $dbOtp   = trim((string) ($admin->otp ?? ''));
+
+        if ($dbOtp === '' || !hash_equals($dbOtp, $sentOtp)) {
             return back()->withErrors([
-                'otp' => 'Invalid OTP. Please try again.'
+                'otp' => 'Invalid OTP. Please try again.',
             ])->withInput();
         }
 
-        // OTP is valid
+        // OTP is valid — clear it
         $admin->otp = null;
 
         if (empty($admin->admin_id)) {
-            $admin->admin_id = 'ADMIN' . rand(10000, 99999);
+            $admin->admin_id = 'ADMIN' . random_int(10000, 99999);
         }
 
         $admin->save();
