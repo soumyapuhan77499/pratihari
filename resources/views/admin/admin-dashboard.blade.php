@@ -554,7 +554,7 @@
 
 @section('content')
     <!-- App Bar -->
-    <div class="appbar py-2">
+    <div class="appbar py-2 mb-4">
         <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-3">
                 <span class="brand fs-4">Pratihari Admin</span>
