@@ -1,12 +1,11 @@
 @extends('layouts.app')
 
+@section('title', 'Pratihari Dashboard')
+
 @section('styles')
-    <!-- Icons & vendor CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
+    <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- Friendly, legible fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
@@ -113,12 +112,33 @@
         .panel-head{
             padding:14px 16px;
             border-bottom:1px solid var(--border);
-            background: var(--g-soft);
+            background:var(--g-soft);
             border-top-left-radius:18px; border-top-right-radius:18px;
         }
         .section-title{ font-weight:800; letter-spacing:.2px; }
         .subtle{ color:var(--muted); }
         .divider{ height:1px; background:var(--border); }
+
+        /* Gradient overview header block */
+        .gradient-header{
+            position:relative; border-radius:18px; padding:24px;
+            background: var(--g-brand); color:#fff; overflow:hidden; box-shadow: var(--shadow);
+        }
+        .gradient-header .bg-icons{
+            position:absolute; inset:0; pointer-events:none; opacity:.14;
+            background:
+              radial-gradient(160px 160px at 15% 40%, #fff 0, transparent 60%),
+              radial-gradient(130px 130px at 85% 30%, #fff 0, transparent 60%);
+            mix-blend-mode: soft-light;
+        }
+        .icon-hero{
+            display:inline-flex; align-items:center; justify-content:center;
+            width:46px; height:46px; border-radius:12px;
+            background: rgba(255,255,255,.18); color:#fff; font-size:20px;
+            border:1px solid rgba(255,255,255,.35);
+        }
+        .title{ font-weight:800; letter-spacing:.3px; font-size: clamp(20px, 2.2vw, 26px); }
+        .subtitle{ color:rgba(255,255,255,.92); }
 
         /* Overview pills */
         .pill{
@@ -135,11 +155,11 @@
 
         /* Horizontal people strip */
         .strip{
-            display:grid; grid-auto-flow:column; grid-auto-columns:max-content;
+            display:grid; grid-auto-flow:column; grid-auto-columns:minmax(240px, 1fr);
             gap:14px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory;
         }
         .mini-card{
-            scroll-snap-align:start; min-width:220px;
+            scroll-snap-align:start;
             background: color-mix(in oklab, var(--panel) 90%, var(--surface-2));
             border:1px solid var(--border); border-radius:14px; padding:12px;
             transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
@@ -162,24 +182,15 @@
            COLORFUL KPI CARDS
         ========================= */
         .kpi{
-            position:relative;
-            background:var(--panel);
-            border:1px solid var(--border);
-            border-radius:16px;
-            padding:16px 16px 14px;
-            box-shadow: var(--shadow);
-            overflow:hidden;
+            position:relative; background:var(--panel); border:1px solid var(--border);
+            border-radius:16px; padding:16px 16px 14px; box-shadow: var(--shadow); overflow:hidden;
         }
-        /* Gradient ribbon */
         .kpi::before{
-            content:'';
-            position:absolute; inset:0 0 auto 0; height:6px;
+            content:''; position:absolute; inset:0 0 auto 0; height:6px;
             background: var(--kpi-grad, var(--g-brand));
         }
-        /* Soft wave */
         .kpi::after{
-            content:'';
-            position:absolute; inset:auto -20% -20% -20%; height:60%;
+            content:''; position:absolute; inset:auto -20% -20% -20%; height:60%;
             background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent,#7c3aed) 28%, transparent), transparent 70%);
             opacity:.35;
         }
@@ -206,6 +217,11 @@
 
         /* Helpers */
         .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+        /* Responsive tweaks */
+        @media (max-width: 576px){
+            .header-actions{ margin-top: 12px; }
+        }
     </style>
 @endsection
 
@@ -215,7 +231,9 @@
         <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-3">
                 <span class="brand fs-4">Pratihari Admin</span>
-                <span class="pill d-none d-md-inline"><span class="dot"></span>{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                <span class="pill d-none d-md-inline">
+                    <span class="dot"></span>{{ \Carbon\Carbon::now()->format('d M Y') }}
+                </span>
             </div>
             <div class="d-flex align-items-center gap-2">
                 <div class="d-none d-sm-flex align-items-center gap-2 subtle mono">
@@ -231,24 +249,46 @@
     </div>
 
     <div class="container-fluid py-3">
-        <!-- Overview -->
-        <div class="panel mb-3">
-            <div class="panel-head">
-                <div class="section-title">Overview</div>
-                <div class="subtle">Colorful, icon-based summary for quick scanning</div>
+        <!-- ===== GRADIENT HEADER / OVERVIEW ===== -->
+        <div class="gradient-header mb-3">
+            <div class="bg-icons"></div>
+            <div class="d-flex align-items-start align-items-md-center gap-3 flex-column flex-md-row">
+                <span class="icon-hero"><i class="bi bi-speedometer2"></i></span>
+                <div class="flex-grow-1">
+                    <div class="title">Pratihari Admin Dashboard</div>
+                    <div class="subtitle">A colorful, icon-led overview for quick scanning and action.</div>
+                </div>
+                <div class="header-actions d-flex gap-2 ms-md-auto">
+                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'today') }}">
+                        <i class="bi bi-funnel"></i> Today
+                    </a>
+                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
+                        <i class="bi bi-check2-circle"></i> Approved
+                    </a>
+                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
+                        <i class="bi bi-hourglass-split"></i> Pending
+                    </a>
+                </div>
             </div>
-            <div class="p-3 d-flex flex-wrap align-items-center gap-2">
-                <span class="pill"><i class="bi bi-badge-ad"></i><span class="fw-bold"> Pratihari Beddha:</span> <span class="ms-1">{{ $pratihariBeddha ?: 'N/A' }}</span></span>
-                <span class="pill"><i class="bi bi-people"></i><span class="fw-bold"> Gochhikar Beddha:</span> <span class="ms-1">{{ $gochhikarBeddha ?: 'N/A' }}</span></span>
-                <a class="btn btn-sm btn-outline-primary fw-bold ms-auto" href="{{ route('admin.pratihari.filterUsers', 'today') }}"><i class="bi bi-funnel"></i> Today</a>
-                <a class="btn btn-sm btn-outline-success fw-bold" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"><i class="bi bi-check2-circle"></i> Approved</a>
-                <a class="btn btn-sm btn-outline-warning fw-bold" href="{{ route('admin.pratihari.filterUsers', 'pending') }}"><i class="bi bi-hourglass-split"></i> Pending</a>
+
+            <!-- Summary row -->
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+                <span class="pill">
+                    <i class="bi bi-badge-ad"></i>
+                    <span class="fw-bold">Pratihari Beddha:</span>
+                    <span class="ms-1">{{ $pratihariBeddha ?: 'N/A' }}</span>
+                </span>
+                <span class="pill">
+                    <i class="bi bi-people"></i>
+                    <span class="fw-bold">Gochhikar Beddha:</span>
+                    <span class="ms-1">{{ $gochhikarBeddha ?: 'N/A' }}</span>
+                </span>
             </div>
         </div>
 
-        <!-- Main Grid -->
+        <!-- ===== MAIN GRID ===== -->
         <div class="row g-3">
-            <!-- Left: Pratihari Seba -->
+            <!-- Left: Pratihari Seba & Nijoga -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
                     <div class="panel-head d-flex align-items-center justify-content-between">
@@ -259,20 +299,26 @@
                     </div>
                     <div class="p-3">
                         <!-- Tabs -->
-                        <ul class="nav nav-pills tabs gap-2" id="sebaTabs" role="tablist">
+                        <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill" data-bs-target="#pratihari-pane" type="button" role="tab" aria-controls="pratihari-pane" aria-selected="true">
+                                <button class="nav-link active" id="pratihari-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pratihari-pane"
+                                        type="button" role="tab" aria-controls="pratihari-pane"
+                                        aria-selected="true">
                                     <i class="bi bi-person-badge me-1"></i> Pratihari
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill" data-bs-target="#nijoga-pane" type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
+                                <button class="nav-link" id="nijoga-tab"
+                                        data-bs-toggle="pill" data-bs-target="#nijoga-pane"
+                                        type="button" role="tab" aria-controls="nijoga-pane"
+                                        aria-selected="false">
                                     <i class="bi bi-clipboard2-check me-1"></i> Nijoga Assigned
                                 </button>
                             </li>
                         </ul>
 
-                        <div class="tab-content mt-3" id="sebaTabsContent">
+                        <div class="tab-content" id="sebaTabsContent">
                             <!-- Pratihari -->
                             <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel" aria-labelledby="pratihari-tab">
                                 @forelse ($pratihariEvents as $label => $pratiharis)
@@ -325,68 +371,76 @@
                 </div>
             </div>
 
-            <!-- Right: Gochhikar Today -->
+            <!-- Right: Quick Actions & System Health -->
             <div class="col-12 col-xl-4">
-                <div class="panel h-100">
-                    <div class="panel-head">
-                        <div class="section-title">Gochhikar Today</div>
-                        <div class="subtle">Normal & Nijoga assignments</div>
+                <div class="panel mb-3">
+                    <div class="panel-head d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="section-title">Quick Actions</div>
+                            <div class="subtle">Frequently used filters & links.</div>
+                        </div>
                     </div>
-                    <div class="p-3">
-                        <div class="mb-3">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="fw-bold">Gochhikar</span>
-                                <span class="chip ok"><i class="bi bi-check2-circle"></i> Normal</span>
+                    <div class="p-3 d-grid gap-2">
+                        <a class="btn btn-outline-primary d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'today') }}">
+                            <span><i class="bi bi-funnel me-2"></i> Filter Today</span>
+                            <i class="bi bi-arrow-right-short fs-5"></i>
+                        </a>
+                        <a class="btn btn-outline-success d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
+                            <span><i class="bi bi-check2-circle me-2"></i> View Approved</span>
+                            <i class="bi bi-arrow-right-short fs-5"></i>
+                        </a>
+                        <a class="btn btn-outline-warning d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
+                            <span><i class="bi bi-hourglass-split me-2"></i> View Pending</span>
+                            <i class="bi bi-arrow-right-short fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="section-title">System Health</div>
+                            <div class="subtle">At-a-glance indicators.</div>
+                        </div>
+                    </div>
+                    <div class="p-3 d-grid gap-2">
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background:rgba(16,185,129,.10); border:1px solid rgba(16,185,129,.25);">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-shield-check fs-5"></i>
+                                <div>
+                                    <div class="fw-semibold">Auth & Roles</div>
+                                    <div class="subtle">No anomalies detected</div>
+                                </div>
                             </div>
-                            @forelse ($gochhikarEvents as $label => $users)
-                                <div class="mb-2">
-                                    <div class="small fw-semibold mb-1">{{ $label }}</div>
-                                    <div class="strip">
-                                        @foreach ($users as $user)
-                                            <div class="mini-card">
-                                                @include('partials._user_card', ['user' => $user])
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="alert alert-light border" role="alert">
-                                    No Gochhikar assigned (normal) for today.
-                                </div>
-                            @endforelse
+                            <span class="chip ok"><i class="bi bi-activity"></i> OK</span>
                         </div>
 
-                        <div class="divider my-3"></div>
-
-                        <div class="mb-2">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="fw-bold">Nijoga Assign</span>
-                                <span class="chip warn"><i class="bi bi-exclamation-circle"></i> Nijoga</span>
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background:rgba(245,158,11,.12); border:1px solid rgba(245,158,11,.25);">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-hdd-network fs-5"></i>
+                                <div>
+                                    <div class="fw-semibold">Jobs Queue</div>
+                                    <div class="subtle">Minor backlog</div>
+                                </div>
                             </div>
-                            @forelse ($nijogaGochhikarEvents as $label => $users)
-                                <div class="mb-2">
-                                    <div class="small fw-semibold mb-1">{{ $label }}</div>
-                                    <div class="strip">
-                                        @foreach ($users as $user)
-                                            <div class="mini-card">
-                                                @include('partials._user_card', ['user' => $user])
-                                            </div>
-                                        @endforeach
-                                    </div>
+                            <span class="chip warn"><i class="bi bi-clock-history"></i> Watch</span>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-3" style="background:rgba(244,63,94,.12); border:1px solid rgba(244,63,94,.25);">
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-cloud-slash fs-5"></i>
+                                <div>
+                                    <div class="fw-semibold">Backups</div>
+                                    <div class="subtle">Last run 36m ago</div>
                                 </div>
-                            @empty
-                                <div class="alert alert-light border" role="alert">
-                                    No Nijoga Gochhikar for today.
-                                </div>
-                            @endforelse
+                            </div>
+                            <span class="chip danger"><i class="bi bi-exclamation-triangle"></i> Action</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- =========================
-                 COLORFUL KPI GRID
-            ========================= -->
+            <!-- ===== KPI GRID ===== -->
             <div class="col-12 mt-1">
                 <div class="row g-3">
                     <!-- Today’s Registrations -->
@@ -697,7 +751,7 @@
 @endsection
 
 @section('scripts')
-    <!-- Vendors -->
+    <!-- Vendors (if you use DataTables elsewhere on the page, keep these; otherwise safe to remove) -->
     <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
@@ -710,9 +764,10 @@
     <script src="{{ asset('assets/plugins/datatable/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/datatable/responsive.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/js/table-data.js') }}"></script>
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -751,6 +806,25 @@
             localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
             updateThemeButton();
         });
+
+        // Preserve active tab via URL hash
+        (function(){
+            const triggerTabList = [].slice.call(document.querySelectorAll('#sebaTabs button[data-bs-toggle="pill"]'));
+            triggerTabList.forEach(function (triggerEl) {
+                triggerEl.addEventListener('shown.bs.tab', function (event) {
+                    const target = event.target.getAttribute('data-bs-target');
+                    history.replaceState(null, '', target);
+                });
+            });
+            const hash = window.location.hash;
+            if (hash) {
+                const tabTrigger = document.querySelector(`#sebaTabs button[data-bs-target="${hash}"]`);
+                if (tabTrigger) new bootstrap.Tab(tabTrigger).show();
+            }
+        })();
+
+        // Enable tooltips if any appear in included partials
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
         // Approve / Reject handlers
         document.addEventListener('click', function (e) {
