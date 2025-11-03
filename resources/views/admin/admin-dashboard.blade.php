@@ -1,166 +1,228 @@
 @extends('layouts.app')
 
 @section('styles')
-    <!-- Icons & vendor CSS you already use -->
+    <!-- Icons & vendor CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Modern, legible fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+
     <style>
         :root{
-            --brand-1:#6a11cb;      /* primary */
-            --brand-2:#2575fc;      /* secondary */
-            --brand-3:#f8c66d;      /* accent */
-            --ok:#1db954;
-            --warn:#f59f00;
-            --danger:#e03131;
-            --muted:#6c757d;
+            /* Brand */
+            --brand-1:#6a11cb;
+            --brand-2:#2575fc;
+            --brand-3:#f8c66d;
 
+            /* Accents */
+            --ok:#16a34a;
+            --warn:#f59e0b;
+            --danger:#ef4444;
+            --muted:#6b7280;
+
+            /* Surfaces (light) */
             --surface:#ffffff;
-            --surface-soft:#f8f9fb;
-            --ink:#1f2937;
-            --ink-soft:#3d4a5d;
-            --border:#e6e8ef;
-            --shadow:0 10px 24px rgba(16, 24, 40, .06);
+            --surface-2:#f7f8fc;
+            --surface-3:#eef2ff;
+            --ink:#111827;
+            --ink-soft:#334155;
+            --border:rgba(17, 24, 39, .08);
+            --ring:rgba(37,117,252,.35);
+            --shadow:0 10px 30px rgba(2, 6, 23, .08);
+
+            /* Special */
+            --glass-top:rgba(255,255,255,.7);
+            --glass:rgba(255,255,255,.55);
+            --gradient:linear-gradient(90deg, var(--brand-1), var(--brand-2));
         }
 
-        /* Page shell */
-        body { background: linear-gradient(180deg, #eef2f9 0%, #fbfbfd 100%) no-repeat fixed; }
+        /* Dark mode tokens */
+        html.dark{
+            --surface:#0b1020;
+            --surface-2:#0f152a;
+            --surface-3:#111a33;
+            --ink:#e5e7eb;
+            --ink-soft:#cbd5e1;
+            --border:rgba(148,163,184,.18);
+            --glass-top:rgba(17,24,39,.7);
+            --glass:rgba(17,24,39,.55);
+            --shadow:0 12px 36px rgba(0,0,0,.35);
+        }
+
+        /* Global reset / base */
+        * { outline-color: var(--brand-2); }
+        html, body { height:100%; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+            background:
+                radial-gradient(1200px 600px at -10% -10%, rgba(106,17,203,.07), transparent 60%),
+                radial-gradient(1200px 600px at 110% -10%, rgba(37,117,252,.07), transparent 60%),
+                linear-gradient(180deg, #f6f8ff 0%, #fbfbfd 100%) fixed;
+            color: var(--ink);
+        }
+        html.dark body{
+            background:
+                radial-gradient(1200px 600px at -10% -10%, rgba(106,17,203,.15), transparent 60%),
+                radial-gradient(1200px 600px at 110% -10%, rgba(37,117,252,.12), transparent 60%),
+                linear-gradient(180deg, #0a0f1d 0%, #0b1020 100%) fixed;
+        }
+
+        /* Focus */
+        :is(button,a,.form-control,.nav-link,.chip,.stat,.seba-card):focus-visible{
+            box-shadow: 0 0 0 4px var(--ring);
+        }
+
+        /* Banner */
+        .banner {
+            position: relative;
+            background: linear-gradient(180deg, var(--glass-top), var(--glass));
+            backdrop-filter: blur(8px);
+            border:1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            padding: 18px;
+        }
+        .banner:after{
+            content:'';
+            position:absolute; inset:0;
+            border-radius:20px;
+            background:
+              radial-gradient(60% 120% at 0% 0%, rgba(106,17,203,.08), transparent 50%),
+              radial-gradient(60% 120% at 100% 0%, rgba(37,117,252,.08), transparent 50%);
+            pointer-events:none;
+        }
+        .banner-pill{
+            background: #fff;
+            color: var(--ink);
+            border:1px solid var(--border);
+            border-radius: 999px;
+            padding: 8px 12px;
+            display: inline-flex;
+            gap:8px; align-items:center; font-weight:700;
+        }
+        html.dark .banner-pill{ background: var(--surface-2); }
+
+        /* Title styles */
+        .ux-title{ font-weight: 800; color: var(--ink); letter-spacing:.2px; }
+        .ux-subtle{ color: var(--muted); }
 
         /* Cards */
         .ux-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 16px;
+            border-radius: 18px;
             box-shadow: var(--shadow);
         }
         .ux-card__head{
             border-bottom: 1px solid var(--border);
             padding: 14px 18px;
             background: linear-gradient(90deg, rgba(106,17,203,.08), rgba(37,117,252,.08));
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-        }
-        .ux-title{
-            font-weight: 700; color: var(--ink); letter-spacing:.2px;
-        }
-        .ux-subtle{ color: var(--muted); }
-
-        /* Top banner */
-        .banner {
-            background: radial-gradient(110% 160% at 0% 0%, #f8f9ff 0%, #eef4ff 45%, #ffffff 100%) ;
-            border:1px solid var(--border);
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-            padding: 18px;
-        }
-        .banner-pill{
-            background: #fff;
-            border:1px solid var(--border);
-            border-radius: 999px;
-            padding: 6px 10px;
-            display: inline-flex;
-            gap:8px;
-            align-items: center;
-            font-weight:600;
+            border-top-left-radius: 18px; border-top-right-radius: 18px;
         }
 
-        /* Stat grid */
+        /* Stat tile */
         .stat {
             position: relative;
             overflow: hidden;
             padding: 16px;
             background: var(--surface);
             border:1px solid var(--border);
-            border-radius: 14px;
-            transition: transform .2s ease, box-shadow .2s ease;
+            border-radius: 16px;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
         }
-        .stat:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+        .stat:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(37,117,252,.35); }
         .stat .badge-pill {
             border-radius: 999px;
             background: rgba(106,17,203,.08);
             color: var(--brand-1);
-            font-weight: 600;
+            font-weight: 700;
             padding: 6px 10px;
             font-size:.85rem;
         }
-        .stat .count {
-            font-size: 2rem;
+        .count {
+            font-size: clamp(1.6rem, 2.4vw, 2.2rem);
             font-weight: 800;
             color: var(--ink);
             line-height: 1.1;
+            letter-spacing:-.5px;
         }
-        .stat .label { color: var(--ink-soft); font-weight: 600; }
+        .label { color: var(--ink-soft); font-weight: 600; }
 
-        /* Seba user strip */
+        /* Horizontal user strip */
         .seba-strip{
-            display: grid;
-            grid-auto-flow: column;
-            grid-auto-columns: max-content;
-            gap: 14px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            scroll-snap-type: x mandatory;
+            display: grid; grid-auto-flow: column; grid-auto-columns: max-content;
+            gap: 14px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type:x mandatory;
         }
         .seba-card{
             scroll-snap-align: start;
             min-width: 220px;
             border:1px solid var(--border);
             border-radius: 14px;
-            background: var(--surface-soft);
+            background: var(--surface-2);
             padding: 12px;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
         }
+        .seba-card:hover{ transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(106,17,203,.35); }
         .seba-card .avatar{
             width: 54px; height:54px; object-fit:cover; border-radius:50%;
             border:2px solid #fff; box-shadow: var(--shadow);
         }
+
+        /* Chips */
         .chip{
             display:inline-flex; align-items:center; gap:6px;
-            padding: 4px 8px; border-radius: 999px; font-size:.8rem; font-weight:600;
+            padding: 4px 10px; border-radius: 999px; font-size:.8rem; font-weight:700;
             background:#fff; border:1px solid var(--border); color: var(--ink-soft);
         }
-        .chip.ok{ color: var(--ok); border-color: rgba(29,185,84,.35); background: rgba(29,185,84,.06); }
-        .chip.warn{ color: var(--warn); border-color: rgba(245,159,0,.35); background: rgba(245,159,0,.08); }
-        .chip.danger{ color: var(--danger); border-color: rgba(224,49,49,.35); background: rgba(224,49,49,.08); }
+        html.dark .chip{ background: var(--surface-2); }
+        .chip.ok{ color: var(--ok); border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.08); }
+        .chip.warn{ color: var(--warn); border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.10); }
+        .chip.danger{ color: var(--danger); border-color: rgba(239,68,68,.35); background: rgba(239,68,68,.10); }
 
-        /* Tab pills */
+        /* Pills (tabs) */
         .nav-modern .nav-link{
             border:1px solid var(--border);
-            background:#fff;
+            background:var(--surface);
             color: var(--ink-soft);
-            font-weight:700;
+            font-weight:800; letter-spacing:.2px;
             border-radius: 12px;
             padding:.6rem 1rem;
         }
         .nav-modern .nav-link.active{
-            color:#fff;
-            background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
-            border-color: transparent;
-            box-shadow: var(--shadow);
+            color:#fff; background: var(--gradient);
+            border-color: transparent; box-shadow: var(--shadow);
         }
 
         /* Lists */
-        .user-list{
-            max-height: 300px;
-            overflow:auto;
-        }
-        .user-item:hover{ background: #fafbff; }
+        .user-list{ max-height: 320px; overflow:auto; }
+        .user-item:hover{ background: rgba(37,117,252,.06); }
 
         /* Helpers */
         .text-gradient{
-            background: linear-gradient(90deg, var(--brand-1), var(--brand-2));
+            background: var(--gradient);
             -webkit-background-clip: text; background-clip: text; color: transparent;
         }
         .divider{ height:1px; background: var(--border); margin: 8px 0;}
-        .small-muted{ font-size:.85rem; color: var(--muted); }
+        .small-muted{ font-size:.9rem; color: var(--muted); }
+        .mono{ font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
-        /* Make scrollbars slimmer (WebKit) */
+        /* Scrollbars */
         .seba-strip::-webkit-scrollbar, .user-list::-webkit-scrollbar { height:8px; width:8px; }
-        .seba-strip::-webkit-scrollbar-thumb, .user-list::-webkit-scrollbar-thumb {
-            background: #d7d9e0; border-radius: 8px;
+        .seba-strip::-webkit-scrollbar-thumb, .user-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        html.dark .seba-strip::-webkit-scrollbar-thumb, html.dark .user-list::-webkit-scrollbar-thumb { background: #475569; }
+
+        /* Theme toggle button */
+        .btn-theme{
+            display:inline-flex; align-items:center; gap:8px;
+            border:1px solid var(--border); background: var(--surface);
+            border-radius: 999px; padding:8px 12px; font-weight:700;
+            transition: transform .15s ease, box-shadow .15s ease;
         }
+        .btn-theme:hover{ transform: translateY(-1px); box-shadow: var(--shadow); }
     </style>
 @endsection
 
@@ -169,7 +231,7 @@
     <!-- Banner -->
     <div class="banner mb-4">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-            <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
                 <div class="banner-pill">
                     <i class="bi bi-calendar-week"></i>
                     <span>{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
@@ -183,9 +245,16 @@
                     <span class="text-gradient fw-bold">Gochhikar Beddha: {{ $gochhikarBeddha ?: 'N/A' }}</span>
                 </div>
             </div>
-            <div class="d-flex align-items-center gap-2 small-muted">
-                <i class="bi bi-clock-history"></i>
-                <span id="live-time"></span>
+
+            <div class="d-flex align-items-center gap-2">
+                <button id="themeToggle" class="btn-theme" type="button" aria-pressed="false">
+                    <i class="bi bi-moon-stars" id="themeIcon"></i>
+                    <span class="d-none d-sm-inline">Theme</span>
+                </button>
+                <div class="d-flex align-items-center gap-2 small-muted mono">
+                    <i class="bi bi-clock-history"></i>
+                    <span id="live-time"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -323,6 +392,7 @@
         <!-- Stat tiles -->
         <div class="col-12 mt-2">
             <div class="row g-3">
+                <!-- Today’s Registrations -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -347,6 +417,7 @@
                     </div>
                 </div>
 
+                <!-- Pending Profiles -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -371,6 +442,7 @@
                     </div>
                 </div>
 
+                <!-- Active Profiles -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -395,6 +467,7 @@
                     </div>
                 </div>
 
+                <!-- Incomplete Profiles -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -419,6 +492,7 @@
                     </div>
                 </div>
 
+                <!-- Today Approved -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -443,6 +517,7 @@
                     </div>
                 </div>
 
+                <!-- Today Rejected -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -467,6 +542,7 @@
                     </div>
                 </div>
 
+                <!-- Updated Profiles -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -491,6 +567,7 @@
                     </div>
                 </div>
 
+                <!-- Total Rejected -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -515,7 +592,7 @@
                     </div>
                 </div>
 
-                <!-- Applications -->
+                <!-- Applications: Today -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -540,6 +617,7 @@
                     </div>
                 </div>
 
+                <!-- Applications: Approved -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -564,6 +642,7 @@
                     </div>
                 </div>
 
+                <!-- Applications: Rejected -->
                 <div class="col-12 col-sm-6 col-xl-3">
                     <div class="stat">
                         <div class="d-flex justify-content-between align-items-start">
@@ -614,14 +693,50 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Live time
+        // ---------------------------
+        // Live time (HH:MM:SS)
+        // ---------------------------
         (function tick() {
             const el = document.getElementById('live-time');
             if (el) el.textContent = new Date().toLocaleTimeString();
             setTimeout(tick, 1000);
         })();
 
+        // ---------------------------
+        // Theme toggle (light/dark)
+        // ---------------------------
+        (function themeInit(){
+            const html = document.documentElement;
+            const saved = localStorage.getItem('theme') || '';
+            if(saved){
+                html.classList.toggle('dark', saved === 'dark');
+            } else {
+                // Respect system preference on first visit
+                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                html.classList.toggle('dark', systemDark);
+            }
+            updateThemeButton();
+        })();
+
+        function updateThemeButton(){
+            const isDark = document.documentElement.classList.contains('dark');
+            const btn = document.getElementById('themeToggle');
+            const icon = document.getElementById('themeIcon');
+            if (!btn || !icon) return;
+            btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+            icon.className = isDark ? 'bi bi-sun' : 'bi bi-moon-stars';
+        }
+
+        document.getElementById('themeToggle')?.addEventListener('click', () => {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            updateThemeButton();
+        });
+
+        // ---------------------------
         // Approve / Reject handlers
+        // ---------------------------
         document.addEventListener('click', function (e) {
             const approveBtn = e.target.closest('.approve-btn');
             const rejectBtn = e.target.closest('.reject-btn');
@@ -633,8 +748,8 @@
                     text: 'This will mark the profile as approved.',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#1db954',
-                    cancelButtonColor: '#6c757d',
+                    confirmButtonColor: '#16a34a',
+                    cancelButtonColor: '#6b7280',
                     confirmButtonText: 'Approve'
                 }).then((res) => {
                     if (res.isConfirmed) {
@@ -650,6 +765,8 @@
                         .then(resp => {
                             Swal.fire('Approved!', resp.message || 'Profile approved.', 'success')
                                 .then(() => location.reload());
+                        }).catch(() => {
+                            Swal.fire('Error', 'Unable to approve. Try again.', 'error');
                         });
                     }
                 });
@@ -664,8 +781,8 @@
                     inputPlaceholder: 'Type your reason here...',
                     inputAttributes: { 'aria-label': 'Type your reason here' },
                     showCancelButton: true,
-                    confirmButtonColor: '#e03131',
-                    cancelButtonColor: '#6c757d',
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#6b7280',
                     confirmButtonText: 'Reject',
                     preConfirm: (reason) => {
                         if (!reason) {
@@ -687,6 +804,8 @@
                         .then(resp => {
                             Swal.fire('Rejected', resp.message || 'Profile rejected.', 'error')
                                 .then(() => location.reload());
+                        }).catch(() => {
+                            Swal.fire('Error', 'Unable to reject. Try again.', 'error');
                         });
                     }
                 });
