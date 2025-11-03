@@ -159,15 +159,24 @@
         .tabs .nav-link{ border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); font-weight:800; border-radius:12px; padding:.55rem 1rem; }
         .tabs .nav-link.active{ color:#fff; background: var(--g-brand); border-color: transparent; }
 
-        /* Horizontal people strip */
+        /* ===== People strip – unified sizing & alignment ===== */
         .strip{
-            display:grid; grid-auto-flow:column; grid-auto-columns:minmax(240px, 1fr);
-            gap:14px; overflow-x:auto; padding-bottom:8px; scroll-snap-type:x mandatory;
+            display:grid;
+            grid-auto-flow:column;
+            grid-auto-columns: clamp(220px, 28vw, 260px);
+            gap:14px;
+            overflow-x:auto;
+            padding:2px 2px 10px;
+            scroll-snap-type:x mandatory;
         }
         .mini-card{
             scroll-snap-align:start;
             background: color-mix(in oklab, var(--panel) 90%, var(--surface-2));
-            border:1px solid var(--border); border-radius:14px; padding:12px;
+            border:1px solid var(--border);
+            border-radius:14px;
+            padding:12px;
+            height: 142px; /* fixed height for consistent rows */
+            display:flex; align-items:center; justify-content:center;
             transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
         }
         .mini-card:hover{ transform:translateY(-2px); box-shadow: var(--shadow); border-color: rgba(124,58,237,.35); }
@@ -344,8 +353,12 @@
                             <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel" aria-labelledby="pratihari-tab">
                                 @forelse ($pratihariEvents as $label => $pratiharis)
                                     <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <span class="fw-bold">{{ $label }}</span>
+                                        <!-- header row aligned consistently -->
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-bold">{{ $label }}</span>
+                                                <span class="badge text-bg-light border">{{ count($pratiharis) }}</span>
+                                            </div>
                                             <span class="chip ok"><i class="bi bi-calendar-event"></i> Today</span>
                                         </div>
                                         <div class="strip">
@@ -368,8 +381,11 @@
                             <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
                                 @forelse ($nijogaAssign as $label => $nojoga)
                                     <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <span class="fw-bold">{{ $label }}</span>
+                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-bold">{{ $label }}</span>
+                                                <span class="badge text-bg-light border">{{ count($nojoga) }}</span>
+                                            </div>
                                             <span class="chip warn"><i class="bi bi-clipboard2-pulse"></i> Nijoga</span>
                                         </div>
                                         <div class="strip">
@@ -392,7 +408,7 @@
                 </div>
             </div>
 
-            <!-- Right: Gochhikar Today + Quick Actions + Assign Seba -->
+            <!-- Right: Gochhikar Today + Quick Actions -->
             <div class="col-12 col-xl-4">
                 <!-- Gochhikar Today -->
                 <div class="panel h-100 mb-3">
@@ -401,14 +417,21 @@
                         <div class="subtle">Normal & Nijoga assignments</div>
                     </div>
                     <div class="p-3">
+                        <!-- Normal -->
                         <div class="mb-3">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="fw-bold">Gochhikar</span>
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold">Gochhikar</span>
+                                    <span class="badge text-bg-light border">{{ collect($gochhikarEvents)->flatten(1)->count() }}</span>
+                                </div>
                                 <span class="chip ok"><i class="bi bi-check2-circle"></i> Normal</span>
                             </div>
                             @forelse ($gochhikarEvents as $label => $users)
                                 <div class="mb-2">
-                                    <div class="small fw-semibold mb-1">{{ $label }}</div>
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <div class="small fw-semibold">{{ $label }}</div>
+                                        <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                    </div>
                                     <div class="strip">
                                         @foreach ($users as $user)
                                             <div class="mini-card">
@@ -426,14 +449,21 @@
 
                         <div class="divider my-3"></div>
 
+                        <!-- Nijoga -->
                         <div class="mb-2">
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                <span class="fw-bold">Nijoga Assign</span>
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-bold">Nijoga Assign</span>
+                                    <span class="badge text-bg-light border">{{ collect($nijogaGochhikarEvents)->flatten(1)->count() }}</span>
+                                </div>
                                 <span class="chip warn"><i class="bi bi-exclamation-circle"></i> Nijoga</span>
                             </div>
                             @forelse ($nijogaGochhikarEvents as $label => $users)
                                 <div class="mb-2">
-                                    <div class="small fw-semibold mb-1">{{ $label }}</div>
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <div class="small fw-semibold">{{ $label }}</div>
+                                        <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                    </div>
                                     <div class="strip">
                                         @foreach ($users as $user)
                                             <div class="mini-card">
@@ -474,57 +504,6 @@
                         </a>
                     </div>
                 </div>
-{{-- 
-                <!-- Assign Pratihari Seba -->
-                <div class="panel mb-3">
-                    <div class="panel-head d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="section-title">Assign Pratihari Seba</div>
-                            <div class="subtle">Quick-create an assignment</div>
-                        </div>
-                        <span class="chip ok"><i class="bi bi-plus-circle"></i> New</span>
-                    </div>
-                    <div class="p-3">
-                        <form action="{{ route('admin.pratihari.assignSeba') }}" method="POST" class="row g-3">
-                            @csrf
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">User</label>
-                                @isset($allUsers)
-                                    <select class="form-select" name="user_id" id="sebaUserSelect">
-                                        <option value="">Select user…</option>
-                                        @foreach ($allUsers as $u)
-                                            <option value="{{ $u->pratihari_id }}">
-                                                {{ $u->first_name }} {{ $u->last_name }} — {{ $u->phone_no }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <input type="text" class="form-control" name="user_lookup" placeholder="Search name / phone">
-                                @endisset
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Date</label>
-                                <input type="date" class="form-control" name="date" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Time</label>
-                                <input type="time" class="form-control" name="time">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Label / Slot</label>
-                                <input type="text" class="form-control" name="label" placeholder="e.g., Morning Seba">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Notes</label>
-                                <textarea class="form-control" rows="2" name="notes" placeholder="Optional note…"></textarea>
-                            </div>
-                            <div class="col-12 d-flex gap-2">
-                                <button class="btn btn-primary"><i class="bi bi-send"></i> Assign</button>
-                                <button type="reset" class="btn btn-outline-secondary">Reset</button>
-                            </div>
-                        </form>
-                    </div>
-                </div> --}}
 
             </div>
 
