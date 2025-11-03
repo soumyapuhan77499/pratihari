@@ -474,7 +474,7 @@
                         </a>
                     </div>
                 </div>
-
+{{-- 
                 <!-- Assign Pratihari Seba -->
                 <div class="panel mb-3">
                     <div class="panel-head d-flex align-items-center justify-content-between">
@@ -524,7 +524,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> --}}
 
             </div>
 
