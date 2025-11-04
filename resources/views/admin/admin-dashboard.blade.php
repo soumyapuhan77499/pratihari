@@ -852,7 +852,7 @@
                             <div class="value mt-2">{{ count($todayProfiles) }}</div>
                             <div class="subtle">New profiles created</div>
                             <div class="kpi-progress"><span style="--p: 38%;"></span></div>
-                            <div class="list-max mt-2">
+                            {{-- <div class="list-max mt-2">
                                 @foreach ($todayProfiles->take(5) as $user)
                                     <div
                                         class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
@@ -869,7 +869,7 @@
                                         </div>
                                     </div>
                                 @endforeach
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 
