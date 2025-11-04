@@ -366,7 +366,7 @@
                                                 'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
                                                 'phone' => $u->phone_no ?? '',
                                             ];
-                                        });
+                                        })->values();
                                     @endphp
                                     <div class="mb-3">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
@@ -379,7 +379,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Pratihari · {{ $label }}"
-                                               data-users='@json($pratihariList)'
+                                               data-users="@json($pratihariList)"
                                                aria-label="View all {{ count($pratiharis) }} Pratihari in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Pratihari</div>
@@ -409,7 +409,7 @@
                                                 'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
                                                 'phone' => $u->phone_no ?? '',
                                             ];
-                                        });
+                                        })->values();
                                     @endphp
                                     <div class="mb-3">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
@@ -422,7 +422,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Nijoga · {{ $label }}"
-                                               data-users='@json($nijogaList)'
+                                               data-users="@json($nijogaList)"
                                                aria-label="View all {{ count($nojoga) }} Nijoga in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
@@ -507,7 +507,7 @@
                                                 'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
                                                 'phone' => $u->phone_no ?? '',
                                             ];
-                                        });
+                                        })->values();
                                     @endphp
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
@@ -517,7 +517,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Gochhikar · {{ $label }}"
-                                               data-users='@json($gList)'
+                                               data-users="@json($gList)"
                                                aria-label="View all {{ count($users) }} Gochhikar in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Gochhikar</div>
@@ -547,7 +547,7 @@
                                                 'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
                                                 'phone' => $u->phone_no ?? '',
                                             ];
-                                        });
+                                        })->values();
                                     @endphp
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
@@ -557,7 +557,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Nijoga · {{ $label }}"
-                                               data-users='@json($ngList)'
+                                               data-users="@json($ngList)"
                                                aria-label="View all {{ count($users) }} Nijoga Gochhikar in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
@@ -596,7 +596,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today’s Registrations"
                                    data-type="profiles"
-                                   data-users='@json($todayProfiles->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($todayProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -616,7 +616,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Pending Profiles"
                                    data-type="pending"
-                                   data-users='@json($pendingProfile->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($pendingProfile->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -636,7 +636,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Active Profiles"
                                    data-type="approved"
-                                   data-users='@json($totalActiveUsers->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($totalActiveUsers->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -656,7 +656,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Incomplete Profiles"
                                    data-type="incomplete"
-                                   data-users='@json($incompleteProfiles->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($incompleteProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -676,7 +676,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today Approved"
                                    data-type="todayapproved"
-                                   data-users='@json($todayApprovedProfiles->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($todayApprovedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -696,7 +696,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today Rejected"
                                    data-type="todayrejected"
-                                   data-users='@json($todayRejectedProfiles->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($todayRejectedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -716,7 +716,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Updated Profiles"
                                    data-type="updated"
-                                   data-users='@json($updatedProfiles->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($updatedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -736,7 +736,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Total Rejected"
                                    data-type="rejected"
-                                   data-users='@json($rejectedProfiles->map(fn($u)=>["name"=>trim(($u->first_name ?? "")." ".($u->last_name ?? "")),"phone"=>$u->phone_no ?? "","link"=>route("admin.viewProfile",$u->pratihari_id)]))'>
+                                   data-users="@json($rejectedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -756,7 +756,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today’s Applications"
                                    data-type="apps_today"
-                                   data-users='@json($todayApplications->map(fn($a)=>["name"=>$a->header ?? "N/A","phone"=>"","meta"=>$a->date ?? "","link"=>""]))'>
+                                   data-users="@json($todayApplications->map(function($a){ return ['name'=>$a->header ?? 'N/A','phone'=>'','meta'=>$a->date ?? '','link'=>'']; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -776,7 +776,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Approved Applications"
                                    data-type="apps_approved"
-                                   data-users='@json($approvedApplication->map(fn($a)=>["name"=>$a->header ?? "N/A","phone"=>"","meta"=>$a->date ?? "","link"=>""]))'>
+                                   data-users="@json($approvedApplication->map(function($a){ return ['name'=>$a->header ?? 'N/A','phone'=>'','meta'=>$a->date ?? '','link'=>'']; })->values())">
                                     View all
                                 </a>
                             </div>
@@ -796,7 +796,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Rejected Applications"
                                    data-type="apps_rejected"
-                                   data-users='@json($rejectedApplication->map(fn($a)=>["name"=>$a->header ?? "N/A","phone"=>"","meta"=>$a->date ?? "","link"=>""]))'>
+                                   data-users="@json($rejectedApplication->map(function($a){ return ['name'=>$a->header ?? 'N/A','phone'=>'','meta'=>$a->date ?? '','link'=>'']; })->values())">
                                     View all
                                 </a>
                             </div>
