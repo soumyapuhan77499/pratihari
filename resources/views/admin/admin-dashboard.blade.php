@@ -324,13 +324,13 @@
                     <div class="subtitle">A colorful, icon-led overview for quick scanning and action.</div>
                 </div>
                 <div class="header-actions d-flex gap-2 ms-md-auto">
-                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'today') }}">
+                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'today') }}" style="color: white">
                         <i class="bi bi-funnel"></i> Today
                     </a>
-                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
+                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}" style="color: white">
                         <i class="bi bi-check2-circle"></i> Approved
                     </a>
-                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
+                    <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'pending') }}" style="color: white">
                         <i class="bi bi-hourglass-split"></i> Pending
                     </a>
                 </div>
