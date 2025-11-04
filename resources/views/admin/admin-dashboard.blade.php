@@ -776,7 +776,7 @@
                             <!-- Gochhikar (Normal) -->
                             <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel"
                                 aria-labelledby="gochhikar-tab" tabindex="0">
-                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                {{-- <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="fw-bold">Gochhikar</span>
                                         <span class="badge text-bg-light border">{{ $gochhikarCount }}</span>
@@ -784,7 +784,7 @@
                                     <span class="chip ok">
                                         <i class="bi bi-check2-circle"></i> Normal
                                     </span>
-                                </div>
+                                </div> --}}
 
                                 @forelse ($gochhikarEvents as $label => $users)
                                     <div class="mb-2">
