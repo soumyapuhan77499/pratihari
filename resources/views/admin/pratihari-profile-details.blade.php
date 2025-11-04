@@ -9,7 +9,7 @@
 
     <style>
         :root{
-            /* Brand palette (match dashboard) */
+            /* Brand palette */
             --brand-a: #7c3aed; /* violet  */
             --brand-b: #06b6d4; /* cyan    */
             --brand-c: #22c55e; /* emerald */
@@ -18,8 +18,17 @@
             --border: rgba(2,6,23,.10);
             --ring: rgba(6,182,212,.28);
             --soft: rgba(2,6,23,.04);
-            --chip-bg: rgba(255,255,255,.45);
-            --chip-bd: rgba(2,6,23,.08);
+
+            /* Chip color tokens */
+            --violet:  #7c3aed;
+            --cyan:    #06b6d4;
+            --emerald: #22c55e;
+            --amber:   #f59e0b;
+            --rose:    #fb7185;
+            --sky:     #0ea5e9;
+            --indigo:  #6366f1;
+            --pink:    #ec4899;
+            --slate:   #334155;
         }
 
         /* Page header */
@@ -32,89 +41,71 @@
         }
         .page-header .title{ font-weight: 800; letter-spacing:.3px; }
 
-        /* ---------------------------------------------------
-           Tab bar (colorful, scrollable, perfectly aligned)
-           --------------------------------------------------- */
+        /* Tab bar */
         .tabbar{
-            position: relative;
-            background:#fff;
-            border:1px solid var(--border);
-            border-radius:14px;
+            background:#fff;border:1px solid var(--border);border-radius:14px;
             box-shadow: 0 8px 22px rgba(2,6,23,.06);
-            padding:.35rem;
-            overflow:auto;
-            scrollbar-width: thin;
+            padding:.35rem;overflow:auto;scrollbar-width: thin;
         }
-        .tabbar .nav{
-            flex-wrap: nowrap;
-            gap:.35rem;
-        }
+        .tabbar .nav{flex-wrap: nowrap;gap:.35rem;}
         .tabbar .nav-link{
-            display:flex; align-items:center; gap:.55rem;
-            border:1px solid transparent;
-            background: #f8fafc;
-            color: var(--muted);
-            border-radius: 11px;
-            padding:.55rem .9rem;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: transform .12s ease, background .2s ease, color .2s ease, border-color .2s ease;
+            display:flex;align-items:center;gap:.55rem;border:1px solid transparent;
+            background:#f8fafc;color:var(--muted);border-radius:11px;
+            padding:.55rem .9rem;font-weight:700;white-space:nowrap;
+            transition:transform .12s ease, background .2s ease, color .2s ease, border-color .2s ease;
         }
         .tabbar .nav-link:hover{
-            background:#eef2ff; color: var(--ink);
-            transform: translateY(-1px);
+            background:#eef2ff;color:var(--ink);transform: translateY(-1px);
             border-color: rgba(124,58,237,.25);
         }
         .tabbar .nav-link.active{
-            color:#fff !important;
-            background: linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            border-color: transparent;
-            box-shadow: 0 10px 18px rgba(124,58,237,.25);
+            color:#fff!important;background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            border-color:transparent;box-shadow:0 10px 18px rgba(124,58,237,.25);
         }
-        .tabbar .nav-link i{ font-size: .95rem; }
+        .tabbar .nav-link i{font-size:.95rem;}
 
-        /* Panel/Card */
+        /* Card */
         .card{ border:1px solid var(--border); border-radius: 1rem; }
 
         /* Section headings */
         .section-title{ font-weight: 800; color: var(--ink); }
         .section-hint{ color: var(--muted); font-size: .9rem; }
 
-        /* ---------------------------------------------------
-           Inputs with glass chips (transparent, subtle ring)
-           --------------------------------------------------- */
+        /* Colorful chips */
         .input-group .chip{
             display:inline-grid; place-items:center;
             width: 40px; min-width:40px; height:40px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--chip-bg), rgba(255,255,255,.2));
-            border: 1px solid var(--chip-bd);
+            border-radius: 10px; color:#fff;
+            border: 1px solid rgba(255,255,255,.35);
             box-shadow:
-              inset 0 0 0 1px rgba(255,255,255,.35),
-              0 4px 10px var(--soft);
-            backdrop-filter: blur(6px);
-            color: #3b3b3b;
+              inset 0 0 0 1px rgba(255,255,255,.25),
+              0 6px 16px rgba(2,6,23,.12);
+            backdrop-filter: blur(4px);
         }
-        .input-group .chip.gradient{
-            /* slight brand hint for variation */
-            background:
-              linear-gradient(135deg, rgba(124,58,237,.20), rgba(6,182,212,.20));
-        }
-        .input-group .chip i{
-            font-size: .95rem;
-        }
+        .chip i{ font-size:.95rem; }
 
+        /* Per-color variants (two-tone gradients) */
+        .chip--violet  { background: linear-gradient(135deg, color-mix(in oklab, var(--violet) 85%, #fff), color-mix(in oklab, var(--indigo) 70%, #fff)); }
+        .chip--cyan    { background: linear-gradient(135deg, color-mix(in oklab, var(--cyan) 85%, #fff), color-mix(in oklab, var(--sky) 70%, #fff)); }
+        .chip--emerald { background: linear-gradient(135deg, color-mix(in oklab, var(--emerald) 85%, #fff), color-mix(in oklab, #34d399 70%, #fff)); }
+        .chip--amber   { background: linear-gradient(135deg, color-mix(in oklab, var(--amber) 85%, #fff), color-mix(in oklab, #f97316 70%, #fff)); }
+        .chip--rose    { background: linear-gradient(135deg, color-mix(in oklab, var(--rose) 85%, #fff), color-mix(in oklab, var(--pink) 70%, #fff)); }
+        .chip--slate   { background: linear-gradient(135deg, color-mix(in oklab, var(--slate) 85%, #fff), color-mix(in oklab, #64748b 70%, #fff)); }
+
+        /* Seamless join with fields */
         .input-group>.chip + .form-control,
         .input-group>.chip + .form-select{
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
             border-left-color: transparent;
         }
+
+        /* Fields */
         .form-control, .form-select{
             border-radius: 10px;
             border-color: var(--border);
             padding: .6rem .8rem;
-            height: 40px; /* ensures perfect row alignment */
+            height: 40px;
         }
         .form-control:focus, .form-select:focus{
             border-color: color-mix(in oklab, var(--brand-b) 60%, #fff);
@@ -122,14 +113,11 @@
         }
         .form-select{ padding-right: 2.25rem; }
 
-        /* Labels */
         .form-label{ font-weight: 600; margin-bottom:.35rem; }
 
-        /* Spacing rhythm */
         .row.g-3 { --bs-gutter-x: 1rem; --bs-gutter-y: 1rem; }
         .tab-pane { padding: 1rem .25rem; }
 
-        /* Submit button */
         .btn-brand{
             background: linear-gradient(90deg,var(--brand-a),var(--brand-b));
             border: 0; color:#fff;
@@ -137,14 +125,9 @@
         }
         .btn-brand:hover{ opacity:.96; }
 
-        /* Modal image scaling */
         #cropperImage{ max-width:100%; max-height:420px; }
 
-        /* Helper: subtle divider */
-        .divider {
-            height:1px; background: var(--border);
-            margin: 1rem 0;
-        }
+        .divider { height:1px; background: var(--border); margin: 1rem 0; }
     </style>
 @endsection
 
@@ -222,7 +205,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="first_name" class="form-label">First Name</label>
                                 <div class="input-group">
-                                    <span class="chip gradient"><i class="fa-regular fa-user"></i></span>
+                                    <span class="chip chip--violet"><i class="fa-regular fa-user"></i></span>
                                     <input type="text" class="form-control" id="first_name" name="first_name" autocomplete="off">
                                 </div>
                             </div>
@@ -230,7 +213,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="middle_name" class="form-label">Middle Name</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-user"></i></span>
+                                    <span class="chip chip--slate"><i class="fa-regular fa-user"></i></span>
                                     <input type="text" class="form-control" id="middle_name" name="middle_name" autocomplete="off">
                                 </div>
                             </div>
@@ -238,7 +221,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="last_name" class="form-label">Last Name</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-user"></i></span>
+                                    <span class="chip chip--indigo"><i class="fa-regular fa-user"></i></span>
                                     <input type="text" class="form-control" id="last_name" name="last_name" autocomplete="off">
                                 </div>
                             </div>
@@ -246,7 +229,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="alias_name" class="form-label">Alias Name</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-user-tag"></i></span>
+                                    <span class="chip chip--rose"><i class="fa-solid fa-user-tag"></i></span>
                                     <input type="text" class="form-control" id="alias_name" name="alias_name" autocomplete="off">
                                 </div>
                             </div>
@@ -264,7 +247,7 @@
                             <div class="col-12 col-md-4">
                                 <label for="email" class="form-label">Email</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-envelope"></i></span>
+                                    <span class="chip chip--cyan"><i class="fa-regular fa-envelope"></i></span>
                                     <input type="email" class="form-control" id="email" name="email" autocomplete="off">
                                 </div>
                             </div>
@@ -272,7 +255,7 @@
                             <div class="col-12 col-md-4">
                                 <label for="whatsapp_no" class="form-label">WhatsApp No</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-phone"></i></span>
+                                    <span class="chip chip--emerald"><i class="fa-solid fa-phone"></i></span>
                                     <input type="tel" class="form-control" id="whatsapp_no" name="whatsapp_no" pattern="\d{10}" maxlength="10" autocomplete="off">
                                 </div>
                                 <div class="form-text">10 digits only.</div>
@@ -281,7 +264,7 @@
                             <div class="col-12 col-md-4">
                                 <label for="phone_no" class="form-label">Primary Phone No</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-phone"></i></span>
+                                    <span class="chip chip--amber"><i class="fa-solid fa-phone"></i></span>
                                     <input type="tel" class="form-control" id="phone_no" name="phone_no" pattern="\d{10}" maxlength="10" autocomplete="off">
                                 </div>
                             </div>
@@ -299,7 +282,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="blood_group" class="form-label">Blood Group</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-droplet"></i></span>
+                                    <span class="chip chip--rose"><i class="fa-solid fa-droplet"></i></span>
                                     <select class="form-select" id="blood_group" name="blood_group">
                                         <option value="">Select Blood Group</option>
                                         @foreach (['A+','A-','B+','B-','O+','O-','AB+','AB-'] as $bg)
@@ -312,7 +295,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="healthcard_no" class="form-label">Health Card No</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-id-card"></i></span>
+                                    <span class="chip chip--slate"><i class="fa-regular fa-id-card"></i></span>
                                     <input type="text" class="form-control" id="healthcard_no" name="healthcard_no" autocomplete="off">
                                 </div>
                             </div>
@@ -320,7 +303,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="health_card_photo" class="form-label">Health Card Photo</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-image"></i></span>
+                                    <span class="chip chip--indigo"><i class="fa-regular fa-image"></i></span>
                                     <input type="file" class="form-control" id="health_card_photo" name="health_card_photo" accept="image/*">
                                 </div>
                             </div>
@@ -328,7 +311,7 @@
                             <div class="col-12 col-md-3">
                                 <label for="profile_photo" class="form-label">Profile Photo</label>
                                 <div class="input-group">
-                                    <span class="chip gradient"><i class="fa-solid fa-camera"></i></span>
+                                    <span class="chip chip--violet"><i class="fa-solid fa-camera"></i></span>
                                     <input type="file" class="form-control" id="profile_photo" name="original_photo" accept="image/*">
                                 </div>
                             </div>
@@ -367,7 +350,7 @@
                             <div class="col-12 col-md-4">
                                 <label for="date_of_birth" class="form-label">Date of Birth</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-calendar"></i></span>
+                                    <span class="chip chip--cyan"><i class="fa-regular fa-calendar"></i></span>
                                     <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
                                 </div>
                             </div>
@@ -382,7 +365,7 @@
                             <div class="col-12 col-md-4" id="dateField">
                                 <label for="joining_year" class="form-label">Year of Joining</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-calendar-days"></i></span>
+                                    <span class="chip chip--cyan"><i class="fa-regular fa-calendar-days"></i></span>
                                     <select class="form-select" id="joining_year" name="joining_year">
                                         <option value="">Select Year</option>
                                         @for ($i = date('Y'); $i >= 1900; $i--)
@@ -411,21 +394,21 @@
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="father_name">Father’s Name</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-person"></i></span>
+                                    <span class="chip chip--slate"><i class="fa-solid fa-person"></i></span>
                                     <input type="text" class="form-control" id="father_name" name="father_name">
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="mother_name">Mother’s Name</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-person-dress"></i></span>
+                                    <span class="chip chip--rose"><i class="fa-solid fa-person-dress"></i></span>
                                     <input type="text" class="form-control" id="mother_name" name="mother_name">
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="spouse_name">Spouse Name</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-people-arrows"></i></span>
+                                    <span class="chip chip--violet"><i class="fa-solid fa-people-arrows"></i></span>
                                     <input type="text" class="form-control" id="spouse_name" name="spouse_name">
                                 </div>
                             </div>
@@ -442,14 +425,14 @@
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="aadhaar_no">Aadhaar Number</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-id-card"></i></span>
+                                    <span class="chip chip--indigo"><i class="fa-regular fa-id-card"></i></span>
                                     <input type="text" class="form-control" id="aadhaar_no" name="aadhaar_no">
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="pan_no">PAN</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-id-badge"></i></span>
+                                    <span class="chip chip--amber"><i class="fa-solid fa-id-badge"></i></span>
                                     <input type="text" class="form-control" id="pan_no" name="pan_no">
                                 </div>
                             </div>
@@ -466,21 +449,21 @@
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="address_line">Address Line</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-location-dot"></i></span>
+                                    <span class="chip chip--cyan"><i class="fa-solid fa-location-dot"></i></span>
                                     <input type="text" class="form-control" id="address_line" name="address_line">
                                 </div>
                             </div>
                             <div class="col-12 col-md-3">
                                 <label class="form-label" for="city">City</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-city"></i></span>
+                                    <span class="chip chip--emerald"><i class="fa-solid fa-city"></i></span>
                                     <input type="text" class="form-control" id="city" name="city">
                                 </div>
                             </div>
                             <div class="col-12 col-md-3">
                                 <label class="form-label" for="pincode">Pincode</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-hashtag"></i></span>
+                                    <span class="chip chip--slate"><i class="fa-solid fa-hashtag"></i></span>
                                     <input type="text" class="form-control" id="pincode" name="pincode" maxlength="6">
                                 </div>
                             </div>
@@ -497,14 +480,14 @@
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="profession">Profession</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-briefcase"></i></span>
+                                    <span class="chip chip--violet"><i class="fa-solid fa-briefcase"></i></span>
                                     <input type="text" class="form-control" id="profession" name="profession">
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="organization">Organization</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-building"></i></span>
+                                    <span class="chip chip--indigo"><i class="fa-solid fa-building"></i></span>
                                     <input type="text" class="form-control" id="organization" name="organization">
                                 </div>
                             </div>
@@ -521,7 +504,7 @@
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="seba_area">Area of Service</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-hands-helping"></i></span>
+                                    <span class="chip chip--emerald"><i class="fa-solid fa-hands-helping"></i></span>
                                     <input type="text" class="form-control" id="seba_area" name="seba_area">
                                 </div>
                             </div>
@@ -538,21 +521,21 @@
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="facebook">Facebook</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-brands fa-facebook-f"></i></span>
+                                    <span class="chip chip--indigo"><i class="fa-brands fa-facebook-f"></i></span>
                                     <input type="url" class="form-control" id="facebook" name="facebook">
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="instagram">Instagram</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-brands fa-instagram"></i></span>
+                                    <span class="chip chip--rose"><i class="fa-brands fa-instagram"></i></span>
                                     <input type="url" class="form-control" id="instagram" name="instagram">
                                 </div>
                             </div>
                             <div class="col-12 col-md-4">
                                 <label class="form-label" for="twitter">Twitter/X</label>
                                 <div class="input-group">
-                                    <span class="chip"><i class="fa-brands fa-x-twitter"></i></span>
+                                    <span class="chip chip--slate"><i class="fa-brands fa-x-twitter"></i></span>
                                     <input type="url" class="form-control" id="twitter" name="twitter">
                                 </div>
                             </div>
@@ -584,7 +567,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
-        // Toggle Year vs Full Date (keeps alignment by rebuilding same input-group structure)
+        // Toggle Year vs Full Date (keeps alignment)
         function toggleDateField() {
             const checked = document.getElementById("remember_date").checked;
             const wrap = document.getElementById("dateField");
@@ -592,7 +575,7 @@
                 wrap.innerHTML = `
                     <label for="joining_date" class="form-label">Date of Joining</label>
                     <div class="input-group">
-                        <span class="chip"><i class="fa-regular fa-calendar-days"></i></span>
+                        <span class="chip chip--cyan"><i class="fa-regular fa-calendar-days"></i></span>
                         <input type="date" class="form-control" id="joining_date" name="joining_date">
                     </div>`;
             } else {
@@ -602,7 +585,7 @@
                 wrap.innerHTML = `
                     <label for="joining_year" class="form-label">Year of Joining</label>
                     <div class="input-group">
-                        <span class="chip"><i class="fa-regular fa-calendar-days"></i></span>
+                        <span class="chip chip--cyan"><i class="fa-regular fa-calendar-days"></i></span>
                         <select class="form-select" id="joining_year" name="joining_year">${opts}</select>
                     </div>`;
             }
@@ -635,7 +618,6 @@
                 const file = new File([blob], 'profile_photo.jpg', { type: 'image/jpeg' });
                 const dt = new DataTransfer(); dt.items.add(file);
                 fileInput.files = dt.files;
-                // Base64 (optional for server)
                 document.getElementById('cropped_profile_photo').value = canvas.toDataURL('image/jpeg');
                 modal.hide();
             }, 'image/jpeg');
