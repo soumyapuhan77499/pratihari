@@ -10,12 +10,13 @@
     <style>
         :root{
             /* Brand palette (match dashboard) */
-            --brand-a: #7c3aed; /* violet */
-            --brand-b: #06b6d4; /* cyan   */
+            --brand-a: #7c3aed; /* violet  */
+            --brand-b: #06b6d4; /* cyan    */
             --brand-c: #22c55e; /* emerald */
             --ink: #0b1220;
             --muted: #64748b;
-            --border: rgba(2,6,23,.08);
+            --border: rgba(2,6,23,.10);
+            --ring: rgba(6,182,212,.28);
         }
 
         /* Page header */
@@ -23,34 +24,51 @@
             background: linear-gradient(90deg,var(--brand-a),var(--brand-b));
             color:#fff;
             border-radius: 1rem;
-            padding: 1.2rem 1.25rem;
+            padding: 1.05rem 1.25rem;
             box-shadow: 0 10px 24px rgba(6,182,212,.18);
         }
         .page-header .title{ font-weight: 800; letter-spacing:.3px; }
 
-        /* Tabs: colorful, friendly */
-        .smart-tabs{
-            background: #fff;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: .4rem;
+        /* ---------------------------------------------------
+           Tab bar (colorful, scrollable, perfectly aligned)
+           --------------------------------------------------- */
+        .tabbar{
+            position: relative;
+            background:#fff;
+            border:1px solid var(--border);
+            border-radius:14px;
             box-shadow: 0 8px 22px rgba(2,6,23,.06);
+            padding:.35rem;
+            overflow:auto;
+            scrollbar-width: thin;
         }
-        .smart-tabs .nav-link{
-            display: flex; align-items: center; gap:.5rem;
-            border: 0; border-radius: 10px;
+        .tabbar .nav{
+            flex-wrap: nowrap;
+            gap:.35rem;
+        }
+        .tabbar .nav-link{
+            display:flex; align-items:center; gap:.55rem;
+            border:1px solid transparent;
+            background: #f8fafc;
             color: var(--muted);
+            border-radius: 11px;
+            padding:.55rem .9rem;
             font-weight: 700;
-            padding: .6rem .9rem;
-            transition: transform .12s ease, background .2s ease, color .2s ease;
+            white-space: nowrap;
+            transition: transform .12s ease, background .2s ease, color .2s ease, border-color .2s ease;
         }
-        .smart-tabs .nav-link:hover{ background: #f6f7fb; color: var(--ink); transform: translateY(-1px); }
-        .smart-tabs .nav-link.active{
-            color: #fff;
+        .tabbar .nav-link:hover{
+            background:#eef2ff; color: var(--ink);
+            transform: translateY(-1px);
+            border-color: rgba(124,58,237,.25);
+        }
+        .tabbar .nav-link.active{
+            color:#fff;
             background: linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            box-shadow: 0 8px 18px rgba(124,58,237,.25);
+            border-color: transparent;
+            box-shadow: 0 10px 18px rgba(124,58,237,.25);
         }
-        .smart-tabs .nav-link i{ font-size: .95rem; }
+        .tabbar .nav-link i{ font-size: .95rem; }
 
         /* Card */
         .card{ border:1px solid var(--border); border-radius: 1rem; }
@@ -59,26 +77,41 @@
         .section-title{ font-weight: 800; color: var(--ink); }
         .section-hint{ color: var(--muted); font-size: .9rem; }
 
-        /* Inputs with colorful icon chips */
+        /* ---------------------------------------------------
+           Inputs with icon chips (perfect alignment)
+           --------------------------------------------------- */
         .input-group .chip{
             display:inline-grid; place-items:center;
-            width: 38px; min-width:38px; height:38px;
+            width: 40px; min-width:40px; height:40px;
             border-radius: 10px; color:#fff;
             background: linear-gradient(135deg,var(--brand-a),var(--brand-b));
             box-shadow: inset 0 0 0 1px rgba(255,255,255,.35);
+            border: 1px solid var(--border);
         }
         .input-group .chip.alt{
-            background: linear-gradient(135deg,#f59e0b,#fb7185); /* warm alt for variety */
+            background: linear-gradient(135deg,#f59e0b,#fb7185);
+        }
+        .input-group>.chip + .form-control,
+        .input-group>.chip + .form-select{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-left-color: transparent;
         }
         .form-control, .form-select{
             border-radius: 10px;
             border-color: var(--border);
             padding: .6rem .8rem;
+            height: 40px; /* ensures perfect row alignment */
         }
         .form-control:focus, .form-select:focus{
             border-color: color-mix(in oklab, var(--brand-b) 60%, #fff);
-            box-shadow: 0 0 0 .25rem rgba(6,182,212,.25);
+            box-shadow: 0 0 0 .22rem var(--ring);
         }
+        /* small helper for selects to keep arrow visible */
+        .form-select{ padding-right: 2.25rem; }
+
+        /* Labels */
+        .form-label{ font-weight: 600; margin-bottom:.35rem; }
 
         /* Submit button */
         .btn-brand{
@@ -90,9 +123,6 @@
 
         /* Modal image scaling */
         #cropperImage{ max-width:100%; max-height:420px; }
-
-        /* Small helper spacing tweak for labels */
-        .form-label{ font-weight: 600; }
     </style>
 @endsection
 
@@ -103,21 +133,23 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>
                 <div class="title h4 mb-0">Add / Edit Pratihari Profile</div>
-                <div class="small opacity-75">A colorful, accessible form that matches your dashboard.</div>
+                <div class="small opacity-75">A clean, aligned, and colorful form consistent with your dashboard.</div>
             </div>
         </div>
     </div>
 
     <!-- Tabs -->
-    <ul class="nav smart-tabs flex-wrap gap-2 mb-3">
-        <li class="nav-item"><button class="nav-link active" type="button"><i class="fa-solid fa-user"></i>Profile</button></li>
-        <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-users"></i>Family</button></li>
-        <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-id-card"></i>ID Card</button></li>
-        <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-location-dot"></i>Address</button></li>
-        <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-briefcase"></i>Occupation</button></li>
-        <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-gears"></i>Seba</button></li>
-        <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-share-nodes"></i>Social Media</button></li>
-    </ul>
+    <div class="tabbar mb-3">
+        <ul class="nav">
+            <li class="nav-item"><button class="nav-link active" type="button"><i class="fa-solid fa-user"></i>Profile</button></li>
+            <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-users"></i>Family</button></li>
+            <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-id-card"></i>ID Card</button></li>
+            <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-location-dot"></i>Address</button></li>
+            <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-briefcase"></i>Occupation</button></li>
+            <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-gears"></i>Seba</button></li>
+            <li class="nav-item"><button class="nav-link" type="button"><i class="fa-solid fa-share-nodes"></i>Social Media</button></li>
+        </ul>
+    </div>
 
     <!-- Form Card -->
     <div class="card shadow-sm">
@@ -133,7 +165,7 @@
                 </div>
 
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="first_name" class="form-label">First Name</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-user"></i></span>
@@ -141,7 +173,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="middle_name" class="form-label">Middle Name</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-user"></i></span>
@@ -149,7 +181,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="last_name" class="form-label">Last Name</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-user"></i></span>
@@ -157,10 +189,10 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="alias_name" class="form-label">Alias Name</label>
                         <div class="input-group">
-                            <span class="chip"><i class="fa-solid fa-user-tag"></i></span>
+                            <span class="chip alt"><i class="fa-solid fa-user-tag"></i></span>
                             <input type="text" class="form-control" id="alias_name" name="alias_name" autocomplete="off">
                         </div>
                     </div>
@@ -173,7 +205,7 @@
                 </div>
 
                 <div class="row g-3">
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label for="email" class="form-label">Email</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-envelope"></i></span>
@@ -181,7 +213,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label for="whatsapp_no" class="form-label">WhatsApp No</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-solid fa-phone"></i></span>
@@ -190,7 +222,7 @@
                         <div class="form-text">10 digits only.</div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label for="phone_no" class="form-label">Primary Phone No</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-solid fa-phone"></i></span>
@@ -206,10 +238,10 @@
                 </div>
 
                 <div class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="blood_group" class="form-label">Blood Group</label>
                         <div class="input-group">
-                            <span class="chip"><i class="fa-solid fa-droplet"></i></span>
+                            <span class="chip alt"><i class="fa-solid fa-droplet"></i></span>
                             <select class="form-select" id="blood_group" name="blood_group">
                                 <option value="">Select Blood Group</option>
                                 @foreach (['A+','A-','B+','B-','O+','O-','AB+','AB-'] as $bg)
@@ -219,7 +251,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="healthcard_no" class="form-label">Health Card No</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-id-card"></i></span>
@@ -227,7 +259,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="health_card_photo" class="form-label">Health Card Photo</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-image"></i></span>
@@ -235,7 +267,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-12 col-md-3">
                         <label for="profile_photo" class="form-label">Profile Photo</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-solid fa-camera"></i></span>
@@ -272,7 +304,7 @@
                 </div>
 
                 <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <label for="date_of_birth" class="form-label">Date of Birth</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-calendar"></i></span>
@@ -280,14 +312,14 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-12 col-md-4">
                         <div class="form-check mt-4">
                             <input class="form-check-input" type="checkbox" value="1" id="remember_date" onchange="toggleDateField()">
                             <label class="form-check-label" for="remember_date">Remember exact Date of Joining?</label>
                         </div>
                     </div>
 
-                    <div class="col-md-4" id="dateField">
+                    <div class="col-12 col-md-4" id="dateField">
                         <label for="joining_year" class="form-label">Year of Joining</label>
                         <div class="input-group">
                             <span class="chip"><i class="fa-regular fa-calendar-days"></i></span>
@@ -328,7 +360,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <script>
-        // Toggle Year vs Full Date
+        // Toggle Year vs Full Date (keeps alignment by rebuilding same input-group structure)
         function toggleDateField() {
             const checked = document.getElementById("remember_date").checked;
             const wrap = document.getElementById("dateField");
