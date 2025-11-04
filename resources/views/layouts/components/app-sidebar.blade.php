@@ -83,7 +83,7 @@
                     <a class="side-menu__item {{ request()->is('admin/manage-notice') ? 'is-active' : '' }}"
                        href="{{ url('admin/manage-notice') }}">
                         <i class="bi bi-bell icon gradient-6"></i>
-                        <span class="side-menu__label">Manage Notice</span>
+                        <span class="side-menu__label">Mng Notice</span>
                     </a>
                 </li>
 
@@ -92,7 +92,7 @@
                     <a class="side-menu__item {{ request()->is('admin/manage-designation') ? 'is-active' : '' }}"
                        href="{{ url('admin/manage-designation') }}">
                         <i class="bi bi-building-gear icon gradient-7"></i>
-                        <span class="side-menu__label">Manage Committee</span>
+                        <span class="side-menu__label">Mng Committee</span>
                     </a>
                 </li>
 
@@ -101,7 +101,7 @@
                     <a class="side-menu__item {{ request()->is('admin/manage-application') ? 'is-active' : '' }}"
                        href="{{ url('admin/manage-application') }}">
                         <i class="bi bi-ui-checks-grid icon gradient-8"></i>
-                        <span class="side-menu__label">Manage Application</span>
+                        <span class="side-menu__label">Mng Application</span>
                     </a>
                 </li>
 
@@ -120,7 +120,7 @@
                         <a class="side-menu__item {{ Route::is('superadmin.manageAdmin') ? 'is-active' : '' }}"
                            href="{{ route('superadmin.manageAdmin') }}">
                             <i class="bi bi-shield-lock icon gradient-10"></i>
-                            <span class="side-menu__label">Manage Admin</span>
+                            <span class="side-menu__label">Mng Admin</span>
                         </a>
                     </li>
                 @endif
