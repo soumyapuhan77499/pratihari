@@ -74,7 +74,6 @@
         /* ===== Underline input style ===== */
         .form-label{ font-weight: 600; margin-bottom:.35rem; }
 
-        /* Make the underline live on the group, so it's continuous under chip + input */
         .input-group{
             display:flex; align-items:center; gap:.6rem;
             border-bottom: 2px solid var(--border);
@@ -82,13 +81,11 @@
             background: transparent;
             transition: border-color .2s ease, box-shadow .2s ease;
         }
-        /* Animated thicker accent on focus */
         .input-group:focus-within{
             border-bottom-color: color-mix(in oklab, var(--brand-b) 70%, #fff 30%);
             box-shadow: 0 6px 0 -5px var(--ring);
         }
 
-        /* The actual inputs have NO borders/background, so only the underline shows */
         .form-control,
         .form-select{
             border: 0 !important;
@@ -101,32 +98,41 @@
         }
         .form-control::placeholder{ color: color-mix(in oklab, var(--muted) 70%, #fff 30%); }
         .form-select{ padding-right: 1.6rem; }
-
-        /* Hide Bootstrap's validation shadow rings */
         .form-control:focus,
         .form-select:focus{ outline: none; }
 
-        /* Chips (icons) */
+        /* ===== Chips (icon pills) ===== */
         .input-group .chip{
-            display:inline-grid; place-items:center;
+            display:inline-flex; align-items:center; justify-content:center;
             width: 40px; min-width:40px; height:40px;
             border-radius: 10px; color:#fff;
             border: 1px solid rgba(255,255,255,.35);
             box-shadow:
-              inset 0 0 0 1px rgba(255,255,255,.25),
+              inset 0 0 0 1px rgba(255,255,255,.2),
               0 6px 16px rgba(2,6,23,.12);
             backdrop-filter: blur(4px);
         }
-        .chip i{ font-size:.95rem; }
+        .chip i{ font-size:.95rem; line-height:1; color:#fff; }
 
-        /* Two-tone gradients for chips */
-        .chip--violet  { background: linear-gradient(135deg, color-mix(in oklab, var(--violet) 85%, #fff), color-mix(in oklab, var(--indigo) 70%, #fff)); }
-        .chip--cyan    { background: linear-gradient(135deg, color-mix(in oklab, var(--cyan) 85%, #fff), color-mix(in oklab, var(--sky) 70%, #fff)); }
-        .chip--emerald { background: linear-gradient(135deg, color-mix(in oklab, var(--emerald) 85%, #fff), color-mix(in oklab, #34d399 70%, #fff)); }
-        .chip--amber   { background: linear-gradient(135deg, color-mix(in oklab, var(--amber) 85%, #fff), color-mix(in oklab, #f97316 70%, #fff)); }
-        .chip--rose    { background: linear-gradient(135deg, color-mix(in oklab, var(--rose) 85%, #fff), color-mix(in oklab, var(--pink) 70%, #fff)); }
-        .chip--slate   { background: linear-gradient(135deg, color-mix(in oklab, var(--slate) 85%, #fff), color-mix(in oklab, #64748b 70%, #fff)); }
-        .chip--indigo  { background: linear-gradient(135deg, color-mix(in oklab, var(--indigo) 85%, #fff), color-mix(in oklab, var(--violet) 70%, #fff)); }
+        /* --- FALLBACK gradients (no color-mix needed) --- */
+        .chip--violet  { background: linear-gradient(135deg, #7c3aed, #6366f1); }
+        .chip--cyan    { background: linear-gradient(135deg, #06b6d4, #0ea5e9); }
+        .chip--emerald { background: linear-gradient(135deg, #22c55e, #34d399); }
+        .chip--amber   { background: linear-gradient(135deg, #f59e0b, #f97316); }
+        .chip--rose    { background: linear-gradient(135deg, #fb7185, #ec4899); }
+        .chip--slate   { background: linear-gradient(135deg, #334155, #64748b); }
+        .chip--indigo  { background: linear-gradient(135deg, #6366f1, #7c3aed); }
+
+        /* --- Progressive enhancement: prettier mixes if supported --- */
+        @supports (background: color-mix(in oklab, white 100%, black)) {
+            .chip--violet  { background: linear-gradient(135deg, color-mix(in oklab, var(--violet) 85%, #fff), color-mix(in oklab, var(--indigo) 70%, #fff)); }
+            .chip--cyan    { background: linear-gradient(135deg, color-mix(in oklab, var(--cyan) 85%, #fff),   color-mix(in oklab, var(--sky) 70%, #fff)); }
+            .chip--emerald { background: linear-gradient(135deg, color-mix(in oklab, var(--emerald) 85%, #fff),color-mix(in oklab, #34d399 70%, #fff)); }
+            .chip--amber   { background: linear-gradient(135deg, color-mix(in oklab, var(--amber) 85%, #fff),  color-mix(in oklab, #f97316 70%, #fff)); }
+            .chip--rose    { background: linear-gradient(135deg, color-mix(in oklab, var(--rose) 85%, #fff),   color-mix(in oklab, var(--pink) 70%, #fff)); }
+            .chip--slate   { background: linear-gradient(135deg, color-mix(in oklab, var(--slate) 85%, #fff),  color-mix(in oklab, #64748b 70%, #fff)); }
+            .chip--indigo  { background: linear-gradient(135deg, color-mix(in oklab, var(--indigo) 85%, #fff), color-mix(in oklab, var(--violet) 70%, #fff)); }
+        }
 
         /* Layout tweaks */
         .row.g-3 { --bs-gutter-x: 1rem; --bs-gutter-y: 1rem; }
