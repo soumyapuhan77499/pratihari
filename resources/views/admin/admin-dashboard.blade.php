@@ -248,6 +248,49 @@
 @endsection
 
 @section('content')
+
+    {{-- =========================
+         Precompute JSON payloads
+         ========================= --}}
+    @php
+        // Helpers to keep things tidy
+        $mapProfile = function($u) {
+            return [
+                'name'  => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
+                'phone' => $u->phone_no ?? '',
+                'link'  => route('admin.viewProfile', $u->pratihari_id),
+            ];
+        };
+        $mapProfileNoLink = function($u) {
+            return [
+                'name'  => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
+                'phone' => $u->phone_no ?? '',
+            ];
+        };
+        $mapApplication = function($a) {
+            return [
+                'name'  => $a->header ?? 'N/A',
+                'phone' => '',
+                'meta'  => $a->date ?? '',
+                'link'  => '',
+            ];
+        };
+
+        // KPI data arrays (not JSON yet)
+        $arrTodayProfiles        = $todayProfiles->map($mapProfile)->values();
+        $arrPendingProfiles      = $pendingProfile->map($mapProfile)->values();
+        $arrActiveProfiles       = $totalActiveUsers->map($mapProfile)->values();
+        $arrIncompleteProfiles   = $incompleteProfiles->map($mapProfile)->values();
+        $arrTodayApproved        = $todayApprovedProfiles->map($mapProfile)->values();
+        $arrTodayRejected        = $todayRejectedProfiles->map($mapProfile)->values();
+        $arrUpdatedProfiles      = $updatedProfiles->map($mapProfile)->values();
+        $arrRejectedAll          = $rejectedProfiles->map($mapProfile)->values();
+
+        $arrAppsToday            = $todayApplications->map($mapApplication)->values();
+        $arrAppsApproved         = $approvedApplication->map($mapApplication)->values();
+        $arrAppsRejected         = $rejectedApplication->map($mapApplication)->values();
+    @endphp
+
     <!-- App Bar -->
     <div class="appbar py-2 mt-4">
         <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
@@ -379,7 +422,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Pratihari · {{ $label }}"
-                                               data-users="@json($pratihariList)"
+                                               data-users='@json($pratihariList)'
                                                aria-label="View all {{ count($pratiharis) }} Pratihari in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Pratihari</div>
@@ -422,7 +465,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Nijoga · {{ $label }}"
-                                               data-users="@json($nijogaList)"
+                                               data-users='@json($nijogaList)'
                                                aria-label="View all {{ count($nojoga) }} Nijoga in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
@@ -517,7 +560,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Gochhikar · {{ $label }}"
-                                               data-users="@json($gList)"
+                                               data-users='@json($gList)'
                                                aria-label="View all {{ count($users) }} Gochhikar in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Gochhikar</div>
@@ -557,7 +600,7 @@
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
                                                data-title="Nijoga · {{ $label }}"
-                                               data-users="@json($ngList)"
+                                               data-users='@json($ngList)'
                                                aria-label="View all {{ count($users) }} Nijoga Gochhikar in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
@@ -582,7 +625,7 @@
                 </div>
             </div>
 
-            <!-- ===== KPI GRID (clean: header + count + progress; no inline lists) ===== -->
+            <!-- ===== KPI GRID ===== -->
             <div class="col-12 mt-1">
                 <div class="row g-3">
 
@@ -596,7 +639,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today’s Registrations"
                                    data-type="profiles"
-                                   data-users="@json($todayProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrTodayProfiles)'>
                                     View all
                                 </a>
                             </div>
@@ -616,7 +659,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Pending Profiles"
                                    data-type="pending"
-                                   data-users="@json($pendingProfile->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrPendingProfiles)'>
                                     View all
                                 </a>
                             </div>
@@ -636,7 +679,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Active Profiles"
                                    data-type="approved"
-                                   data-users="@json($totalActiveUsers->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrActiveProfiles)'>
                                     View all
                                 </a>
                             </div>
@@ -656,7 +699,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Incomplete Profiles"
                                    data-type="incomplete"
-                                   data-users="@json($incompleteProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrIncompleteProfiles)'>
                                     View all
                                 </a>
                             </div>
@@ -676,7 +719,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today Approved"
                                    data-type="todayapproved"
-                                   data-users="@json($todayApprovedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrTodayApproved)'>
                                     View all
                                 </a>
                             </div>
@@ -696,7 +739,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today Rejected"
                                    data-type="todayrejected"
-                                   data-users="@json($todayRejectedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrTodayRejected)'>
                                     View all
                                 </a>
                             </div>
@@ -716,7 +759,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Updated Profiles"
                                    data-type="updated"
-                                   data-users="@json($updatedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrUpdatedProfiles)'>
                                     View all
                                 </a>
                             </div>
@@ -736,7 +779,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Total Rejected"
                                    data-type="rejected"
-                                   data-users="@json($rejectedProfiles->map(function($u){ return ['name'=>trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')), 'phone'=>$u->phone_no ?? '', 'link'=>route('admin.viewProfile',$u->pratihari_id)]; })->values())">
+                                   data-users='@json($arrRejectedAll)'>
                                     View all
                                 </a>
                             </div>
@@ -756,7 +799,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Today’s Applications"
                                    data-type="apps_today"
-                                   data-users="@json($todayApplications->map(function($a){ return ['name'=>$a->header ?? 'N/A','phone'=>'','meta'=>$a->date ?? '','link'=>'']; })->values())">
+                                   data-users='@json($arrAppsToday)'>
                                     View all
                                 </a>
                             </div>
@@ -776,7 +819,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Approved Applications"
                                    data-type="apps_approved"
-                                   data-users="@json($approvedApplication->map(function($a){ return ['name'=>$a->header ?? 'N/A','phone'=>'','meta'=>$a->date ?? '','link'=>'']; })->values())">
+                                   data-users='@json($arrAppsApproved)'>
                                     View all
                                 </a>
                             </div>
@@ -796,7 +839,7 @@
                                    class="ms-auto subtle text-decoration-none kpi-viewall"
                                    data-title="Rejected Applications"
                                    data-type="apps_rejected"
-                                   data-users="@json($rejectedApplication->map(function($a){ return ['name'=>$a->header ?? 'N/A','phone'=>'','meta'=>$a->date ?? '','link'=>'']; })->values())">
+                                   data-users='@json($arrAppsRejected)'>
                                     View all
                                 </a>
                             </div>
@@ -806,7 +849,7 @@
                         </div>
                     </div>
 
-                    <!-- Quick Actions (kept) -->
+                    <!-- Quick Actions -->
                     <div class="col-12">
                         <div class="panel mb-3">
                             <div class="panel-head d-flex align-items-center justify-content-between">
