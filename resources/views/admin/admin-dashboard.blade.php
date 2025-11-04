@@ -20,150 +20,471 @@
 
     <style>
         /* =========================
-           Colorful Design Tokens
-        ========================= */
-        :root{
-            --brand-a:#7c3aed; --brand-b:#06b6d4;
-            --c-violet:#8b5cf6; --c-cyan:#06b6d4; --c-emerald:#10b981; --c-amber:#f59e0b;
-            --c-rose:#f43f5e; --c-blue:#3b82f6; --c-indigo:#4f46e5; --c-fuchsia:#d946ef;
-            --ok:#16a34a; --warn:#f59e0b; --danger:#ef4444;
-            --ink:#0b1220; --ink-soft:#334155; --muted:#64748b;
-            --surface:#ffffff; --surface-2:#f7f8fb; --panel:#ffffff;
-            --border:rgba(2,6,23,.08); --ring:rgba(6,182,212,.35); --shadow:0 12px 34px rgba(2,6,23,.10);
-            --g-brand:linear-gradient(90deg, var(--brand-a), var(--brand-b));
-            --g-soft:linear-gradient(180deg, rgba(124,58,237,.08), rgba(6,182,212,.08));
+               Colorful Design Tokens
+            ========================= */
+        :root {
+            --brand-a: #7c3aed;
+            --brand-b: #06b6d4;
+            --c-violet: #8b5cf6;
+            --c-cyan: #06b6d4;
+            --c-emerald: #10b981;
+            --c-amber: #f59e0b;
+            --c-rose: #f43f5e;
+            --c-blue: #3b82f6;
+            --c-indigo: #4f46e5;
+            --c-fuchsia: #d946ef;
+            --ok: #16a34a;
+            --warn: #f59e0b;
+            --danger: #ef4444;
+            --ink: #0b1220;
+            --ink-soft: #334155;
+            --muted: #64748b;
+            --surface: #ffffff;
+            --surface-2: #f7f8fb;
+            --panel: #ffffff;
+            --border: rgba(2, 6, 23, .08);
+            --ring: rgba(6, 182, 212, .35);
+            --shadow: 0 12px 34px rgba(2, 6, 23, .10);
+            --g-brand: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            --g-soft: linear-gradient(180deg, rgba(124, 58, 237, .08), rgba(6, 182, 212, .08));
         }
-        html.dark{
-            --ink:#e5e7eb; --ink-soft:#cbd5e1; --muted:#94a3b8;
-            --surface:#0a0f1d; --surface-2:#070b14; --panel:#0f172a;
-            --border:rgba(148,163,184,.18); --ring:rgba(59,130,246,.35);
-            --shadow:0 16px 38px rgba(0,0,0,.45);
+
+        html.dark {
+            --ink: #e5e7eb;
+            --ink-soft: #cbd5e1;
+            --muted: #94a3b8;
+            --surface: #0a0f1d;
+            --surface-2: #070b14;
+            --panel: #0f172a;
+            --border: rgba(148, 163, 184, .18);
+            --ring: rgba(59, 130, 246, .35);
+            --shadow: 0 16px 38px rgba(0, 0, 0, .45);
         }
-        html, body{ height:100%; }
-        body{
-            font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
             background:
-                radial-gradient(1100px 540px at -10% -10%, rgba(124,58,237,.10), transparent 60%),
-                radial-gradient(1100px 540px at 110% -10%, rgba(6,182,212,.10), transparent 60%),
+                radial-gradient(1100px 540px at -10% -10%, rgba(124, 58, 237, .10), transparent 60%),
+                radial-gradient(1100px 540px at 110% -10%, rgba(6, 182, 212, .10), transparent 60%),
                 var(--surface-2) fixed;
-            color:var(--ink);
+            color: var(--ink);
         }
-        html.dark body{
+
+        html.dark body {
             background:
-                radial-gradient(1100px 540px at -10% -10%, rgba(124,58,237,.20), transparent 60%),
-                radial-gradient(1100px 540px at 110% -10%, rgba(6,182,212,.16), transparent 60%),
+                radial-gradient(1100px 540px at -10% -10%, rgba(124, 58, 237, .20), transparent 60%),
+                radial-gradient(1100px 540px at 110% -10%, rgba(6, 182, 212, .16), transparent 60%),
                 var(--surface) fixed;
         }
-        *{ outline-color: var(--brand-b); }
-        :is(a,button,.panel,.kpi,.pill,.nav-link,.chip):focus-visible{ box-shadow:0 0 0 4px var(--ring); }
+
+        * {
+            outline-color: var(--brand-b);
+        }
+
+        :is(a, button, .panel, .kpi, .pill, .nav-link, .chip):focus-visible {
+            box-shadow: 0 0 0 4px var(--ring);
+        }
 
         /* Sticky app bar */
-        .appbar{
-            position: sticky; top: 0; z-index: 40;
+        .appbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
             backdrop-filter: blur(10px);
             background: color-mix(in oklab, var(--panel) 80%, transparent);
-            border-bottom:1px solid var(--border);
+            border-bottom: 1px solid var(--border);
         }
-        .brand{ font-weight:800; letter-spacing:.3px; background:var(--g-brand); -webkit-background-clip:text; background-clip:text; color:transparent; }
-        .btn-theme{
-            display:inline-flex; align-items:center; gap:8px; border:1px solid var(--border); background: var(--panel);
-            border-radius: 999px; padding:8px 12px; font-weight:700; transition: transform .15s ease, box-shadow .15s ease;
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: .3px;
+            background: var(--g-brand);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-        .btn-theme:hover{ transform:translateY(-1px); box-shadow: var(--shadow); }
+
+        .btn-theme {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-weight: 700;
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .btn-theme:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
 
         /* Panels */
-        .panel{ background:var(--panel); border:1px solid var(--border); border-radius:18px; box-shadow: var(--shadow); }
-        .panel-head{ padding:14px 16px; border-bottom:1px solid var(--border); background:var(--g-soft); border-top-left-radius:18px; border-top-right-radius:18px; }
-        .section-title{ font-weight:800; letter-spacing:.2px; }
-        .subtle{ color:var(--muted); }
-        .divider{ height:1px; background:var(--border); }
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-head {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--g-soft);
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+        }
+
+        .section-title {
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .subtle {
+            color: var(--muted);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+        }
 
         /* Gradient overview header block */
-        .gradient-header{
-            position:relative; border-radius:18px; padding:24px; background: var(--g-brand); color:#fff; overflow:hidden; box-shadow: var(--shadow);
+        .gradient-header {
+            position: relative;
+            border-radius: 18px;
+            padding: 24px;
+            background: var(--g-brand);
+            color: #fff;
+            overflow: hidden;
+            box-shadow: var(--shadow);
         }
-        .gradient-header .bg-icons{
-            position:absolute; inset:0; pointer-events:none; opacity:.14;
+
+        .gradient-header .bg-icons {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: .14;
             background: radial-gradient(160px 160px at 15% 40%, #fff 0, transparent 60%),
-                        radial-gradient(130px 130px at 85% 30%, #fff 0, transparent 60%);
+                radial-gradient(130px 130px at 85% 30%, #fff 0, transparent 60%);
             mix-blend-mode: soft-light;
         }
-        .icon-hero{
-            display:inline-flex; align-items:center; justify-content:center; width:46px; height:46px; border-radius:12px;
-            background: rgba(255,255,255,.18); color:#fff; font-size:20px; border:1px solid rgba(255,255,255,.35);
+
+        .icon-hero {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .18);
+            color: #fff;
+            font-size: 20px;
+            border: 1px solid rgba(255, 255, 255, .35);
         }
-        .title{ font-weight:800; letter-spacing:.3px; font-size: clamp(20px, 2.2vw, 26px); }
-        .subtitle{ color:rgba(255,255,255,.92); }
+
+        .title {
+            font-weight: 800;
+            letter-spacing: .3px;
+            font-size: clamp(20px, 2.2vw, 26px);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, .92);
+        }
 
         /* Pills */
-        .pill{
-            display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:999px; font-weight:700;
-            border:1px solid var(--border); background:var(--panel); color:var(--ink-soft);
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            color: var(--ink-soft);
         }
-        .pill .dot{ width:8px; height:8px; border-radius:999px; background:var(--brand-a); }
+
+        .pill .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--brand-a);
+        }
 
         /* Tabs */
-        .tabs .nav-link{
-            border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); font-weight:800; border-radius:12px; padding:.55rem 1rem;
+        .tabs .nav-link {
+            border: 1px solid var(--border);
+            background: var(--panel);
+            color: var(--ink-soft);
+            font-weight: 800;
+            border-radius: 12px;
+            padding: .55rem 1rem;
         }
-        .tabs .nav-link.active{ color:#fff; background: var(--g-brand); border-color: transparent; }
+
+        .tabs .nav-link.active {
+            color: #fff;
+            background: var(--g-brand);
+            border-color: transparent;
+        }
 
         /* Horizontal strip */
-        .strip{
-            display:grid; grid-auto-flow:column; grid-auto-columns: clamp(260px, 38vw, 420px);
-            gap:14px; overflow-x:auto; padding:2px 2px 10px; scroll-snap-type:x mandatory;
+        .strip {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: clamp(260px, 38vw, 420px);
+            gap: 14px;
+            overflow-x: auto;
+            padding: 2px 2px 10px;
+            scroll-snap-type: x mandatory;
         }
-        .mini-card{
-            scroll-snap-align:start;
+
+        .mini-card {
+            scroll-snap-align: start;
             background: color-mix(in oklab, var(--panel) 90%, var(--surface-2));
-            border:1px solid var(--border); border-radius:14px; padding:14px;
-            min-height:88px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            min-height: 88px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
             transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-            text-decoration:none; color:inherit;
+            text-decoration: none;
+            color: inherit;
         }
-        .mini-card:hover{ transform:translateY(-2px); box-shadow: var(--shadow); border-color: rgba(124,58,237,.35); }
-        .mini-card .label{ font-weight:800; }
-        .mini-card .meta{ color:var(--muted); font-size:.9rem; }
-        .mini-card .count{ font-weight:800; font-size:1.4rem; }
-        .mini-card .go{ font-size:1.4rem; opacity:.7; }
+
+        .mini-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: rgba(124, 58, 237, .35);
+        }
+
+        .mini-card .label {
+            font-weight: 800;
+        }
+
+        .mini-card .meta {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .mini-card .count {
+            font-weight: 800;
+            font-size: 1.4rem;
+        }
+
+        .mini-card .go {
+            font-size: 1.4rem;
+            opacity: .7;
+        }
 
         /* Chips */
-        .chip{ display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; font-size:.8rem; font-weight:700; border:1px solid var(--border); background:var(--panel); color:var(--ink-soft); }
-        .chip.ok{ color:var(--ok); background:rgba(16,185,129,.10); border-color:rgba(16,185,129,.25); }
-        .chip.warn{ color:var(--warn); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.25); }
-        .chip.danger{ color:var(--danger); background:rgba(244,63,94,.12); border-color:rgba(244,63,94,.25); }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: .8rem;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: var(--panel);
+            color: var(--ink-soft);
+        }
+
+        .chip.ok {
+            color: var(--ok);
+            background: rgba(16, 185, 129, .10);
+            border-color: rgba(16, 185, 129, .25);
+        }
+
+        .chip.warn {
+            color: var(--warn);
+            background: rgba(245, 158, 11, .12);
+            border-color: rgba(245, 158, 11, .25);
+        }
+
+        .chip.danger {
+            color: var(--danger);
+            background: rgba(244, 63, 94, .12);
+            border-color: rgba(244, 63, 94, .25);
+        }
 
         /* Scrollbars */
-        .strip::-webkit-scrollbar,.list-max::-webkit-scrollbar{ height:8px; width:8px; }
-        .strip::-webkit-scrollbar-thumb,.list-max::-webkit-scrollbar-thumb{ background:#cbd5e1; border-radius:8px; }
-        html.dark .strip::-webkit-scrollbar-thumb, html.dark .list-max::-webkit-scrollbar-thumb{ background:#475569; }
+        .strip::-webkit-scrollbar,
+        .list-max::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        .strip::-webkit-scrollbar-thumb,
+        .list-max::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        html.dark .strip::-webkit-scrollbar-thumb,
+        html.dark .list-max::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
 
         /* KPIs */
-        .kpi{ position:relative; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:16px 16px 14px; box-shadow: var(--shadow); overflow:hidden; }
-        .kpi::before{ content:''; position:absolute; inset:0 0 auto 0; height:6px; background: var(--kpi-grad, var(--g-brand)); }
-        .kpi::after{ content:''; position:absolute; inset:auto -20% -20% -20%; height:60%; background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent,#7c3aed) 28%, transparent), transparent 70%); opacity:.35; }
-        .kpi .meta{ display:flex; align-items:center; gap:10px; font-weight:700; color:var(--ink-soft); }
-        .kpi .meta i{ display:inline-grid; place-items:center; width:34px; height:34px; border-radius:10px; background: var(--kpi-icon-bg, #eee); color: var(--kpi-icon, #444); }
-        .kpi .value{ font-size: clamp(1.8rem, 2.6vw, 2.3rem); font-weight:800; letter-spacing:-.4px; color: var(--ink); }
-        .kpi .subtle{ color: var(--muted); }
-        .list-max{ max-height:320px; overflow:auto; }
-        .list-row:hover{ background: color-mix(in oklab, var(--panel) 85%, var(--surface-2)); }
+        .kpi {
+            position: relative;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 16px 14px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
 
-        .kpi.violet  { --kpi-grad: linear-gradient(90deg, #8b5cf6, #a78bfa); --kpi-icon-bg: rgba(139,92,246,.12); --kpi-icon:#8b5cf6; --kpi-accent:#8b5cf6; }
-        .kpi.cyan    { --kpi-grad: linear-gradient(90deg, #06b6d4, #22d3ee); --kpi-icon-bg: rgba(6,182,212,.12);  --kpi-icon:#06b6d4; --kpi-accent:#06b6d4; }
-        .kpi.emerald { --kpi-grad: linear-gradient(90deg, #10b981, #34d399); --kpi-icon-bg: rgba(16,185,129,.12); --kpi-icon:#10b981; --kpi-accent:#10b981; }
-        .kpi.amber   { --kpi-grad: linear-gradient(90deg, #f59e0b, #fbbf24); --kpi-icon-bg: rgba(245,158,11,.12);  --kpi-icon:#f59e0b; --kpi-accent:#f59e0b; }
-        .kpi.rose    { --kpi-grad: linear-gradient(90deg, #f43f5e, #fb7185); --kpi-icon-bg: rgba(244,63,94,.12);  --kpi-icon:#f43f5e; --kpi-accent:#f43f5e; }
-        .kpi.blue    { --kpi-grad: linear-gradient(90deg, #3b82f6, #60a5fa); --kpi-icon-bg: rgba(59,130,246,.12);  --kpi-icon:#3b82f6; --kpi-accent:#3b82f6; }
-        .kpi.indigo  { --kpi-grad: linear-gradient(90deg, #4f46e5, #818cf8); --kpi-icon-bg: rgba(79,70,229,.12);   --kpi-icon:#4f46e5; --kpi-accent:#4f46e5; }
-        .kpi.fuchsia { --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc); --kpi-icon-bg: rgba(217,70,239,.12);  --kpi-icon:#d946ef; --kpi-accent:#d946ef; }
+        .kpi::before {
+            content: '';
+            position: absolute;
+            inset: 0 0 auto 0;
+            height: 6px;
+            background: var(--kpi-grad, var(--g-brand));
+        }
 
-        .kpi-progress{ height:6px; background:rgba(148,163,184,.3); border-radius:999px; overflow:hidden; margin-top:10px; }
-        .kpi-progress > span{ display:block; height:100%; width:var(--p, 40%); background: var(--kpi-grad); border-radius:999px; }
+        .kpi::after {
+            content: '';
+            position: absolute;
+            inset: auto -20% -20% -20%;
+            height: 60%;
+            background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent, #7c3aed) 28%, transparent), transparent 70%);
+            opacity: .35;
+        }
 
-        .mono{ font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .kpi .meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var(--ink-soft);
+        }
 
-        @media (max-width: 576px){ .header-actions{ margin-top: 12px; } }
+        .kpi .meta i {
+            display: inline-grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: var(--kpi-icon-bg, #eee);
+            color: var(--kpi-icon, #444);
+        }
+
+        .kpi .value {
+            font-size: clamp(1.8rem, 2.6vw, 2.3rem);
+            font-weight: 800;
+            letter-spacing: -.4px;
+            color: var(--ink);
+        }
+
+        .kpi .subtle {
+            color: var(--muted);
+        }
+
+        .list-max {
+            max-height: 320px;
+            overflow: auto;
+        }
+
+        .list-row:hover {
+            background: color-mix(in oklab, var(--panel) 85%, var(--surface-2));
+        }
+
+        .kpi.violet {
+            --kpi-grad: linear-gradient(90deg, #8b5cf6, #a78bfa);
+            --kpi-icon-bg: rgba(139, 92, 246, .12);
+            --kpi-icon: #8b5cf6;
+            --kpi-accent: #8b5cf6;
+        }
+
+        .kpi.cyan {
+            --kpi-grad: linear-gradient(90deg, #06b6d4, #22d3ee);
+            --kpi-icon-bg: rgba(6, 182, 212, .12);
+            --kpi-icon: #06b6d4;
+            --kpi-accent: #06b6d4;
+        }
+
+        .kpi.emerald {
+            --kpi-grad: linear-gradient(90deg, #10b981, #34d399);
+            --kpi-icon-bg: rgba(16, 185, 129, .12);
+            --kpi-icon: #10b981;
+            --kpi-accent: #10b981;
+        }
+
+        .kpi.amber {
+            --kpi-grad: linear-gradient(90deg, #f59e0b, #fbbf24);
+            --kpi-icon-bg: rgba(245, 158, 11, .12);
+            --kpi-icon: #f59e0b;
+            --kpi-accent: #f59e0b;
+        }
+
+        .kpi.rose {
+            --kpi-grad: linear-gradient(90deg, #f43f5e, #fb7185);
+            --kpi-icon-bg: rgba(244, 63, 94, .12);
+            --kpi-icon: #f43f5e;
+            --kpi-accent: #f43f5e;
+        }
+
+        .kpi.blue {
+            --kpi-grad: linear-gradient(90deg, #3b82f6, #60a5fa);
+            --kpi-icon-bg: rgba(59, 130, 246, .12);
+            --kpi-icon: #3b82f6;
+            --kpi-accent: #3b82f6;
+        }
+
+        .kpi.indigo {
+            --kpi-grad: linear-gradient(90deg, #4f46e5, #818cf8);
+            --kpi-icon-bg: rgba(79, 70, 229, .12);
+            --kpi-icon: #4f46e5;
+            --kpi-accent: #4f46e5;
+        }
+
+        .kpi.fuchsia {
+            --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc);
+            --kpi-icon-bg: rgba(217, 70, 239, .12);
+            --kpi-icon: #d946ef;
+            --kpi-accent: #d946ef;
+        }
+
+        .kpi-progress {
+            height: 6px;
+            background: rgba(148, 163, 184, .3);
+            border-radius: 999px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .kpi-progress>span {
+            display: block;
+            height: 100%;
+            width: var(--p, 40%);
+            background: var(--kpi-grad);
+            border-radius: 999px;
+        }
+
+        .mono {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        @media (max-width: 576px) {
+            .header-actions {
+                margin-top: 12px;
+            }
+        }
     </style>
 @endsection
 
@@ -236,9 +557,11 @@
                 <div class="panel">
                     <!-- Compact gradient sub-header -->
                     <div class="px-3 pt-3">
-                        <div class="rounded-3 p-3 text-white" style="background: var(--g-brand); box-shadow: var(--shadow);">
+                        <div class="rounded-3 p-3 text-white"
+                            style="background: var(--g-brand); box-shadow: var(--shadow);">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero" style="background: transparent; border-color: rgba(255,255,255,.35); color:#fff;">
+                                <span class="icon-hero"
+                                    style="background: transparent; border-color: rgba(255,255,255,.35); color:#fff;">
                                     <i class="bi bi-person-badge"></i>
                                 </span>
                                 <div class="flex-grow-1">
@@ -258,19 +581,20 @@
                     </div>
 
                     <!-- Subtle gradient background -->
-                    <div class="p-3" style="background: linear-gradient(180deg, rgba(124,58,237,.06), rgba(6,182,212,.06)); border-bottom-left-radius:18px; border-bottom-right-radius:18px;">
+                    <div class="p-3"
+                        style="background: linear-gradient(180deg, rgba(124,58,237,.06), rgba(6,182,212,.06)); border-bottom-left-radius:18px; border-bottom-right-radius:18px;">
                         <!-- Tabs -->
                         <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pratihari-pane" type="button" role="tab"
-                                        aria-controls="pratihari-pane" aria-selected="true">
+                                    data-bs-target="#pratihari-pane" type="button" role="tab"
+                                    aria-controls="pratihari-pane" aria-selected="true">
                                     <i class="bi bi-person-badge me-1"></i> Pratihari
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill" data-bs-target="#nijoga-pane"
-                                        type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
+                                    type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
                                     <i class="bi bi-clipboard2-check me-1"></i> Nijoga Assigned
                                 </button>
                             </li>
@@ -278,18 +602,20 @@
 
                         <div class="tab-content" id="sebaTabsContent">
                             <!-- Pratihari -->
-                            <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel" aria-labelledby="pratihari-tab">
+                            <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel"
+                                aria-labelledby="pratihari-tab">
                                 @forelse ($pratihariEvents as $label => $pratiharis)
                                     @php
-                                        $pratihariList = $pratiharis->map(function($u){
+                                        $pratihariList = $pratiharis->map(function ($u) {
                                             return [
-                                                'name'   => trim(($u->first_name ?? '').' '.($u->last_name ?? '')),
-                                                'phone'  => $u->phone_no ?? '',
+                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
+                                                'phone' => $u->phone_no ?? '',
                                             ];
                                         });
                                     @endphp
                                     <div class="mb-3">
-                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                        <div
+                                            class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-bold">{{ $label }}</span>
                                                 <span class="badge text-bg-light border">{{ count($pratiharis) }}</span>
@@ -298,9 +624,9 @@
                                         </div>
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
-                                               data-title="Pratihari · {{ $label }}"
-                                               data-users='@json($pratihariList)'
-                                               aria-label="View all {{ count($pratiharis) }} Pratihari in {{ $label }}">
+                                                data-title="Pratihari · {{ $label }}"
+                                                data-users='@json($pratihariList)'
+                                                aria-label="View all {{ count($pratiharis) }} Pratihari in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Pratihari</div>
                                                     <div class="meta">Click to view list</div>
@@ -324,15 +650,16 @@
                             <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
                                 @forelse ($nijogaAssign as $label => $nojoga)
                                     @php
-                                        $nijogaList = $nojoga->map(function($u){
+                                        $nijogaList = $nojoga->map(function ($u) {
                                             return [
-                                                'name'   => trim(($u->first_name ?? '').' '.($u->last_name ?? '')),
-                                                'phone'  => $u->phone_no ?? '',
+                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
+                                                'phone' => $u->phone_no ?? '',
                                             ];
                                         });
                                     @endphp
                                     <div class="mb-3">
-                                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                        <div
+                                            class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-bold">{{ $label }}</span>
                                                 <span class="badge text-bg-light border">{{ count($nojoga) }}</span>
@@ -341,9 +668,9 @@
                                         </div>
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
-                                               data-title="Nijoga · {{ $label }}"
-                                               data-users='@json($nijogaList)'
-                                               aria-label="View all {{ count($nojoga) }} Nijoga in {{ $label }}">
+                                                data-title="Nijoga · {{ $label }}"
+                                                data-users='@json($nijogaList)'
+                                                aria-label="View all {{ count($nojoga) }} Nijoga in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
                                                     <div class="meta">Click to view list</div>
@@ -372,7 +699,8 @@
                 <div class="panel mb-3">
                     <!-- Compact gradient sub-header -->
                     <div class="px-3 pt-3">
-                        <div class="rounded-3 p-3 text-white" style="background: var(--g-brand); box-shadow: var(--shadow);">
+                        <div class="rounded-3 p-3 text-white"
+                            style="background: var(--g-brand); box-shadow: var(--shadow);">
                             <div class="d-flex align-items-center gap-2">
                                 <span class="icon-hero" style="border-color: rgba(255,255,255,.35);">
                                     <i class="bi bi-people"></i>
@@ -382,7 +710,8 @@
                                     <div class="small" style="opacity:.9;">Normal &amp; Nijoga assignments</div>
                                 </div>
                                 <span class="badge bg-light text-dark border-0">
-                                    {{ collect($gochhikarEvents)->flatten(1)->count() + collect($nijogaGochhikarEvents)->flatten(1)->count() }} total
+                                    {{ collect($gochhikarEvents)->flatten(1)->count() + collect($nijogaGochhikarEvents)->flatten(1)->count() }}
+                                    total
                                 </span>
                             </div>
                         </div>
@@ -398,8 +727,8 @@
                         <ul class="nav nav-pills tabs gap-2 mb-3" id="gochhikarTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active d-flex align-items-center gap-2" id="gochhikar-tab"
-                                        data-bs-toggle="pill" data-bs-target="#gochhikar-pane" type="button" role="tab"
-                                        aria-controls="gochhikar-pane" aria-selected="true">
+                                    data-bs-toggle="pill" data-bs-target="#gochhikar-pane" type="button" role="tab"
+                                    aria-controls="gochhikar-pane" aria-selected="true">
                                     <i class="bi bi-check2-circle"></i>
                                     <span>Gochhikar</span>
                                     <span class="badge text-bg-light border ms-1">{{ $gochhikarCount }}</span>
@@ -407,8 +736,8 @@
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link d-flex align-items-center gap-2" id="nijoga-g-tab"
-                                        data-bs-toggle="pill" data-bs-target="#nijoga-g-pane" type="button" role="tab"
-                                        aria-controls="nijoga-g-pane" aria-selected="false">
+                                    data-bs-toggle="pill" data-bs-target="#nijoga-g-pane" type="button" role="tab"
+                                    aria-controls="nijoga-g-pane" aria-selected="false">
                                     <i class="bi bi-exclamation-circle"></i>
                                     <span>Nijoga Assign</span>
                                     <span class="badge text-bg-light border ms-1">{{ $nijogaCount }}</span>
@@ -418,12 +747,13 @@
 
                         <div class="tab-content" id="gochhikarTabsContent">
                             <!-- Gochhikar (Normal) -->
-                            <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel" aria-labelledby="gochhikar-tab" tabindex="0">
+                            <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel"
+                                aria-labelledby="gochhikar-tab" tabindex="0">
                                 @forelse ($gochhikarEvents as $label => $users)
                                     @php
-                                        $gList = collect($users)->map(function($u){
+                                        $gList = collect($users)->map(function ($u) {
                                             return [
-                                                'name'  => trim(($u->first_name ?? '').' '.($u->last_name ?? '')),
+                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
                                                 'phone' => $u->phone_no ?? '',
                                             ];
                                         });
@@ -431,13 +761,14 @@
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
                                             <div class="small fw-semibold">{{ $label }}</div>
-                                            <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                            <span
+                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
                                         </div>
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
-                                               data-title="Gochhikar · {{ $label }}"
-                                               data-users='@json($gList)'
-                                               aria-label="View all {{ count($users) }} Gochhikar in {{ $label }}">
+                                                data-title="Gochhikar · {{ $label }}"
+                                                data-users='@json($gList)'
+                                                aria-label="View all {{ count($users) }} Gochhikar in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Gochhikar</div>
                                                     <div class="meta">Click to view list</div>
@@ -458,12 +789,13 @@
                             </div>
 
                             <!-- Nijoga (Gochhikar) -->
-                            <div class="tab-pane fade" id="nijoga-g-pane" role="tabpanel" aria-labelledby="nijoga-g-tab" tabindex="0">
+                            <div class="tab-pane fade" id="nijoga-g-pane" role="tabpanel" aria-labelledby="nijoga-g-tab"
+                                tabindex="0">
                                 @forelse ($nijogaGochhikarEvents as $label => $users)
                                     @php
-                                        $ngList = collect($users)->map(function($u){
+                                        $ngList = collect($users)->map(function ($u) {
                                             return [
-                                                'name'  => trim(($u->first_name ?? '').' '.($u->last_name ?? '')),
+                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
                                                 'phone' => $u->phone_no ?? '',
                                             ];
                                         });
@@ -471,13 +803,14 @@
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
                                             <div class="small fw-semibold">{{ $label }}</div>
-                                            <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                            <span
+                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
                                         </div>
                                         <div class="strip">
                                             <a href="#" class="mini-card summary-card"
-                                               data-title="Nijoga · {{ $label }}"
-                                               data-users='@json($ngList)'
-                                               aria-label="View all {{ count($users) }} Nijoga Gochhikar in {{ $label }}">
+                                                data-title="Nijoga · {{ $label }}"
+                                                data-users='@json($ngList)'
+                                                aria-label="View all {{ count($users) }} Nijoga Gochhikar in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
                                                     <div class="meta">Click to view list</div>
@@ -501,28 +834,7 @@
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="panel mb-3">
-                    <div class="panel-head d-flex align-items-center justify-content-between">
-                        <div>
-                            <div class="section-title">Quick Actions</div>
-                            <div class="subtle">Frequently used filters & links.</div>
-                        </div>
-                    </div>
-                    <div class="p-3 d-grid gap-2">
-                        <a class="btn btn-outline-primary d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'today') }}">
-                            <span><i class="bi bi-funnel me-2"></i> Filter Today</span>
-                            <i class="bi bi-arrow-right-short fs-5"></i>
-                        </a>
-                        <a class="btn btn-outline-success d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
-                            <span><i class="bi bi-check2-circle me-2"></i> View Approved</span>
-                            <i class="bi bi-arrow-right-short fs-5"></i>
-                        </a>
-                        <a class="btn btn-outline-warning d-flex align-items-center justify-content-between" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
-                            <span><i class="bi bi-hourglass-split me-2"></i> View Pending</span>
-                            <i class="bi bi-arrow-right-short fs-5"></i>
-                        </a>
-                    </div>
-                </div>
+
             </div>
 
             <!-- ===== KPI GRID ===== -->
@@ -534,18 +846,24 @@
                             <div class="meta">
                                 <i class="bi bi-person-plus"></i>
                                 Today’s Registrations
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'today') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'today') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayProfiles) }}</div>
                             <div class="subtle">New profiles created</div>
                             <div class="kpi-progress"><span style="--p: 38%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayProfiles->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -561,24 +879,32 @@
                             <div class="meta">
                                 <i class="bi bi-hourglass-split"></i>
                                 Pending Profiles
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'pending') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'pending') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($pendingProfile) }}</div>
                             <div class="subtle">Awaiting review</div>
                             <div class="kpi-progress"><span style="--p: 62%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($pendingProfile->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
                                         <div class="d-flex gap-1">
-                                            <button class="btn btn-sm btn-outline-success approve-btn" data-id="{{ $user->pratihari_id }}"><i class="bi bi-check2"></i></button>
-                                            <button class="btn btn-sm btn-outline-danger reject-btn" data-id="{{ $user->pratihari_id }}"><i class="bi bi-x"></i></button>
+                                            <button class="btn btn-sm btn-outline-success approve-btn"
+                                                data-id="{{ $user->pratihari_id }}"><i class="bi bi-check2"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger reject-btn"
+                                                data-id="{{ $user->pratihari_id }}"><i class="bi bi-x"></i></button>
                                         </div>
                                     </div>
                                 @endforeach
@@ -592,18 +918,24 @@
                             <div class="meta">
                                 <i class="bi bi-person-check"></i>
                                 Active Profiles
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'approved') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'approved') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($totalActiveUsers) }}</div>
                             <div class="subtle">Approved & active</div>
                             <div class="kpi-progress"><span style="--p: 74%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($totalActiveUsers->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -619,18 +951,24 @@
                             <div class="meta">
                                 <i class="bi bi-clipboard2-data"></i>
                                 Incomplete Profiles
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($incompleteProfiles) }}</div>
                             <div class="subtle">Need more info</div>
                             <div class="kpi-progress"><span style="--p: 45%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($incompleteProfiles->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -646,18 +984,24 @@
                             <div class="meta">
                                 <i class="bi bi-check2-circle"></i>
                                 Today Approved
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'todayapproved') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'todayapproved') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayApprovedProfiles) }}</div>
                             <div class="subtle">Approved today</div>
                             <div class="kpi-progress"><span style="--p: 52%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayApprovedProfiles->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -673,18 +1017,24 @@
                             <div class="meta">
                                 <i class="bi bi-x-circle"></i>
                                 Today Rejected
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'todayrejected') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'todayrejected') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayRejectedProfiles) }}</div>
                             <div class="subtle">Rejected today</div>
                             <div class="kpi-progress"><span style="--p: 30%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayRejectedProfiles->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -700,18 +1050,24 @@
                             <div class="meta">
                                 <i class="bi bi-arrow-repeat"></i>
                                 Updated Profiles
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'updated') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'updated') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($updatedProfiles) }}</div>
                             <div class="subtle">Recently modified</div>
                             <div class="kpi-progress"><span style="--p: 66%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($updatedProfiles->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -727,18 +1083,24 @@
                             <div class="meta">
                                 <i class="bi bi-emoji-frown"></i>
                                 Total Rejected
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'rejected') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.pratihari.filterUsers', 'rejected') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($rejectedProfiles) }}</div>
                             <div class="subtle">All-time rejected</div>
                             <div class="kpi-progress"><span style="--p: 22%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($rejectedProfiles->take(5) as $user)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img class="avatar" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile">
+                                            <img class="avatar"
+                                                src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}"
+                                                alt="Profile">
                                             <div>
-                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
+                                                <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}"
+                                                    class="fw-semibold text-decoration-none">{{ $user->first_name }}
+                                                    {{ $user->last_name }}</a>
                                                 <div class="subtle">{{ $user->phone_no }}</div>
                                             </div>
                                         </div>
@@ -754,14 +1116,16 @@
                             <div class="meta">
                                 <i class="bi bi-calendar-check"></i>
                                 Today’s Applications
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.application.filter', 'today') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.application.filter', 'today') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($todayApplications) }}</div>
                             <div class="subtle">Submitted today</div>
                             <div class="kpi-progress"><span style="--p: 48%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($todayApplications->take(5) as $app)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-file-person fs-5 text-primary"></i>
                                             <div>
@@ -781,14 +1145,16 @@
                             <div class="meta">
                                 <i class="bi bi-file-earmark-check"></i>
                                 Approved Applications
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.application.filter', 'approved') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.application.filter', 'approved') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($approvedApplication) }}</div>
                             <div class="subtle">Accepted</div>
                             <div class="kpi-progress"><span style="--p: 70%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($approvedApplication->take(5) as $app)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-file-person fs-5 text-success"></i>
                                             <div>
@@ -808,14 +1174,16 @@
                             <div class="meta">
                                 <i class="bi bi-file-earmark-x"></i>
                                 Rejected Applications
-                                <a class="ms-auto subtle text-decoration-none" href="{{ route('admin.application.filter', 'rejected') }}">View</a>
+                                <a class="ms-auto subtle text-decoration-none"
+                                    href="{{ route('admin.application.filter', 'rejected') }}">View</a>
                             </div>
                             <div class="value mt-2">{{ count($rejectedApplication) }}</div>
                             <div class="subtle">Declined</div>
                             <div class="kpi-progress"><span style="--p: 28%;"></span></div>
                             <div class="list-max mt-2">
                                 @foreach ($rejectedApplication->take(5) as $app)
-                                    <div class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
+                                    <div
+                                        class="list-row d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
                                             <i class="bi bi-file-person fs-5 text-danger"></i>
                                             <div>
@@ -828,6 +1196,33 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="panel mb-3">
+                        <div class="panel-head d-flex align-items-center justify-content-between">
+                            <div>
+                                <div class="section-title">Quick Actions</div>
+                                <div class="subtle">Frequently used filters & links.</div>
+                            </div>
+                        </div>
+                        <div class="p-3 d-grid gap-2">
+                            <a class="btn btn-outline-primary d-flex align-items-center justify-content-between"
+                                href="{{ route('admin.pratihari.filterUsers', 'today') }}">
+                                <span><i class="bi bi-funnel me-2"></i> Filter Today</span>
+                                <i class="bi bi-arrow-right-short fs-5"></i>
+                            </a>
+                            <a class="btn btn-outline-success d-flex align-items-center justify-content-between"
+                                href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
+                                <span><i class="bi bi-check2-circle me-2"></i> View Approved</span>
+                                <i class="bi bi-arrow-right-short fs-5"></i>
+                            </a>
+                            <a class="btn btn-outline-warning d-flex align-items-center justify-content-between"
+                                href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
+                                <span><i class="bi bi-hourglass-split me-2"></i> View Pending</span>
+                                <i class="bi bi-arrow-right-short fs-5"></i>
+                            </a>
+                        </div>
+                    </div>
+
 
                 </div><!-- /row -->
             </div>
@@ -896,10 +1291,10 @@
         })();
 
         // Theme toggle with persistence
-        (function themeInit(){
+        (function themeInit() {
             const html = document.documentElement;
             const saved = localStorage.getItem('theme') || '';
-            if(saved){
+            if (saved) {
                 html.classList.toggle('dark', saved === 'dark');
             } else {
                 const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -907,7 +1302,8 @@
             }
             updateThemeButton();
         })();
-        function updateThemeButton(){
+
+        function updateThemeButton() {
             const isDark = document.documentElement.classList.contains('dark');
             const btn = document.getElementById('themeToggle');
             const icon = document.getElementById('themeIcon');
@@ -923,10 +1319,10 @@
         });
 
         // Preserve active tab via URL hash (left)
-        (function(){
+        (function() {
             const triggerTabList = [].slice.call(document.querySelectorAll('#sebaTabs button[data-bs-toggle="pill"]'));
-            triggerTabList.forEach(function (triggerEl) {
-                triggerEl.addEventListener('shown.bs.tab', function (event) {
+            triggerTabList.forEach(function(triggerEl) {
+                triggerEl.addEventListener('shown.bs.tab', function(event) {
                     const target = event.target.getAttribute('data-bs-target');
                     history.replaceState(null, '', target);
                 });
@@ -943,11 +1339,14 @@
 
         // Select2 (if user list provided)
         if (window.jQuery && $("#sebaUserSelect").length) {
-            $("#sebaUserSelect").select2({ width: '100%', placeholder: "Select user…" });
+            $("#sebaUserSelect").select2({
+                width: '100%',
+                placeholder: "Select user…"
+            });
         }
 
         // Approve / Reject handlers
-        document.addEventListener('click', function (e) {
+        document.addEventListener('click', function(e) {
             const approveBtn = e.target.closest('.approve-btn');
             const rejectBtn = e.target.closest('.reject-btn');
 
@@ -964,17 +1363,20 @@
                 }).then((res) => {
                     if (res.isConfirmed) {
                         fetch(`/admin/pratihari/approve/${profileId}`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-                            body: JSON.stringify({})
-                        })
-                        .then(r => r.json())
-                        .then(resp => {
-                            Swal.fire('Approved!', resp.message || 'Profile approved.', 'success')
-                                .then(() => location.reload());
-                        }).catch(() => {
-                            Swal.fire('Error', 'Unable to approve. Try again.', 'error');
-                        });
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({})
+                            })
+                            .then(r => r.json())
+                            .then(resp => {
+                                Swal.fire('Approved!', resp.message || 'Profile approved.', 'success')
+                                    .then(() => location.reload());
+                            }).catch(() => {
+                                Swal.fire('Error', 'Unable to approve. Try again.', 'error');
+                            });
                     }
                 });
             }
@@ -986,7 +1388,9 @@
                     input: 'textarea',
                     inputLabel: 'Reason for rejection',
                     inputPlaceholder: 'Type your reason here...',
-                    inputAttributes: { 'aria-label': 'Type your reason here' },
+                    inputAttributes: {
+                        'aria-label': 'Type your reason here'
+                    },
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
                     cancelButtonColor: '#6b7280',
@@ -998,33 +1402,38 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch(`/admin/pratihari/reject/${profileId}`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
-                            body: JSON.stringify({ reason: result.value })
-                        })
-                        .then(r => r.json())
-                        .then(resp => {
-                            Swal.fire('Rejected', resp.message || 'Profile rejected.', 'error')
-                                .then(() => location.reload());
-                        }).catch(() => {
-                            Swal.fire('Error', 'Unable to reject. Try again.', 'error');
-                        });
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                                },
+                                body: JSON.stringify({
+                                    reason: result.value
+                                })
+                            })
+                            .then(r => r.json())
+                            .then(resp => {
+                                Swal.fire('Rejected', resp.message || 'Profile rejected.', 'error')
+                                    .then(() => location.reload());
+                            }).catch(() => {
+                                Swal.fire('Error', 'Unable to reject. Try again.', 'error');
+                            });
                     }
                 });
             }
         });
 
         // ===== Summary card -> Modal list =====
-        (function(){
+        (function() {
             const modalEl = document.getElementById('listModal');
             const modal = new bootstrap.Modal(modalEl);
             const tbody = document.getElementById('listModalBody');
             const titleEl = document.getElementById('listModalLabel');
 
-            function renderRows(users){
-                if(!Array.isArray(users)) return '';
+            function renderRows(users) {
+                if (!Array.isArray(users)) return '';
                 return users.map((u, idx) => {
-                    const name  = (u && u.name)  ? u.name  : '—';
+                    const name = (u && u.name) ? u.name : '—';
                     const phone = (u && u.phone) ? u.phone : '—';
                     return `<tr>
                         <td class="text-muted">${idx+1}</td>
@@ -1034,14 +1443,18 @@
                 }).join('');
             }
 
-            document.addEventListener('click', function(e){
+            document.addEventListener('click', function(e) {
                 const card = e.target.closest('.summary-card');
-                if(!card) return;
+                if (!card) return;
                 e.preventDefault();
 
                 titleEl.textContent = card.getAttribute('data-title') || 'List';
                 let users = [];
-                try { users = JSON.parse(card.getAttribute('data-users') || '[]'); } catch(e){ users = []; }
+                try {
+                    users = JSON.parse(card.getAttribute('data-users') || '[]');
+                } catch (e) {
+                    users = [];
+                }
                 tbody.innerHTML = renderRows(users);
                 modal.show();
             });
