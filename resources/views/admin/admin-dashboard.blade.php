@@ -20,8 +20,8 @@
 
     <style>
         /* =========================
-                   Colorful Design Tokens
-                ========================= */
+                       Colorful Design Tokens
+                    ========================= */
         :root {
             /* Brand gradient */
             --brand-a: #7c3aed;
@@ -75,9 +75,6 @@
             --shadow: 0 16px 38px rgba(0, 0, 0, .45);
         }
 
-        /* =========================
-                   App Shell
-                ========================= */
         html,
         body {
             height: 100%;
@@ -254,7 +251,6 @@
             border-color: transparent;
         }
 
-        /* ===== People strip – unified sizing & alignment ===== */
         .strip {
             display: grid;
             grid-auto-flow: column;
@@ -272,7 +268,6 @@
             border-radius: 14px;
             padding: 12px;
             height: 142px;
-            /* fixed height for consistent rows */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -344,9 +339,6 @@
             background: #475569;
         }
 
-        /* =========================
-                   COLORFUL KPI CARDS
-                ========================= */
         .kpi {
             position: relative;
             background: var(--panel);
@@ -730,15 +722,16 @@
 
             <!-- Right: Gochhikar Today + Quick Actions -->
             <div class="col-12 col-xl-4">
-                <!-- Gochhikar Today -->
+                <!-- Gochhikar Today (Tabbed) -->
                 <div class="panel mb-3">
                     <!-- Compact gradient sub-header -->
                     <div class="px-3 pt-3">
                         <div class="rounded-3 p-3 text-white"
                             style="background: var(--g-brand); box-shadow: var(--shadow);">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero" style="border-color: rgba(255,255,255,.35);"><i
-                                        class="bi bi-people"></i></span>
+                                <span class="icon-hero" style="border-color: rgba(255,255,255,.35);">
+                                    <i class="bi bi-people"></i>
+                                </span>
                                 <div class="flex-grow-1">
                                     <div class="fw-bold" style="letter-spacing:.2px;">Gochhikar Today</div>
                                     <div class="small" style="opacity:.9;">Normal &amp; Nijoga assignments</div>
@@ -752,84 +745,109 @@
                     </div>
 
                     <div class="p-3">
-                        <!-- Normal -->
-                        <div class="mb-3">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-bold">Gochhikar</span>
-                                    <span class="badge text-bg-light border">
-                                        {{ collect($gochhikarEvents)->flatten(1)->count() }}
+                        <!-- Tabs -->
+                        @php
+                            $gochhikarCount = collect($gochhikarEvents)->flatten(1)->count();
+                            $nijogaCount = collect($nijogaGochhikarEvents)->flatten(1)->count();
+                        @endphp
+
+                        <ul class="nav nav-pills tabs gap-2 mb-3" id="gochhikarTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active d-flex align-items-center gap-2" id="gochhikar-tab"
+                                    data-bs-toggle="pill" data-bs-target="#gochhikar-pane" type="button" role="tab"
+                                    aria-controls="gochhikar-pane" aria-selected="true">
+                                    <i class="bi bi-check2-circle"></i>
+                                    <span>Gochhikar</span>
+                                    <span class="badge text-bg-light border ms-1">{{ $gochhikarCount }}</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link d-flex align-items-center gap-2" id="nijoga-tab"
+                                    data-bs-toggle="pill" data-bs-target="#nijoga-pane" type="button" role="tab"
+                                    aria-controls="nijoga-pane" aria-selected="false">
+                                    <i class="bi bi-exclamation-circle"></i>
+                                    <span>Nijoga Assign</span>
+                                    <span class="badge text-bg-light border ms-1">{{ $nijogaCount }}</span>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="gochhikarTabsContent">
+                            <!-- Gochhikar (Normal) -->
+                            <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel"
+                                aria-labelledby="gochhikar-tab" tabindex="0">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold">Gochhikar</span>
+                                        <span class="badge text-bg-light border">{{ $gochhikarCount }}</span>
+                                    </div>
+                                    <span class="chip ok">
+                                        <i class="bi bi-check2-circle"></i> Normal
                                     </span>
                                 </div>
-                                <span class="chip ok">
-                                    <i class="bi bi-check2-circle"></i> Normal
-                                </span>
+
+                                @forelse ($gochhikarEvents as $label => $users)
+                                    <div class="mb-2">
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <div class="small fw-semibold">{{ $label }}</div>
+                                            <span
+                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                        </div>
+                                        <div class="strip">
+                                            @foreach ($users as $user)
+                                                <div class="mini-card">
+                                                    @include('partials._user_card', ['user' => $user])
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="alert alert-light border d-flex align-items-center" role="alert">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        No Gochhikar assigned (normal) for today.
+                                    </div>
+                                @endforelse
                             </div>
 
-                            @forelse ($gochhikarEvents as $label => $users)
-                                <div class="mb-2">
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div class="small fw-semibold">{{ $label }}</div>
-                                        <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                            <!-- Nijoga -->
+                            <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab"
+                                tabindex="0">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-bold">Nijoga Assign</span>
+                                        <span class="badge text-bg-light border">{{ $nijogaCount }}</span>
                                     </div>
-                                    <div class="strip">
-                                        @foreach ($users as $user)
-                                            <div class="mini-card">
-                                                @include('partials._user_card', ['user' => $user])
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="alert alert-light border d-flex align-items-center" role="alert">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    No Gochhikar assigned (normal) for today.
-                                </div>
-                            @endforelse
-                        </div>
-
-                        <div class="divider my-3"></div>
-
-                        <!-- Nijoga -->
-                        <div class="mb-2">
-                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="fw-bold">Nijoga Assign</span>
-                                    <span class="badge text-bg-light border">
-                                        {{ collect($nijogaGochhikarEvents)->flatten(1)->count() }}
+                                    <span class="chip warn">
+                                        <i class="bi bi-exclamation-circle"></i> Nijoga
                                     </span>
                                 </div>
-                                <span class="chip warn">
-                                    <i class="bi bi-exclamation-circle"></i> Nijoga
-                                </span>
-                            </div>
 
-                            @forelse ($nijogaGochhikarEvents as $label => $users)
-                                <div class="mb-2">
-                                    <div class="d-flex align-items-center justify-content-between mb-1">
-                                        <div class="small fw-semibold">{{ $label }}</div>
-                                        <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                @forelse ($nijogaGochhikarEvents as $label => $users)
+                                    <div class="mb-2">
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <div class="small fw-semibold">{{ $label }}</div>
+                                            <span
+                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                        </div>
+                                        <div class="strip">
+                                            @foreach ($users as $user)
+                                                <div class="mini-card">
+                                                    @include('partials._user_card', ['user' => $user])
+                                                </div>
+                                            @endforeach
+                                        </div>
                                     </div>
-                                    <div class="strip">
-                                        @foreach ($users as $user)
-                                            <div class="mini-card">
-                                                @include('partials._user_card', ['user' => $user])
-                                            </div>
-                                        @endforeach
+                                @empty
+                                    <div class="alert alert-light border d-flex align-items-center" role="alert">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        No Nijoga Gochhikar for today.
                                     </div>
-                                </div>
-                            @empty
-                                <div class="alert alert-light border d-flex align-items-center" role="alert">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    No Nijoga Gochhikar for today.
-                                </div>
-                            @endforelse
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
 
             <!-- ===== KPI GRID ===== -->
             <div class="col-12 mt-1">
