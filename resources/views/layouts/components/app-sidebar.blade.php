@@ -46,7 +46,7 @@
                     <a class="side-menu__item {{ request()->is('admin/pratihari-profile') ? 'is-active' : '' }}"
                         href="{{ url('admin/pratihari-profile') }}">
                         <i class="bi bi-person-plus icon gradient-2"></i>
-                        <span class="side-menu__label">Add Pratihari Profile</span>
+                        <span class="side-menu__label">Add Profile</span>
                     </a>
                 </li>
 
@@ -55,7 +55,7 @@
                     <a class="side-menu__item {{ request()->is('admin/pratihari-manage-profile') ? 'is-active' : '' }}"
                         href="{{ url('admin/pratihari-manage-profile') }}">
                         <i class="bi bi-people icon gradient-3"></i>
-                        <span class="side-menu__label">Manage Pratihari Profile</span>
+                        <span class="side-menu__label">Manage Profile</span>
                     </a>
                 </li>
 
@@ -65,7 +65,7 @@
                         <a class="side-menu__item {{ request()->is('admin/pratihari-seba-beddha') ? 'is-active' : '' }}"
                             href="{{ url('admin/pratihari-seba-beddha') }}">
                             <i class="bi bi-diagram-3 icon gradient-4"></i>
-                            <span class="side-menu__label">Pratihari Beddha Assign</span>
+                            <span class="side-menu__label">Beddha Assign</span>
                         </a>
                     </li>
                 @endif
@@ -75,7 +75,7 @@
                     <a class="side-menu__item {{ request()->is('admin/assign-pratihari-seba') ? 'is-active' : '' }}"
                         href="{{ url('admin/assign-pratihari-seba') }}">
                         <i class="bi bi-journal-check icon gradient-5"></i>
-                        <span class="side-menu__label">Pratihari Seba Assign</span>
+                        <span class="side-menu__label">Seba Assign</span>
                     </a>
                 </li>
 
