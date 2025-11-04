@@ -160,7 +160,7 @@
                     <div class="col-md-3">
                         <label for="alias_name" class="form-label">Alias Name</label>
                         <div class="input-group">
-                            <span class="chip alt"><i class="fa-solid fa-user-tag"></i></span>
+                            <span class="chip"><i class="fa-solid fa-user-tag"></i></span>
                             <input type="text" class="form-control" id="alias_name" name="alias_name" autocomplete="off">
                         </div>
                     </div>
@@ -209,7 +209,7 @@
                     <div class="col-md-3">
                         <label for="blood_group" class="form-label">Blood Group</label>
                         <div class="input-group">
-                            <span class="chip alt"><i class="fa-solid fa-droplet"></i></span>
+                            <span class="chip"><i class="fa-solid fa-droplet"></i></span>
                             <select class="form-select" id="blood_group" name="blood_group">
                                 <option value="">Select Blood Group</option>
                                 @foreach (['A+','A-','B+','B-','O+','O-','AB+','AB-'] as $bg)
