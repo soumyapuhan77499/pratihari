@@ -120,7 +120,7 @@
     <div class="tabbar mb-3">
         <ul class="nav" id="profileTabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihari.create') }}">
+                <a class="nav-link" href="{{ route('admin.pratihariProfile') }}">
                     <i class="fa-solid fa-user"></i> Profile
                 </a>
             </li>
