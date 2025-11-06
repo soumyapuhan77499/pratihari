@@ -1,263 +1,255 @@
 @extends('layouts.app')
 
 @section('styles')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 (single source of truth) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Font Awesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <!-- Select2 -->
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-    {{-- Select2 CSS --}}
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
 
     <style>
-        #custom-calendar {
+        :root{
+            --brand-a:#7c3aed; /* violet */
+            --brand-b:#06b6d4; /* cyan   */
+            --accent:#f5c12e;  /* amber  */
+            --ink:#0b1220;
+            --muted:#64748b;
+            --border:rgba(2,6,23,.10);
+            --soft:#f8fafc;
+        }
+
+        .page-header{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff;border-radius:1rem;padding:1rem 1.25rem;
+            box-shadow:0 10px 24px rgba(6,182,212,.18);
+        }
+        .page-header .title{font-weight:800;letter-spacing:.3px;}
+
+        .card.custom-card{ border:1px solid var(--border); border-radius:14px; box-shadow:0 8px 22px rgba(2,6,23,.06); }
+        .card-header{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff;font-weight:800;letter-spacing:.3px;border-radius:14px 14px 0 0;
+            display:flex;align-items:center;gap:.55rem;
+        }
+
+        /* Filter cards */
+        .filter-header--pratihari{ background:#f8c66d; color:#1f2937; }
+        .filter-header--gochhikar{ background:#e96a01; color:#fff; }
+
+        /* Calendar wrapper */
+        #custom-calendar{
             max-width: 100%;
             margin: 0 auto;
-            height: 900px !important;
             background: #ffffff;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 12px;
+            border:1px solid var(--border);
+            box-shadow:0 6px 18px rgba(2,6,23,.06);
         }
+        .fc .fc-toolbar-title{ font-weight:800; color:#f8c66d; }
+        .fc .fc-button{ background-color:#f8c66d; border:none; }
+        .fc .fc-button:hover{ filter:brightness(.95); }
+        .fc-event{
+            background-color:#e96a01 !important; border:none !important; border-radius:6px !important;
+            padding:2px 6px; font-size:.76rem;
+        }
+        .fc-daygrid-day{ background-color:#f8f9fa; }
 
-        .fc .fc-toolbar-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #f8c66d;
+        /* Select2 harmonize with BS5 */
+        .select2-container .select2-selection--single{
+            height: 38px; padding:.35rem .5rem; border:1px solid #ced4da; border-radius:.375rem;
         }
-
-        .fc-button {
-            background-color: #f8c66d !important;
-            border: none !important;
-            border-radius: 6px !important;
-        }
-
-        .fc-button-primary:not(:disabled):hover {
-            background-color: #f8c66d !important;
-        }
-
-        .fc-event {
-            background-color: #e96a01 !important;
-            border: none !important;
-            border-radius: 4px !important;
-            padding: 2px 4px;
-            font-size: 0.685rem;
-        }
-
-        .fc-daygrid-day-number {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .fc-daygrid-day {
-            background-color: #f8f9fa;
-        }
-
-        .card-header {
-            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
-            color: rgb(233, 234, 237);
-            font-size: 25px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .card-headers {
-            background: linear-gradient(90deg, #007bff 0%, #6a11cb 100%);
-            color: rgb(233, 234, 237);
-            font-size: 20px;
-            text-align: center;
-            padding: 10px;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-transform: uppercase;
-        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered{ line-height: 28px; }
+        .select2-container--default .select2-selection--single .select2-selection__arrow{ height: 36px; right: 6px; }
     </style>
 @endsection
 
 @section('content')
-    <div class="row">
+<div class="container-fluid">
 
-        <div class="col-12 mt-2">
-            <div class="card">
-                <div class="col-lg-12 mt-4">
-                    <div class="card custom-card overflow-hidden">
-                        <div class="card-header">Seba Calendar</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <!-- Pratihari Dropdown -->
-                    <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
-                        <div class="card custom-card w-100">
-                            <div class="card-header text-white" style="background-color: #f8c66d">
-                                <i class="bi bi-filter me-2"></i> Filter by Pratihari Name
-                            </div>
-                            <div class="card-body">
-                                <form method="GET" action="{{ url()->current() }}">
-                                    <div class="mb-3">
-                                        <select class="form-control select2" name="pratihari_id"
-                                            onchange="this.form.submit()">
-                                            <option value="">-- Select Pratihari Name --</option>
-                                            @foreach ($profile_name as $profile)
-                                                <option value="{{ $profile->pratihari_id }}"
-                                                    {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
-                                                    {{ $profile->first_name }} {{ $profile->middle_name }}
-                                                    {{ $profile->last_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gochhikar Dropdown -->
-                    <div class="col-lg-4 mb-4 mx-auto d-flex mt-4">
-                        <div class="card custom-card w-100">
-                            <div class="card-header text-white" style="background-color: #e96a01">
-                                <i class="bi bi-filter me-2"></i> Filter by Gochhikar Name
-                            </div>
-                            <div class="card-body">
-                                <form method="GET" action="{{ url()->current() }}">
-                                    <div class="mb-3">
-                                        <select class="form-control select2" name="pratihari_id"
-                                            onchange="this.form.submit()">
-                                            <option value="">-- Select Gochhikar Name --</option>
-                                            @foreach ($gochhikar_name as $gochhikar)
-                                                <option value="{{ $gochhikar->pratihari_id }}"
-                                                    {{ request('pratihari_id') == $gochhikar->pratihari_id ? 'selected' : '' }}>
-                                                    {{ $gochhikar->first_name }} {{ $gochhikar->middle_name }}
-                                                    {{ $gochhikar->last_name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Calendar -->
-                <div class="col-lg-12 mb-4">
-                    <div class="card custom-card">
-                        <div class="card-header text-white" style="background-color: #f8c66d">
-                            <i class="bi bi-calendar-event me-2"></i>Custom Calendar
-                        </div>
-                        <div class="card-body">
-                            <div id="custom-calendar"></div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Page header -->
+    <div class="page-header mt-3 mb-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <div class="title h4 mb-1"><i class="fa-solid fa-calendar-days me-2"></i>Seba Calendar</div>
+                <div class="small opacity-75">Filter by Pratihari or Gochhikar to view assigned Seba dates.</div>
             </div>
-
-            <!-- Modal -->
-            <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="eventModalLabel">Seba Details</h5>
-                            <button type="button" class="btn-close bg-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p><strong>Seba Name:</strong> <span id="modalSebaName"></span></p>
-                            <p><strong>Beddha ID:</strong> <span id="modalBeddhaId"></span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="javascript:void(0);">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Seba Calendar</li>
+                </ol>
+            </nav>
         </div>
     </div>
+
+    <!-- Filters -->
+    <div class="row g-3">
+        <!-- Pratihari Filter -->
+        <div class="col-lg-6">
+            <div class="card custom-card">
+                <div class="card-header filter-header--pratihari">
+                    <i class="fa-solid fa-filter me-1"></i> Filter by Pratihari
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url()->current() }}">
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Pratihari Name</label>
+                            <select class="form-control select2" name="pratihari_id" onchange="this.form.submit()">
+                                <option value="">-- Select Pratihari --</option>
+                                @foreach ($profile_name as $profile)
+                                    <option value="{{ $profile->pratihari_id }}"
+                                        {{ request('pratihari_id') == $profile->pratihari_id ? 'selected' : '' }}>
+                                        {{ trim($profile->first_name.' '.$profile->middle_name.' '.$profile->last_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        {{-- keep other query params on submit --}}
+                        @if(request('gochhikar_id'))
+                            <input type="hidden" name="gochhikar_id" value="{{ request('gochhikar_id') }}">
+                        @endif
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gochhikar Filter -->
+        <div class="col-lg-6">
+            <div class="card custom-card">
+                <div class="card-header filter-header--gochhikar">
+                    <i class="fa-solid fa-filter me-1"></i> Filter by Gochhikar
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="{{ url()->current() }}">
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold">Gochhikar Name</label>
+                            <select class="form-control select2" name="gochhikar_id" onchange="this.form.submit()">
+                                <option value="">-- Select Gochhikar --</option>
+                                @foreach ($gochhikar_name as $gochhikar)
+                                    <option value="{{ $gochhikar->pratihari_id }}"
+                                        {{ request('gochhikar_id') == $gochhikar->pratihari_id ? 'selected' : '' }}>
+                                        {{ trim($gochhikar->first_name.' '.$gochhikar->middle_name.' '.$gochhikar->last_name) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        {{-- keep other query params on submit --}}
+                        @if(request('pratihari_id'))
+                            <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
+                        @endif
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Calendar -->
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="card custom-card">
+                <div class="card-header">
+                    <i class="fa-regular fa-calendar-check me-1"></i> Calendar
+                </div>
+                <div class="card-body">
+                    @if(!request('pratihari_id') && !request('gochhikar_id'))
+                        <div class="alert alert-info d-flex align-items-center" role="alert">
+                            <i class="fa-solid fa-circle-info me-2"></i>
+                            Select a Pratihari or Gochhikar to load events.
+                        </div>
+                    @endif
+                    <div id="custom-calendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event details modal -->
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="eventModalLabel"><i class="fa-solid fa-clipboard-list me-2"></i>Seba Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-1"><strong>Seba Name:</strong> <span id="modalSebaName"></span></p>
+                    <p class="mb-0"><strong>Beddha ID:</strong> <span id="modalBeddhaId"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 @endsection
 
 @section('scripts')
+    <!-- jQuery + Bootstrap 5 bundle -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Select2 -->
+    <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
+
+    <!-- FullCalendar -->
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        $(function () {
+            // Init Select2 once
+            $('.select2').select2({ placeholder: 'Select name', allowClear: true, width: '100%' });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
             const calendarEl = document.getElementById('custom-calendar');
+            const urlParams  = new URLSearchParams(window.location.search);
+            const pratihariId = urlParams.get('pratihari_id');
+            const gochhikarId = urlParams.get('gochhikar_id');
+
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
-                height: 500,
+                height: 650,
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const pratihariId = urlParams.get('pratihari_id');
-
-                    if (pratihariId) {
-                        fetch(
-                                `{{ route('admin.sebaDate') }}?pratihari_id=${encodeURIComponent(pratihariId)}&_=no_cache`
-                            )
-                            .then(response => response.json())
-                            .then(data => successCallback(data))
-                            .catch(error => {
-                                console.error("Error loading events:", error);
-                                failureCallback(error);
-                            });
-                    } else {
-                        successCallback([]);
+                events: function (fetchInfo, success, failure) {
+                    // Only load when at least one filter is present
+                    if (!pratihariId && !gochhikarId) {
+                        success([]);
+                        return;
                     }
-                },
-                eventClick: function(info) {
-                    document.getElementById('modalSebaName').innerText = info.event.extendedProps
-                        .sebaName;
-                    document.getElementById('modalBeddhaId').innerText = info.event.extendedProps
-                        .beddhaId;
 
-                    const modal = new bootstrap.Modal(document.getElementById('eventModal'));
-                    modal.show();
+                    // Build query preserving both filters if present
+                    const qs = new URLSearchParams();
+                    if (pratihariId)  qs.set('pratihari_id', pratihariId);
+                    if (gochhikarId)  qs.set('gochhikar_id', gochhikarId);
+                    // Prevent caches in some proxies
+                    qs.set('_', Date.now());
+
+                    fetch(`{{ route('admin.sebaDate') }}?` + qs.toString())
+                        .then(r => r.json())
+                        .then(data => success(Array.isArray(data) ? data : []))
+                        .catch(err => {
+                            console.error('Error loading events:', err);
+                            failure(err);
+                        });
+                },
+                eventClick: function (info) {
+                    document.getElementById('modalSebaName').innerText = info.event.extendedProps?.sebaName ?? '';
+                    document.getElementById('modalBeddhaId').innerText = info.event.extendedProps?.beddhaId ?? '';
+                    new bootstrap.Modal(document.getElementById('eventModal')).show();
                 }
             });
 
             calendar.render();
         });
     </script>
-
-    <script>
-        $(document).ready(function() {
-            $('.select2-search').select2({
-                placeholder: "-- Select Pratihari Name --",
-                allowClear: true,
-                width: '100%'
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function() {
-            $('.select2').select2({
-                placeholder: "Search Gochhikar",
-                allowClear: true,
-                width: '100%'
-            });
-        });
-    </script>
-
-    {{-- Select2 JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <!-- Select2 CSS -->
-
-<!-- Select2 JS -->
-
-<script>
-    $(document).ready(function () {
-        $('.select2').select2({
-            placeholder: "Select Name",
-            allowClear: true,
-            width: '100%'
-        });
-    });
-</script>
 @endsection
