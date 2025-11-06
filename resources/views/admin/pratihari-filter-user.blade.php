@@ -1,47 +1,54 @@
 @extends('layouts.app')
 
 @section('styles')
-    <!-- One Bootstrap & One Font Awesome (keep versions consistent across app) -->
+    <!-- One Bootstrap & One Font Awesome (consistent across app) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
     <style>
         :root{
-            --brand-a:#7c3aed; /* violet */
-            --brand-b:#06b6d4; /* cyan   */
+            --brand-a:#7c3aed; /* violet  */
+            --brand-b:#06b6d4; /* cyan    */
             --ink:#0b1220;
             --muted:#64748b;
             --border:rgba(2,6,23,.10);
+            --soft:#f8fafc;
         }
 
         .card{ border:1px solid var(--border); border-radius:14px; box-shadow:0 8px 22px rgba(2,6,23,.06); }
+
+        /* NEW: unified colorful header (same as other pages) */
         .card-header{
-            background:linear-gradient(90deg,#F7CE68,#FBAB7E);
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
             color:#fff; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
-            border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.5rem;
-            text-shadow: 0 1px 2px rgba(0,0,0,.25);
+            border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:space-between;
+            padding:.9rem 1rem; text-shadow:0 1px 2px rgba(0,0,0,.25);
         }
+        .card-header .title{display:flex; align-items:center; gap:.6rem;}
+        .card-header .title i{opacity:.95;}
+        .subhint{font-size:.85rem; opacity:.9; font-weight:600;}
 
         .table thead th{ white-space:nowrap; }
         .table td, .table th{ vertical-align:middle; }
+        .table-hover>tbody>tr:hover{ background:rgba(2,6,23,.03); }
 
         .profile-photo{
             width:60px; height:60px; border-radius:50%;
-            object-fit:cover; transition: transform .2s ease, box-shadow .2s ease;
+            object-fit:cover; transition: transform .18s ease, box-shadow .18s ease;
             cursor: zoom-in;
         }
-        .profile-photo:hover{ transform: scale(1.15); box-shadow:0 6px 18px rgba(2,6,23,.18); }
+        .profile-photo:hover{ transform: scale(1.12); box-shadow:0 6px 18px rgba(2,6,23,.18); }
 
-        .btn-icon{
-            display:inline-flex; align-items:center; gap:.35rem;
-        }
+        .btn-icon{ display:inline-flex; align-items:center; gap:.35rem; }
 
-        .badge-status{
-            font-size:.78rem; padding:.45rem .6rem; border-radius:999px;
-        }
+        .badge-status{ font-size:.78rem; padding:.45rem .6rem; border-radius:999px; }
 
-        /* address modal table */
+        /* Address modal table */
         #addressModal table th{ width:220px; }
+
+        /* Tiny header legend */
+        .legend{ display:flex; gap:.4rem; flex-wrap:wrap; }
+        .legend .badge{ font-weight:700; }
     </style>
 @endsection
 
@@ -50,13 +57,21 @@
     <div class="col-12 mt-2">
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-user-circle" style="color:#e96a01;"></i>
-                Pratihari Manage Profile
+                <div class="title">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Pratihari • Manage Profile</span>
+                </div>
+                <div class="legend">
+                    <span class="badge bg-success badge-status"><i class="fa-solid fa-check-circle me-1"></i>Approved</span>
+                    <span class="badge bg-warning text-dark badge-status"><i class="fa-solid fa-pen-to-square me-1"></i>Updated</span>
+                    <span class="badge bg-secondary badge-status"><i class="fa-regular fa-hourglass-half me-1"></i>Pending</span>
+                    <span class="badge bg-danger badge-status"><i class="fa-solid fa-xmark-circle me-1"></i>Rejected</span>
+                </div>
             </div>
 
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="file-datatable" class="table table-bordered align-middle">
+                    <table id="file-datatable" class="table table-bordered table-hover align-middle">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
@@ -202,22 +217,12 @@
 @endsection
 
 @section('scripts')
-    <!-- jQuery (needed for your AJAX) + Bootstrap bundle + SweetAlert2 -->
+    <!-- jQuery + Bootstrap + SweetAlert2 -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // Flash toasts from session (optional)
-        document.addEventListener("DOMContentLoaded", function() {
-            @if (session('success'))
-                Swal.fire({ icon:'success', title:'Success!', text:"{{ session('success') }}", confirmButtonColor:'#3085d6' });
-            @endif
-            @if (session('error'))
-                Swal.fire({ icon:'error', title:'Error!', text:"{{ session('error') }}", confirmButtonColor:'#d33' });
-            @endif
-        });
-
         // Tooltips
         document.addEventListener('DOMContentLoaded', () => {
             const tt = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -248,6 +253,16 @@
                     document.getElementById('reject-reason-text').textContent = this.getAttribute('data-reason') || 'No reason provided.';
                 });
             });
+        });
+
+        // Session flash toasts (optional)
+        document.addEventListener("DOMContentLoaded", function() {
+            @if (session('success'))
+                Swal.fire({ icon:'success', title:'Success!', text:"{{ session('success') }}", confirmButtonColor:'#3085d6' });
+            @endif
+            @if (session('error'))
+                Swal.fire({ icon:'error', title:'Error!', text:"{{ session('error') }}", confirmButtonColor:'#d33' });
+            @endif
         });
 
         // AJAX Approve / Reject with CSRF
