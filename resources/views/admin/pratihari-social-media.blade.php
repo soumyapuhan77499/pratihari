@@ -169,7 +169,7 @@
         .btn-brand {
             background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
             border: 0;
-            color: #fff;
+            color: #fff !important;
             box-shadow: 0 14px 30px rgba(124, 58, 237, .25);
         }
 
