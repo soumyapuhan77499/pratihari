@@ -24,10 +24,21 @@
             color:#fff; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
             display:flex; flex-wrap:wrap; gap:.75rem 1rem; align-items:center; justify-content:space-between;
             padding:1rem 1.1rem; text-shadow:0 1px 2px rgba(0,0,0,.25);
+            border-radius:16px 16px 0 0;
         }
         .card-header .title{display:flex; align-items:center; gap:.6rem; font-size:1.05rem;}
         .card-header .title i{opacity:.95;}
         .subhint{font-size:.84rem; opacity:.9; font-weight:600;}
+
+        /* Keep legend readable and on one/two lines */
+        .legend{ display:flex; gap:.4rem; flex-wrap:wrap; align-items:center; justify-content:flex-end; max-width:100%; }
+        .legend .badge{ font-weight:700; white-space:nowrap; }
+
+        /* On smaller widths, move legend below the title so it doesn't get squeezed */
+        @media (max-width: 992px){
+            .card-header{ align-items:flex-start; }
+            .card-header .legend{ order:2; width:100%; justify-content:flex-start; }
+        }
 
         /* Toolbar */
         .toolbar{
@@ -43,11 +54,20 @@
         .toolbar .form-select{ border-radius:999px; padding:.45rem 2rem .45rem .9rem; border:1px solid var(--border); }
 
         /* Table */
+        #profiles-table{ table-layout:auto !important; } /* avoid truncating button text */
         .table thead th{ white-space:nowrap; font-weight:800; color:#0b1220; }
         .table td, .table th{ vertical-align:middle; }
         .table-hover>tbody>tr:hover{ background:rgba(2,6,23,.03); }
         tbody tr{ transition: background .15s ease, transform .12s ease; }
         tbody tr:hover{ transform: translateY(-1px); }
+        .btn{ white-space:nowrap; } /* keep “View Profile” / “Details” in one line */
+
+        /* Explicit column widths for consistent alignment */
+        /* 1:#, 2:Photo, 3:View, 4:Name, 5:Phone, 6:Address, 7:Occupation, 8:Health, 9:Status, 10:Actions */
+        #profiles-table th:nth-child(2), #profiles-table td:nth-child(2){ width:90px; }
+        #profiles-table th:nth-child(3), #profiles-table td:nth-child(3){ width:140px; }
+        #profiles-table th:nth-child(6), #profiles-table td:nth-child(6){ width:120px; }
+        #profiles-table th:nth-child(10), #profiles-table td:nth-child(10){ width:240px; }
 
         /* Photo */
         .profile-photo{
@@ -60,8 +80,6 @@
         /* Buttons & badges */
         .btn-icon{ display:inline-flex; align-items:center; gap:.35rem; }
         .badge-status{ font-size:.78rem; padding:.45rem .6rem; border-radius:999px; }
-        .legend{ display:flex; gap:.4rem; flex-wrap:wrap; }
-        .legend .badge{ font-weight:700; }
 
         /* Sticky actions at small screens */
         @media (max-width: 576px){
@@ -71,10 +89,7 @@
 
         /* Modals */
         #addressModal table th{ width:220px; }
-        .modal-header.bg-primary,
-        .modal-header.bg-danger{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b)) !important;
-        }
+        .modal-header.bg-primary{ background:linear-gradient(90deg,var(--brand-a),var(--brand-b)) !important; }
         .modal-header.bg-danger{ background:linear-gradient(90deg,#ef4444,#f97316) !important; }
 
         /* Focus rings */
@@ -153,7 +168,7 @@
                                     <th>Occupation</th>
                                     <th>Health Card No</th>
                                     <th>Status</th>
-                                    <th style="min-width:240px;">Actions</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -179,13 +194,8 @@
                                             </a>
                                         </td>
 
-                                        <td class="fw-semibold">
-                                            {{ $fullName ?: 'N/A' }}
-                                        </td>
-
-                                        <td>
-                                            {{ $profile->phone_no ?: 'N/A' }}
-                                        </td>
+                                        <td class="fw-semibold">{{ $fullName ?: 'N/A' }}</td>
+                                        <td>{{ $profile->phone_no ?: 'N/A' }}</td>
 
                                         <td>
                                             <button class="btn btn-info btn-sm btn-icon view-address"
