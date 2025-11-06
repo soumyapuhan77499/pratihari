@@ -34,24 +34,17 @@
             display:inline-block;border:3px solid rgba(255,255,255,.6);
             box-shadow:0 10px 22px rgba(2,6,23,.18);
         }
-        .profile-head .profile-image img{
-            width:100%;height:100%;object-fit:cover;
-        }
+        .profile-head .profile-image img{ width:100%;height:100%;object-fit:cover; }
 
         /* Clickable donut progress list */
-        .progress-circle-wrapper{
-            display:flex;flex-wrap:wrap;gap:1rem;align-items:center;
-        }
+        .progress-circle-wrapper{ display:flex;flex-wrap:wrap;gap:1rem;align-items:center; }
         .progress-circle{
-            display:flex;flex-direction:column;align-items:center;text-decoration:none;
-            width:92px;
+            display:flex;flex-direction:column;align-items:center;text-decoration:none;width:92px;
         }
-        .progress-circle canvas{width:92px !important;height:92px !important;}
-        .progress-label{
-            margin-top:.35rem;text-align:center;font-weight:700;font-size:.82rem;color:var(--ink);
-        }
+        .progress-circle canvas{ width:92px!important;height:92px!important; }
+        .progress-label{ margin-top:.35rem;text-align:center;font-weight:700;font-size:.82rem;color:var(--ink); }
 
-        /* Tabbar (uniform across app) */
+        /* Tabbar */
         .tabbar{background:#fff;border:1px solid var(--border);border-radius:14px;
             box-shadow:0 8px 22px rgba(2,6,23,.06);padding:.35rem;overflow:auto;scrollbar-width:thin;}
         .tabbar .nav{flex-wrap:nowrap;gap:.35rem;}
@@ -70,12 +63,10 @@
 
         /* Section cards */
         .card{border:1px solid var(--border);border-radius:1rem;}
-        .profile-section .profile-item{
-            display:flex;gap:.75rem;padding:.4rem 0;align-items:flex-start;
-        }
+        .profile-section .profile-item{ display:flex;gap:.75rem;padding:.4rem 0;align-items:flex-start; }
         .profile-item i{color:#475569;opacity:.8;margin-top:.15rem;}
 
-        /* Pills (Bheddha) */
+        /* Pills */
         .beddha-pill{
             display:inline-flex;align-items:center;gap:.35rem;
             background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
@@ -84,7 +75,7 @@
             box-shadow:0 6px 14px rgba(124,58,237,.22);
         }
 
-        /* Address grid helper (uses your <x-address-item> components) */
+        /* Address grid helper */
         .address-grid .col{min-width:220px;}
 
         /* Buttons */
@@ -126,22 +117,36 @@
                 </div>
             </div>
 
-            <!-- Progress donuts (clickable) -->
+            <!-- Progress donuts (explicit items to avoid Blade array parsing issues) -->
             <div class="progress-circle-wrapper">
-                @foreach ([
-                    ['Personal', $profileCompletion, 'profileChart', route('profile.update', ['pratihari_id'=>$profile->pratihari_id])],
-                    ['Family', $familyCompletion, 'familyChart', route('family.update', ['pratihari_id'=>$profile->pratihari_id])],
-                    ['ID Card', $idcardCompletion, 'idcardChart', route('idcard.update', ['pratihari_id'=>$profile->pratihari_id])],
-                    ['Address', $addressCompletion, 'addressChart', route('address.update', ['pratihari_id'=>$profile->pratihari_id])],
-                    ['Occupation', $occupationCompletion, 'occupationChart', route('occupation.update', ['pratihari_id'=>$profile->pratihari_id])],
-                    ['Seba', $sebaCompletion, 'sebaChart', route('seba.update', ['pratihari_id'=>$profile->pratihari_id])],
-                    ['Social', $socialmediaCompletion, 'socialmediaChart', route('social.update', ['pratihari_id'=>$profile->pratihari_id])]
-                ] as $d)
-                    <a href="{{ $d[3] }}" class="progress-circle" title="Edit {{ $d[0] }}">
-                        <canvas id="{{ $d[2] }}"></canvas>
-                        <div class="progress-label">{{ $d[0] }}<br>{{ round($d[1]) }}%</div>
-                    </a>
-                @endforeach
+                <a href="{{ route('profile.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit Personal">
+                    <canvas id="profileChart"></canvas>
+                    <div class="progress-label">Personal<br>{{ round($profileCompletion) }}%</div>
+                </a>
+                <a href="{{ route('family.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit Family">
+                    <canvas id="familyChart"></canvas>
+                    <div class="progress-label">Family<br>{{ round($familyCompletion) }}%</div>
+                </a>
+                <a href="{{ route('idcard.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit ID Card">
+                    <canvas id="idcardChart"></canvas>
+                    <div class="progress-label">ID Card<br>{{ round($idcardCompletion) }}%</div>
+                </a>
+                <a href="{{ route('address.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit Address">
+                    <canvas id="addressChart"></canvas>
+                    <div class="progress-label">Address<br>{{ round($addressCompletion) }}%</div>
+                </a>
+                <a href="{{ route('occupation.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit Occupation">
+                    <canvas id="occupationChart"></canvas>
+                    <div class="progress-label">Occupation<br>{{ round($occupationCompletion) }}%</div>
+                </a>
+                <a href="{{ route('seba.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit Seba">
+                    <canvas id="sebaChart"></canvas>
+                    <div class="progress-label">Seba<br>{{ round($sebaCompletion) }}%</div>
+                </a>
+                <a href="{{ route('social.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="progress-circle" title="Edit Social">
+                    <canvas id="socialmediaChart"></canvas>
+                    <div class="progress-label">Social<br>{{ round($socialmediaCompletion) }}%</div>
+                </a>
             </div>
         </div>
     </div>
@@ -451,14 +456,14 @@
                                         ['fab fa-youtube','bg-danger','YouTube',$socialMedia->youtube_url ?? '#'],
                                     ];
                                 @endphp
-                                @foreach ($socialLinks as [$icon,$color,$label,$url])
+                                @foreach ($socialLinks as $social)
                                     <div class="d-flex align-items-center me-3">
-                                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center {{ $color }}"
-                                             style="width:40px;height:40px;"><i class="{{ $icon }}"></i></div>
+                                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center {{ $social[1] }}"
+                                             style="width:40px;height:40px;"><i class="{{ $social[0] }}"></i></div>
                                         <div class="ms-2">
-                                            <div class="fw-semibold">{{ $label }}</div>
-                                            <a href="{{ $url ?: '#' }}" target="_blank" class="text-muted small text-decoration-none">
-                                                {{ $url ? (parse_url($url, PHP_URL_HOST) ?: $url) : 'Not Available' }}
+                                            <div class="fw-semibold">{{ $social[2] }}</div>
+                                            <a href="{{ $social[3] ?: '#' }}" target="_blank" class="text-muted small text-decoration-none">
+                                                {{ $social[3] ? (parse_url($social[3], PHP_URL_HOST) ?: $social[3]) : 'Not Available' }}
                                             </a>
                                         </div>
                                     </div>
@@ -479,18 +484,17 @@
     <!-- Bootstrap bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Chart.js (single include) -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- Flash toasts -->
     @if (session('success'))
-    <script>Swal.fire({icon:'success',title:'Success!',text:@json(session('success')),confirmButtonColor:'#0ea5e9'});</script>
+        <script>Swal.fire({icon:'success',title:'Success!',text:@json(session('success')),confirmButtonColor:'#0ea5e9'});</script>
     @endif
     @if (session('error'))
-    <script>Swal.fire({icon:'error',title:'Error!',text:@json(session('error')),confirmButtonColor:'#ef4444'});</script>
+        <script>Swal.fire({icon:'error',title:'Error!',text:@json(session('error')),confirmButtonColor:'#ef4444'});</script>
     @endif
 
     <script>
@@ -521,10 +525,7 @@
             new Chart(el.getContext('2d'), {
                 type:'doughnut',
                 data:{ datasets:[{ data:[val, 100-val], backgroundColor:[chartColors[id], '#e5e7eb'], borderWidth:0 }] },
-                options:{
-                    cutout:'72%', responsive:false,
-                    plugins:{ legend:{display:false}, tooltip:{enabled:false} }
-                }
+                options:{ cutout:'72%', responsive:false, plugins:{ legend:{display:false}, tooltip:{enabled:false} } }
             });
         });
     </script>
