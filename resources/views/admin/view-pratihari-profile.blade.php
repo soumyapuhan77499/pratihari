@@ -1,716 +1,500 @@
 @extends('layouts.app')
+
 @section('styles')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5.3 + Font Awesome 6 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Optional: keep your component CSS -->
     <link href="{{ asset('assets/css/profile.css') }}" rel="stylesheet">
+
     <style>
-        .progress-circle-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            margin-top: 1rem;
+        :root{
+            --brand-a:#7c3aed; /* violet */
+            --brand-b:#06b6d4; /* cyan   */
+            --brand-c:#22c55e; /* emerald */
+            --ink:#0b1220;
+            --muted:#64748b;
+            --border:rgba(2,6,23,.10);
+            --ring:rgba(6,182,212,.28);
+            --amber:#f5c12e;
         }
 
-        .progress-circle {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 60px;
+        /* Page header */
+        .page-header{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff;border-radius:1rem;padding:1.05rem 1.25rem;
+            box-shadow:0 10px 24px rgba(6,182,212,.18);
+        }
+        .page-header .title{font-weight:800;letter-spacing:.3px;}
+
+        /* Profile header block */
+        .profile-head .profile-image{
+            width:92px;height:92px;border-radius:18px;overflow:hidden;
+            display:inline-block;border:3px solid rgba(255,255,255,.6);
+            box-shadow:0 10px 22px rgba(2,6,23,.18);
+        }
+        .profile-head .profile-image img{
+            width:100%;height:100%;object-fit:cover;
         }
 
-        .progress-circle canvas {
-            width: 100px !important;
-            height: 100px !important;
+        /* Clickable donut progress list */
+        .progress-circle-wrapper{
+            display:flex;flex-wrap:wrap;gap:1rem;align-items:center;
+        }
+        .progress-circle{
+            display:flex;flex-direction:column;align-items:center;text-decoration:none;
+            width:92px;
+        }
+        .progress-circle canvas{width:92px !important;height:92px !important;}
+        .progress-label{
+            margin-top:.35rem;text-align:center;font-weight:700;font-size:.82rem;color:var(--ink);
         }
 
-        .progress-label {
-            margin-top: 0.5rem;
-            text-align: center;
-            font-weight: 600;
-            font-size: 13px;
-            color: #333;
+        /* Tabbar (uniform across app) */
+        .tabbar{background:#fff;border:1px solid var(--border);border-radius:14px;
+            box-shadow:0 8px 22px rgba(2,6,23,.06);padding:.35rem;overflow:auto;scrollbar-width:thin;}
+        .tabbar .nav{flex-wrap:nowrap;gap:.35rem;}
+        .tabbar .nav-link{
+            display:flex;align-items:center;gap:.55rem;border:1px solid transparent;
+            background:#f8fafc;color:var(--muted);border-radius:11px;
+            padding:.55rem .9rem;font-weight:700;white-space:nowrap;
+            transition:transform .12s ease, background .2s ease, color .2s ease, border-color .2s ease;
+        }
+        .tabbar .nav-link:hover{background:#eef2ff;color:var(--ink);transform:translateY(-1px);border-color:rgba(124,58,237,.25);}
+        .tabbar .nav-link.active{color:#fff!important;background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            border-color:transparent;box-shadow:0 10px 18px rgba(124,58,237,.25);}
+        .tabbar .nav-link i{font-size:.95rem;}
+        .tabbar::-webkit-scrollbar{ height:8px; }
+        .tabbar::-webkit-scrollbar-thumb{ background:#e2e8f0;border-radius:8px; }
+
+        /* Section cards */
+        .card{border:1px solid var(--border);border-radius:1rem;}
+        .profile-section .profile-item{
+            display:flex;gap:.75rem;padding:.4rem 0;align-items:flex-start;
+        }
+        .profile-item i{color:#475569;opacity:.8;margin-top:.15rem;}
+
+        /* Pills (Bheddha) */
+        .beddha-pill{
+            display:inline-flex;align-items:center;gap:.35rem;
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff;font-weight:700;font-size:.82rem;
+            padding:.35rem .65rem;border-radius:999px;
+            box-shadow:0 6px 14px rgba(124,58,237,.22);
         }
 
-        .profiles-nav-line {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        /* Address grid helper (uses your <x-address-item> components) */
+        .address-grid .col{min-width:220px;}
+
+        /* Buttons */
+        .btn-amber{background-color:var(--amber);color:#1f2937;border:0;}
+        .btn-amber:hover{filter:brightness(.95);}
+        .btn-brand{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            border:0;color:#fff;box-shadow:0 14px 30px rgba(124,58,237,.25);
         }
+        .btn-brand:hover{opacity:.96;}
 
-        .profiles-nav-line .nav-link {
-            color: #ffffff;
-            font-weight: 600;
-            padding: 12px 20px;
-            border-radius: 10px;
-            transition: all 0.3s ease-in-out;
-            background: linear-gradient(45deg, #dc8f06, #f5c12e);
-            text-transform: uppercase;
-            font-size: 14px;
-        }
+        /* Accessibility */
+        :focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px var(--ring)!important;border-radius:10px;}
 
-        .profiles-nav-line .nav-link:hover {
-            transform: translateY(-3px);
-            background: linear-gradient(45deg, #dc8f06, #6d5601);
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            color: white;
-
-        }
-
-        .profiles-nav-line .active {
-            background: linear-gradient(45deg, #fbcc4c, #bb7908);
-            color: white;
-            box-shadow: 0px 4px 10px rgba(76, 175, 80, 0.5);
-            transform: scale(1.1);
-        }
-
-
-        .personal-details-item i {
-            font-size: 13px;
-            color: #f0eee8;
-            margin-right: 15px;
-        }
-
-        .beddha-pill {
-            display: inline-flex;
-            align-items: center;
-            background: linear-gradient(45deg, #fbcc4c, #bb7908);
-            color: #fff;
-            font-weight: 600;
-            font-size: 14px;
-            padding: 6px 12px;
-            border-radius: 50px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            margin-right: 8px;
-            margin-bottom: 6px;
-            transition: transform 0.2s ease;
-        }
-
-        .beddha-pill i {
-            font-size: 14px;
-            color: #ffffff;
-        }
-
-        .beddha-pill:hover {
-            transform: scale(1.05);
+        @media (max-width: 576px){
+            .profile-head .prof-details{width:100%!important;}
+            .progress-circle-wrapper{gap:.75rem;}
         }
     </style>
 @endsection
 
 @section('content')
-    <!-- breadcrumb -->
-    <div class="breadcrumb-header justify-content-between">
-        <div class="left-content">
-            <span class="main-content-title mg-b-0 mg-b-lg-1">PROFILE DETAILS</span>
-        </div>
-        <div class="justify-content-center mt-2">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item tx-15"><a href="javascript:void(0);">Pages</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Profile Details</li>
-            </ol>
+<div class="container-fluid my-3">
+    <!-- Header -->
+    <div class="page-header mb-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3 profile-head">
+                <span class="profile-image">
+                    <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo">
+                </span>
+                <div class="prof-details" style="width: 320px;">
+                    <div class="title h4 mb-1">{{ $profile->first_name }} {{ $profile->last_name }}</div>
+                    <div class="small">
+                        <span class="me-3"><i class="fa-solid fa-id-badge me-1"></i><b>Nijoga ID:</b> {{ $profile->nijoga_id }}</span>
+                        <span class="me-3"><i class="fa-solid fa-envelope me-1"></i>{{ $profile->email }}</span>
+                        <span class="me-3"><i class="fa-solid fa-phone me-1"></i>{{ $profile->phone_no }}</span>
+                        <span><i class="fa-brands fa-whatsapp me-1"></i>{{ $profile->whatsapp_no }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress donuts (clickable) -->
+            <div class="progress-circle-wrapper">
+                @foreach ([
+                    ['Personal', $profileCompletion, 'profileChart', route('profile.update', ['pratihari_id'=>$profile->pratihari_id])],
+                    ['Family', $familyCompletion, 'familyChart', route('family.update', ['pratihari_id'=>$profile->pratihari_id])],
+                    ['ID Card', $idcardCompletion, 'idcardChart', route('idcard.update', ['pratihari_id'=>$profile->pratihari_id])],
+                    ['Address', $addressCompletion, 'addressChart', route('address.update', ['pratihari_id'=>$profile->pratihari_id])],
+                    ['Occupation', $occupationCompletion, 'occupationChart', route('occupation.update', ['pratihari_id'=>$profile->pratihari_id])],
+                    ['Seba', $sebaCompletion, 'sebaChart', route('seba.update', ['pratihari_id'=>$profile->pratihari_id])],
+                    ['Social', $socialmediaCompletion, 'socialmediaChart', route('social.update', ['pratihari_id'=>$profile->pratihari_id])]
+                ] as $d)
+                    <a href="{{ $d[3] }}" class="progress-circle" title="Edit {{ $d[0] }}">
+                        <canvas id="{{ $d[2] }}"></canvas>
+                        <div class="progress-label">{{ $d[0] }}<br>{{ round($d[1]) }}%</div>
+                    </a>
+                @endforeach
+            </div>
         </div>
     </div>
 
-    <!-- /breadcrumb -->
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card custom-card">
-                    <div class="card-body d-md-flex align-items-center">
-                        <div class="me-4">
-                            <span class="profile-image">
-                                <img class="br-5" src="{{ asset($profile->profile_photo) }}" alt="Profile Photo">
-                                <span class="profile-online"></span>
-                            </span>
-                        </div>
+    <!-- Tabs -->
+    <div class="tabbar mb-3">
+        <ul class="nav" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab"><i class="fa-solid fa-user"></i> Personal</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#family" type="button" role="tab"><i class="fa-solid fa-users"></i> Family</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#idcard" type="button" role="tab"><i class="fa-solid fa-id-card"></i> ID Card</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#address" type="button" role="tab"><i class="fa-solid fa-location-dot"></i> Address</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#occupation" type="button" role="tab"><i class="fa-solid fa-briefcase"></i> Occupation</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#seba" type="button" role="tab"><i class="fa-solid fa-gears"></i> Seba</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#social" type="button" role="tab"><i class="fa-solid fa-share-nodes"></i> Social Media</button></li>
+        </ul>
+    </div>
 
-                        <div class="my-md-auto mt-4 prof-details" style="width: 300px">
-                            <h4>{{ $profile->first_name }} {{ $profile->last_name }}</h4>
-
-                            <p><i class="bi bi-person-badge-fill me-2 text-primary"></i> <b>Nijoga Id:</b>
-                                {{ $profile->nijoga_id }}</p>
-
-                            <p><i class="bi bi-envelope-fill me-2 text-danger"></i> <b>Email:</b> {{ $profile->email }}</p>
-
-                            <p><i class="bi bi-telephone-fill me-2 text-info"></i> <b>Phone:</b> {{ $profile->phone_no }}
-                            </p>
-
-                            <p><i class="bi bi-whatsapp me-2 text-success"></i> <b>Whatsapp:</b> {{ $profile->whatsapp_no }}
-                            </p>
-                        </div>
-
-                        <div class="progress-circle-wrapper">
-                            @foreach ([['Personal', $profileCompletion, 'profileChart', '#4CAF50', 'profile.update'], ['Family', $familyCompletion, 'familyChart', '#FF9800', 'family.update'], ['ID Card', $idcardCompletion, 'idcardChart', '#2196F3', 'idcard.update'], ['Address', $addressCompletion, 'addressChart', '#673AB7', 'address.update'], ['Occupation', $occupationCompletion, 'occupationChart', '#009688', 'occupation.update'], ['Seba', $sebaCompletion, 'sebaChart', '#FF5722', 'seba.update'], ['Social Media', $socialmediaCompletion, 'socialmediaChart', '#E91E63', 'social.update']] as $data)
-                                <a href="{{ route($data[4], ['pratihari_id' => $profile->pratihari_id]) }}"
-                                    class="progress-circle">
-                                    <canvas id="{{ $data[2] }}"></canvas>
-                                    <div class="progress-label">{{ $data[0] }}<br>{{ round($data[1]) }}%</div>
-                                </a>
-                            @endforeach
-                        </div>
-
-                    </div>
-
-                    <div class="card-footer py-3">
-                        <nav class="nav main-nav-line profiles-nav-line">
-                            <a style="color: white" class="nav-link active" data-bs-toggle="tab"
-                                href="#personal">Personal</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#family">Family</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#idcard">Id Card</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#address">Address</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#occupation">Occupation</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#seba">Seba</a>
-                            <a style="color: white" class="nav-link" data-bs-toggle="tab" href="#social">Social Media</a>
-                        </nav>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Row -->
-        <div class="row row-sm">
-            <div class="col-lg-12 col-md-12">
-                <div class="main-content-body-profile">
-                    <div class="tab-content">
-                        <!-- Personal Information -->
-
-                        <div class="main-content-body tab-pane active" id="personal">
-                            <div class="card personal-details-card">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <h4 class="fw-bold"><i class="fas fa-user-circle me-2"
-                                                style="color:#f5c12e;font-size: 25px"></i> Personal Details</h4>
-
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <a href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                                class="btn btn-warning btn-sm" title="Edit Personal Details">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-user-tag"></i>
-                                        <div>
-                                            <span class="personal-details-text">Alias Name:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->alias_name ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-id-card"></i>
-                                        <div>
-                                            <span class="personal-details-text">Health Card No:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->healthcard_no ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-birthday-cake"></i>
-                                        <div>
-                                            <span class="personal-details-text">Date of Birth:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->date_of_birth ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-tint"></i>
-                                        <div>
-                                            <span class="personal-details-text">Blood Group:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->blood_group ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="personal-details-item">
-                                        <i class="fas fa-calendar-check"></i>
-                                        <div>
-                                            <span class="personal-details-text">Joining Date:</span>
-                                            <span
-                                                class="personal-details-value">{{ $profile->joining_date ?? 'Not Available' }}</span>
-                                        </div>
-                                    </div>
-
-                                    @if (!empty($profile->health_card_photo))
-                                        <div class="personal-details-item">
-                                            <i class="fas fa-image"></i>
-                                            <div>
-                                                <span class="personal-details-text">Health Card Photo:</span>
-                                                <a href="{{ asset($profile->health_card_photo) }}" target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    class="view-photo-btn mt-1 d-inline-block">View Photo</a>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
+    <!-- Tab content -->
+    <div class="row">
+        <div class="col-12">
+            <div class="tab-content">
+                <!-- PERSONAL -->
+                <div class="tab-pane fade show active" id="personal" role="tabpanel">
+                    <div class="card personal-details-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0"><i class="fa-solid fa-user-circle me-2" style="color:var(--amber)"></i>Personal Details</h5>
+                                <a href="{{ route('profile.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
                             </div>
-                        </div>
 
-                        <!-- Family Information -->
-                        <div class="main-content-body tab-pane border-top-0" id="family">
-                            <div class="card p-4 shadow-lg">
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <h3 class="fw-bold text-center mb-4" style="color: rgb(1, 1, 66)">Family Details</h3>
-                                    <div class="d-flex justify-content-end mb-3">
-                                        <a href="{{ route('family.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                            class="btn btn-warning btn-sm" title="Edit Family Details">
-                                            <i class="fas fa-edit"></i> Edit
-                                        </a>
-                                    </div>
+                            <div class="profile-section">
+                                <div class="profile-item"><i class="fa-solid fa-user-tag"></i>
+                                    <div><span class="text-muted small d-block">Alias Name</span><span class="fw-semibold">{{ $profile->alias_name ?? 'Not Available' }}</span></div>
                                 </div>
-                                <!-- Parent Details Section -->
-                                <div class="family-section mb-5">
-                                    <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
-                                        <i class="fas fa-users me-2" style="color:#f5c12e"></i> Parents
-                                    </h4>
-                                    <div class="row g-4 text-center">
-                                        <!-- Father -->
-                                        <div class="col-md-4">
-                                            <div class="card border shadow-sm p-3 h-100">
-                                                <div class="card-body">
-                                                    <img class="profile-imgs rounded-circle mb-3"
-                                                        style="height: 100px; width: 100px; object-fit: cover;"
-                                                        src="{{ asset($family->father_photo ?? '') }}" alt="Father">
-                                                    <h5 class="fw-semibold text-dark">
-                                                        {{ $family->father_name ?? 'Not Available' }}</h5>
-                                                    <span class="text-muted">Father</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Mother -->
-                                        <div class="col-md-4">
-                                            <div class="card border shadow-sm p-3 h-100">
-                                                <div class="card-body">
-                                                    <img class="profile-imgs rounded-circle mb-3"
-                                                        style="height: 100px; width: 100px; object-fit: cover;"
-                                                        src="{{ asset($family->mother_photo ?? '') }}" alt="Mother">
-                                                    <h5 class="fw-semibold text-dark">
-                                                        {{ $family->mother_name ?? 'Not Available' }}</h5>
-                                                    <span class="text-muted">Mother</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="profile-item"><i class="fa-solid fa-id-card-clip"></i>
+                                    <div><span class="text-muted small d-block">Health Card No</span><span class="fw-semibold">{{ $profile->healthcard_no ?? 'Not Available' }}</span></div>
+                                </div>
+                                <div class="profile-item"><i class="fa-solid fa-cake-candles"></i>
+                                    <div><span class="text-muted small d-block">Date of Birth</span><span class="fw-semibold">{{ $profile->date_of_birth ?? 'Not Available' }}</span></div>
+                                </div>
+                                <div class="profile-item"><i class="fa-solid fa-droplet"></i>
+                                    <div><span class="text-muted small d-block">Blood Group</span><span class="fw-semibold">{{ $profile->blood_group ?? 'Not Available' }}</span></div>
+                                </div>
+                                <div class="profile-item"><i class="fa-solid fa-calendar-check"></i>
+                                    <div><span class="text-muted small d-block">Joining Date</span><span class="fw-semibold">{{ $profile->joining_date ?? 'Not Available' }}</span></div>
                                 </div>
 
-                                <!-- Spouse Details Section -->
-                                @if ($family && $family->maritial_status == 'married')
-                                    <div class="family-section mb-5">
-                                        <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
-                                            <i class="fas fa-heart me-2" style="color:#f5c12e"></i> Spouse &
-                                            In-Laws
-                                        </h4>
-                                        <div class="row g-4 text-center">
-                                            <!-- Spouse -->
-                                            <div class="col-md-4">
-                                                <div class="card border shadow-sm p-3 h-100">
-                                                    <div class="card-body">
-                                                        <img class="profile-imgs rounded-circle mb-3"
-                                                            style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{ asset($family->spouse_photo ?? '') }}"
-                                                            alt="Spouse">
-                                                        <h5 class="fw-semibold text-dark">
-                                                            {{ $family->spouse_name ?? 'Not Available' }}</h5>
-                                                        <span class="text-muted">Spouse</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Spouse's Father -->
-                                            <div class="col-md-4">
-                                                <div class="card border shadow-sm p-3 h-100">
-                                                    <div class="card-body">
-                                                        <img class="profile-imgs rounded-circle mb-3"
-                                                            style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{ asset($family->spouse_father_photo ?? '') }}"
-                                                            alt="Spouse Father">
-                                                        <h5 class="fw-semibold text-dark">
-                                                            {{ $family->spouse_father_name ?? 'Not Available' }}</h5>
-                                                        <span class="text-muted">Spouse's Father</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Spouse's Mother -->
-                                            <div class="col-md-4">
-                                                <div class="card border shadow-sm p-3 h-100">
-                                                    <div class="card-body">
-                                                        <img class="profile-imgs rounded-circle mb-3"
-                                                            style="height: 100px; width: 100px; object-fit: cover;"
-                                                            src="{{ asset($family->spouse_mother_photo ?? '') }}"
-                                                            alt="Spouse Mother">
-                                                        <h5 class="fw-semibold text-dark">
-                                                            {{ $family->spouse_mother_name ?? 'Not Available' }}</h5>
-                                                        <span class="text-muted">Spouse's Mother</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                @if (!empty($profile->health_card_photo))
+                                    <div class="profile-item"><i class="fa-solid fa-image"></i>
+                                        <div>
+                                            <span class="text-muted small d-block">Health Card Photo</span>
+                                            <a href="{{ asset($profile->health_card_photo) }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-1">
+                                                <i class="fa-solid fa-up-right-from-square me-1"></i>View Photo
+                                            </a>
                                         </div>
                                     </div>
                                 @endif
-
-                                <!-- Children Details Section -->
-                                <div class="family-section">
-                                    <h4 class="fw-bold mb-4" style="color:rgb(1, 1, 66)">
-                                        <i class="fas fa-child me-2" style="color:#f5c12e"></i> Children
-                                    </h4>
-                                    <div class="row g-4">
-                                        @forelse ($children as $child)
-                                            <div class="col-md-4">
-                                                <div class="card border shadow-sm p-3 text-center h-100">
-                                                    <div class="card-body">
-                                                        <img alt="Child" class="profile-imgs rounded-circle mb-3"
-                                                            style="width: 120px; height: 120px; object-fit: cover;"
-                                                            src="{{ asset($child->photo ?? '') }}">
-                                                        <h5 class="fw-semibold text-dark">{{ $child->children_name }}</h5>
-                                                        <span class="text-muted">{{ $child->gender }} | DOB:
-                                                            {{ date('d M Y', strtotime($child->date_of_birth)) }}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @empty
-                                            <p class="text-center text-muted">No Children Details Available</p>
-                                        @endforelse
-                                    </div>
-                                </div>
                             </div>
                         </div>
-
-                        <!-- ID Card Section -->
-                        <div class="tab-pane fade" id="idcard">
-                            <div class="card profile-section">
-                                <div class="card-body">
-
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                                        <h4 class="fw-bold mb-4">
-                                            <i class="fas fa-id-card" style="color:#f5c12e"></i> ID Card Details
-                                        </h4>
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <a href="{{ route('idcard.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                                class="btn btn-warning btn-sm" title="Edit ID Card Details">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="row g-4">
-                                        @foreach ($idcard as $index => $card)
-                                            <div class="col-md-4">
-                                                <div class="card shadow-sm p-3 border rounded id-card-box h-100">
-                                                    <div class="text-center border-bottom pb-2 mb-2">
-                                                        <h5 class="text-uppercase fw-bold mb-0">
-                                                            {{ $card->id_type ?? 'ID CARD' }}
-                                                        </h5>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <a href="{{ $card->id_photo }}" target="_blank">
-                                                            <img src="{{ $card->id_photo }}" alt="ID Photo"
-                                                                class="img-fluid rounded mb-3"
-                                                                style="height: 160px; object-fit: cover; cursor: pointer;">
-                                                        </a>
-                                                    </div>
-                                                    <div class="text-center">
-                                                        <p class="mb-1"><strong>ID Type:</strong>
-                                                            {{ $card->id_type ?? 'Not Available' }}</p>
-                                                        <p class="mb-0"><strong>ID Number:</strong>
-                                                            {{ $card->id_number ?? 'Not Available' }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Address Details -->
-                        <div class="tab-pane fade" id="address">
-                            <div class="card profile-section shadow-lg border-0">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                                        <h4 class="fw-bold text-center mb-4">
-                                            <i class="fas fa-map-marker-alt me-2" style="color:#f5c12e"></i> Address
-                                            Details
-                                        </h4>
-
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <a href="{{ route('address.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                                class="btn btn-warning btn-sm" title="Edit Address Details">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    <!-- Current Address -->
-                                    <h5 class="fw-semibold mb-3 text-dark">
-                                        <i class="fas fa-map-pin me-2 text-success"></i>Current Address
-                                    </h5>
-                                    <div class="row g-3 mb-4">
-                                        <x-address-item icon="fa-map-marked-alt" color="primary" label="Current Address"
-                                            :value="$profile->address->address ?? 'Not Available'" />
-                                        <x-address-item icon="fa-map-signs" color="success" label="Sahi"
-                                            :value="$profile->address->sahi ?? 'Not Available'" />
-                                        <x-address-item icon="fa-thumbtack" color="danger" label="Landmark"
-                                            :value="$profile->address->landmark ?? 'Not Available'" />
-                                        <x-address-item icon="fa-envelope" color="info" label="Pincode"
-                                            :value="$profile->address->pincode ?? 'Not Available'" />
-                                        <x-address-item icon="fa-mail-bulk" color="primary" label="Post"
-                                            :value="$profile->address->post ?? 'Not Available'" />
-                                        <x-address-item icon="fa-user-shield" color="warning" label="Police Station"
-                                            :value="$profile->address->police_station ?? 'Not Available'" />
-                                        <x-address-item icon="fa-city" color="secondary" label="District"
-                                            :value="$profile->address->district ?? 'Not Available'" />
-                                        <x-address-item icon="fa-map" color="success" label="State"
-                                            :value="$profile->address->state ?? 'Not Available'" />
-                                        <x-address-item icon="fa-flag" color="danger" label="Country"
-                                            :value="$profile->address->country ?? 'Not Available'" />
-                                    </div>
-
-                                    <hr class="my-4">
-
-                                    <!-- Permanent Address -->
-                                    <h5 class="fw-semibold mb-3 text-dark">
-                                        <i class="fas fa-home me-2 text-info"></i>Permanent Address
-                                    </h5>
-                                    <div class="row g-3">
-                                        <x-address-item icon="fa-map-marked" color="primary" label="Permanent Address"
-                                            :value="$profile->address->per_address ?? 'Not Available'" />
-                                        <x-address-item icon="fa-map-signs" color="success" label="Sahi"
-                                            :value="$profile->address->per_sahi ?? 'Not Available'" />
-                                        <x-address-item icon="fa-thumbtack" color="danger" label="Landmark"
-                                            :value="$profile->address->per_landmark ?? 'Not Available'" />
-                                        <x-address-item icon="fa-envelope" color="info" label="Pincode"
-                                            :value="$profile->address->per_pincode ?? 'Not Available'" />
-                                        <x-address-item icon="fa-mail-bulk" color="primary" label="Post"
-                                            :value="$profile->address->per_post ?? 'Not Available'" />
-                                        <x-address-item icon="fa-user-shield" color="warning" label="Police Station"
-                                            :value="$profile->address->per_police_station ?? 'Not Available'" />
-                                        <x-address-item icon="fa-city" color="secondary" label="District"
-                                            :value="$profile->address->per_district ?? 'Not Available'" />
-                                        <x-address-item icon="fa-map" color="success" label="State"
-                                            :value="$profile->address->per_state ?? 'Not Available'" />
-                                        <x-address-item icon="fa-flag" color="danger" label="Country"
-                                            :value="$profile->address->per_country ?? 'Not Available'" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Occupation Details -->
-                        <div class="tab-pane fade" id="occupation">
-                            <div class="card profile-section">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                                        <h4 class="fw-bold"><i class="fas fa-briefcase" style="color: #f5c12e"></i>
-                                            Occupation Details
-                                        </h4>
-
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <a href="{{ route('occupation.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                                class="btn btn-warning btn-sm" title="Edit Occupation Details">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-
-                                    </div>
-
-                                    @if ($occupation->isNotEmpty())
-                                        <div class="profile-item">
-                                            <i class="fas fa-user-tie"></i>
-                                            <div>
-                                                <span class="profile-text">Occupation Type:</span>
-                                                <span
-                                                    class="profile-value">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="profile-item">
-                                            <i class="fas fa-certificate"></i>
-                                            <div>
-                                                <span class="profile-text">Extra Activities:</span>
-                                                <div class="profile-value">
-                                                    @if (!empty(optional($occupation->first())->extra_activity))
-                                                        @foreach (explode(',', optional($occupation->first())->extra_activity) as $activity)
-                                                            <span
-                                                                class="badge bg-success me-1">{{ trim($activity) }}</span>
-                                                        @endforeach
-                                                    @else
-                                                        <span class="text-muted">Not Available</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <p class="text-muted">No occupation details available.</p>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Seba Details -->
-                        <div class="tab-pane fade" id="seba">
-                            <div class="card profile-section">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                                        <h4 class="fw-bold">Seba Details </h4>
-
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                                class="btn btn-warning btn-sm" title="Edit Seba Details">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-                                    </div>
-
-                                    @foreach ($sebaDetails as $seba)
-                                        <!-- Seba Name Section -->
-                                        <div class="profile-item d-flex align-items-center">
-
-                                            <div>
-                                                <span class="profile-text fw-bold">Seba Name:</span>
-                                                <span
-                                                    class="profile-value">{{ $seba->sebaMaster->seba_name ?? 'Not Available' }}</span>
-                                            </div>
-                                        </div>
-
-                                        <!-- Beddha Assigned Section -->
-                                        <div class="profile-item d-flex align-items-center">
-
-                                            <div>
-                                                <span class="profile-text fw-bold">Beddha Assigned:</span>
-                                                <div class="profile-value mt-1">
-                                                    @php
-                                                        $beddhas = $seba->beddhas();
-                                                    @endphp
-
-                                                    @if ($beddhas->isNotEmpty())
-                                                        @foreach ($beddhas as $beddha)
-                                                            <span class="beddha-pill">
-                                                                <i class="fas fa-user-tag me-1"></i>
-                                                                {{ $beddha->beddha_name }}
-                                                            </span>
-                                                        @endforeach
-                                                    @else
-                                                        <span class="text-muted">Not Assigned</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <hr class="my-3"> <!-- Stylish separator -->
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="social">
-                            <div class="card">
-                                <div class="p-4">
-
-                                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                                        <h4 class="fw-bold"><i class="fas fa-share-alt" style="color: #f5c12e"></i>
-                                            Social
-                                            Media Links
-                                        </h4>
-
-                                        <div class="d-flex justify-content-end mb-3">
-                                            <a href="{{ route('social.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                                                class="btn btn-warning btn-sm" title="Edit Social Media Links">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                        </div>
-
-                                    </div>
-
-
-                                    <div class="d-lg-flex flex-wrap " style="margin-top: 20px">
-                                        @php
-                                            $socialLinks = [
-                                                [
-                                                    'icon' => 'fab fa-facebook-f',
-                                                    'color' => 'bg-primary',
-                                                    'text' => 'Facebook',
-                                                    'url' => $socialMedia->facebook_url ?? '#',
-                                                ],
-                                                [
-                                                    'icon' => 'fab fa-instagram',
-                                                    'color' => 'bg-danger',
-                                                    'text' => 'Instagram',
-                                                    'url' => $socialMedia->instagram_url ?? '#',
-                                                ],
-                                                [
-                                                    'icon' => 'fab fa-twitter',
-                                                    'color' => 'bg-info',
-                                                    'text' => 'Twitter',
-                                                    'url' => $socialMedia->twitter_url ?? '#',
-                                                ],
-                                                [
-                                                    'icon' => 'fab fa-linkedin-in',
-                                                    'color' => 'bg-success',
-                                                    'text' => 'LinkedIn',
-                                                    'url' => $socialMedia->linkedin_url ?? '#',
-                                                ],
-                                                [
-                                                    'icon' => 'fab fa-youtube',
-                                                    'color' => 'bg-danger',
-                                                    'text' => 'YouTube',
-                                                    'url' => $socialMedia->youtube_url ?? '#',
-                                                ],
-                                            ];
-                                        @endphp
-
-                                        @foreach ($socialLinks as $social)
-                                            <div class="mg-md-r-20 mg-b-10">
-                                                <div class="main-profile-social-list">
-                                                    <div class="media d-flex align-items-center">
-                                                        <div class="media-icon {{ $social['color'] }} text-white rounded-circle d-flex align-items-center justify-content-center"
-                                                            style="width: 40px; height: 40px;">
-                                                            <i class="{{ $social['icon'] }} fa-lg"></i>
-                                                        </div>
-                                                        <div class="media-body ms-3">
-                                                            <span class="fw-bold">{{ $social['text'] }}</span>
-                                                            <a href="{{ $social['url'] }}" target="_blank"
-                                                                class="d-block text-muted">{{ parse_url($social['url'], PHP_URL_HOST) ?: 'Not Available' }}</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
+
+                <!-- FAMILY -->
+                <div class="tab-pane fade" id="family" role="tabpanel">
+                    <div class="card p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="mb-0"><i class="fa-solid fa-people-roof me-2" style="color:var(--amber)"></i>Family Details</h5>
+                            <a href="{{ route('family.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                        </div>
+
+                        <!-- Parents -->
+                        <div class="row g-3 mt-1">
+                            <div class="col-md-6">
+                                <div class="card h-100 p-3">
+                                    <div class="text-center">
+                                        <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
+                                             src="{{ asset($family->father_photo ?? '') }}" alt="Father">
+                                        <div class="fw-semibold">{{ $family->father_name ?? 'Not Available' }}</div>
+                                        <div class="text-muted small">Father</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 p-3">
+                                    <div class="text-center">
+                                        <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
+                                             src="{{ asset($family->mother_photo ?? '') }}" alt="Mother">
+                                        <div class="fw-semibold">{{ $family->mother_name ?? 'Not Available' }}</div>
+                                        <div class="text-muted small">Mother</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if ($family && $family->maritial_status == 'married')
+                            <hr class="my-4">
+                            <h6 class="fw-bold mb-2"><i class="fa-solid fa-heart me-2" style="color:var(--amber)"></i>Spouse & In-Laws</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="card h-100 p-3 text-center">
+                                        <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;" src="{{ asset($family->spouse_photo ?? '') }}" alt="Spouse">
+                                        <div class="fw-semibold">{{ $family->spouse_name ?? 'Not Available' }}</div>
+                                        <div class="text-muted small">Spouse</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100 p-3 text-center">
+                                        <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;" src="{{ asset($family->spouse_father_photo ?? '') }}" alt="Spouse Father">
+                                        <div class="fw-semibold">{{ $family->spouse_father_name ?? 'Not Available' }}</div>
+                                        <div class="text-muted small">Spouse's Father</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card h-100 p-3 text-center">
+                                        <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;" src="{{ asset($family->spouse_mother_photo ?? '') }}" alt="Spouse Mother">
+                                        <div class="fw-semibold">{{ $family->spouse_mother_name ?? 'Not Available' }}</div>
+                                        <div class="text-muted small">Spouse's Mother</div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        <hr class="my-4">
+                        <h6 class="fw-bold mb-2"><i class="fa-solid fa-child-reaching me-2" style="color:var(--amber)"></i>Children</h6>
+                        <div class="row g-3">
+                            @forelse ($children as $child)
+                                <div class="col-md-4">
+                                    <div class="card h-100 p-3 text-center">
+                                        <img class="rounded-circle mb-2" style="height:120px;width:120px;object-fit:cover;" src="{{ asset($child->photo ?? '') }}" alt="Child">
+                                        <div class="fw-semibold">{{ $child->children_name }}</div>
+                                        <div class="text-muted small">{{ ucfirst($child->gender) }} • DOB: {{ date('d M Y', strtotime($child->date_of_birth)) }}</div>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-muted text-center">No Children Details Available</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ID CARD -->
+                <div class="tab-pane fade" id="idcard" role="tabpanel">
+                    <div class="card profile-section">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><i class="fa-solid fa-id-card me-2" style="color:var(--amber)"></i>ID Card Details</h5>
+                                <a href="{{ route('idcard.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                            </div>
+
+                            <div class="row g-3 mt-1">
+                                @foreach ($idcard as $index => $card)
+                                    <div class="col-md-4">
+                                        <div class="card h-100 p-3">
+                                            <div class="text-center border-bottom pb-2 mb-2">
+                                                <div class="fw-bold text-uppercase">{{ $card->id_type ?? 'ID CARD' }}</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <a href="{{ $card->id_photo }}" target="_blank">
+                                                    <img src="{{ $card->id_photo }}" alt="ID Photo" class="img-fluid rounded mb-2" style="height:160px;object-fit:cover;">
+                                                </a>
+                                            </div>
+                                            <div class="text-center small">
+                                                <div class="mb-1"><span class="text-muted">ID Type:</span> <span class="fw-semibold">{{ $card->id_type ?? 'Not Available' }}</span></div>
+                                                <div><span class="text-muted">ID Number:</span> <span class="fw-semibold">{{ $card->id_number ?? 'Not Available' }}</span></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                @if($idcard->isEmpty())
+                                    <div class="col-12 text-center text-muted">No ID cards added.</div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADDRESS -->
+                <div class="tab-pane fade" id="address" role="tabpanel">
+                    <div class="card profile-section">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><i class="fa-solid fa-location-dot me-2" style="color:var(--amber)"></i>Address Details</h5>
+                                <a href="{{ route('address.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                            </div>
+
+                            <h6 class="fw-bold mt-2 mb-2"><i class="fa-solid fa-map-pin me-2 text-success"></i>Current Address</h6>
+                            <div class="row row-cols-auto g-2 address-grid">
+                                <x-address-item icon="fa-map-marked-alt" color="primary" label="Address" :value="$profile->address->address ?? 'Not Available'" />
+                                <x-address-item icon="fa-map-signs" color="success" label="Sahi" :value="$profile->address->sahi ?? 'Not Available'" />
+                                <x-address-item icon="fa-thumbtack" color="danger" label="Landmark" :value="$profile->address->landmark ?? 'Not Available'" />
+                                <x-address-item icon="fa-envelope" color="info" label="Pincode" :value="$profile->address->pincode ?? 'Not Available'" />
+                                <x-address-item icon="fa-mail-bulk" color="primary" label="Post" :value="$profile->address->post ?? 'Not Available'" />
+                                <x-address-item icon="fa-user-shield" color="warning" label="Police Station" :value="$profile->address->police_station ?? 'Not Available'" />
+                                <x-address-item icon="fa-city" color="secondary" label="District" :value="$profile->address->district ?? 'Not Available'" />
+                                <x-address-item icon="fa-map" color="success" label="State" :value="$profile->address->state ?? 'Not Available'" />
+                                <x-address-item icon="fa-flag" color="danger" label="Country" :value="$profile->address->country ?? 'Not Available'" />
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h6 class="fw-bold mb-2"><i class="fa-solid fa-house me-2 text-info"></i>Permanent Address</h6>
+                            <div class="row row-cols-auto g-2 address-grid">
+                                <x-address-item icon="fa-map-marked" color="primary" label="Address" :value="$profile->address->per_address ?? 'Not Available'" />
+                                <x-address-item icon="fa-map-signs" color="success" label="Sahi" :value="$profile->address->per_sahi ?? 'Not Available'" />
+                                <x-address-item icon="fa-thumbtack" color="danger" label="Landmark" :value="$profile->address->per_landmark ?? 'Not Available'" />
+                                <x-address-item icon="fa-envelope" color="info" label="Pincode" :value="$profile->address->per_pincode ?? 'Not Available'" />
+                                <x-address-item icon="fa-mail-bulk" color="primary" label="Post" :value="$profile->address->per_post ?? 'Not Available'" />
+                                <x-address-item icon="fa-user-shield" color="warning" label="Police Station" :value="$profile->address->per_police_station ?? 'Not Available'" />
+                                <x-address-item icon="fa-city" color="secondary" label="District" :value="$profile->address->per_district ?? 'Not Available'" />
+                                <x-address-item icon="fa-map" color="success" label="State" :value="$profile->address->per_state ?? 'Not Available'" />
+                                <x-address-item icon="fa-flag" color="danger" label="Country" :value="$profile->address->per_country ?? 'Not Available'" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OCCUPATION -->
+                <div class="tab-pane fade" id="occupation" role="tabpanel">
+                    <div class="card profile-section">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><i class="fa-solid fa-briefcase me-2" style="color:var(--amber)"></i>Occupation Details</h5>
+                                <a href="{{ route('occupation.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                            </div>
+
+                            @if ($occupation->isNotEmpty())
+                                <div class="profile-item"><i class="fa-solid fa-user-tie"></i>
+                                    <div><span class="text-muted small d-block">Occupation Type</span>
+                                        <span class="fw-semibold">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
+                                    </div>
+                                </div>
+                                <div class="profile-item"><i class="fa-solid fa-certificate"></i>
+                                    <div><span class="text-muted small d-block">Extra Activities</span>
+                                        <div>
+                                            @if (!empty(optional($occupation->first())->extra_activity))
+                                                @foreach (explode(',', optional($occupation->first())->extra_activity) as $activity)
+                                                    <span class="badge text-bg-success me-1">{{ trim($activity) }}</span>
+                                                @endforeach
+                                            @else
+                                                <span class="text-muted">Not Available</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <p class="text-muted mb-0">No occupation details available.</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEBA -->
+                <div class="tab-pane fade" id="seba" role="tabpanel">
+                    <div class="card profile-section">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><i class="fa-solid fa-gears me-2" style="color:var(--amber)"></i>Seba Details</h5>
+                                <a href="{{ route('seba.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                            </div>
+
+                            @forelse ($sebaDetails as $s)
+                                <div class="profile-item">
+                                    <i class="fa-solid fa-hand-holding-heart"></i>
+                                    <div>
+                                        <div><span class="text-muted small d-block">Seba Name</span>
+                                            <span class="fw-bold">{{ $s->sebaMaster->seba_name ?? 'Not Available' }}</span>
+                                        </div>
+                                        <div class="mt-2">
+                                            <span class="text-muted small d-block">Bheddha Assigned</span>
+                                            @php $beddhas = $s->beddhas(); @endphp
+                                            @if ($beddhas->isNotEmpty())
+                                                <div class="mt-1">
+                                                    @foreach ($beddhas as $beddha)
+                                                        <span class="beddha-pill"><i class="fa-solid fa-user-tag"></i>{{ $beddha->beddha_name }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <span class="text-muted">Not Assigned</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="my-3">
+                            @empty
+                                <p class="text-muted mb-0">No seba details available.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOCIAL -->
+                <div class="tab-pane fade" id="social" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="mb-0"><i class="fa-solid fa-share-nodes me-2" style="color:var(--amber)"></i>Social Media Links</h5>
+                                <a href="{{ route('social.update', ['pratihari_id'=>$profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-3 mt-3">
+                                @php
+                                    $socialLinks = [
+                                        ['fab fa-facebook-f','bg-primary','Facebook',$socialMedia->facebook_url ?? '#'],
+                                        ['fab fa-instagram','bg-danger','Instagram',$socialMedia->instagram_url ?? '#'],
+                                        ['fab fa-twitter','bg-info','Twitter',$socialMedia->twitter_url ?? '#'],
+                                        ['fab fa-linkedin-in','bg-success','LinkedIn',$socialMedia->linkedin_url ?? '#'],
+                                        ['fab fa-youtube','bg-danger','YouTube',$socialMedia->youtube_url ?? '#'],
+                                    ];
+                                @endphp
+                                @foreach ($socialLinks as [$icon,$color,$label,$url])
+                                    <div class="d-flex align-items-center me-3">
+                                        <div class="rounded-circle text-white d-flex align-items-center justify-content-center {{ $color }}"
+                                             style="width:40px;height:40px;"><i class="{{ $icon }}"></i></div>
+                                        <div class="ms-2">
+                                            <div class="fw-semibold">{{ $label }}</div>
+                                            <a href="{{ $url ?: '#' }}" target="_blank" class="text-muted small text-decoration-none">
+                                                {{ $url ? (parse_url($url, PHP_URL_HOST) ?: $url) : 'Not Available' }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- /SOCIAL -->
             </div>
         </div>
     </div>
+</div>
 @endsection
-@section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@section('scripts')
+    <!-- Bootstrap bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Chart.js (single include) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Flash toasts -->
+    @if (session('success'))
+    <script>Swal.fire({icon:'success',title:'Success!',text:@json(session('success')),confirmButtonColor:'#0ea5e9'});</script>
+    @endif
+    @if (session('error'))
+    <script>Swal.fire({icon:'error',title:'Error!',text:@json(session('error')),confirmButtonColor:'#ef4444'});</script>
+    @endif
+
     <script>
+        // Donut chart data/colors
         const chartData = {
             profileChart: {{ round($profileCompletion) }},
             familyChart: {{ round($familyCompletion) }},
@@ -720,68 +504,28 @@
             sebaChart: {{ round($sebaCompletion) }},
             socialmediaChart: {{ round($socialmediaCompletion) }},
         };
-
         const chartColors = {
-            profileChart: '#4CAF50',
-            familyChart: '#FF9800',
-            idcardChart: '#2196F3',
-            addressChart: '#673AB7',
-            occupationChart: '#009688',
-            sebaChart: '#FF5722',
-            socialmediaChart: '#E91E63',
+            profileChart:'#4CAF50',
+            familyChart:'#FF9800',
+            idcardChart:'#2196F3',
+            addressChart:'#673AB7',
+            occupationChart:'#009688',
+            sebaChart:'#FF5722',
+            socialmediaChart:'#E91E63',
         };
 
-        Object.keys(chartData).forEach(id => {
-            const ctx = document.getElementById(id).getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    datasets: [{
-                        data: [chartData[id], 100 - chartData[id]],
-                        backgroundColor: [chartColors[id], '#e0e0e0'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    cutout: '75%',
-                    responsive: false,
-                    plugins: {
-                        tooltip: {
-                            enabled: false
-                        },
-                        legend: {
-                            display: false
-                        },
-                    }
+        Object.keys(chartData).forEach(id=>{
+            const el = document.getElementById(id);
+            if(!el) return;
+            const val = Math.max(0, Math.min(100, Number(chartData[id])||0));
+            new Chart(el.getContext('2d'), {
+                type:'doughnut',
+                data:{ datasets:[{ data:[val, 100-val], backgroundColor:[chartColors[id], '#e5e7eb'], borderWidth:0 }] },
+                options:{
+                    cutout:'72%', responsive:false,
+                    plugins:{ legend:{display:false}, tooltip:{enabled:false} }
                 }
             });
         });
     </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            @if (session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: "{{ session('success') }}",
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'OK'
-                });
-            @endif
-
-            @if (session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: "{{ session('error') }}",
-                    confirmButtonColor: '#d33',
-                    confirmButtonText: 'OK'
-                });
-            @endif
-        });
-    </script>
-
-    <!-- Include SweetAlert Library -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @endsection
