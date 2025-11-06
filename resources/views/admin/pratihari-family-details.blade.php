@@ -116,13 +116,13 @@
         </div>
     </div>
 
-    <!-- Tabs (same component as profile page) -->
+    <!-- Tabs (button tabs, Family active) -->
     <div class="tabbar mb-3">
         <ul class="nav" id="profileTabs" role="tablist">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihariProfile') }}">
+                <button class="nav-link" id="tab-profile" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="false">
                     <i class="fa-solid fa-user"></i> Profile
-                </a>
+                </button>
             </li>
             <li class="nav-item">
                 <button class="nav-link active" id="tab-family" data-bs-toggle="tab" data-bs-target="#pane-family" type="button" role="tab" aria-controls="pane-family" aria-selected="true">
@@ -130,34 +130,34 @@
                 </button>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihari.idcard.form', ['pratihari_id'=>request('pratihari_id')]) }}">
+                <button class="nav-link" id="tab-id" data-bs-toggle="tab" data-bs-target="#pane-id" type="button" role="tab" aria-controls="pane-id" aria-selected="false">
                     <i class="fa-solid fa-id-card"></i> ID Card
-                </a>
+                </button>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihari.address.form', ['pratihari_id'=>request('pratihari_id')]) }}">
+                <button class="nav-link" id="tab-address" data-bs-toggle="tab" data-bs-target="#pane-address" type="button" role="tab" aria-controls="pane-address" aria-selected="false">
                     <i class="fa-solid fa-location-dot"></i> Address
-                </a>
+                </button>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihari.occupation.form', ['pratihari_id'=>request('pratihari_id')]) }}">
+                <button class="nav-link" id="tab-occupation" data-bs-toggle="tab" data-bs-target="#pane-occupation" type="button" role="tab" aria-controls="pane-occupation" aria-selected="false">
                     <i class="fa-solid fa-briefcase"></i> Occupation
-                </a>
+                </button>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihari.seba.form', ['pratihari_id'=>request('pratihari_id')]) }}">
+                <button class="nav-link" id="tab-seba" data-bs-toggle="tab" data-bs-target="#pane-seba" type="button" role="tab" aria-controls="pane-seba" aria-selected="false">
                     <i class="fa-solid fa-gears"></i> Seba
-                </a>
+                </button>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('admin.pratihari.social.form', ['pratihari_id'=>request('pratihari_id')]) }}">
+                <button class="nav-link" id="tab-social" data-bs-toggle="tab" data-bs-target="#pane-social" type="button" role="tab" aria-controls="pane-social" aria-selected="false">
                     <i class="fa-solid fa-share-nodes"></i> Social Media
-                </a>
+                </button>
             </li>
         </ul>
     </div>
 
-    <!-- Form -->
+    <!-- Form + Tab panes -->
     <div class="card shadow-sm">
         <div class="card-body">
             <form action="{{ route('admin.pratihari-family.store') }}" method="POST" enctype="multipart/form-data" novalidate>
@@ -165,7 +165,12 @@
                 <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
 
                 <div class="tab-content" id="tabsContent">
-                    <!-- FAMILY -->
+                    <!-- PROFILE (placeholder for consistency) -->
+                    <div class="tab-pane fade" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile">
+                        <div class="text-muted">Profile section is managed on the Profile page.</div>
+                    </div>
+
+                    <!-- FAMILY (active) -->
                     <div class="tab-pane fade show active" id="pane-family" role="tabpanel" aria-labelledby="tab-family">
                         <div class="mb-2">
                             <div class="section-title">Parents</div>
@@ -360,6 +365,23 @@
                             </button>
                         </div>
                     </div> <!-- /FAMILY -->
+
+                    <!-- Other panes (placeholders to keep tab UI consistent) -->
+                    <div class="tab-pane fade" id="pane-id" role="tabpanel" aria-labelledby="tab-id">
+                        <div class="text-muted">ID Card section is available on the ID Card page.</div>
+                    </div>
+                    <div class="tab-pane fade" id="pane-address" role="tabpanel" aria-labelledby="tab-address">
+                        <div class="text-muted">Address section is available on the Address page.</div>
+                    </div>
+                    <div class="tab-pane fade" id="pane-occupation" role="tabpanel" aria-labelledby="tab-occupation">
+                        <div class="text-muted">Occupation section is available on the Occupation page.</div>
+                    </div>
+                    <div class="tab-pane fade" id="pane-seba" role="tabpanel" aria-labelledby="tab-seba">
+                        <div class="text-muted">Seba section is available on the Seba page.</div>
+                    </div>
+                    <div class="tab-pane fade" id="pane-social" role="tabpanel" aria-labelledby="tab-social">
+                        <div class="text-muted">Social Media section is available on the Social page.</div>
+                    </div>
                 </div> <!-- /tab-content -->
             </form>
         </div>
@@ -389,6 +411,7 @@
         // Father/Mother select handling (existing vs "other")
         function handleFamilySelection(type){
             const select = document.getElementById(`${type}_name_select`);
+            if(!select) return;
             const selected = select.value;
             const option   = select.options[select.selectedIndex];
             const photoUrl = option?.getAttribute('data-photo') || '';
@@ -489,7 +512,7 @@
         }
         if(addBtn){ addBtn.addEventListener('click', addChildRow); }
 
-        // Initialize: keep UI consistent on load (e.g., if old input present)
+        // Initialize on load
         refreshMaritalUI();
     })();
     </script>
