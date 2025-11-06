@@ -49,17 +49,17 @@
         .section-hint{color:var(--muted);font-size:.9rem;}
         .divider{height:1px;background:var(--border);margin:1rem 0;}
 
-        /* Seba checkbox grid */
+        /* Checkbox grid */
         .checkbox-grid{
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-            gap:.7rem .9rem;
+            gap:.6rem;
             background:#f8fafc;
             border:1px solid var(--border);
             border-radius:12px;
-            padding:1rem;
+            padding:.8rem;
         }
-        .form-check .form-check-input{cursor:pointer;transform:scale(1.15);margin-right:.5rem;}
+        .form-check .form-check-input{cursor:pointer;transform:scale(1.1);margin-right:.4rem;}
         .form-check-label{cursor:pointer;}
 
         /* Bheddha group */
@@ -67,43 +67,19 @@
             border:1px solid var(--border);
             background:#fff;
             border-radius:12px;
-            padding:1rem;
+            padding: .85rem;
         }
-        .beddha-group + .beddha-group{ margin-top:.9rem; }
         .beddha-group .title{
-            font-weight:700;color:var(--ink);margin-bottom:.6rem;
+            font-weight:700;color:var(--ink);
         }
-
-        /* >>> Improved Bheddha list sizing & spacing <<< */
         .beddha-pills{
-            display:grid;
-            /* wider min width makes each item bigger */
-            grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-            gap:.75rem 1rem; /* row gap, column gap */
+            display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.6rem;
         }
         .beddha-pill{
-            display:flex;align-items:center;gap:.6rem; /* clear gap between checkbox and label/number */
-            border:1px solid var(--border);
-            border-radius:999px;
-            padding:.55rem .9rem; /* bigger touch target */
-            background:#f9fafb;
-            min-height:44px;      /* taller item */
-            line-height:1.25;
-            font-size:0.975rem;   /* slightly larger text */
+            display:flex;align-items:center;gap:.35rem;
+            border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;background:#f9fafb;
         }
-        .beddha-pill .form-check-input{
-            transform:scale(1.25); /* larger checkbox */
-            margin:0 .15rem 0 .1rem;
-        }
-        .beddha-pill span{
-            display:inline-block;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            letter-spacing:.2px;
-        }
-
-        .beddha-disabled{opacity:.6;}
+        .beddha-disabled{opacity:.55;}
         .beddha-disabled .form-check-input{cursor:not-allowed;}
 
         /* Buttons */
@@ -117,9 +93,6 @@
         /* Accessibility focus */
         :focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px var(--ring) !important;border-radius:10px;}
 
-        @media (max-width: 460px){
-            .beddha-pills{ grid-template-columns:1fr; } /* single column on very small screens */
-        }
         @media (prefers-reduced-motion: reduce){
             *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition:none !important;}
         }
@@ -277,6 +250,7 @@
         // Render a single Bheddha group for one Seba
         function renderBeddhaGroup(sebaId, sebaName, items){
             const groupId = `beddha_group_${sebaId}`;
+            // If already exists, replace it
             const existing = document.getElementById(groupId);
             if(existing) existing.remove();
 
@@ -284,19 +258,16 @@
             group.className = 'beddha-group';
             group.id = groupId;
 
-            const header = document.createElement('div');
-            header.className = 'title';
-            header.textContent = sebaName;
-
+            const inner = document.createElement('div');
+            inner.innerHTML = `<div class="title">${sebaName}</div>`;
             const pills = document.createElement('div');
             pills.className = 'beddha-pills';
 
             items.forEach(b => {
                 const disabled = Number(b.beddha_status) === 0;
-
                 const pill = document.createElement('label');
                 pill.className = 'beddha-pill form-check-label' + (disabled ? ' beddha-disabled' : '');
-                if(disabled) pill.setAttribute('title', 'Admin assigned this Bheddha ID');
+                pill.setAttribute('title', disabled ? 'Admin assigned this Bheddha ID' : '');
 
                 const input = document.createElement('input');
                 input.type = 'checkbox';
@@ -307,7 +278,7 @@
                 if(disabled) input.disabled = true;
 
                 const text = document.createElement('span');
-                text.textContent = b.beddha_name; // includes number if present in name
+                text.textContent = b.beddha_name;
 
                 pill.htmlFor = input.id;
                 pill.prepend(input);
@@ -315,8 +286,8 @@
                 pills.appendChild(pill);
             });
 
-            group.appendChild(header);
-            group.appendChild(pills);
+            inner.appendChild(pills);
+            group.appendChild(inner);
             beddhaListWrap.appendChild(group);
         }
 
@@ -332,6 +303,7 @@
                 const sebaId   = this.dataset.sebaId;
                 const sebaName = this.nextElementSibling?.textContent?.trim() || 'Seba';
                 if(this.checked){
+                    // Fetch Bheddha for this Seba
                     fetch(`/admin/get-beddha/${sebaId}`)
                         .then(r => r.json())
                         .then(list => {
