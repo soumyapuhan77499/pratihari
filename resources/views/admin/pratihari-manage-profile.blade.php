@@ -162,7 +162,7 @@
                                         data-pincode="{{ $profile->address->pincode ?? 'N/A' }}"
                                         data-landmark="{{ $profile->address->landmark ?? 'N/A' }}"
                                         data-police-station="{{ $profile->address->police_station ?? 'N/A' }}">
-                                        <i class="fa-solid fa-map-location-dot me-1"></i> Details
+                                        <i class="fa-solid fa-map-location-dot me-1"></i>
                                     </button>
                                 </td>
 
@@ -174,11 +174,11 @@
                                         $ps = $profile->pratihari_status;
                                     @endphp
                                     @if ($ps === 'approved')
-                                        <span class="badge badge-soft badge-approved">Approved</span>
+                                        <span class="badge badge-soft badge-approved"></span>
                                     @elseif ($ps === 'rejected')
-                                        <span class="badge badge-soft badge-rejected">Rejected</span>
+                                        <span class="badge badge-soft badge-rejected"></span>
                                     @else
-                                        <span class="badge badge-soft badge-pending">Pending</span>
+                                        <span class="badge badge-soft badge-pending"></span>
                                     @endif
                                 </td>
 
