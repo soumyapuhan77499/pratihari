@@ -31,9 +31,7 @@
         .page-header .meta{opacity:.95}
 
         /* Profile block */
-        .profile-hero{
-            display:flex;align-items:center;gap:16px;
-        }
+        .profile-hero{display:flex;align-items:center;gap:16px;}
         .profile-hero .avatar{
             width:84px;height:84px;border-radius:14px;overflow:hidden;
             border:3px solid rgba(255,255,255,.55);
@@ -42,14 +40,41 @@
         }
         .profile-hero .avatar img{width:100%;height:100%;object-fit:cover;}
 
-        /* Summary stats chips */
+        /* Summary chips */
         .stat-chip{
             display:flex;align-items:center;gap:.45rem;
             background:rgba(255,255,255,.15);
-            padding:.35rem .55rem;border-radius:999px;
-            font-weight:600;backdrop-filter: blur(2px);
-            white-space:nowrap;
+            padding:.35rem .55rem;border-radius:999px;font-weight:600;white-space:nowrap;
+            backdrop-filter: blur(2px);
         }
+
+        /* Donut rail (ROW-WISE) */
+        .donut-card{
+            border:1px solid rgba(255,255,255,.25);
+            background:rgba(255,255,255,.08);
+            border-radius:14px;
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.15), 0 8px 20px rgba(2,6,23,.15);
+            backdrop-filter: blur(3px);
+            max-width:100%;
+        }
+        .donut-rail{
+            display:flex;flex-wrap:nowrap;gap:12px;
+            overflow-x:auto;overflow-y:hidden;
+            padding:6px 6px;
+            scroll-snap-type:x mandatory;
+        }
+        .donut-rail::-webkit-scrollbar{height:8px}
+        .donut-rail::-webkit-scrollbar-thumb{background:rgba(255,255,255,.25);border-radius:8px}
+        .donut{
+            flex:0 0 132px; /* fixed width to keep a clean row */
+            display:flex;flex-direction:column;align-items:center;
+            padding:12px 10px;border-radius:12px;background:var(--soft);
+            scroll-snap-align:start;
+            border:1px solid var(--border);
+        }
+        .donut canvas{width:92px!important;height:92px!important;}
+        .donut .label{font-weight:700;margin-top:.4rem;font-size:.9rem;color:var(--ink);text-align:center;}
+        .donut .pct{font-size:.85rem;color:var(--muted);}
 
         /* Tabbar */
         .tabbar{background:#fff;border:1px solid var(--border);border-radius:14px;
@@ -66,42 +91,24 @@
             border-color:transparent;box-shadow:0 10px 18px rgba(124,58,237,.25);}
         .tabbar .nav-link i{font-size:.95rem;}
 
-        /* Donut grid */
-        .donut-card{
-            border:1px solid var(--border);border-radius:14px;background:#fff;
-            box-shadow:0 8px 20px rgba(2,6,23,.06);
-        }
-        .donut-grid{
-            display:grid;gap:14px;
-            grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-        }
-        .donut{
-            display:flex;flex-direction:column;align-items:center;
-            padding:14px 10px;border-radius:12px;background:var(--soft);
-        }
-        .donut canvas{width:92px!important;height:92px!important;}
-        .donut .label{font-weight:700;margin-top:.4rem;font-size:.9rem;color:var(--ink);text-align:center;}
-        .donut .pct{font-size:.85rem;color:var(--muted);}
-
         /* Content cards */
         .section-card{border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:0 6px 16px rgba(2,6,23,.05);}
         .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
         .section-title{margin:0;font-weight:800;color:var(--ink);font-size:1.05rem;}
         .section-hint{font-size:.9rem;color:var(--muted);}
 
-        /* Profile item rows */
+        /* Profile items */
         .profile-section .profile-item{display:flex;gap:.75rem;padding:.5rem 0;align-items:flex-start;}
         .profile-item i{color:#475569;opacity:.85;margin-top:.25rem;min-width:18px;text-align:center;}
         .profile-item .key{display:block;font-size:.8rem;color:var(--muted);}
         .profile-item .val{font-weight:600;}
 
-        /* Pills (Bheddha) */
+        /* Bheddha pill */
         .beddha-pill{
             display:inline-flex;align-items:center;gap:.4rem;
             background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
             color:#fff;font-weight:700;font-size:.83rem;
-            padding:.35rem .65rem;border-radius:999px;
-            box-shadow:0 6px 14px rgba(124,58,237,.22);
+            padding:.35rem .65rem;border-radius:999px;box-shadow:0 6px 14px rgba(124,58,237,.22);
         }
 
         /* Buttons */
@@ -113,8 +120,9 @@
         /* Address helper */
         .address-grid .col{min-width:240px;}
 
-        /* Misc */
+        /* Focus */
         :focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px var(--ring)!important;border-radius:10px;}
+
         @media (max-width: 576px){
             .profile-hero{align-items:flex-start;}
         }
@@ -141,9 +149,9 @@
                 </div>
             </div>
 
-            <!-- Donuts -->
-            <div class="donut-card p-3">
-                <div class="donut-grid">
+            <!-- Donuts: single ROW with horizontal scroll when needed -->
+            <div class="donut-card p-2 p-sm-3">
+                <div class="donut-rail">
                     <a class="donut text-decoration-none" href="{{ route('profile.update', ['pratihari_id'=>$profile->pratihari_id]) }}" title="Edit Personal">
                         <canvas id="profileChart"></canvas>
                         <div class="label">Personal</div>
