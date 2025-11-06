@@ -293,10 +293,7 @@
                         <!-- SOCIAL (active) -->
                         <div class="tab-pane fade show active" id="pane-social" role="tabpanel"
                             aria-labelledby="tab-social">
-                            <div class="mb-2">
-                                <div class="section-title">Social Profiles</div>
-                                <div class="section-hint">Use full URLs (e.g., https://facebook.com/yourpage).</div>
-                            </div>
+                           
 
                             <div class="row g-3">
                                 <!-- Facebook -->
