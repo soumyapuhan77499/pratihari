@@ -15,6 +15,7 @@
             --muted:#64748b;
             --border:rgba(2,6,23,.10);
             --ring:rgba(6,182,212,.28);
+            --soft:#f8fafc;
         }
 
         /* Page header */
@@ -49,7 +50,7 @@
         .section-hint{color:var(--muted);font-size:.9rem;}
         .divider{height:1px;background:var(--border);margin:1rem 0;}
 
-        /* Checkbox grid */
+        /* Seba checkbox grid (same “previous page” vibe) */
         .checkbox-grid{
             display:grid;
             grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -59,25 +60,51 @@
             border-radius:12px;
             padding:.8rem;
         }
-        .form-check .form-check-input{cursor:pointer;transform:scale(1.1);margin-right:.4rem;}
-        .form-check-label{cursor:pointer;}
+        .form-check .form-check-input{
+            cursor:pointer; width:22px;height:22px;
+            border:2px solid #3248c7; border-radius:6px; transition:.2s;
+            margin-right:.45rem;
+        }
+        .form-check .form-check-input:checked{ background:#0d0d0c;border-color:#2d11e9; }
+        .form-check .form-check-input:hover{ box-shadow:0 0 8px rgba(53,104,246,.35); }
+        .form-check-label{cursor:pointer;font-weight:600;color:var(--ink);}
 
-        /* Bheddha group */
+        /* Beddha group */
         .beddha-group{
             border:1px solid var(--border);
             background:#fff;
             border-radius:12px;
-            padding: .85rem;
+            padding:.85rem;
         }
         .beddha-group .title{
-            font-weight:700;color:var(--ink);
+            font-weight:800;color:var(--ink); display:flex; align-items:center; gap:.5rem;
         }
+        .beddha-group .title .title-chip{
+            display:inline-flex;align-items:center;gap:.5rem;
+            color:#fff;background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            padding:.25rem .6rem;border-radius:999px;font-size:.85rem;
+        }
+
         .beddha-pills{
             display:flex;flex-wrap:wrap;gap:.6rem;margin-top:.6rem;
         }
         .beddha-pill{
-            display:flex;align-items:center;gap:.35rem;
+            display:flex;align-items:center;gap:.45rem;
             border:1px solid var(--border);border-radius:999px;padding:.25rem .6rem;background:#f9fafb;
+            transition: transform .08s ease, box-shadow .15s ease;
+        }
+        .beddha-pill:hover{ transform: translateY(-1px); box-shadow:0 6px 14px rgba(2,6,23,.06); }
+
+        /* Checkbox inside Beddha pill (match previous large style) */
+        .beddha-pill .form-check-input{
+            width:22px;height:22px;border:2px solid #3248c7;border-radius:6px;margin:0;
+        }
+        .beddha-pill .form-check-input:checked{ background:#0d0d0c;border-color:#2d11e9; }
+        .beddha-pill .form-check-input:hover{ box-shadow:0 0 8px rgba(53,104,246,.35); }
+
+        .pill-icon{
+            width:22px; display:inline-flex; align-items:center; justify-content:center;
+            color:var(--brand-a);
         }
         .beddha-disabled{opacity:.55;}
         .beddha-disabled .form-check-input{cursor:not-allowed;}
@@ -159,7 +186,7 @@
                 <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
 
                 <div class="tab-content" id="tabsContent">
-                    <!-- PLACEHOLDERS to keep tab structure uniform -->
+                    <!-- Placeholder panes to keep layout uniform -->
                     <div class="tab-pane fade" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile">
                         <div class="text-muted">Profile section is managed on the Profile tab.</div>
                     </div>
@@ -220,17 +247,13 @@
 @endsection
 
 @section('scripts')
-    <!-- SweetAlert (flash) -->
+    <!-- SweetAlert flash -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
-    <script>
-        Swal.fire({ icon:'success', title:'Success!', text:@json(session('success')), confirmButtonColor:'#0ea5e9' });
-    </script>
+    <script>Swal.fire({ icon:'success', title:'Success!', text:@json(session('success')), confirmButtonColor:'#0ea5e9' });</script>
     @endif
     @if (session('error'))
-    <script>
-        Swal.fire({ icon:'error', title:'Error!', text:@json(session('error')), confirmButtonColor:'#ef4444' });
-    </script>
+    <script>Swal.fire({ icon:'error', title:'Error!', text:@json(session('error')), confirmButtonColor:'#ef4444' });</script>
     @endif
 
     <!-- Bootstrap 5.3 bundle -->
@@ -247,10 +270,25 @@
             if(!anyChecked){ beddhaListWrap.innerHTML = ''; }
         }
 
-        // Render a single Bheddha group for one Seba
+        // Pick an icon for a Bheddha by name (fallback to tag)
+        function getBeddhaIcon(name = ''){
+            const n = name.toLowerCase();
+            if(n.match(/lead|head|chief/))      return 'fa-user-shield';
+            if(n.match(/cook|anna|kitchen/))    return 'fa-utensils';
+            if(n.match(/clean|safai|sweep/))    return 'fa-broom';
+            if(n.match(/security|guard/))       return 'fa-shield-halved';
+            if(n.match(/music|bhajan|drum/))    return 'fa-music';
+            if(n.match(/light|sound|tech/))     return 'fa-plug';
+            if(n.match(/flower|decor|pushpa/))  return 'fa-seedling';
+            if(n.match(/water|pani/))           return 'fa-droplet';
+            if(n.match(/store|bhandar/))        return 'fa-boxes-stacked';
+            if(n.match(/health|first aid|med/)) return 'fa-kit-medical';
+            return 'fa-tag'; // default
+        }
+
+        // Render a single Bheddha group for one Seba (with icon + large checkbox)
         function renderBeddhaGroup(sebaId, sebaName, items){
             const groupId = `beddha_group_${sebaId}`;
-            // If already exists, replace it
             const existing = document.getElementById(groupId);
             if(existing) existing.remove();
 
@@ -258,36 +296,49 @@
             group.className = 'beddha-group';
             group.id = groupId;
 
-            const inner = document.createElement('div');
-            inner.innerHTML = `<div class="title">${sebaName}</div>`;
+            const header = document.createElement('div');
+            header.className = 'title';
+            header.innerHTML = `<span class="title-chip"><i class="fa-solid fa-hands-praying"></i> ${sebaName}</span>`;
+            group.appendChild(header);
+
             const pills = document.createElement('div');
             pills.className = 'beddha-pills';
 
-            items.forEach(b => {
+            (items || []).forEach(b => {
                 const disabled = Number(b.beddha_status) === 0;
+
+                // pill container
                 const pill = document.createElement('label');
                 pill.className = 'beddha-pill form-check-label' + (disabled ? ' beddha-disabled' : '');
                 pill.setAttribute('title', disabled ? 'Admin assigned this Bheddha ID' : '');
 
+                // checkbox
                 const input = document.createElement('input');
-                input.type = 'checkbox';
+                input.type   = 'checkbox';
                 input.className = 'form-check-input';
-                input.name = `beddha_id[${sebaId}][]`;
+                input.name  = `beddha_id[${sebaId}][]`;
                 input.value = b.id;
-                input.id = `beddha_${sebaId}_${b.id}`;
+                input.id    = `beddha_${sebaId}_${b.id}`;
                 if(disabled) input.disabled = true;
 
+                // icon
+                const icon = document.createElement('i');
+                icon.className = `pill-icon fa-solid ${getBeddhaIcon(b.beddha_name || '')}`;
+
+                // text
                 const text = document.createElement('span');
                 text.textContent = b.beddha_name;
 
+                // assemble
                 pill.htmlFor = input.id;
-                pill.prepend(input);
+                pill.appendChild(input);
+                pill.appendChild(icon);
                 pill.appendChild(text);
+
                 pills.appendChild(pill);
             });
 
-            inner.appendChild(pills);
-            group.appendChild(inner);
+            group.appendChild(pills);
             beddhaListWrap.appendChild(group);
         }
 
@@ -303,7 +354,6 @@
                 const sebaId   = this.dataset.sebaId;
                 const sebaName = this.nextElementSibling?.textContent?.trim() || 'Seba';
                 if(this.checked){
-                    // Fetch Bheddha for this Seba
                     fetch(`/admin/get-beddha/${sebaId}`)
                         .then(r => r.json())
                         .then(list => {
@@ -322,7 +372,7 @@
             });
         });
 
-        // Init visibility (in case of old input)
+        // Init visibility
         updateBeddhaSectionVisibility();
     })();
     </script>
