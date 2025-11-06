@@ -293,8 +293,7 @@
                         <!-- SOCIAL (active) -->
                         <div class="tab-pane fade show active" id="pane-social" role="tabpanel"
                             aria-labelledby="tab-social">
-                           
-
+                    
                             <div class="row g-3">
                                 <!-- Facebook -->
                                 <div class="col-md-6">
