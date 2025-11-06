@@ -205,7 +205,7 @@
                                         <span class="chip" aria-hidden="true"><i class="fa-solid fa-person-running"></i></span>
                                         <input type="text" name="extra_activity[]" class="form-control" placeholder="e.g., Sports coaching" autocomplete="off">
                                         <button type="button" class="btn btn-brand ms-2 addMore">
-                                            <i class="fa fa-plus me-1"></i>Add
+                                            <i class="fa fa-plus me-1"></i>
                                         </button>
                                     </div>
                                 </div>
