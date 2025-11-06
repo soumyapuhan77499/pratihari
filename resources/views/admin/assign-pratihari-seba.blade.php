@@ -1,9 +1,12 @@
 @extends('layouts.app')
 
 @section('styles')
-    <!-- Single Bootstrap + Select2 -->
+    <!-- Bootstrap + Select2 (single versions) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+
+    <!-- Font Awesome 6 (needed for all fa-solid / fa-regular icons below) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
         :root{
@@ -204,7 +207,7 @@
 
                             <div class="text-center">
                                 <button type="submit" class="btn btn-lg mt-4 w-50 custom-gradient-btn">
-                                    <i class="fa fa-save me-1"></i> Submit
+                                    <i class="fa-solid fa-floppy-disk me-1"></i> Submit
                                 </button>
                             </div>
                         @endif
