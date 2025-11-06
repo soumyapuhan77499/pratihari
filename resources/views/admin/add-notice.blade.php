@@ -1,118 +1,140 @@
 @extends('layouts.app')
 
 @section('styles')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap 5 + Font Awesome (icons will now render) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+    <!-- (Optional) Select2 – keep if you use it site-wide -->
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
     <style>
-        .form-group {
-            position: relative;
+        :root{
+            --brand-a:#7c3aed; /* violet  */
+            --brand-b:#06b6d4; /* cyan    */
+            --ink:#0b1220;
+            --muted:#64748b;
+            --border:rgba(2,6,23,.10);
         }
 
-        .form-group i {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #007bff;
+        .page-header{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff;border-radius:1rem;padding:1rem 1.25rem;
+            box-shadow:0 10px 24px rgba(6,182,212,.18);
+        }
+        .page-header .title{font-weight:800;letter-spacing:.3px;}
+
+        .card{ border:1px solid var(--border); border-radius:14px; box-shadow:0 8px 22px rgba(2,6,23,.06); }
+        .card-header{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+            border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; justify-content:center;
         }
 
-        .form-control {
-            padding-left: 35px;
-        }
+        .input-group-text{ background:#fff; }
+        .form-label{ font-weight:700; color:var(--ink); }
+        .text-hint{ color:var(--muted); font-size:.9rem; }
 
-        .card-header {
-            background: linear-gradient(135deg, #f8f19e, #dcf809);
-            color: rgb(51, 101, 251);
-            font-size: 25px;
-            font-weight: bold;
-            text-align: center;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .custom-gradient-btn{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            border:0; color:#fff; font-weight:800; border-radius:10px;
+            box-shadow:0 12px 24px rgba(124,58,237,.22);
         }
+        .custom-gradient-btn:hover{ opacity:.96; }
 
-        .custom-gradient-btn {
-            background: linear-gradient(135deg, #6a11cb, #2575fc);
-            border: none;
-            color: white;
-            padding: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .custom-gradient-btn:hover {
-            background: linear-gradient(135deg, #2575fc, #6a11cb);
-            transform: translateY(-2px);
-            box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
-        }
+        /* Flash fade */
+        .fade-out{ animation: fadeout .5s ease-in-out forwards; }
+        @keyframes fadeout{ to{ opacity:0; height:0; margin:0; padding:0; } }
     </style>
 @endsection
 
 @section('content')
+    <div class="page-header mb-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <div class="title h4 mb-0"><i class="fa-solid fa-bullhorn me-2"></i>Add Notice</div>
+                <div class="text-hint">Create a notice with dates and a description. Dates must be valid.</div>
+            </div>
+        </div>
+    </div>
+
     @if (session('success'))
-        <div class="alert alert-success" id="successMessage">
-            {{ session('success') }}
+        <div class="alert alert-success d-flex align-items-center gap-2" id="successMessage">
+            <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
         </div>
     @endif
 
     @if (session('error'))
-        <div class="alert alert-danger" id="errorMessage">
-            {{ session('error') }}
+        <div class="alert alert-danger d-flex align-items-center gap-2" id="errorMessage">
+            <i class="fa-solid fa-triangle-exclamation"></i> {{ session('error') }}
         </div>
     @endif
 
     <div class="row">
         <div class="col-12 mt-2">
             <div class="card">
-                <div class="card-header"><i class="fa fa-map-marker-alt" style="color: blue"></i>Notice</div>
+                <div class="card-header">
+                    <i class="fa-solid fa-clipboard-list"></i> Notice
+                </div>
+
                 <div class="card-body">
-                    <form action="{{ route('saveNotice') }}" method="POST">
+                    <form action="{{ route('saveNotice') }}" method="POST" novalidate>
                         @csrf
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-group">
-                                        <label for="notice_name"><i class="fas fa-map-marker-alt"></i> Notice Name</label>
-                                        <input type="text" class="form-control" id="notice_name" name="notice_name"
-                                            required placeholder="Enter Notice Name">
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-group">
-                                        <label for="from_date"><i class="fas fa-calendar-alt"></i> From Date</label>
-                                        <input type="date" class="form-control" id="from_date" name="from_date" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <div class="form-group">
-                                        <label for="to_date"><i class="fas fa-calendar-alt"></i> To Date</label>
-                                        <input type="date" class="form-control" id="to_date" name="to_date" required>
-                                    </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label for="notice_name" class="form-label">Notice Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-pen"></i></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="notice_name"
+                                           name="notice_name"
+                                           required
+                                           maxlength="150"
+                                           placeholder="Enter Notice Name">
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-3">
-                                <div class="form-group">
-                                    <label for="description"><i class="fas fa-align-left"></i> Description</label>
+
+                            <div class="col-md-4">
+                                <label for="from_date" class="form-label">From Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="from_date"
+                                           name="from_date"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="to_date" class="form-label">To Date</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-regular fa-calendar-days"></i></span>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="to_date"
+                                           name="to_date"
+                                           required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="description" class="form-label">Description <span class="text-hint">(optional)</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-align-left"></i></span>
                                     <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description"></textarea>
                                 </div>
                             </div>
 
                             <div class="col-12 text-center">
-                                <button type="submit" class="btn btn-lg mt-3 w-50 custom-gradient-btn"
-                                    style="color: white">
-                                    <i class="fa fa-save"></i> Submit
+                                <button type="submit" class="btn btn-lg mt-2 px-5 custom-gradient-btn">
+                                    <i class="fa-regular fa-floppy-disk me-2"></i>Submit
                                 </button>
                             </div>
-                        </div>
+                        </div><!-- /row -->
                     </form>
-
                 </div>
             </div>
         </div>
@@ -120,22 +142,34 @@
 @endsection
 
 @section('scripts')
+    <!-- jQuery (if needed elsewhere) + Bootstrap 5 bundle -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Select2 (optional, kept once to avoid duplicates) -->
+    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
+
     <script>
+        // Flash messages auto-hide
         document.addEventListener("DOMContentLoaded", function() {
-            setTimeout(() => document.getElementById("successMessage")?.classList.add("d-none"), 5000);
-            setTimeout(() => document.getElementById("errorMessage")?.classList.add("d-none"), 5000);
+            setTimeout(() => document.getElementById("successMessage")?.classList.add("fade-out"), 3000);
+            setTimeout(() => document.getElementById("errorMessage")?.classList.add("fade-out"), 3000);
         });
+
+        // Date guard: to_date cannot be before from_date
+        (function(){
+            const from = document.getElementById('from_date');
+            const to   = document.getElementById('to_date');
+
+            function syncMin(){
+                if(!from.value) { to.min = ''; return; }
+                to.min = from.value;
+                if(to.value && to.value < from.value){
+                    to.value = from.value;
+                }
+            }
+            from.addEventListener('change', syncMin);
+            document.addEventListener('DOMContentLoaded', syncMin);
+        })();
     </script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js'></script>
-
-    <!-- Internal Select2 js-->
-    <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
-
-    <!--Internal  Form-elements js-->
-    <script src="{{ asset('assets/js/advanced-form-elements.js') }}"></script>
-    <script src="{{ asset('assets/js/select2.js') }}"></script>
 @endsection
