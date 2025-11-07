@@ -37,7 +37,6 @@ class AdminController extends Controller
     {
         return view('admin.admin-login');
     }
-
 public function dashboard()
 {
     $today = Carbon::today();
@@ -100,7 +99,7 @@ public function dashboard()
     $approvedApplication = PratihariApplication::where('status', 'approved')->get();
     $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
 
-    // ---- Seba ID groups (unchanged utility) ----
+    // ---- Seba ID groups ----
     $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
     $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
@@ -129,7 +128,6 @@ public function dashboard()
     $todayStr = $today->toDateString();
     $beddhaMapping   = DateBeddhaMapping::where('date', $todayStr)->first();
 
-    // If mapping not present, fall back to "N/A"
     $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
     $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
 
@@ -137,25 +135,17 @@ public function dashboard()
     $todayGoBeddha = is_numeric($gochhikarBeddha) ? (int)$gochhikarBeddha : null;
 
     // ---- Build events filtered strictly by TODAY’s beddha number ----
-    // Structure we’ll pass to Blade:
-    // $pratihariEvents = [
-    //   'SebaName | Beddha X' => [
-    //      ['profile'=>PratihariProfile, 'beddha'=>X, 'assigned_by'=>'User'|'Admin']
-    //   ], ...
-    // ]
-    // $nijogaAssign = same grouping but only for Admin (0) if you want to show in Nijoga tab.
-
+    // Left panel (Pratihari) -> arrays of entries with profile + beddha + assigned_by
     $pratihariEvents = [];
     $nijogaAssign    = [];
 
     if ($todayPrBeddha) {
-        // Load all sebas of type 'pratihari' that include today’s beddha
         $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
             ->whereIn('seba_id', $pratihariSebaIds)
             ->get();
 
         foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster?->seba_name ?? 'Unknown Seba';
+            $sebaName  = $seba->sebaMaster?->seba_name ?? 'Unknown Seba';
             $beddhaIds = $seba->beddha_id; // accessor returns array
 
             if (!in_array($todayPrBeddha, $beddhaIds ?? [], true)) {
@@ -163,7 +153,6 @@ public function dashboard()
             }
 
             $assign = $seba->beddhaAssigns->firstWhere('beddha_id', $todayPrBeddha);
-            // 1 = user assign; 0 = admin assign; null = unknown/fallback admin
             $assignedBy = ($assign && (int)$assign->beddha_status === 1) ? 'User' : 'Admin';
 
             $label = "{$sebaName} | Beddha {$todayPrBeddha}";
@@ -190,7 +179,46 @@ public function dashboard()
         })->toArray();
     }
 
-    // Displays (for the small “current beddha” chips elsewhere if needed)
+    // Right panel (Gochhikar) -> arrays of profiles only (matches Blade)
+    $gochhikarEvents = [];
+    $nijogaGochhikarEvents = [];
+
+    if ($todayGoBeddha) {
+        $gsebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
+            ->whereIn('seba_id', $gochhikarSebaIds)
+            ->get();
+
+        foreach ($gsebas as $seba) {
+            $sebaName  = $seba->sebaMaster?->seba_name ?? 'Unknown Seba';
+            $beddhaIds = $seba->beddha_id;
+
+            if (!in_array($todayGoBeddha, $beddhaIds ?? [], true)) {
+                continue;
+            }
+
+            $assign = $seba->beddhaAssigns->firstWhere('beddha_id', $todayGoBeddha);
+            $isUserAssigned = $assign && (int)$assign->beddha_status === 1;
+
+            $label = "{$sebaName} | Beddha {$todayGoBeddha}";
+
+            if ($isUserAssigned) {
+                $gochhikarEvents[$label][] = $seba->pratihari;
+            } else {
+                $nijogaGochhikarEvents[$label][] = $seba->pratihari;
+            }
+        }
+
+        // Deduplicate by profile pratihari_id
+        $gochhikarEvents = collect($gochhikarEvents)->map(function ($arr) {
+            return collect($arr)->unique('pratihari_id')->values()->all();
+        })->toArray();
+
+        $nijogaGochhikarEvents = collect($nijogaGochhikarEvents)->map(function ($arr) {
+            return collect($arr)->unique('pratihari_id')->values()->all();
+        })->toArray();
+    }
+
+    // Displays (for small “current beddha” chips)
     $currentPratihariBeddhaDisplay = $todayPrBeddha ? (string)$todayPrBeddha : '—';
     $currentGochhikarBeddhaDisplay = $todayGoBeddha ? (string)$todayGoBeddha : '—';
 
@@ -214,11 +242,14 @@ public function dashboard()
         'currentGochhikarBeddhaDisplay',
         'nijogaAssign',
         'pratihariEvents',
+        'gochhikarEvents',          // <-- added
+        'nijogaGochhikarEvents',    // <-- added
         'pratihariBeddha',
         'gochhikarBeddha',
         'profileStatus'
     ));
 }
+
 
     public function pratihariManageProfile()
     {
