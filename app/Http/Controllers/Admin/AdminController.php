@@ -462,7 +462,7 @@ class AdminController extends Controller
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
-   private function isValidIndianMobile(?string $raw): bool
+      private function isValidIndianMobile(?string $raw): bool
     {
         if (!$raw) return false;
         $digits = preg_replace('/\D+/', '', $raw);
@@ -507,23 +507,23 @@ class AdminController extends Controller
     private function msg91Success(?array $json, int $httpStatus): bool
     {
         if ($httpStatus < 200 || $httpStatus >= 300) return false;
+
+        // bulk may return { status: "success" } OR per-item objects under data, or request_id
         $st  = data_get($json, 'status');
         $tp  = data_get($json, 'type');
         $msg = data_get($json, 'message');
-        $id1 = data_get($json, 'data.request_id');
-        $id2 = data_get($json, 'request_id');
+        $id1 = data_get($json, 'data.request_id') ?: data_get($json, 'request_id');
         $hasErrors = data_get($json, 'errors');
 
-        // typical success shapes
         if (is_string($st)  && strcasecmp($st, 'success') === 0) return true;
         if (is_string($tp)  && strcasecmp($tp, 'success') === 0) return true;
         if (is_string($msg) && strcasecmp($msg, 'success') === 0) return true;
-        if ($id1 || $id2) return true;
+        if ($id1) return true;
 
-        // some tenants return 2xx + no errors but no explicit 'success'
-        if (!$hasErrors) return true;
+        // Some accounts: 2xx + no explicit 'success' + no 'errors' => still OK (queued)
+        if (!$hasErrors && $httpStatus >= 200 && $httpStatus < 300 && $json !== null) return true;
 
-        // but if they explicitly say the known error message, force fail
+        // If explicit generic failure, treat as fail
         if (is_string($msg) && trim($msg) === 'Failed to send OTP. Please try again.') return false;
 
         return false;
@@ -536,15 +536,14 @@ class AdminController extends Controller
         if (!$errStr) $errStr = 'Unknown error';
 
         if (stripos($errStr, 'blocked prefix') !== false || stripos($errStr, 'blocked prefixes') !== false) {
-            $errStr .= ' — Confirm the number is in 917XXXXXXXXX and that this operator/prefix is permitted on your WABA. Ensure user opt-in if required.';
+            $errStr .= ' — Confirm the number is 917XXXXXXXXX and that this prefix/operator is permitted on your WABA. Ensure user opt-in if required.';
         }
         if (stripos($errStr, 'template') !== false) {
-            $errStr .= " — Verify the approved template name/namespace exactly: name={$tplName}, namespace=".($namespace ?: '(none)')." and that variable counts match. If your template has NO button, set MSG91_WA_BUTTON=false.";
+            $errStr .= " — Verify the approved template name/namespace exactly: name={$tplName}, namespace=".($namespace ?: '(none)').". Match variable count/names (body_1, button_1).";
         }
         if (stripos($errStr, 'Please try again') !== false && !$templateButton) {
             $errStr .= ' — If your approved template includes a URL button, set MSG91_WA_BUTTON=true so the parameter is sent.';
         }
-
         return $errStr;
     }
 
@@ -590,9 +589,9 @@ class AdminController extends Controller
         $admin->otp = $otp;
 
         // (optional) expiry
-        if ($this->schemaHas('admins', 'otp_expires_at')) {       // <— 1/3
-            $admin->otp_expires_at = Carbon::now()->addMinutes(5); // <— 2/3
-        }                                                          // <— 3/3
+        if ($this->schemaHas('admins', 'otp_expires_at')) {
+            $admin->otp_expires_at = Carbon::now()->addMinutes(5);
+        }
         $admin->save();
 
         // ENV
@@ -611,8 +610,56 @@ class AdminController extends Controller
 
         $integratedNumber = $this->normalizeMsisdn($waNumber, '91');
 
-        // Template components
-        $components = [
+        // ---------------- BULK SHAPE (matches your cURL) ----------------
+        // language.code en_US; template.name/namespace; to_and_components with body_1/button_1
+        $toAndComponents = [
+            [
+                'to' => [ $toMsisdn ],
+                'components' => [
+                    'body_1' => [
+                        'type'  => 'text',
+                        'value' => $otp,          // OTP in body_1
+                    ],
+                ],
+            ],
+        ];
+
+        if ($templateButton) {
+            // only if your approved template has a URL button 1 variable
+            $toAndComponents[0]['components']['button_1'] = [
+                'subtype' => 'url',
+                'type'    => 'text',
+                'value'   => $shortToken, // URL text variable for button_1
+            ];
+        }
+
+        $bulkPayload = [
+            'integrated_number' => $integratedNumber,
+            'content_type'      => 'template',
+            'payload'           => [
+                'messaging_product' => 'whatsapp',
+                'type'              => 'template',
+                'template'          => [
+                    'name'               => $tplName,
+                    'language'           => [
+                        'code'   => 'en_US',
+                        'policy' => 'deterministic',
+                    ],
+                    'namespace'          => $namespace,     // if empty, still included; okay for MSG91
+                    'to_and_components'  => $toAndComponents,
+                ],
+            ],
+        ];
+
+        // ---------------- Single shape fallback (some accounts expect this) ----------------
+        $singleTemplate = [
+            'name'     => $tplName,
+            'language' => ['code' => 'en_US', 'policy' => 'deterministic'],
+        ];
+        if ($namespace !== '') {
+            $singleTemplate['namespace'] = $namespace;
+        }
+        $singleComponents = [
             [
                 'type'       => 'body',
                 'parameters' => [
@@ -621,7 +668,7 @@ class AdminController extends Controller
             ],
         ];
         if ($templateButton) {
-            $components[] = [
+            $singleComponents[] = [
                 'type'       => 'button',
                 'sub_type'   => 'url',
                 'index'      => '0',
@@ -630,54 +677,44 @@ class AdminController extends Controller
                 ],
             ];
         }
+        $singleTemplate['components'] = $singleComponents;
 
-        $templateBase = [
-            'name'     => $tplName,
-            'language' => ['code' => 'en', 'policy' => 'deterministic'],
-        ];
-        if ($namespace !== '') {
-            $templateBase['namespace'] = $namespace;
-        }
-        $templateA = $templateBase + ['components' => $components];
-
-        // ---------- Attempt A: current documented shape (integrated_number at root) ----------
-        $payloadA = [
+        $singlePayload = [
             'integrated_number' => $integratedNumber,
             'content_type'      => 'template',
             'payload'           => [
                 'messaging_product' => 'whatsapp',
                 'to'                => $toMsisdn,
                 'type'              => 'template',
-                'template'          => $templateA,
+                'template'          => $singleTemplate,
             ],
         ];
 
         try {
-            $respA = Http::withHeaders([
+            // Attempt 1: BULK endpoint + bulk payload
+            $respBulk = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'Accept'       => 'application/json',
                 'authkey'      => $authKey,
-            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payloadA);
+            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/', $bulkPayload);
 
-            $statusA  = $respA->status();
-            $rawA     = $respA->body();
-            $jsonA    = null;
-            try { $jsonA = $respA->json(); } catch (\Throwable $e) {}
+            $statusBulk = $respBulk->status();
+            $rawBulk    = $respBulk->body();
+            $jsonBulk   = null;
+            try { $jsonBulk = $respBulk->json(); } catch (\Throwable $e) {}
 
-            Log::info('MSG91 Attempt A', [
-                'http_status' => $statusA,
-                'json'        => $jsonA,
-                'raw'         => $jsonA ? null : $rawA,
+            Log::info('MSG91 BULK Attempt', [
+                'http_status' => $statusBulk,
+                'json'        => $jsonBulk,
+                'raw'         => $jsonBulk ? null : $rawBulk,
                 'to'          => $toMsisdn,
                 'integrated'  => $integratedNumber,
                 'template'    => $tplName,
                 'has_button'  => $templateButton,
             ]);
 
-            $okA = $this->msg91Success($jsonA, $statusA);
-
-            // If success -> done
-            if ($okA) {
+            $okBulk = $this->msg91Success($jsonBulk, $statusBulk);
+            if ($okBulk) {
                 return back()->with([
                     'otp_sent'  => true,
                     'otp_phone' => $local10,
@@ -685,69 +722,40 @@ class AdminController extends Controller
                 ]);
             }
 
-            // If explicit error message equals the generic failure, try alternate shape
-            $msgA = data_get($jsonA, 'message');
-            $shouldTryB = true;
-            if (is_string($msgA) && trim($msgA) !== 'Failed to send OTP. Please try again.') {
-                // not the exact generic message? still try B (some tenants only accept from/payload)
-                $shouldTryB = true;
-            }
+            // Attempt 2: Single endpoint + components array (fallback)
+            $respSingle = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
+                'authkey'      => $authKey,
+            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $singlePayload);
 
-            // ---------- Attempt B: alternate shape (from inside payload) ----------
-            if ($shouldTryB) {
-                $templateB = $templateA; // same template, different envelope
-                $payloadB  = [
-                    'content_type' => 'template',
-                    'payload'      => [
-                        'messaging_product' => 'whatsapp',
-                        'from'              => $integratedNumber, // <— key difference here
-                        'to'                => $toMsisdn,
-                        'type'              => 'template',
-                        'template'          => $templateB,
-                    ],
-                ];
+            $statusSingle = $respSingle->status();
+            $rawSingle    = $respSingle->body();
+            $jsonSingle   = null;
+            try { $jsonSingle = $respSingle->json(); } catch (\Throwable $e) {}
 
-                $respB = Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Accept'       => 'application/json',
-                    'authkey'      => $authKey,
-                ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payloadB);
+            Log::info('MSG91 SINGLE Attempt', [
+                'http_status' => $statusSingle,
+                'json'        => $jsonSingle,
+                'raw'         => $jsonSingle ? null : $rawSingle,
+                'to'          => $toMsisdn,
+                'integrated'  => $integratedNumber,
+                'template'    => $tplName,
+                'has_button'  => $templateButton,
+            ]);
 
-                $statusB = $respB->status();
-                $rawB    = $respB->body();
-                $jsonB   = null;
-                try { $jsonB = $respB->json(); } catch (\Throwable $e) {}
-
-                Log::info('MSG91 Attempt B', [
-                    'http_status' => $statusB,
-                    'json'        => $jsonB,
-                    'raw'         => $jsonB ? null : $rawB,
-                    'to'          => $toMsisdn,
-                    'from'        => $integratedNumber,
-                    'template'    => $tplName,
-                    'has_button'  => $templateButton,
-                ]);
-
-                $okB = $this->msg91Success($jsonB, $statusB);
-                if ($okB) {
-                    return back()->with([
-                        'otp_sent'  => true,
-                        'otp_phone' => $local10,
-                        'message'   => 'OTP sent to your WhatsApp.',
-                    ]);
-                }
-
-                // Build actionable error from B; otherwise fall back to A
-                $errStr = $this->formatMsg91Error($jsonB, $rawB, $templateButton, $tplName, $namespace);
+            $okSingle = $this->msg91Success($jsonSingle, $statusSingle);
+            if ($okSingle) {
                 return back()->with([
-                    'error'      => 'Failed to send OTP. MSG91 error: ' . $errStr,
-                    'otp_phone'  => $local10,
-                    'otp_sent'   => false,
-                ])->withInput();
+                    'otp_sent'  => true,
+                    'otp_phone' => $local10,
+                    'message'   => 'OTP sent to your WhatsApp.',
+                ]);
             }
 
-            // If we didn’t try B, return A’s error
-            $errStr = $this->formatMsg91Error($jsonA, $rawA, $templateButton, $tplName, $namespace);
+            // Build actionable error (prefer bulk's message if present)
+            $errStr = $this->formatMsg91Error($jsonBulk ?: $jsonSingle, ($jsonBulk ? $rawBulk : $rawSingle), $templateButton, $tplName, $namespace);
+
             return back()->with([
                 'error'      => 'Failed to send OTP. MSG91 error: ' . $errStr,
                 'otp_phone'  => $local10,
@@ -812,6 +820,7 @@ class AdminController extends Controller
 
         return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
     }
+
     public function logout()
     {
         Auth::guard('admins')->logout();
