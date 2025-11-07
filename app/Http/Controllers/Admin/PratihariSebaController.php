@@ -312,7 +312,6 @@ class PratihariSebaController extends Controller
                     [
                         'pratihari_id' => $pratihariId,
                         'seba_id' => $sebaId,
-                        'year' => $year
                     ],
                     [
                         'beddha_id' => $beddhaIdsString,
