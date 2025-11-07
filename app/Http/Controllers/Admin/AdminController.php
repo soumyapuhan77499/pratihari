@@ -462,11 +462,11 @@ class AdminController extends Controller
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
-private function isValidIndianMobile(?string $raw): bool
+   private function isValidIndianMobile(?string $raw): bool
     {
         if (!$raw) return false;
         $digits = preg_replace('/\D+/', '', $raw);
-        if (Str::startsWith($digits, '91') && strlen($digits) === 12) {
+        if (\Illuminate\Support\Str::startsWith($digits, '91') && strlen($digits) === 12) {
             $digits = substr($digits, -10);
         }
         return (bool) preg_match('/^[6-9]\d{9}$/', $digits);
@@ -474,20 +474,22 @@ private function isValidIndianMobile(?string $raw): bool
 
     private function normalizeMsisdn(?string $raw, string $cc = '91'): string
     {
+        // returns digits-only, with country code, no plus (e.g., +91 77499 68976 -> 917749968976)
         $digits = preg_replace('/\D+/', '', (string) $raw);
         if ($digits === '') return '';
         $digits = ltrim($digits, '0');
 
-        if (Str::startsWith($digits, $cc)) return $digits;
-        if (strlen($digits) === 10)        return $cc . $digits;
-        if (!Str::startsWith($digits, $cc)) return $cc . $digits;
+        if (\Illuminate\Support\Str::startsWith($digits, $cc)) return $digits;
+        if (strlen($digits) === 10) return $cc . $digits;
+        if (!\Illuminate\Support\Str::startsWith($digits, $cc)) return $cc . $digits;
         return $digits;
     }
 
     private function tenDigitLocal(string $raw): string
     {
+        // canonical 10-digit local for DB storage/lookup
         $digits = preg_replace('/\D+/', '', $raw);
-        if (Str::startsWith($digits, '91') && strlen($digits) >= 12) {
+        if (\Illuminate\Support\Str::startsWith($digits, '91') && strlen($digits) >= 12) {
             $digits = substr($digits, -10);
         }
         return substr($digits, -10);
@@ -502,7 +504,51 @@ private function isValidIndianMobile(?string $raw): bool
         }
     }
 
-    /* ---------- Send OTP ---------- */
+    private function msg91Success(?array $json, int $httpStatus): bool
+    {
+        if ($httpStatus < 200 || $httpStatus >= 300) return false;
+        $st  = data_get($json, 'status');
+        $tp  = data_get($json, 'type');
+        $msg = data_get($json, 'message');
+        $id1 = data_get($json, 'data.request_id');
+        $id2 = data_get($json, 'request_id');
+        $hasErrors = data_get($json, 'errors');
+
+        // typical success shapes
+        if (is_string($st)  && strcasecmp($st, 'success') === 0) return true;
+        if (is_string($tp)  && strcasecmp($tp, 'success') === 0) return true;
+        if (is_string($msg) && strcasecmp($msg, 'success') === 0) return true;
+        if ($id1 || $id2) return true;
+
+        // some tenants return 2xx + no errors but no explicit 'success'
+        if (!$hasErrors) return true;
+
+        // but if they explicitly say the known error message, force fail
+        if (is_string($msg) && trim($msg) === 'Failed to send OTP. Please try again.') return false;
+
+        return false;
+    }
+
+    private function formatMsg91Error($decoded, string $raw, bool $templateButton, string $tplName, string $namespace): string
+    {
+        $err = data_get($decoded, 'errors') ?: data_get($decoded, 'error') ?: data_get($decoded, 'message') ?: $raw;
+        $errStr = is_string($err) ? $err : json_encode($err);
+        if (!$errStr) $errStr = 'Unknown error';
+
+        if (stripos($errStr, 'blocked prefix') !== false || stripos($errStr, 'blocked prefixes') !== false) {
+            $errStr .= ' — Confirm the number is in 917XXXXXXXXX and that this operator/prefix is permitted on your WABA. Ensure user opt-in if required.';
+        }
+        if (stripos($errStr, 'template') !== false) {
+            $errStr .= " — Verify the approved template name/namespace exactly: name={$tplName}, namespace=".($namespace ?: '(none)')." and that variable counts match. If your template has NO button, set MSG91_WA_BUTTON=false.";
+        }
+        if (stripos($errStr, 'Please try again') !== false && !$templateButton) {
+            $errStr .= ' — If your approved template includes a URL button, set MSG91_WA_BUTTON=true so the parameter is sent.';
+        }
+
+        return $errStr;
+    }
+
+    /* ==================== Send OTP ==================== */
 
     public function sendOtp(Request $request)
     {
@@ -518,11 +564,10 @@ private function isValidIndianMobile(?string $raw): bool
             ])->withInput();
         }
 
-        // Canonical forms
-        $toMsisdn = $this->normalizeMsisdn($inputPhone, '91'); // 917749968976
-        $local10  = $this->tenDigitLocal($inputPhone);        // 7749968976
+        $toMsisdn = $this->normalizeMsisdn($inputPhone, '91'); // e.g. 917749968976
+        $local10  = $this->tenDigitLocal($inputPhone);         // e.g. 7749968976
 
-        // Find admin (prefer local 10-digit); also enforce active (optional but recommended)
+        // find admin (active only, if column exists)
         $admin = Admin::where('mobile_no', $local10)
             ->when($this->schemaHas('admins', 'status'), fn($q) => $q->where('status', 'active'))
             ->first();
@@ -535,26 +580,27 @@ private function isValidIndianMobile(?string $raw): bool
 
         if (!$admin) {
             return back()->with([
-                'error' => 'Mobile number not registered or inactive. Please contact super admin.'
+                'error' => 'Mobile number not registered or inactive. Please contact super admin.',
             ])->withInput();
         }
 
-        // OTP + expiry
+        // issue OTP
         $otp        = (string) random_int(100000, 999999);
         $shortToken = Str::upper(Str::random(6));
         $admin->otp = $otp;
 
-        if ($this->schemaHas('admins', 'otp_expires_at')) {
-            $admin->otp_expires_at = Carbon::now()->addMinutes(5);
-        }
+        // (optional) expiry
+        if ($this->schemaHas('admins', 'otp_expires_at')) {       // <— 1/3
+            $admin->otp_expires_at = Carbon::now()->addMinutes(5); // <— 2/3
+        }                                                          // <— 3/3
         $admin->save();
 
         // ENV
         $authKey        = (string) env('MSG91_AUTHKEY', '');
-        $tplName        = (string) env('MSG91_WA_TEMPLATE', '');     // approved WA template name
-        $namespace      = (string) env('MSG91_WA_NAMESPACE', '');    // optional
-        $waNumber       = (string) env('MSG91_WA_NUMBER', '');       // your integrated WA number
-        $templateButton = filter_var(env('MSG91_WA_BUTTON', false), FILTER_VALIDATE_BOOLEAN); // true/false
+        $tplName        = (string) env('MSG91_WA_TEMPLATE', '');
+        $namespace      = (string) env('MSG91_WA_NAMESPACE', '');
+        $waNumber       = (string) env('MSG91_WA_NUMBER', '');
+        $templateButton = filter_var(env('MSG91_WA_BUTTON', false), FILTER_VALIDATE_BOOLEAN);
 
         if ($authKey === '' || $tplName === '' || $waNumber === '') {
             Log::warning('MSG91 config missing', compact('authKey', 'tplName', 'waNumber', 'namespace'));
@@ -565,15 +611,7 @@ private function isValidIndianMobile(?string $raw): bool
 
         $integratedNumber = $this->normalizeMsisdn($waNumber, '91');
 
-        // Build template
-        $template = [
-            'name'     => $tplName,
-            'language' => ['code' => 'en', 'policy' => 'deterministic'],
-        ];
-        if ($namespace !== '') {
-            $template['namespace'] = $namespace;
-        }
-
+        // Template components
         $components = [
             [
                 'type'       => 'body',
@@ -582,8 +620,6 @@ private function isValidIndianMobile(?string $raw): bool
                 ],
             ],
         ];
-
-        // Only include button component if your approved template actually has one
         if ($templateButton) {
             $components[] = [
                 'type'       => 'button',
@@ -595,99 +631,128 @@ private function isValidIndianMobile(?string $raw): bool
             ];
         }
 
-        $template['components'] = $components;
+        $templateBase = [
+            'name'     => $tplName,
+            'language' => ['code' => 'en', 'policy' => 'deterministic'],
+        ];
+        if ($namespace !== '') {
+            $templateBase['namespace'] = $namespace;
+        }
+        $templateA = $templateBase + ['components' => $components];
 
-        $payload = [
+        // ---------- Attempt A: current documented shape (integrated_number at root) ----------
+        $payloadA = [
             'integrated_number' => $integratedNumber,
             'content_type'      => 'template',
             'payload'           => [
                 'messaging_product' => 'whatsapp',
                 'to'                => $toMsisdn,
                 'type'              => 'template',
-                'template'          => $template,
+                'template'          => $templateA,
             ],
         ];
 
         try {
-            $response = Http::withHeaders([
+            $respA = Http::withHeaders([
                 'Content-Type' => 'application/json',
+                'Accept'       => 'application/json',
                 'authkey'      => $authKey,
-            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
+            ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payloadA);
 
-            $status       = $response->status();
-            $rawBody      = $response->body();
-            $decodedBody  = null;
+            $statusA  = $respA->status();
+            $rawA     = $respA->body();
+            $jsonA    = null;
+            try { $jsonA = $respA->json(); } catch (\Throwable $e) {}
 
-            try {
-                $decodedBody = $response->json();
-            } catch (\Throwable $je) {
-                // keep $decodedBody = null; we will log raw
-            }
-
-            Log::info('MSG91 OTP Response', [
-                'http_status' => $status,
-                'json'        => $decodedBody,
-                'raw'         => $decodedBody ? null : $rawBody,
+            Log::info('MSG91 Attempt A', [
+                'http_status' => $statusA,
+                'json'        => $jsonA,
+                'raw'         => $jsonA ? null : $rawA,
                 'to'          => $toMsisdn,
                 'integrated'  => $integratedNumber,
                 'template'    => $tplName,
                 'has_button'  => $templateButton,
             ]);
 
-            // --- Robust success predicate ---
-            $ok = false;
-            if ($status >= 200 && $status < 300) {
-                $st  = data_get($decodedBody, 'status');
-                $tp  = data_get($decodedBody, 'type');
-                $msg = data_get($decodedBody, 'message');
-                $id1 = data_get($decodedBody, 'data.request_id');
-                $id2 = data_get($decodedBody, 'request_id');
-                $hasErrors = data_get($decodedBody, 'errors');
+            $okA = $this->msg91Success($jsonA, $statusA);
 
-                // Common success shapes
-                if (is_string($st)  && strcasecmp($st, 'success') === 0) $ok = true;
-                if (is_string($tp)  && strcasecmp($tp, 'success') === 0) $ok = true;
-                if (is_string($msg) && strcasecmp($msg, 'success') === 0) $ok = true;
-                if ($id1 || $id2) $ok = true;
-
-                // If still not ok but no explicit errors and HTTP 2xx, assume queued OK for some accounts
-                if (!$ok && !$hasErrors) $ok = true;
-
-                // If message is exactly "Failed to send OTP. Please try again.", force failure
-                if (is_string($msg) && trim($msg) === 'Failed to send OTP. Please try again.') {
-                    $ok = false;
-                }
+            // If success -> done
+            if ($okA) {
+                return back()->with([
+                    'otp_sent'  => true,
+                    'otp_phone' => $local10,
+                    'message'   => 'OTP sent to your WhatsApp.',
+                ]);
             }
 
-            if (!$ok) {
-                // Build actionable error
-                $err     = data_get($decodedBody, 'errors') ?: data_get($decodedBody, 'error') ?: data_get($decodedBody, 'message') ?: $rawBody;
-                $errStr  = is_string($err) ? $err : json_encode($err);
+            // If explicit error message equals the generic failure, try alternate shape
+            $msgA = data_get($jsonA, 'message');
+            $shouldTryB = true;
+            if (is_string($msgA) && trim($msgA) !== 'Failed to send OTP. Please try again.') {
+                // not the exact generic message? still try B (some tenants only accept from/payload)
+                $shouldTryB = true;
+            }
 
-                if ($errStr) {
-                    if (stripos($errStr, 'blocked prefix') !== false || stripos($errStr, 'blocked prefixes') !== false) {
-                        $errStr .= ' — Check country code format (917XXXXXXXXX) and confirm this prefix is allowed on your WABA. Ensure user opt-in if required.';
-                    }
-                    if (stripos($errStr, 'template') !== false) {
-                        $errStr .= ' — Verify the approved template name/namespace exactly matches and that variable count matches your message (remove button if your template has no button).';
-                    }
-                    if (stripos($errStr, 'Please try again') !== false && !$templateButton) {
-                        $errStr .= ' — Some accounts require URL button variables; if your template includes a button, set MSG91_WA_BUTTON=true.';
-                    }
+            // ---------- Attempt B: alternate shape (from inside payload) ----------
+            if ($shouldTryB) {
+                $templateB = $templateA; // same template, different envelope
+                $payloadB  = [
+                    'content_type' => 'template',
+                    'payload'      => [
+                        'messaging_product' => 'whatsapp',
+                        'from'              => $integratedNumber, // <— key difference here
+                        'to'                => $toMsisdn,
+                        'type'              => 'template',
+                        'template'          => $templateB,
+                    ],
+                ];
+
+                $respB = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Accept'       => 'application/json',
+                    'authkey'      => $authKey,
+                ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payloadB);
+
+                $statusB = $respB->status();
+                $rawB    = $respB->body();
+                $jsonB   = null;
+                try { $jsonB = $respB->json(); } catch (\Throwable $e) {}
+
+                Log::info('MSG91 Attempt B', [
+                    'http_status' => $statusB,
+                    'json'        => $jsonB,
+                    'raw'         => $jsonB ? null : $rawB,
+                    'to'          => $toMsisdn,
+                    'from'        => $integratedNumber,
+                    'template'    => $tplName,
+                    'has_button'  => $templateButton,
+                ]);
+
+                $okB = $this->msg91Success($jsonB, $statusB);
+                if ($okB) {
+                    return back()->with([
+                        'otp_sent'  => true,
+                        'otp_phone' => $local10,
+                        'message'   => 'OTP sent to your WhatsApp.',
+                    ]);
                 }
 
+                // Build actionable error from B; otherwise fall back to A
+                $errStr = $this->formatMsg91Error($jsonB, $rawB, $templateButton, $tplName, $namespace);
                 return back()->with([
-                    'error'      => 'Failed to send OTP. MSG91 error: ' . ($errStr ?: 'Unknown error'),
+                    'error'      => 'Failed to send OTP. MSG91 error: ' . $errStr,
                     'otp_phone'  => $local10,
                     'otp_sent'   => false,
                 ])->withInput();
             }
 
+            // If we didn’t try B, return A’s error
+            $errStr = $this->formatMsg91Error($jsonA, $rawA, $templateButton, $tplName, $namespace);
             return back()->with([
-                'otp_sent'  => true,
-                'otp_phone' => $local10,
-                'message'   => 'OTP sent to your WhatsApp.',
-            ]);
+                'error'      => 'Failed to send OTP. MSG91 error: ' . $errStr,
+                'otp_phone'  => $local10,
+                'otp_sent'   => false,
+            ])->withInput();
 
         } catch (\Throwable $e) {
             Log::error('MSG91 OTP Exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
@@ -697,7 +762,7 @@ private function isValidIndianMobile(?string $raw): bool
         }
     }
 
-    /* ---------- Verify OTP ---------- */
+    /* ==================== Verify OTP ==================== */
 
     public function verifyOtp(Request $request)
     {
