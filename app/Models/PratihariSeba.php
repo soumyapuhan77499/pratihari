@@ -8,25 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 class PratihariSeba extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'pratihari__seba_details';
 
     protected $fillable = [
         'pratihari_id',
         'seba_id',
         'beddha_id',
+        'status',
     ];
 
     public function beddhaAssigns()
     {
         return $this->hasMany(PratihariSebaBeddhaAssign::class, 'seba_id', 'seba_id');
     }
-    
+
     public function sebaMaster()
     {
         return $this->belongsTo(PratihariSebaMaster::class, 'seba_id', 'id');
     }
-
 
     public function pratihari()
     {
@@ -38,35 +38,45 @@ class PratihariSeba extends Model
         return $this->belongsTo(PratihariNijogaMaster::class, 'nijoga_id', 'id');
     }
 
+    // If you still need it:
     public function beddhaMaster()
     {
         return $this->hasManyThrough(
             PratihariBeddhaMaster::class,
             PratihariSebaBeddhaAssign::class,
-            'seba_id',    // Foreign key on PratihariSebaBeddhaAssign
-            'id',         // Local key on PratihariBeddhaMaster
-            'seba_id',    // Local key on PratihariSeba
-            'beddha_id'   // Foreign key on PratihariSebaBeddhaAssign
+            'seba_id',    // FK on assign table
+            'id',         // PK on beddha master
+            'seba_id',    // local key on this model
+            'beddha_id'   // FK on assign table
         );
     }
 
-    // Instead of hasManyThrough, define a method to fetch related beddhas
     public function beddhas()
     {
-        // $this->beddha_id is now an array because of accessor
         return PratihariBeddhaMaster::whereIn('id', $this->beddha_id)->get();
     }
 
-    // Accessor to handle comma-separated beddha_id values
+    /** Accessor: make sure we always get an ARRAY OF INTS like [1,2,14] */
     public function getBeddhaIdAttribute($value)
     {
-        return explode(',', $value);
+        if ($value === null || $value === '') return [];
+        return collect(explode(',', $value))
+            ->map(fn($v) => (int) trim($v))
+            ->filter(fn($v) => $v > 0)
+            ->values()
+            ->all();
     }
 
-    // Mutator to save beddha_id as comma-separated values
+    /** Mutator: accept array or CSV; store as CSV */
     public function setBeddhaIdAttribute($value)
     {
-        $this->attributes['beddha_id'] = is_array($value) ? implode(',', $value) : $value;
+        if (is_array($value)) {
+            $value = collect($value)
+                ->map(fn($v) => (int) $v)
+                ->filter(fn($v) => $v > 0)
+                ->unique()
+                ->implode(',');
+        }
+        $this->attributes['beddha_id'] = $value;
     }
-
 }
