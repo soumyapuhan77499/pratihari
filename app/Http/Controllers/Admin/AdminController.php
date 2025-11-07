@@ -462,10 +462,9 @@ class AdminController extends Controller
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
- private function isValidIndianMobile(?string $raw): bool
+private function isValidIndianMobile(?string $raw): bool
     {
         if (!$raw) return false;
-        // Accept with/without +91, spaces, dashes, etc.; validate final 10 digits start 6-9
         $digits = preg_replace('/\D+/', '', $raw);
         if (Str::startsWith($digits, '91') && strlen($digits) === 12) {
             $digits = substr($digits, -10);
@@ -475,33 +474,18 @@ class AdminController extends Controller
 
     private function normalizeMsisdn(?string $raw, string $cc = '91'): string
     {
-        // Returns countrycode+number, digits only, no plus. E.g. "+91 77499 68976" -> "917749968976"
         $digits = preg_replace('/\D+/', '', (string) $raw);
         if ($digits === '') return '';
-        // Strip leading zeros
         $digits = ltrim($digits, '0');
 
-        // If already starts with country code and length 12 for India, keep
-        if (Str::startsWith($digits, $cc)) {
-            return $digits;
-        }
-
-        // If it looks like a local 10-digit mobile, prepend country code
-        if (strlen($digits) === 10) {
-            return $cc . $digits;
-        }
-
-        // Fallback: if someone passed +9177.. or 0091.. we already stripped non-digits; just ensure it starts with cc
-        if (!Str::startsWith($digits, $cc)) {
-            return $cc . $digits;
-        }
-
+        if (Str::startsWith($digits, $cc)) return $digits;
+        if (strlen($digits) === 10)        return $cc . $digits;
+        if (!Str::startsWith($digits, $cc)) return $cc . $digits;
         return $digits;
     }
 
     private function tenDigitLocal(string $raw): string
     {
-        // Extract the canonical 10-digit local mobile to match DB storage like "7749968976"
         $digits = preg_replace('/\D+/', '', $raw);
         if (Str::startsWith($digits, '91') && strlen($digits) >= 12) {
             $digits = substr($digits, -10);
@@ -509,9 +493,19 @@ class AdminController extends Controller
         return substr($digits, -10);
     }
 
+    private function schemaHas(string $table, string $column): bool
+    {
+        try {
+            return \Illuminate\Support\Facades\Schema::hasColumn($table, $column);
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /* ---------- Send OTP ---------- */
+
     public function sendOtp(Request $request)
     {
-        // 1) Validate input early
         $request->validate([
             'phone' => ['required', 'string'],
         ]);
@@ -524,41 +518,43 @@ class AdminController extends Controller
             ])->withInput();
         }
 
-        // 2) Canonicalize numbers
-        $toMsisdn = $this->normalizeMsisdn($inputPhone, '91'); // digits-only E.164 without '+', e.g. 917749968976
-        $local10  = $this->tenDigitLocal($inputPhone);        // e.g. 7749968976
+        // Canonical forms
+        $toMsisdn = $this->normalizeMsisdn($inputPhone, '91'); // 917749968976
+        $local10  = $this->tenDigitLocal($inputPhone);        // 7749968976
 
-        // 3) Find Admin by how you actually store it (most apps store 10-digit local)
-        $admin = Admin::where('mobile_no', $local10)->first();
+        // Find admin (prefer local 10-digit); also enforce active (optional but recommended)
+        $admin = Admin::where('mobile_no', $local10)
+            ->when($this->schemaHas('admins', 'status'), fn($q) => $q->where('status', 'active'))
+            ->first();
+
         if (!$admin) {
-            // If you store with +91, try that as a fallback
-            $maybePlus = '+91' . $local10;
-            $admin = Admin::where('mobile_no', $maybePlus)->first();
+            $admin = Admin::where('mobile_no', '+91'.$local10)
+                ->when($this->schemaHas('admins', 'status'), fn($q) => $q->where('status', 'active'))
+                ->first();
         }
 
         if (!$admin) {
             return back()->with([
-                'error' => 'Mobile number not registered. Please contact super admin.'
+                'error' => 'Mobile number not registered or inactive. Please contact super admin.'
             ])->withInput();
         }
 
-        // 4) Prepare OTP + expiry
+        // OTP + expiry
         $otp        = (string) random_int(100000, 999999);
         $shortToken = Str::upper(Str::random(6));
         $admin->otp = $otp;
 
-        // Optional: add expiry (5 minutes)
-        if (schemaHasColumn('admins', 'otp_expires_at')) {
+        if ($this->schemaHas('admins', 'otp_expires_at')) {
             $admin->otp_expires_at = Carbon::now()->addMinutes(5);
         }
-
         $admin->save();
 
-        // 5) ENV guardrails
-        $authKey   = (string) env('MSG91_AUTHKEY', '');
-        $tplName   = (string) env('MSG91_WA_TEMPLATE', '');
-        $namespace = (string) env('MSG91_WA_NAMESPACE', '');
-        $waNumber  = (string) env('MSG91_WA_NUMBER', ''); // your integrated WA business number
+        // ENV
+        $authKey        = (string) env('MSG91_AUTHKEY', '');
+        $tplName        = (string) env('MSG91_WA_TEMPLATE', '');     // approved WA template name
+        $namespace      = (string) env('MSG91_WA_NAMESPACE', '');    // optional
+        $waNumber       = (string) env('MSG91_WA_NUMBER', '');       // your integrated WA number
+        $templateButton = filter_var(env('MSG91_WA_BUTTON', false), FILTER_VALIDATE_BOOLEAN); // true/false
 
         if ($authKey === '' || $tplName === '' || $waNumber === '') {
             Log::warning('MSG91 config missing', compact('authKey', 'tplName', 'waNumber', 'namespace'));
@@ -567,9 +563,9 @@ class AdminController extends Controller
             ]);
         }
 
-        $integratedNumber = $this->normalizeMsisdn($waNumber, '91'); // e.g. 919124420330
+        $integratedNumber = $this->normalizeMsisdn($waNumber, '91');
 
-        // 6) Build WhatsApp template payload (MSG91 WA v5)
+        // Build template
         $template = [
             'name'     => $tplName,
             'language' => ['code' => 'en', 'policy' => 'deterministic'],
@@ -578,6 +574,29 @@ class AdminController extends Controller
             $template['namespace'] = $namespace;
         }
 
+        $components = [
+            [
+                'type'       => 'body',
+                'parameters' => [
+                    ['type' => 'text', 'text' => $otp],
+                ],
+            ],
+        ];
+
+        // Only include button component if your approved template actually has one
+        if ($templateButton) {
+            $components[] = [
+                'type'       => 'button',
+                'sub_type'   => 'url',
+                'index'      => '0',
+                'parameters' => [
+                    ['type' => 'text', 'text' => $shortToken],
+                ],
+            ];
+        }
+
+        $template['components'] = $components;
+
         $payload = [
             'integrated_number' => $integratedNumber,
             'content_type'      => 'template',
@@ -585,72 +604,75 @@ class AdminController extends Controller
                 'messaging_product' => 'whatsapp',
                 'to'                => $toMsisdn,
                 'type'              => 'template',
-                'template'          => $template + [
-                    'components' => [
-                        [
-                            'type'       => 'body',
-                            'parameters' => [
-                                ['type' => 'text', 'text' => $otp],
-                            ],
-                        ],
-                        [
-                            'type'       => 'button',
-                            'sub_type'   => 'url',
-                            'index'      => '0',
-                            'parameters' => [
-                                ['type' => 'text', 'text' => $shortToken],
-                            ],
-                        ],
-                    ],
-                ],
+                'template'          => $template,
             ],
         ];
 
-        // 7) Call MSG91 and handle *all* common shapes of success/error
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'authkey'      => $authKey,
             ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
 
-            $status = $response->status();
-            $body   = $response->json();
+            $status       = $response->status();
+            $rawBody      = $response->body();
+            $decodedBody  = null;
 
-            // Log everything for diagnosis (safe: no OTP in logs)
+            try {
+                $decodedBody = $response->json();
+            } catch (\Throwable $je) {
+                // keep $decodedBody = null; we will log raw
+            }
+
             Log::info('MSG91 OTP Response', [
                 'http_status' => $status,
-                'response'    => $body,
+                'json'        => $decodedBody,
+                'raw'         => $decodedBody ? null : $rawBody,
                 'to'          => $toMsisdn,
                 'integrated'  => $integratedNumber,
                 'template'    => $tplName,
+                'has_button'  => $templateButton,
             ]);
 
-            // MSG91 sometimes returns 200 or 202 with various "status"/"type"/"message"
-            $apiOk = false;
-            if ($response->successful() || $status === 202) {
-                $apiStatus = data_get($body, 'status') ?: data_get($body, 'type') ?: data_get($body, 'message');
-                // Treat "success" (case-insensitive) as OK
-                if (is_string($apiStatus) && strcasecmp($apiStatus, 'success') === 0) {
-                    $apiOk = true;
-                }
-                // Some accounts get a 202 with a GUID and no "status", still valid -> treat >=200 <300 with no explicit error as OK
-                if (!$apiOk && $response->successful() && !data_get($body, 'errors')) {
-                    $apiOk = true;
+            // --- Robust success predicate ---
+            $ok = false;
+            if ($status >= 200 && $status < 300) {
+                $st  = data_get($decodedBody, 'status');
+                $tp  = data_get($decodedBody, 'type');
+                $msg = data_get($decodedBody, 'message');
+                $id1 = data_get($decodedBody, 'data.request_id');
+                $id2 = data_get($decodedBody, 'request_id');
+                $hasErrors = data_get($decodedBody, 'errors');
+
+                // Common success shapes
+                if (is_string($st)  && strcasecmp($st, 'success') === 0) $ok = true;
+                if (is_string($tp)  && strcasecmp($tp, 'success') === 0) $ok = true;
+                if (is_string($msg) && strcasecmp($msg, 'success') === 0) $ok = true;
+                if ($id1 || $id2) $ok = true;
+
+                // If still not ok but no explicit errors and HTTP 2xx, assume queued OK for some accounts
+                if (!$ok && !$hasErrors) $ok = true;
+
+                // If message is exactly "Failed to send OTP. Please try again.", force failure
+                if (is_string($msg) && trim($msg) === 'Failed to send OTP. Please try again.') {
+                    $ok = false;
                 }
             }
 
-            if (!$apiOk) {
-                // Build helpful error message
-                $err     = data_get($body, 'errors') ?: data_get($body, 'error') ?: data_get($body, 'message');
+            if (!$ok) {
+                // Build actionable error
+                $err     = data_get($decodedBody, 'errors') ?: data_get($decodedBody, 'error') ?: data_get($decodedBody, 'message') ?: $rawBody;
                 $errStr  = is_string($err) ? $err : json_encode($err);
 
                 if ($errStr) {
-                    // Common hints
                     if (stripos($errStr, 'blocked prefix') !== false || stripos($errStr, 'blocked prefixes') !== false) {
-                        $errStr .= ' — Verify the number has country code (e.g., 917XXXXXXXXX) and that this prefix is allowed on your WABA. Confirm customer opt-in if required.';
+                        $errStr .= ' — Check country code format (917XXXXXXXXX) and confirm this prefix is allowed on your WABA. Ensure user opt-in if required.';
                     }
-                    if (stripos($errStr, 'template') !== false && stripos($errStr, 'not') !== false) {
-                        $errStr .= ' — Check that the WhatsApp template name/namespace matches an approved template in MSG91 and that variables count matches.';
+                    if (stripos($errStr, 'template') !== false) {
+                        $errStr .= ' — Verify the approved template name/namespace exactly matches and that variable count matches your message (remove button if your template has no button).';
+                    }
+                    if (stripos($errStr, 'Please try again') !== false && !$templateButton) {
+                        $errStr .= ' — Some accounts require URL button variables; if your template includes a button, set MSG91_WA_BUTTON=true.';
                     }
                 }
 
@@ -675,6 +697,8 @@ class AdminController extends Controller
         }
     }
 
+    /* ---------- Verify OTP ---------- */
+
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -684,11 +708,8 @@ class AdminController extends Controller
 
         $local10 = $this->tenDigitLocal($request->mobile_no);
 
-        $admin = Admin::where('mobile_no', $local10)->first();
-        if (!$admin) {
-            // Try "+91XXXXXXXXXX" style if that’s how it’s stored
-            $admin = Admin::where('mobile_no', '+91'.$local10)->first();
-        }
+        $admin = Admin::where('mobile_no', $local10)->first()
+            ?: Admin::where('mobile_no', '+91'.$local10)->first();
 
         if (!$admin) {
             return back()->withErrors([
@@ -705,8 +726,7 @@ class AdminController extends Controller
             ])->withInput();
         }
 
-        // Optional: check expiry (only if column exists)
-        if (schemaHasColumn('admins', 'otp_expires_at') && $admin->otp_expires_at) {
+        if ($this->schemaHas('admins', 'otp_expires_at') && $admin->otp_expires_at) {
             if (Carbon::parse($admin->otp_expires_at)->isPast()) {
                 return back()->withErrors([
                     'otp' => 'OTP expired. Please request a new one.',
@@ -714,24 +734,19 @@ class AdminController extends Controller
             }
         }
 
-        // Clear OTP
         $admin->otp = null;
-        if (schemaHasColumn('admins', 'otp_expires_at')) {
+        if ($this->schemaHas('admins', 'otp_expires_at')) {
             $admin->otp_expires_at = null;
         }
-
-        // Ensure admin_id
         if (empty($admin->admin_id)) {
             $admin->admin_id = 'ADMIN' . random_int(10000, 99999);
         }
-
         $admin->save();
 
         Auth::guard('admins')->login($admin);
 
         return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
     }
-    
     public function logout()
     {
         Auth::guard('admins')->logout();
