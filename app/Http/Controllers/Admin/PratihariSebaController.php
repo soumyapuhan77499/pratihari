@@ -301,7 +301,6 @@ class PratihariSebaController extends Controller
                 if (empty($beddhaList)) {
                     PratihariSeba::where('pratihari_id', $pratihariId)
                         ->where('seba_id', $sebaId)
-                        ->where('year', $year)
                         ->delete();
                     continue;
                 }
