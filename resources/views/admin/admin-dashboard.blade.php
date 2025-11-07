@@ -402,34 +402,42 @@
                         <div class="tab-content" id="sebaTabsContent">
                             <!-- Pratihari -->
                             <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel" aria-labelledby="pratihari-tab">
-                                @forelse ($pratihariEvents as $label => $pratiharis)
+                                @forelse ($pratihariEvents as $label => $entries)
                                     @php
-                                        $pratihariList = $pratiharis->map(function ($u) {
+                                        // Build modal payload with beddha + assigned_by + both beddha numbers for context
+                                        $pratihariList = collect($entries)->map(function ($e) use ($pratihariBeddha, $gochhikarBeddha) {
+                                            $u = $e['profile'];
                                             return [
-                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
-                                                'phone' => $u->phone_no ?? '',
+                                                'name'              => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
+                                                'phone'             => $u->phone_no ?? '',
+                                                'beddha'            => $e['beddha'] ?? null,
+                                                'assigned_by'       => $e['assigned_by'] ?? 'Unknown',
+                                                'pratihari_beddha'  => $pratihariBeddha,
+                                                'gochhikar_beddha'  => $gochhikarBeddha,
                                             ];
                                         })->values();
+
+                                        $count = $pratihariList->count();
                                     @endphp
                                     <div class="mb-3">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-bold">{{ $label }}</span>
-                                                <span class="badge text-bg-light border">{{ count($pratiharis) }}</span>
+                                                <span class="badge text-bg-light border">{{ $count }}</span>
                                             </div>
                                             <span class="chip ok"><i class="bi bi-calendar-event"></i> Today</span>
                                         </div>
                                         <div class="strip">
-                                            <a href="#" class="mini-card summary-card"
+                                            <a href="#" class="mini-card summary-card seba-card"
                                                data-title="Pratihari · {{ $label }}"
                                                data-users='@json($pratihariList)'
-                                               aria-label="View all {{ count($pratiharis) }} Pratihari in {{ $label }}">
+                                               aria-label="View all {{ $count }} Pratihari in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Pratihari</div>
                                                     <div class="meta">Click to view list</div>
                                                 </div>
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <span class="count">{{ count($pratiharis) }}</span>
+                                                    <span class="count">{{ $count }}</span>
                                                     <i class="bi bi-arrow-right-circle go"></i>
                                                 </div>
                                             </a>
@@ -443,36 +451,42 @@
                                 @endforelse
                             </div>
 
-                            <!-- Nijoga -->
+                            <!-- Nijoga (Admin-assigned = beddha_status 0) -->
                             <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
-                                @forelse ($nijogaAssign as $label => $nojoga)
+                                @forelse ($nijogaAssign as $label => $entries)
                                     @php
-                                        $nijogaList = $nojoga->map(function ($u) {
+                                        $nijogaList = collect($entries)->map(function ($e) use ($pratihariBeddha, $gochhikarBeddha) {
+                                            $u = $e['profile'];
                                             return [
-                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
-                                                'phone' => $u->phone_no ?? '',
+                                                'name'              => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
+                                                'phone'             => $u->phone_no ?? '',
+                                                'beddha'            => $e['beddha'] ?? null,
+                                                'assigned_by'       => $e['assigned_by'] ?? 'Admin',
+                                                'pratihari_beddha'  => $pratihariBeddha,
+                                                'gochhikar_beddha'  => $gochhikarBeddha,
                                             ];
                                         })->values();
+                                        $count = $nijogaList->count();
                                     @endphp
                                     <div class="mb-3">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-bold">{{ $label }}</span>
-                                                <span class="badge text-bg-light border">{{ count($nojoga) }}</span>
+                                                <span class="badge text-bg-light border">{{ $count }}</span>
                                             </div>
                                             <span class="chip warn"><i class="bi bi-clipboard2-pulse"></i> Nijoga</span>
                                         </div>
                                         <div class="strip">
-                                            <a href="#" class="mini-card summary-card"
+                                            <a href="#" class="mini-card summary-card seba-card"
                                                data-title="Nijoga · {{ $label }}"
                                                data-users='@json($nijogaList)'
-                                               aria-label="View all {{ count($nojoga) }} Nijoga in {{ $label }}">
+                                               aria-label="View all {{ $count }} Nijoga in {{ $label }}">
                                                 <div>
                                                     <div class="label">All Nijoga</div>
                                                     <div class="meta">Click to view list</div>
                                                 </div>
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <span class="count">{{ count($nojoga) }}</span>
+                                                    <span class="count">{{ $count }}</span>
                                                     <i class="bi bi-arrow-right-circle go"></i>
                                                 </div>
                                             </a>
@@ -884,7 +898,7 @@
         </div>
     </div>
 
-    <!-- Modal used by LEFT/RIGHT summary cards -->
+    <!-- Modal used by RIGHT summary cards (and any non-seba 'summary-card') -->
     <div class="modal fade" id="listModal" tabindex="-1" aria-labelledby="listModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
@@ -942,6 +956,41 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    {{-- Modal for LEFT Pratihari/Nijoga cards (with Beddha + Assigned By) --}}
+    <div class="modal fade" id="sebaListModal" tabindex="-1" aria-labelledby="sebaListModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title fw-bold" id="sebaListModalLabel">Users</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="small text-muted mb-2">
+                Today • Pratihari Beddha: <span id="modalPrBeddha">—</span> • Gochhikar Beddha: <span id="modalGoBeddha">—</span>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead>
+                  <tr>
+                    <th style="width: 35%;">Name</th>
+                    <th style="width: 20%;">Phone</th>
+                    <th style="width: 15%;">Beddha</th>
+                    <th style="width: 30%;">Assigned By</th>
+                  </tr>
+                </thead>
+                <tbody id="sebaModalRows">
+                  <tr><td colspan="4" class="text-muted">No data.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
 @endsection
 
@@ -1098,7 +1147,7 @@
             }
         });
 
-        // ===== LEFT/RIGHT summary cards -> Modal list (listModal) =====
+        // ===== RIGHT summary cards (non-seba) -> listModal =====
         (function() {
             const modalEl = document.getElementById('listModal');
             const modal = new bootstrap.Modal(modalEl);
@@ -1120,7 +1169,7 @@
 
             document.addEventListener('click', function(e) {
                 const card = e.target.closest('.summary-card');
-                if (!card) return;
+                if (!card || card.classList.contains('seba-card')) return; // ignore left-panel seba cards
                 e.preventDefault();
 
                 titleEl.textContent = card.getAttribute('data-title') || 'List';
@@ -1129,6 +1178,66 @@
                 tbody.innerHTML = renderRows(users);
                 modal.show();
             });
+        })();
+
+        // ===== LEFT Pratihari/Nijoga cards (seba-card) -> sebaListModal (with beddha + assigned_by) =====
+        (function(){
+            const modalEl = document.getElementById('sebaListModal');
+            const modal = new bootstrap.Modal(modalEl);
+            const titleEl = document.getElementById('sebaListModalLabel');
+            const rowsEl  = document.getElementById('sebaModalRows');
+            const prEl    = document.getElementById('modalPrBeddha');
+            const goEl    = document.getElementById('modalGoBeddha');
+
+            document.addEventListener('click', function(e){
+                const a = e.target.closest('.seba-card');
+                if (!a) return;
+                e.preventDefault();
+
+                const title = a.getAttribute('data-title') || 'Users';
+                let users   = [];
+                try { users = JSON.parse(a.getAttribute('data-users') || '[]'); } catch(_){ users = []; }
+
+                titleEl.textContent = title;
+
+                if (users.length) {
+                    prEl.textContent = users[0].pratihari_beddha ?? '—';
+                    goEl.textContent = users[0].gochhikar_beddha ?? '—';
+                } else {
+                    prEl.textContent = '—';
+                    goEl.textContent = '—';
+                }
+
+                rowsEl.innerHTML = '';
+                if (!users.length) {
+                    rowsEl.innerHTML = '<tr><td colspan="4" class="text-muted">No data.</td></tr>';
+                } else {
+                    users.forEach(function(u){
+                        const name   = (u.name || '').trim() || '—';
+                        const phone  = (u.phone || '').trim() || '—';
+                        const beddha = (u.beddha != null) ? u.beddha : '—';
+                        const by     = (u.assigned_by || 'Unknown');
+
+                        const badge  = by === 'User'
+                            ? '<span class="badge bg-success-subtle text-success border border-success-subtle">User Assigned</span>'
+                            : '<span class="badge bg-warning-subtle text-warning border border-warning-subtle">Admin Assigned</span>';
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>
+                                <div class="fw-semibold">${name}</div>
+                                <div class="small text-muted">Pratihari: ${u.pratihari_beddha ?? '—'} • Gochhikar: ${u.gochhikar_beddha ?? '—'}</div>
+                            </td>
+                            <td>${ phone !== '—' ? `<a href="tel:${phone}">${phone}</a>` : '—' }</td>
+                            <td>${beddha}</td>
+                            <td>${badge}</td>
+                        `;
+                        rowsEl.appendChild(tr);
+                    });
+                }
+
+                modal.show();
+            }, false);
         })();
 
         // ===== KPI tiles -> Modal list (kpiListModal) =====

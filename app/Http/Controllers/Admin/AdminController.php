@@ -38,219 +38,187 @@ class AdminController extends Controller
         return view('admin.admin-login');
     }
 
-    public function dashboard()
-    {
+public function dashboard()
+{
+    $today = Carbon::today();
 
-        $todayProfiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
+    // ---- Profiles / Applications (as before) ----
+    $todayProfiles = PratihariProfile::whereDate('created_at', $today)->get();
 
-        $todayApprovedProfiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'approved')->get();
+    $todayApprovedProfiles = PratihariProfile::whereDate('updated_at', $today)
+        ->where('pratihari_status', 'approved')->get();
 
-        $todayRejectedProfiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'rejected')->get();
+    $todayRejectedProfiles = PratihariProfile::whereDate('updated_at', $today)
+        ->where('pratihari_status', 'rejected')->get();
 
-        $incompleteProfiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
-            $query->whereNull('email')
-                ->orWhereNull('phone_no')
-                ->orWhereNull('blood_group');
+    $incompleteProfiles = PratihariProfile::query()
+        ->whereIn('pratihari_status', ['pending', 'rejected'])
+        ->where(function ($q) {
+            $q->whereNull('email')
+              ->orWhereNull('phone_no')
+              ->orWhereNull('blood_group')
+              ->orWhereDoesntHave('family', function ($qq) {
+                  $qq->whereNotNull('father_name')
+                     ->whereNotNull('mother_name')
+                     ->whereNotNull('maritial_status');
+              })
+              ->orWhereDoesntHave('children')
+              ->orWhereDoesntHave('idcard', function ($qq) {
+                  $qq->whereNotNull('id_type')
+                     ->whereNotNull('id_number')
+                     ->whereNotNull('id_photo');
+              })
+              ->orWhereDoesntHave('occupation', function ($qq) {
+                  $qq->where(function ($qqq) {
+                      $qqq->whereNotNull('occupation_type')
+                          ->orWhereNotNull('extra_activity');
+                  });
+              })
+              ->orWhereDoesntHave('address')
+              ->orWhereDoesntHave('seba')
+              ->orWhereDoesntHave('socialMedia');
         })
-        // OR profiles with missing family info
-        ->orWhereDoesntHave('family', function ($query) {
-            $query->whereNotNull('father_name')
-                ->whereNotNull('mother_name')
-                ->whereNotNull('maritial_status'); // add more checks if needed
-        })
-        // OR profiles with no children records
-        ->orWhereDoesntHave('children')
-        // OR profiles with missing id card details
-        ->orWhereDoesntHave('idcard', function ($query) {
-            $query->whereNotNull('id_type')
-                ->whereNotNull('id_number')
-                ->whereNotNull('id_photo');
-        })
-        // OR profiles with missing occupation details
-        ->orWhereDoesntHave('occupation', function ($query) {
-            $query->where(function ($q) {
-                $q->whereNotNull('occupation_type')
-                  ->orWhereNotNull('extra_activity');
-            });
-        })
-        // OR profiles with missing address
-        ->orWhereDoesntHave('address')
-        // OR profiles with missing seba details
-        ->orWhereDoesntHave('seba')
-        // OR profiles with missing social media
-        ->orWhereDoesntHave('socialMedia')
         ->get();
 
-        $totalActiveUsers = PratihariProfile::where('status', 'active')->where('pratihari_status', 'approved')->get();
+    $totalActiveUsers = PratihariProfile::where('status', 'active')
+        ->where('pratihari_status', 'approved')->get();
 
-        $updatedProfiles = PratihariProfile::where('status', 'active')->where('pratihari_status', 'updated')->get();
+    $updatedProfiles = PratihariProfile::where('status', 'active')
+        ->where('pratihari_status', 'updated')->get();
 
-        $pendingProfile = PratihariProfile::where('status', 'active')->where('pratihari_status', 'pending')->get();
+    $pendingProfile = PratihariProfile::where('status', 'active')
+        ->where('pratihari_status', 'pending')->get();
 
-        $rejectedProfiles = PratihariProfile::where('pratihari_status', 'rejected')->get();
+    $rejectedProfiles = PratihariProfile::where('pratihari_status', 'rejected')->get();
 
-        $profiles = PratihariProfile::with(['occupation', 'address'])->where('status','active')->get();
+    $profiles = PratihariProfile::with(['occupation', 'address'])
+        ->where('status', 'active')->get();
 
-        $todayApplications = PratihariApplication::whereDate('created_at', Carbon::today())
-        ->where('status', 'active')
-        ->get();
+    $todayApplications = PratihariApplication::whereDate('created_at', $today)
+        ->where('status', 'active')->get();
 
-        $approvedApplication = PratihariApplication::where('status', 'approved')->get();
+    $approvedApplication = PratihariApplication::where('status', 'approved')->get();
+    $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
 
-        $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
+    // ---- Seba ID groups (unchanged utility) ----
+    $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+    $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
-        // Fetch seba IDs based on type from master__seba table
-        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
-        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
+    $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)->pluck('pratihari_id')->unique();
+    $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)->pluck('pratihari_id')->unique();
 
-        // Get all unique Pratihari IDs linked to pratihari type
-        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
-            ->pluck('pratihari_id')
-            ->unique();
+    $profile_name   = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
+    $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
 
-        // Get all unique Pratihari IDs linked to gochhikar type
-        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
-            ->pluck('pratihari_id')
-            ->unique();
+    // ---- Current user table presence (optional UI checklist) ----
+    $user = Auth::user();
+    $profileStatus = [];
+    if ($user) {
+        $pid = $user->pratihari_id;
+        $profileStatus = [
+            'profile'      => PratihariProfile::where('pratihari_id', $pid)->exists(),
+            'family'       => PratihariFamily::where('pratihari_id', $pid)->exists(),
+            'id_card'      => PratihariIdcard::where('pratihari_id', $pid)->exists(),
+            'address'      => PratihariAddress::where('pratihari_id', $pid)->exists(),
+            'seba'         => PratihariSeba::where('pratihari_id', $pid)->exists(),
+            'social_media' => PratihariSocialMedia::where('pratihari_id', $pid)->exists(),
+        ];
+    }
 
-        // Fetch profile details for each group
-        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
-        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
+    // ---- Today’s mapped beddha numbers ----
+    $todayStr = $today->toDateString();
+    $beddhaMapping   = DateBeddhaMapping::where('date', $todayStr)->first();
 
-        $user = Auth::user();
+    // If mapping not present, fall back to "N/A"
+    $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
+    $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
 
-        $profileStatus = [];
-        if ($user) {
-            $pratihari_id = $user->pratihari_id;
-            $tables = [
-                'profile' => PratihariProfile::where('pratihari_id', $pratihari_id)->exists(),
-                'family' => PratihariFamily::where('pratihari_id', $pratihari_id)->exists(),
-                'id_card' => PratihariIdcard::where('pratihari_id', $pratihari_id)->exists(),
-                'address' => PratihariAddress::where('pratihari_id', $pratihari_id)->exists(),
-                'seba' => PratihariSeba::where('pratihari_id', $pratihari_id)->exists(),
-                'social_media' => PratihariSocialMedia::where('pratihari_id', $pratihari_id)->exists(),
-            ];
-        }
+    $todayPrBeddha = is_numeric($pratihariBeddha) ? (int)$pratihariBeddha : null;
+    $todayGoBeddha = is_numeric($gochhikarBeddha) ? (int)$gochhikarBeddha : null;
 
-        $today = Carbon::today();
-        $baseDatePratihari = Carbon::create(2025, 7, 1);
-        $endDatePratihari = Carbon::create(2050, 12, 31);
+    // ---- Build events filtered strictly by TODAY’s beddha number ----
+    // Structure we’ll pass to Blade:
+    // $pratihariEvents = [
+    //   'SebaName | Beddha X' => [
+    //      ['profile'=>PratihariProfile, 'beddha'=>X, 'assigned_by'=>'User'|'Admin']
+    //   ], ...
+    // ]
+    // $nijogaAssign = same grouping but only for Admin (0) if you want to show in Nijoga tab.
 
-        $baseDateGochhikar = Carbon::create(2025, 7, 1);
-        $endDateGochhikar = Carbon::create(2055, 12, 31);
+    $pratihariEvents = [];
+    $nijogaAssign    = [];
 
-        $today = Carbon::today();
-
-        $pratihariEvents = [];
-        $nijogaAssign = [];
-
-        $gochhikarEvents = [];
-        $nijogaGochhikarEvents = [];
-
-        $todayPratihariBeddhaIds = [];
-        $todayGochhikarBeddhaIds = [];
-
-        $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])->get();
+    if ($todayPrBeddha) {
+        // Load all sebas of type 'pratihari' that include today’s beddha
+        $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
+            ->whereIn('seba_id', $pratihariSebaIds)
+            ->get();
 
         foreach ($sebas as $seba) {
-            $sebaType = $seba->type;
-            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+            $sebaName = $seba->sebaMaster?->seba_name ?? 'Unknown Seba';
+            $beddhaIds = $seba->beddha_id; // accessor returns array
 
-            foreach ($beddhaIds as $beddhaId) {
-                $beddhaId = (int) trim($beddhaId);
-                if ($beddhaId < 1 || $beddhaId > 47) continue;
+            if (!in_array($todayPrBeddha, $beddhaIds ?? [], true)) {
+                continue;
+            }
 
-                $beddhaStatus = $seba->beddhaAssigns->where('beddha_id', $beddhaId)->first()->beddha_status ?? null;
-                if ($beddhaStatus === null) continue;
+            $assign = $seba->beddhaAssigns->firstWhere('beddha_id', $todayPrBeddha);
+            // 1 = user assign; 0 = admin assign; null = unknown/fallback admin
+            $assignedBy = ($assign && (int)$assign->beddha_status === 1) ? 'User' : 'Admin';
 
-                $user = $seba->pratihari;
-                $interval = ($sebaType = "gochhikar") ? 16 : 47;
+            $label = "{$sebaName} | Beddha {$todayPrBeddha}";
+            $entry = [
+                'profile'      => $seba->pratihari,
+                'beddha'       => $todayPrBeddha,
+                'assigned_by'  => $assignedBy,
+            ];
 
-                if ($sebaId = "gochhikar") {
-                    $start = $baseDateGochhikar->copy()->addDays($beddhaId - 1);
-                    while ($start->lte($endDateGochhikar)) {
-                        if ($start->equalTo($today)) {
-                            $label = "$sebaName | Beddha $beddhaId";
-                            if ($user) {
-                                if ($beddhaStatus == 1) {
-                                    $gochhikarEvents[$label][] = $user;
-                                } else {
-                                    $nijogaGochhikarEvents[$label][] = $user;
-                                }
-                                $todayGochhikarBeddhaIds[] = $beddhaId;
-                            }
-                            break;
-                        }
-                        $start->addDays($interval);
-                    }
-                }
-
-                else {
-                    $start = $baseDatePratihari->copy()->addDays($beddhaId - 1);
-                    while ($start->lte($endDatePratihari)) {
-                        if ($start->equalTo($today)) {
-                            $label = "$sebaName | Beddha $beddhaId";
-                            if ($user) {
-                                if ($beddhaStatus == 1) {
-                                    $pratihariEvents[$label][] = $user;
-                                } else {
-                                    $nijogaAssign[$label][] = $user;
-                                }
-                                $todayPratihariBeddhaIds[] = $beddhaId;
-                            }
-                            break;
-                        }
-                        $start->addDays($interval);
-                    }
-                }
-
+            if ($assignedBy === 'User') {
+                $pratihariEvents[$label][] = $entry;
+            } else {
+                $nijogaAssign[$label][] = $entry;
             }
         }
 
-        // Deduplicate users
-        $pratihariEvents = collect($pratihariEvents)->map(fn($u) => collect($u)->unique('pratihari_id')->values()->all())->toArray();
-        $nijogaAssign = collect($nijogaAssign)->map(fn($u) => collect($u)->unique('pratihari_id')->values()->all())->toArray();
-        $gochhikarEvents = collect($gochhikarEvents)->map(fn($u) => collect($u)->unique('pratihari_id')->values()->all())->toArray();
-        $nijogaGochhikarEvents = collect($nijogaGochhikarEvents)->map(fn($u) => collect($u)->unique('pratihari_id')->values()->all())->toArray();
+        // Deduplicate by profile pratihari_id
+        $pratihariEvents = collect($pratihariEvents)->map(function ($arr) {
+            return collect($arr)->unique(fn($e) => $e['profile']?->pratihari_id)->values()->all();
+        })->toArray();
 
-        // Separate beddha display
-        $currentPratihariBeddhaDisplay = implode(', ', array_unique($todayPratihariBeddhaIds));
-        $currentGochhikarBeddhaDisplay = implode(', ', array_unique($todayGochhikarBeddhaIds));
-
-         $today = Carbon::today()->toDateString(); // e.g., '2025-07-18'
-
-        $beddhaMapping = DateBeddhaMapping::where('date', $today)->first();
-
-        $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
-        $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
-
-            return view('admin.admin-dashboard', compact(
-                'todayProfiles',
-                'incompleteProfiles',
-                'totalActiveUsers',
-                'rejectedProfiles',
-                'updatedProfiles',
-                'pendingProfile',
-                'todayApplications',
-                'profiles',
-                'profile_name',
-                'gochhikar_name',
-                'todayApprovedProfiles',
-                'todayRejectedProfiles',
-                'approvedApplication',
-                'rejectedApplication',
-                'today',
-                'currentPratihariBeddhaDisplay',
-                'currentGochhikarBeddhaDisplay',
-                'nijogaAssign',
-                'pratihariEvents',
-                'gochhikarEvents',
-                'nijogaGochhikarEvents',
-                'pratihariBeddha',
-                'gochhikarBeddha',
-            ));
+        $nijogaAssign = collect($nijogaAssign)->map(function ($arr) {
+            return collect($arr)->unique(fn($e) => $e['profile']?->pratihari_id)->values()->all();
+        })->toArray();
     }
+
+    // Displays (for the small “current beddha” chips elsewhere if needed)
+    $currentPratihariBeddhaDisplay = $todayPrBeddha ? (string)$todayPrBeddha : '—';
+    $currentGochhikarBeddhaDisplay = $todayGoBeddha ? (string)$todayGoBeddha : '—';
+
+    return view('admin.admin-dashboard', compact(
+        'todayProfiles',
+        'incompleteProfiles',
+        'totalActiveUsers',
+        'rejectedProfiles',
+        'updatedProfiles',
+        'pendingProfile',
+        'todayApplications',
+        'profiles',
+        'profile_name',
+        'gochhikar_name',
+        'todayApprovedProfiles',
+        'todayRejectedProfiles',
+        'approvedApplication',
+        'rejectedApplication',
+        'todayStr',
+        'currentPratihariBeddhaDisplay',
+        'currentGochhikarBeddhaDisplay',
+        'nijogaAssign',
+        'pratihariEvents',
+        'pratihariBeddha',
+        'gochhikarBeddha',
+        'profileStatus'
+    ));
+}
 
     public function pratihariManageProfile()
     {
