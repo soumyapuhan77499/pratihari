@@ -49,11 +49,6 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Pratihari Family, ID Card, Address, Occupation, Social Media
-|--------------------------------------------------------------------------
-*/
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(PratihariFamilyApiController::class)->group(function () {
         Route::post('/save-family', 'saveFamily');

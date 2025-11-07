@@ -114,6 +114,7 @@ class PratihariFamilyApiController extends Controller
 
     public function show()
     {
+        dd('here');
         try {
             $family = PratihariFamily::where('status', 'active')->first();
 
@@ -174,5 +175,5 @@ class PratihariFamilyApiController extends Controller
             ], 500);
         }
     }
-    
+
 }
