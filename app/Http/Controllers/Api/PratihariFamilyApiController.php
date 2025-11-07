@@ -111,68 +111,43 @@ class PratihariFamilyApiController extends Controller
             ], 500);
         }
     }
+public function show()
+{
+    try {
+        $families = PratihariFamily::where('status', 'active')
+            ->get(['father_name','father_photo','mother_name','mother_photo']);
 
-    public function show()
-    {
-        try {
-            $family = PratihariFamily::where('status', 'active')->first();
+        $toUrl = function ($path) {
+            if (empty($path)) return null;
+            if (preg_match('/^https?:\/\//i', $path)) return $path;
+            if (Storage::disk('public')->exists($path)) return Storage::disk('public')->url($path);
+            return asset($path);
+        };
 
-            // Helper to return a full URL (supports storage paths & absolute URLs)
-            $toUrl = function ($path) {
-                if (empty($path)) return null;
-
-                // already absolute?
-                if (preg_match('/^https?:\/\//i', $path)) {
-                    return $path;
-                }
-
-                // If stored on public disk
-                if (Storage::disk('public')->exists($path)) {
-                    return Storage::disk('public')->url($path);
-                }
-
-                // Fallback to asset()
-                return asset($path);
-            };
-
-            if (!$family) {
-                // Still 200 as requested; just return empty payloads
-                return response()->json([
-                    'status'  => 200,
-                    'message' => 'No family data found.',
-                    'data'    => [
-                        'father' => ['name' => null, 'photo' => null],
-                        'mother' => ['name' => null, 'photo' => null],
-                    ],
-                ], 200);
-            }
-
-            return response()->json([
-                'status'  => 200,
-                'message' => 'Family data get successfully.',
-                'data'    => [
-                    'father' => [
-                        'name'  => $family->father_name,
-                        'photo' => $toUrl($family->father_photo),
-                    ],
-                    'mother' => [
-                        'name'  => $family->mother_name,
-                        'photo' => $toUrl($family->mother_photo),
-                    ],
-                ],
-            ], 200);
-
-        } catch (\Throwable $e) {
-            Log::error('PratihariFamily API error', [
-                'pratihari_id' => $pratihari_id,
-                'error'        => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'status'  => 500,
-                'message' => 'Something went wrong.',
-            ], 500);
+        $fathers = [];
+        $mothers = [];
+        foreach ($families as $row) {
+            $fathers[] = ['name' => $row->father_name, 'photo' => $toUrl($row->father_photo)];
+            $mothers[] = ['name' => $row->mother_name, 'photo' => $toUrl($row->mother_photo)];
         }
-    }
 
+        if ($families->isEmpty()) {
+            return response()->json([
+                'status' => 200,
+                'message' => 'No family data found.',
+                'data' => ['father' => [], 'mother' => []],
+            ], 200);
+        }
+
+        return response()->json([
+            'status' => 200,
+            'message' => 'Family data get successfully.',
+            'data' => ['father' => $fathers, 'mother' => $mothers],
+        ], 200);
+
+    } catch (\Throwable $e) {
+        Log::error('PratihariFamily API error', ['error' => $e->getMessage()]);
+        return response()->json(['status' => 500, 'message' => 'Something went wrong.'], 500);
+    }
+}
 }
