@@ -52,7 +52,6 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(PratihariFamilyApiController::class)->group(function () {
         Route::post('/save-family', 'saveFamily');
-        Route::get('/pratihari-family', 'show');
     });
 
     Route::controller(PratihariIdcardApiController::class)->group(function () {
@@ -72,6 +71,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/get-socialmedia', 'getSocialMedia');
     });
 });
+
+    Route::controller(PratihariFamilyApiController::class)->group(function () {
+        Route::get('/pratihari-family', 'show');
+    });
+
 
 /*
 |--------------------------------------------------------------------------
