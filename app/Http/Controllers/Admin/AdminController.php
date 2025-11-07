@@ -462,70 +462,135 @@ class AdminController extends Controller
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
+ private function isValidIndianMobile(?string $raw): bool
+    {
+        if (!$raw) return false;
+        // Accept with/without +91, spaces, dashes, etc.; validate final 10 digits start 6-9
+        $digits = preg_replace('/\D+/', '', $raw);
+        if (Str::startsWith($digits, '91') && strlen($digits) === 12) {
+            $digits = substr($digits, -10);
+        }
+        return (bool) preg_match('/^[6-9]\d{9}$/', $digits);
+    }
+
+    private function normalizeMsisdn(?string $raw, string $cc = '91'): string
+    {
+        // Returns countrycode+number, digits only, no plus. E.g. "+91 77499 68976" -> "917749968976"
+        $digits = preg_replace('/\D+/', '', (string) $raw);
+        if ($digits === '') return '';
+        // Strip leading zeros
+        $digits = ltrim($digits, '0');
+
+        // If already starts with country code and length 12 for India, keep
+        if (Str::startsWith($digits, $cc)) {
+            return $digits;
+        }
+
+        // If it looks like a local 10-digit mobile, prepend country code
+        if (strlen($digits) === 10) {
+            return $cc . $digits;
+        }
+
+        // Fallback: if someone passed +9177.. or 0091.. we already stripped non-digits; just ensure it starts with cc
+        if (!Str::startsWith($digits, $cc)) {
+            return $cc . $digits;
+        }
+
+        return $digits;
+    }
+
+    private function tenDigitLocal(string $raw): string
+    {
+        // Extract the canonical 10-digit local mobile to match DB storage like "7749968976"
+        $digits = preg_replace('/\D+/', '', $raw);
+        if (Str::startsWith($digits, '91') && strlen($digits) >= 12) {
+            $digits = substr($digits, -10);
+        }
+        return substr($digits, -10);
+    }
 
     public function sendOtp(Request $request)
     {
+        // 1) Validate input early
         $request->validate([
-            'phone' => 'required|string',
+            'phone' => ['required', 'string'],
         ]);
 
         $inputPhone = trim($request->phone);
 
-        // Validate & normalize recipient for India WhatsApp
         if (!$this->isValidIndianMobile($inputPhone)) {
-            return redirect()->back()->with([
+            return back()->with([
                 'error' => 'Please enter a valid Indian mobile number (10 digits, starts with 6–9).',
             ])->withInput();
         }
 
-        $toMsisdn = $this->normalizeMsisdn($inputPhone, '91'); // e.g., 917749968976
+        // 2) Canonicalize numbers
+        $toMsisdn = $this->normalizeMsisdn($inputPhone, '91'); // digits-only E.164 without '+', e.g. 917749968976
+        $local10  = $this->tenDigitLocal($inputPhone);        // e.g. 7749968976
 
-        $otp        = (string) random_int(100000, 999999);
-        $shortToken = Str::upper(Str::random(6));
-
-        // Check if admin exists by the number they typed (store "local" form in DB)
-        $admin = Admin::where('mobile_no', $inputPhone)->first();
+        // 3) Find Admin by how you actually store it (most apps store 10-digit local)
+        $admin = Admin::where('mobile_no', $local10)->first();
         if (!$admin) {
-            return redirect()->back()->with([
+            // If you store with +91, try that as a fallback
+            $maybePlus = '+91' . $local10;
+            $admin = Admin::where('mobile_no', $maybePlus)->first();
+        }
+
+        if (!$admin) {
+            return back()->with([
                 'error' => 'Mobile number not registered. Please contact super admin.'
             ])->withInput();
         }
 
-        // Save OTP
+        // 4) Prepare OTP + expiry
+        $otp        = (string) random_int(100000, 999999);
+        $shortToken = Str::upper(Str::random(6));
         $admin->otp = $otp;
+
+        // Optional: add expiry (5 minutes)
+        if (schemaHasColumn('admins', 'otp_expires_at')) {
+            $admin->otp_expires_at = Carbon::now()->addMinutes(5);
+        }
+
         $admin->save();
 
-        // ENV config
-        $authKey   = env('MSG91_AUTHKEY');
-        $tplName   = env('MSG91_WA_TEMPLATE');
-        $namespace = env('MSG91_WA_NAMESPACE');
-        $waNumber  = env('MSG91_WA_NUMBER', '');
+        // 5) ENV guardrails
+        $authKey   = (string) env('MSG91_AUTHKEY', '');
+        $tplName   = (string) env('MSG91_WA_TEMPLATE', '');
+        $namespace = (string) env('MSG91_WA_NAMESPACE', '');
+        $waNumber  = (string) env('MSG91_WA_NUMBER', ''); // your integrated WA business number
 
-        // Normalize integrated (sender) number to digits-only with country code (no plus)
-        $integratedNumber = $this->normalizeMsisdn((string) $waNumber, '91');
+        if ($authKey === '' || $tplName === '' || $waNumber === '') {
+            Log::warning('MSG91 config missing', compact('authKey', 'tplName', 'waNumber', 'namespace'));
+            return back()->with([
+                'error' => 'OTP service is not configured. Please contact support.',
+            ]);
+        }
 
-        // Build template
+        $integratedNumber = $this->normalizeMsisdn($waNumber, '91'); // e.g. 919124420330
+
+        // 6) Build WhatsApp template payload (MSG91 WA v5)
         $template = [
             'name'     => $tplName,
             'language' => ['code' => 'en', 'policy' => 'deterministic'],
         ];
-        if (!empty($namespace)) {
+        if ($namespace !== '') {
             $template['namespace'] = $namespace;
         }
 
         $payload = [
-            'integrated_number' => $integratedNumber,      // e.g., 919124420330
+            'integrated_number' => $integratedNumber,
             'content_type'      => 'template',
             'payload'           => [
                 'messaging_product' => 'whatsapp',
-                'to'   => $toMsisdn,                       // e.g., 917749968976
-                'type' => 'template',
-                'template' => $template + [
+                'to'                => $toMsisdn,
+                'type'              => 'template',
+                'template'          => $template + [
                     'components' => [
                         [
                             'type'       => 'body',
                             'parameters' => [
-                                [ 'type' => 'text', 'text' => $otp ],
+                                ['type' => 'text', 'text' => $otp],
                             ],
                         ],
                         [
@@ -533,7 +598,7 @@ class AdminController extends Controller
                             'sub_type'   => 'url',
                             'index'      => '0',
                             'parameters' => [
-                                [ 'type' => 'text', 'text' => $shortToken ],
+                                ['type' => 'text', 'text' => $shortToken],
                             ],
                         ],
                     ],
@@ -541,43 +606,71 @@ class AdminController extends Controller
             ],
         ];
 
+        // 7) Call MSG91 and handle *all* common shapes of success/error
         try {
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
                 'authkey'      => $authKey,
             ])->post('https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/', $payload);
 
-            $result = $response->json() ?? [];
-            \Log::info('MSG91 OTP Response', ['status' => $response->status(), 'body' => $result]);
+            $status = $response->status();
+            $body   = $response->json();
 
-            $ok = $response->status() === 200 && (($result['status'] ?? '') === 'success');
+            // Log everything for diagnosis (safe: no OTP in logs)
+            Log::info('MSG91 OTP Response', [
+                'http_status' => $status,
+                'response'    => $body,
+                'to'          => $toMsisdn,
+                'integrated'  => $integratedNumber,
+                'template'    => $tplName,
+            ]);
 
-            if (!$ok) {
-                // Common MSG91 error: "Outbound restricted due to blocked prefixes"
-                $err = $result['errors'] ?? ($result['message'] ?? 'Unknown error');
-                $errStr = is_string($err) ? $err : json_encode($err);
+            // MSG91 sometimes returns 200 or 202 with various "status"/"type"/"message"
+            $apiOk = false;
+            if ($response->successful() || $status === 202) {
+                $apiStatus = data_get($body, 'status') ?: data_get($body, 'type') ?: data_get($body, 'message');
+                // Treat "success" (case-insensitive) as OK
+                if (is_string($apiStatus) && strcasecmp($apiStatus, 'success') === 0) {
+                    $apiOk = true;
+                }
+                // Some accounts get a 202 with a GUID and no "status", still valid -> treat >=200 <300 with no explicit error as OK
+                if (!$apiOk && $response->successful() && !data_get($body, 'errors')) {
+                    $apiOk = true;
+                }
+            }
 
-                // Provide a helpful hint for prefix issues
-                if (stripos($errStr, 'blocked prefixes') !== false) {
-                    $errStr .= ' — Ensure the recipient is in E.164 format with country code (e.g., 917XXXXXXXXX) and the number/operator prefix is allowed for your WhatsApp Business account. Also verify opt-in if required.';
+            if (!$apiOk) {
+                // Build helpful error message
+                $err     = data_get($body, 'errors') ?: data_get($body, 'error') ?: data_get($body, 'message');
+                $errStr  = is_string($err) ? $err : json_encode($err);
+
+                if ($errStr) {
+                    // Common hints
+                    if (stripos($errStr, 'blocked prefix') !== false || stripos($errStr, 'blocked prefixes') !== false) {
+                        $errStr .= ' — Verify the number has country code (e.g., 917XXXXXXXXX) and that this prefix is allowed on your WABA. Confirm customer opt-in if required.';
+                    }
+                    if (stripos($errStr, 'template') !== false && stripos($errStr, 'not') !== false) {
+                        $errStr .= ' — Check that the WhatsApp template name/namespace matches an approved template in MSG91 and that variables count matches.';
+                    }
                 }
 
-                return redirect()->back()->with([
-                    'error' => 'Failed to send OTP. MSG91 error: ' . $errStr,
+                return back()->with([
+                    'error'      => 'Failed to send OTP. MSG91 error: ' . ($errStr ?: 'Unknown error'),
+                    'otp_phone'  => $local10,
+                    'otp_sent'   => false,
                 ])->withInput();
             }
 
-            return redirect()->back()->with([
+            return back()->with([
                 'otp_sent'  => true,
-                'otp_phone' => $inputPhone,
+                'otp_phone' => $local10,
                 'message'   => 'OTP sent to your WhatsApp.',
             ]);
 
         } catch (\Throwable $e) {
-            \Log::error('MSG91 OTP Exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
-
-            return redirect()->back()->with([
-                'error' => 'Server error. Please try again later.',
+            Log::error('MSG91 OTP Exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->with([
+                'error' => 'Server error while sending OTP. Please try again.',
             ])->withInput();
         }
     }
@@ -585,11 +678,18 @@ class AdminController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'mobile_no' => 'required|string',
-            'otp'       => 'required|string',
+            'mobile_no' => ['required', 'string'],
+            'otp'       => ['required', 'string'],
         ]);
 
-        $admin = Admin::where('mobile_no', $request->mobile_no)->first();
+        $local10 = $this->tenDigitLocal($request->mobile_no);
+
+        $admin = Admin::where('mobile_no', $local10)->first();
+        if (!$admin) {
+            // Try "+91XXXXXXXXXX" style if that’s how it’s stored
+            $admin = Admin::where('mobile_no', '+91'.$local10)->first();
+        }
+
         if (!$admin) {
             return back()->withErrors([
                 'mobile_no' => 'Mobile number not found. Please contact super admin.',
@@ -605,8 +705,22 @@ class AdminController extends Controller
             ])->withInput();
         }
 
-        $admin->otp = null;
+        // Optional: check expiry (only if column exists)
+        if (schemaHasColumn('admins', 'otp_expires_at') && $admin->otp_expires_at) {
+            if (Carbon::parse($admin->otp_expires_at)->isPast()) {
+                return back()->withErrors([
+                    'otp' => 'OTP expired. Please request a new one.',
+                ])->withInput();
+            }
+        }
 
+        // Clear OTP
+        $admin->otp = null;
+        if (schemaHasColumn('admins', 'otp_expires_at')) {
+            $admin->otp_expires_at = null;
+        }
+
+        // Ensure admin_id
         if (empty($admin->admin_id)) {
             $admin->admin_id = 'ADMIN' . random_int(10000, 99999);
         }
@@ -617,32 +731,7 @@ class AdminController extends Controller
 
         return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
     }
-
-    private function normalizeMsisdn(string $raw, string $defaultCc = '91'): string
-    {
-        $digits = preg_replace('/\D+/', '', $raw ?? '');
-        if (!$digits) return '';
-
-        // If already starts with country code, keep; otherwise prepend default CC
-        if (!Str::startsWith($digits, $defaultCc)) {
-            // Drop leading zeros before appending country code
-            $digits = ltrim($digits, '0');
-            $digits = $defaultCc . $digits;
-        }
-
-        return $digits;
-    }
-
-    private function isValidIndianMobile(string $raw): bool
-    {
-        $d = preg_replace('/\D+/', '', $raw ?? '');
-        // If it already has 91 prefixed, strip it for local validation
-        if (Str::startsWith($d, '91')) {
-            $d = substr($d, 2);
-        }
-        return (bool) preg_match('/^[6-9]\d{9}$/', $d);
-    }
-
+    
     public function logout()
     {
         Auth::guard('admins')->logout();
