@@ -203,7 +203,7 @@
             border-color: transparent
         }
 
-        /* USER GRID (row-wise, scrollable) */
+        /* USER GRID (denser and smaller cards) */
         .usergrid-wrap {
             max-height: 460px;
             overflow: auto;
@@ -212,37 +212,45 @@
 
         .usergrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 14px
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px
         }
 
+        /* smaller */
+        /* Make the whole card clickable (anchor) */
         .usercard {
+            display: block;
             background: color-mix(in oklab, var(--panel) 94%, var(--surface-2));
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 14px 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            border-radius: 14px;
+            padding: 10px 10px 12px;
+            min-height: 130px;
+            text-align: center;
             transition: transform .18s, box-shadow .18s, border-color .18s;
-            min-height: 160px;
+            box-shadow: none;
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
         }
 
         .usercard:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: var(--shadow);
-            border-color: rgba(124, 58, 237, .35)
+            border-color: rgba(124, 58, 237, .35);
+            color: inherit;
+            text-decoration: none;
         }
 
+        /* Smaller avatar */
         .photo-wrap {
             position: relative;
-            width: 86px;
-            height: 86px;
+            width: 64px;
+            height: 64px;
             border-radius: 9999px;
             overflow: hidden;
             border: 1px solid var(--border);
             background: #f1f5f9;
+            margin: 6px auto 8px;
         }
 
         .photo-wrap img {
@@ -250,19 +258,20 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform .25s ease
+            transition: transform .20s ease
         }
 
-        /* Big zoom on hover (stays within the circle) */
         .usercard:hover .photo-wrap img {
-            transform: scale(1.9)
+            transform: scale(1.4)
         }
+
+        /* softer zoom for smaller circle */
 
         .uname {
             font-weight: 800;
             line-height: 1.1;
             text-align: center;
-            font-size: .95rem;
+            font-size: .9rem;
             width: 100%;
             white-space: nowrap;
             overflow: hidden;
@@ -462,12 +471,12 @@
                                     <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-light text-dark border-0">
-                                        {{ collect($pratihariEvents)->flatten(1)->count() }} Pratihari
-                                    </span>
-                                    <span class="badge bg-light text-dark border-0">
-                                        {{ collect($nijogaAssign)->flatten(1)->count() }} Nijoga
-                                    </span>
+                                    <span
+                                        class="badge bg-light text-dark border-0">{{ collect($pratihariEvents)->flatten(1)->count() }}
+                                        Pratihari</span>
+                                    <span
+                                        class="badge bg-light text-dark border-0">{{ collect($nijogaAssign)->flatten(1)->count() }}
+                                        Nijoga</span>
                                 </div>
                             </div>
                         </div>
@@ -509,10 +518,11 @@
                                                     @php
                                                         $u = $e['profile'];
                                                         $name = $fullName($u);
-                                                        $photo = $u->photo_url; // ✅ robust accessor
+                                                        $photo = $u->photo_url ?? null;
                                                         $ini = $initials($u);
                                                     @endphp
-                                                    <div class="usercard" title="{{ $name }}">
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
                                                                 <img src="{{ $photo }}"
@@ -523,7 +533,7 @@
                                                             @endif
                                                         </div>
                                                         <div class="uname">{{ $name }}</div>
-                                                    </div>
+                                                    </a>
                                                 @endforeach
                                             </div>
                                         </div>
@@ -551,10 +561,11 @@
                                                     @php
                                                         $u = $e['profile'];
                                                         $name = $fullName($u);
-                                                        $photo = $u->photo_url; // ✅ same accessor
+                                                        $photo = $u->photo_url ?? null;
                                                         $ini = $initials($u);
                                                     @endphp
-                                                    <div class="usercard" title="{{ $name }}">
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
                                                                 <img src="{{ $photo }}"
@@ -565,7 +576,7 @@
                                                             @endif
                                                         </div>
                                                         <div class="uname">{{ $name }}</div>
-                                                    </div>
+                                                    </a>
                                                 @endforeach
                                             </div>
                                         </div>
@@ -641,10 +652,11 @@
                                                 @foreach ($users as $u)
                                                     @php
                                                         $name = $fullName($u);
-                                                        $photo = $u->photo_url; // ✅ accessor
+                                                        $photo = $u->photo_url ?? null;
                                                         $ini = $initials($u);
                                                     @endphp
-                                                    <div class="usercard" title="{{ $name }}">
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
                                                                 <img src="{{ $photo }}"
@@ -655,7 +667,7 @@
                                                             @endif
                                                         </div>
                                                         <div class="uname">{{ $name }}</div>
-                                                    </div>
+                                                    </a>
                                                 @endforeach
                                             </div>
                                         </div>
@@ -682,10 +694,11 @@
                                                 @foreach ($users as $u)
                                                     @php
                                                         $name = $fullName($u);
-                                                        $photo = $u->photo_url; // ✅ accessor again
+                                                        $photo = $u->photo_url ?? null;
                                                         $ini = $initials($u);
                                                     @endphp
-                                                    <div class="usercard" title="{{ $name }}">
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
                                                                 <img src="{{ $photo }}"
@@ -696,7 +709,7 @@
                                                             @endif
                                                         </div>
                                                         <div class="uname">{{ $name }}</div>
-                                                    </div>
+                                                    </a>
                                                 @endforeach
                                             </div>
                                         </div>
