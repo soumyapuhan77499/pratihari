@@ -120,6 +120,48 @@ class OtpController extends Controller
         ->post($url, $payload);
     }
 
+    /** Create a uniform, **detailed** error response for Postman */
+    private function providerErrorResponse(int $httpStatus, $providerBody, string $fallbackMessage = 'Failed to send OTP.')
+    {
+        // Extract useful fields if JSON; else return string body
+        $provider = [
+            'http_status' => $httpStatus,
+            'code'        => null,
+            'type'        => null,
+            'message'     => null,
+            'raw'         => is_array($providerBody) ? $providerBody : (string) $providerBody,
+        ];
+
+        if (is_array($providerBody)) {
+            // Common MSG91 fields: 'type', 'message', sometimes 'errors' or 'error'
+            $provider['type']    = $providerBody['type']    ?? null;
+            $provider['message'] = $providerBody['message'] ?? null;
+            // attempt to surface nested codes/messages if provided
+            if (isset($providerBody['errors']) && is_array($providerBody['errors']) && isset($providerBody['errors'][0])) {
+                $first = $providerBody['errors'][0];
+                $provider['code'] = $first['code']    ?? ($first['error_code'] ?? null);
+                if (!$provider['message'] && isset($first['message'])) {
+                    $provider['message'] = $first['message'];
+                }
+            }
+            if (isset($providerBody['error'])) {
+                $err = $providerBody['error'];
+                if (is_array($err)) {
+                    $provider['code'] = $provider['code'] ?? ($err['code'] ?? ($err['error_code'] ?? null));
+                    if (!$provider['message']) $provider['message'] = $err['message'] ?? null;
+                } elseif (is_string($err)) {
+                    $provider['message'] = $provider['message'] ?? $err;
+                }
+            }
+        }
+
+        return response()->json([
+            'success'  => false,
+            'message'  => $fallbackMessage,
+            'provider' => $provider,
+        ], 502);
+    }
+
     // ----------------- Logout -----------------
     public function userLogout(Request $request)
     {
@@ -176,7 +218,16 @@ class OtpController extends Controller
             $cfg = $this->msg91ConfigOrFail();
         } catch (\RuntimeException $e) {
             Log::error('MSG91 config error: '.$e->getMessage());
-            return response()->json(['message' => 'OTP service is not configured properly.'], 500);
+            // Also expose this clearly in API response
+            return response()->json([
+                'success'  => false,
+                'message'  => 'OTP service is not configured properly.',
+                'provider' => [
+                    'http_status' => 500,
+                    'type'        => 'config_error',
+                    'message'     => $e->getMessage(),
+                ],
+            ], 500);
         }
 
         // Normalize destination to MSG91 format (digits, no +)
@@ -231,23 +282,22 @@ class OtpController extends Controller
                 'resp'        => is_array($body) ? $body : (string) $body,
             ]);
 
-            // Hard failures (HTTP)
+            // Hard failures (HTTP non-2xx)
             if (!$resp->successful()) {
-                $msg = 'Failed to send OTP. Please try again.';
-                // In non-production, surface provider message to speed up debugging
-                if (!app()->isProduction() && is_array($json) && isset($json['message'])) {
-                    $msg .= ' Provider says: '.$json['message'];
-                }
-                return response()->json(['message' => $msg], 502);
+                return $this->providerErrorResponse(
+                    $resp->status(),
+                    $body,
+                    'Failed to send OTP.'
+                );
             }
 
             // Soft failures (MSG91 returns 200 but type=error)
             if (is_array($json) && isset($json['type']) && strtolower((string) $json['type']) === 'error') {
-                $reason = $json['message'] ?? 'Unknown MSG91 error';
-                if (!app()->isProduction()) {
-                    return response()->json(['message' => 'OTP could not be sent. '.$reason], 502);
-                }
-                return response()->json(['message' => 'OTP could not be sent. Please try again.'], 502);
+                return $this->providerErrorResponse(
+                    200,
+                    $json,
+                    'OTP could not be sent.'
+                );
             }
 
             return response()->json([
@@ -259,7 +309,15 @@ class OtpController extends Controller
 
         } catch (\Throwable $e) {
             Log::error('MSG91 exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['message' => 'OTP service unavailable. Please try again.'], 503);
+            return response()->json([
+                'success'  => false,
+                'message'  => 'OTP service unavailable. Please try again.',
+                'provider' => [
+                    'http_status' => 503,
+                    'type'        => 'exception',
+                    'message'     => $e->getMessage(),
+                ],
+            ], 503);
         }
     }
 
