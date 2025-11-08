@@ -36,4 +36,6 @@ return [
         'wa_namespace'=> env('MSG91_WA_NAMESPACE'),
         'wa_number'   => env('MSG91_WA_NUMBER'),       // e.g. +917327096968
     ],
+
+    
 ];
