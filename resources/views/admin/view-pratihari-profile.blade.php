@@ -539,9 +539,9 @@
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
                         <h6 class="section-title"><i class="fa-solid fa-gears me-2" style="color:var(--amber)"></i>Seba Details</h6>
-                        <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-sm btn-amber">
+                        {{-- <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-sm btn-amber">
                             <i class="fa-regular fa-pen-to-square me-1"></i>Edit
-                        </a>
+                        </a> --}}
                     </div>
 
                     @php
