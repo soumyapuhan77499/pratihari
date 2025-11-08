@@ -31,7 +31,7 @@ use App\Http\Controllers\Api\StatusController;
 
 
 Route::post('/send-otp', [OtpController::class, 'sendOtp']);
-Route::post('/otp/pratihari/verify-otp', [OtpController::class, 'verifyOtp']);
+Route::post('/pratihari/verify-otp', [OtpController::class, 'verifyOtp']);
 
 /*
 |--------------------------------------------------------------------------
