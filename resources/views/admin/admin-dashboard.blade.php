@@ -23,9 +23,9 @@
             --ink: #0b1220;
             --ink-soft: #334155;
             --muted: #64748b;
-            --surface: #ffffff;
+            --surface: #fff;
             --surface-2: #f7f8fb;
-            --panel: #ffffff;
+            --panel: #fff;
             --border: rgba(2, 6, 23, .08);
             --ring: rgba(6, 182, 212, .35);
             --shadow: 0 12px 34px rgba(2, 6, 23, .10);
@@ -102,12 +102,12 @@
             border-radius: 999px;
             padding: 8px 12px;
             font-weight: 700;
-            transition: transform .15s ease, box-shadow .15s ease;
+            transition: transform .15s, box-shadow .15s;
         }
 
         .btn-theme:hover {
             transform: translateY(-1px);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow)
         }
 
         /* Panels */
@@ -115,7 +115,7 @@
             background: var(--panel);
             border: 1px solid var(--border);
             border-radius: 18px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow)
         }
 
         .panel-head {
@@ -123,16 +123,16 @@
             border-bottom: 1px solid var(--border);
             background: var(--g-soft);
             border-top-left-radius: 18px;
-            border-top-right-radius: 18px;
+            border-top-right-radius: 18px
         }
 
         .section-title {
             font-weight: 800;
-            letter-spacing: .2px;
+            letter-spacing: .2px
         }
 
         .subtle {
-            color: var(--muted);
+            color: var(--muted)
         }
 
         /* Header block */
@@ -143,7 +143,7 @@
             background: var(--g-brand);
             color: #fff;
             overflow: hidden;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow)
         }
 
         .gradient-header .bg-icons {
@@ -153,7 +153,7 @@
             opacity: .14;
             background: radial-gradient(160px 160px at 15% 40%, #fff 0, transparent 60%),
                 radial-gradient(130px 130px at 85% 30%, #fff 0, transparent 60%);
-            mix-blend-mode: soft-light;
+            mix-blend-mode: soft-light
         }
 
         .icon-hero {
@@ -165,7 +165,7 @@
             background: rgba(255, 255, 255, .18);
             color: #fff;
             font-size: 20px;
-            border: 1px solid rgba(255, 255, 255, .35);
+            border: 1px solid rgba(255, 255, 255, .35)
         }
 
         .pill {
@@ -177,14 +177,14 @@
             font-weight: 700;
             border: 1px solid var(--border);
             background: var(--panel);
-            color: var(--ink-soft);
+            color: var(--ink-soft)
         }
 
         .pill .dot {
             width: 8px;
             height: 8px;
             border-radius: 999px;
-            background: var(--brand-a);
+            background: var(--brand-a)
         }
 
         /* Tabs */
@@ -194,52 +194,52 @@
             color: var(--ink-soft);
             font-weight: 800;
             border-radius: 12px;
-            padding: .55rem 1rem;
+            padding: .55rem 1rem
         }
 
         .tabs .nav-link.active {
             color: #fff;
             background: var(--g-brand);
-            border-color: transparent;
+            border-color: transparent
         }
 
         /* USER GRID (row-wise, scrollable) */
         .usergrid-wrap {
-            max-height: 420px;
+            max-height: 460px;
             overflow: auto;
-            padding: 2px;
+            padding: 2px
         }
 
         .usergrid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 14px
         }
 
         .usercard {
-            background: color-mix(in oklab, var(--panel) 92%, var(--surface-2));
+            background: color-mix(in oklab, var(--panel) 94%, var(--surface-2));
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 10px 8px;
+            border-radius: 16px;
+            padding: 14px 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
-            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-            min-height: 130px;
+            gap: 10px;
+            transition: transform .18s, box-shadow .18s, border-color .18s;
+            min-height: 160px;
         }
 
         .usercard:hover {
-            transform: translateY(-2px);
+            transform: translateY(-3px);
             box-shadow: var(--shadow);
-            border-color: rgba(124, 58, 237, .35);
+            border-color: rgba(124, 58, 237, .35)
         }
 
         .photo-wrap {
             position: relative;
-            width: 72px;
-            height: 72px;
-            border-radius: 12px;
+            width: 86px;
+            height: 86px;
+            border-radius: 9999px;
             overflow: hidden;
             border: 1px solid var(--border);
             background: #f1f5f9;
@@ -250,23 +250,23 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform .2s ease;
+            transition: transform .25s ease
         }
 
-        /* Big preview on hover (zoom) */
-        .photo-wrap:hover img {
-            transform: scale(1.7);
+        /* Big zoom on hover (stays within the circle) */
+        .usercard:hover .photo-wrap img {
+            transform: scale(1.9)
         }
 
         .uname {
             font-weight: 800;
             line-height: 1.1;
             text-align: center;
-            font-size: .92rem;
+            font-size: .95rem;
             width: 100%;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
+            text-overflow: ellipsis
         }
 
         /* KPI */
@@ -277,7 +277,7 @@
             border-radius: 16px;
             padding: 16px 16px 14px;
             box-shadow: var(--shadow);
-            overflow: hidden;
+            overflow: hidden
         }
 
         .kpi::before {
@@ -285,7 +285,7 @@
             position: absolute;
             inset: 0 0 auto 0;
             height: 6px;
-            background: var(--kpi-grad, var(--g-brand));
+            background: var(--kpi-grad, var(--g-brand))
         }
 
         .kpi .meta {
@@ -293,7 +293,7 @@
             align-items: center;
             gap: 10px;
             font-weight: 700;
-            color: var(--ink-soft);
+            color: var(--ink-soft)
         }
 
         .kpi .meta i {
@@ -365,9 +365,9 @@
             --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc)
         }
 
-        @media (max-width: 576px) {
+        @media (max-width:576px) {
             .usergrid-wrap {
-                max-height: 360px;
+                max-height: 400px
             }
         }
     </style>
@@ -375,22 +375,7 @@
 
 @section('content')
     @php
-        use Illuminate\Support\Facades\Storage;
-
-        // Avatar URL helper (supports public disk or absolute)
-        $avatarUrl = function ($u) {
-            $cand = $u->photo ?? ($u->profile_photo ?? ($u->profile_photo_path ?? ($u->avatar ?? null)));
-            if (!$cand) {
-                return null;
-            }
-            if (preg_match('/^https?:\/\//i', $cand)) {
-                return $cand;
-            }
-            if (Storage::disk('public')->exists($cand)) {
-                return Storage::disk('public')->url($cand);
-            }
-            return asset($cand);
-        };
+        // Small helpers for display text
         $fullName = function ($u) {
             $n = trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? ''));
             return $n !== '' ? $n : $u->name ?? '—';
@@ -412,8 +397,9 @@
         <div class="container-fluid d-flex align-items-center justify-content-between gap-3">
             <div class="d-flex align-items-center gap-3">
                 <span class="brand fs-4">Pratihari Admin</span>
-                <span class="pill d-none d-md-inline"><span
-                        class="dot"></span>{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
+                <span class="pill d-none d-md-inline">
+                    <span class="dot"></span>{{ \Carbon\Carbon::now()->format('d M Y') }}
+                </span>
             </div>
             <div class="d-flex align-items-center gap-2">
                 <div class="d-none d-sm-flex align-items-center gap-2 subtle">
@@ -435,29 +421,34 @@
                 <span class="icon-hero"><i class="bi bi-speedometer2"></i></span>
                 <div class="flex-grow-1">
                     <div class="fw-bold fs-5">Pratihari Admin Dashboard</div>
-                    <div class="small">Clean row-wise cards with photo + name. Hover the photo to zoom.</div>
+                    <div class="small">Rounded avatars with hover zoom. Clean, scrollable grids.</div>
                 </div>
                 <div class="d-flex gap-2 ms-md-auto">
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'today') }}"
-                        style="color:#fff"><i class="bi bi-funnel"></i> Today</a>
+                        style="color:#fff">
+                        <i class="bi bi-funnel"></i> Today
+                    </a>
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"
-                        style="color:#fff"><i class="bi bi-check2-circle"></i> Approved</a>
+                        style="color:#fff">
+                        <i class="bi bi-check2-circle"></i> Approved
+                    </a>
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'pending') }}"
-                        style="color:#fff"><i class="bi bi-hourglass-split"></i> Pending</a>
+                        style="color:#fff">
+                        <i class="bi bi-hourglass-split"></i> Pending
+                    </a>
                 </div>
             </div>
 
             <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
-                <span class="pill"><i class="bi bi-badge-ad"></i><span class="fw-bold">Pratihari Beddha:</span><span
-                        class="ms-1">{{ $pratihariBeddha ?: 'N/A' }}</span></span>
-                <span class="pill"><i class="bi bi-people"></i><span class="fw-bold">Gochhikar Beddha:</span><span
-                        class="ms-1">{{ $gochhikarBeddha ?: 'N/A' }}</span></span>
+                <span class="pill"><i class="bi bi-badge-ad"></i><strong class="ms-1 me-1">Pratihari
+                        Beddha:</strong>{{ $pratihariBeddha ?: 'N/A' }}</span>
+                <span class="pill"><i class="bi bi-people"></i><strong class="ms-1 me-1">Gochhikar
+                        Beddha:</strong>{{ $gochhikarBeddha ?: 'N/A' }}</span>
             </div>
         </div>
 
         <div class="row g-3">
-
-            <!-- LEFT: Pratihari & Nijoga (row-wise user grid, scrollable) -->
+            <!-- LEFT: Pratihari & Nijoga -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
                     <div class="px-3 pt-3">
@@ -471,12 +462,12 @@
                                     <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span
-                                        class="badge bg-light text-dark border-0">{{ collect($pratihariEvents)->flatten(1)->count() }}
-                                        Pratihari</span>
-                                    <span
-                                        class="badge bg-light text-dark border-0">{{ collect($nijogaAssign)->flatten(1)->count() }}
-                                        Nijoga</span>
+                                    <span class="badge bg-light text-dark border-0">
+                                        {{ collect($pratihariEvents)->flatten(1)->count() }} Pratihari
+                                    </span>
+                                    <span class="badge bg-light text-dark border-0">
+                                        {{ collect($nijogaAssign)->flatten(1)->count() }} Nijoga
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -493,16 +484,14 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill"
-                                    data-bs-target="#nijoga-pane" type="button" role="tab"
-                                    aria-controls="nijoga-pane" aria-selected="false">
+                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill" data-bs-target="#nijoga-pane"
+                                    type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
                                     <i class="bi bi-clipboard2-check me-1"></i> Nijoga Assigned
                                 </button>
                             </li>
                         </ul>
 
                         <div class="tab-content" id="sebaTabsContent">
-
                             <!-- Pratihari -->
                             <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel"
                                 aria-labelledby="pratihari-tab">
@@ -520,10 +509,9 @@
                                                     @php
                                                         $u = $e['profile'];
                                                         $name = $fullName($u);
-                                                        $photo = $u->photo_url; // ✅ use accessor from model
+                                                        $photo = $u->photo_url; // ✅ robust accessor
                                                         $ini = $initials($u);
                                                     @endphp
-
                                                     <div class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
@@ -537,7 +525,6 @@
                                                         <div class="uname">{{ $name }}</div>
                                                     </div>
                                                 @endforeach
-
                                             </div>
                                         </div>
                                     </div>
@@ -564,7 +551,7 @@
                                                     @php
                                                         $u = $e['profile'];
                                                         $name = $fullName($u);
-                                                        $photo = $avatarUrl($u);
+                                                        $photo = $u->photo_url; // ✅ same accessor
                                                         $ini = $initials($u);
                                                     @endphp
                                                     <div class="usercard" title="{{ $name }}">
@@ -589,20 +576,21 @@
                                     </div>
                                 @endforelse
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT: Gochhikar (row-wise user grid, scrollable) -->
+            <!-- RIGHT: Gochhikar -->
             <div class="col-12 col-xl-4">
                 <div class="panel">
                     <div class="px-3 pt-3">
                         <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero" style="border-color:rgba(255,255,255,.35);"><i
-                                        class="bi bi-people"></i></span>
+                                <span class="icon-hero"
+                                    style="background:transparent;border-color:rgba(255,255,255,.35);">
+                                    <i class="bi bi-people"></i>
+                                </span>
                                 @php
                                     $gochhikarCount = collect($gochhikarEvents)->flatten(1)->count();
                                     $nijogaCount = collect($nijogaGochhikarEvents)->flatten(1)->count();
@@ -643,7 +631,7 @@
                                 aria-labelledby="gochhikar-tab">
                                 @forelse ($gochhikarEvents as $label => $users)
                                     <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div class=" d-flex align-items-center justify-content-between mb-2">
                                             <div class="small fw-semibold">{{ $label }}</div>
                                             <span
                                                 class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
@@ -653,10 +641,9 @@
                                                 @foreach ($users as $u)
                                                     @php
                                                         $name = $fullName($u);
-                                                        $photo = $u->photo_url; // ✅ accessor again
+                                                        $photo = $u->photo_url; // ✅ accessor
                                                         $ini = $initials($u);
                                                     @endphp
-
                                                     <div class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
@@ -670,7 +657,6 @@
                                                         <div class="uname">{{ $name }}</div>
                                                     </div>
                                                 @endforeach
-
                                             </div>
                                         </div>
                                     </div>
@@ -686,7 +672,7 @@
                                 aria-labelledby="nijoga-g-tab">
                                 @forelse ($nijogaGochhikarEvents as $label => $users)
                                     <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <div class=" d-flex align-items-center justify-content-between mb-2">
                                             <div class="small fw-semibold">{{ $label }}</div>
                                             <span
                                                 class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
@@ -696,7 +682,7 @@
                                                 @foreach ($users as $u)
                                                     @php
                                                         $name = $fullName($u);
-                                                        $photo = $avatarUrl($u);
+                                                        $photo = $u->photo_url; // ✅ accessor again
                                                         $ini = $initials($u);
                                                     @endphp
                                                     <div class="usercard" title="{{ $name }}">
@@ -721,12 +707,10 @@
                                     </div>
                                 @endforelse
                             </div>
-
                         </div>
                     </div>
                 </div>
             </div>
-
 
             <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-4">
@@ -856,7 +840,6 @@
 @endsection
 
 @section('scripts')
-    <!-- Optional scripts you use elsewhere -->
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -893,7 +876,7 @@
             updateThemeButton();
         });
 
-        // Preserve left and right tabs via hash (optional)
+        // Restore tabs via hash (optional)
         (function() {
             const groups = ['#sebaTabs', '#gochhikarTabs'];
             groups.forEach(sel => {
