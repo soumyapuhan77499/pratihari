@@ -3,24 +3,33 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Routing\UrlGenerator;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        // Do NOT bind UrlGenerator or Request here.
-    }
-
-    public function boot(): void
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+ 
+public function register()
 {
-    if ($this->app->runningInConsole() || $this->app->runningUnitTests()) {
-        return;
-    }
-    if ($appUrl = config('app.url')) {
-        \Illuminate\Support\Facades\URL::forceRootUrl($appUrl);
-        \Illuminate\Support\Facades\URL::forceScheme(parse_url($appUrl, PHP_URL_SCHEME) ?: 'http');
-    }
+    $this->app->singleton(UrlGenerator::class, function ($app) {
+        return new UrlGenerator(
+            $app['router']->getRoutes(),
+            Request::create(config('app.url')) // fake request object
+        );
+    });
 }
 
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
+    }
 }

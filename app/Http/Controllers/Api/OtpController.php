@@ -15,154 +15,213 @@ use Carbon\Carbon;
 
 class OtpController extends Controller
 {
-    /** Normalize to digits (E.164 w/o "+"): e.g. 91XXXXXXXXXX */
+    /**
+     * Normalize a phone number to MSG91-style E.164 digits **without plus**.
+     * Examples:
+     *   "9812345678"       -> "919812345678"
+     *   "+91-98123 45678"  -> "919812345678"
+     *   "09812345678"      -> "919812345678"
+     */
     private function normalizeMsisdn(?string $raw, string $defaultCountryCode = '91'): string
     {
         $digits = preg_replace('/\D+/', '', (string) $raw);
         if ($digits === '') return '';
 
-        if (strlen($digits) === 10 && $defaultCountryCode) {
+        // 10-digit local => prefix country code
+        if (strlen($digits) === 10) {
             return $defaultCountryCode . $digits;
         }
-        if (strlen($digits) === 11 && $digits[0] === '0' && $defaultCountryCode) {
+
+        // 11-digit starting with 0 => strip 0, then prefix country code
+        if (strlen($digits) === 11 && $digits[0] === '0') {
             return $defaultCountryCode . substr($digits, 1);
         }
+
+        // Already looks like CC + national (e.g., 91xxxxxxxxxx)
         return $digits;
     }
 
-    /** Validate & fetch MSG91 config, return array or throw \RuntimeException */
-    private function msg91ConfigOrFail(): array
+    /** Build MSG91 WhatsApp Template payload */
+    private function buildMsg91Payload(string $toMsisdn, string $otp): array
     {
-        $cfg = [
-            'auth'        => (string) config('services.msg91.auth_key'),
-            'template'    => (string) config('services.msg91.wa_template'),
-            'namespace'   => (string) config('services.msg91.wa_namespace'),
-            'from_raw'    => (string) config('services.msg91.wa_number'),
-            'lang_code'   => (string) config('services.msg91.wa_lang_code', 'en_US'),
-            'lang_policy' => (string) config('services.msg91.wa_lang_policy', 'deterministic'),
-            'body_params' => (int)    config('services.msg91.wa_body_params', 1),
-        ];
+        $integrated = preg_replace('/\D+/', '', (string) env('MSG91_WA_NUMBER', '')); // digits only (no "+")
+        $template   = env('MSG91_WA_TEMPLATE', '');
+        $namespace  = env('MSG91_WA_NAMESPACE', '');
 
-        $missing = [];
-        foreach (['auth','template','namespace','from_raw'] as $k) {
-            if (empty($cfg[$k])) $missing[] = $k;
-        }
-        if ($missing) {
-            throw new \RuntimeException('MSG91 config missing keys: '.implode(', ', $missing));
-        }
-
-        $cfg['from'] = $this->normalizeMsisdn($cfg['from_raw'], '91');
-        if (!$cfg['from']) {
-            throw new \RuntimeException('MSG91 sender (wa_number) is invalid. Check MSG91_WA_NUMBER.');
-        }
-
-        if (!in_array($cfg['body_params'], [1,2], true)) {
-            throw new \RuntimeException('MSG91_WA_BODY_PARAMS must be 1 or 2.');
-        }
-
-        return $cfg;
-    }
-
-    /**
-     * ✅ Build MSG91 bulk payload using to_and_components (EXPECTED FORMAT)
-     * components must be an OBJECT keyed as body_1, body_2, ... each => {type:"text", value:"..."}
-     * "to" must be an ARRAY of msisdns (strings).
-     */
-    private function buildMsg91Payload(
-        string $fromIntegrated,
-        array $toList,                 // <-- array of digits-only msisdns
-        string $template,
-        string $namespace,
-        array $bodyValues,             // <-- ['123456'] or ['123456','TOKEN123']
-        string $langCode = 'en_US',
-        string $langPolicy = 'deterministic'
-    ): array {
-        // Build components object: body_1, body_2 ...
-        $components = [];
-        foreach ($bodyValues as $i => $val) {
-            $components['body_' . ($i + 1)] = [
-                'type'  => 'text',
-                'value' => (string) $val,
-            ];
-        }
-
+        // Minimal payload with a single body var (body_1). Adjust if your template needs more.
         return [
-            "integrated_number" => $fromIntegrated, // digits only
+            "integrated_number" => $integrated,           // e.g., 919124420330
             "content_type"      => "template",
-            "payload"           => [
-                "type"      => "template",
-                "template"  => [
+            "payload" => [
+                "messaging_product" => "whatsapp",
+                "type"              => "template",
+                "template" => [
                     "name"      => $template,
-                    "namespace" => $namespace,
                     "language"  => [
-                        "code"   => $langCode,
-                        "policy" => $langPolicy,
+                        "code"   => "en_US",
+                        "policy" => "deterministic"
                     ],
-                ],
-                "to_and_components" => [
-                    [
-                        "to"         => $toList,     // array of "91XXXXXXXXXX"
-                        "components" => $components, // object: { "body_1": {...}, "body_2": {...} }
-                    ],
-                ],
-            ],
+                    "namespace" => $namespace,
+                    "to_and_components" => [[
+                        "to" => [$toMsisdn],
+                        "components" => [
+                            // Your template variable mapping. Rename/extend keys to match MSG91 template vars.
+                            "body_1" => [
+                                "type"  => "text",
+                                "value" => $otp
+                            ],
+                            // Example button var if your template uses a URL button param:
+                            // "button_1" => ["subtype" => "url", "type" => "text", "value" => "https://yourapp.example/verify"]
+                        ]
+                    ]]
+                ]
+            ]
         ];
     }
 
-    private function sendViaMsg91(array $payload, string $authKey)
+    // ===================== SEND OTP =====================
+    public function sendOtp(Request $request)
     {
-        $url = 'https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/';
+        $v = Validator::make($request->all(), [
+            'mobile'    => 'required|string',
+            'device_id' => 'nullable|string|max:255',
+        ]);
 
-        return Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'Accept'       => 'application/json',
-            'authkey'      => $authKey,
-            'Authkey'      => $authKey,
-        ])
-        ->timeout(25)
-        ->post($url, $payload);
-    }
+        if ($v->fails()) {
+            return response()->json(['message' => 'Invalid input', 'errors' => $v->errors()], 422);
+        }
 
-    /** Build consistent provider error response */
-    private function providerErrorResponse(int $httpStatus, $providerBody, string $fallbackMessage = 'Failed to send OTP.')
-    {
-        $provider = [
-            'http_status' => $httpStatus,
-            'code'        => null,
-            'type'        => null,
-            'message'     => null,
-            'raw'         => is_array($providerBody) ? $providerBody : (string) $providerBody,
-        ];
+        $rawMobile = $request->input('mobile');
+        $msisdn    = $this->normalizeMsisdn($rawMobile, '91');
+        if ($msisdn === '' || strlen($msisdn) < 12) {
+            return response()->json(['message' => 'Invalid mobile number'], 422);
+        }
 
-        if (is_array($providerBody)) {
-            $provider['type']    = $providerBody['type']    ?? null;
-            $provider['message'] = $providerBody['message'] ?? ($providerBody['errors'] ?? null);
-            if (isset($providerBody['errors']) && is_array($providerBody['errors']) && isset($providerBody['errors'][0])) {
-                $first = $providerBody['errors'][0];
-                $provider['code'] = $first['code'] ?? ($first['error_code'] ?? null);
-                if (!$provider['message'] && isset($first['message'])) {
-                    $provider['message'] = $first['message'];
-                }
+        // Find or create user by mobile_number
+        $user = User::where('mobile_number', $msisdn)->first();
+        if (!$user) {
+            $user = new User();
+            $user->mobile_number = $msisdn;
+            $user->pratihari_id  = $user->pratihari_id ?: ('PRATIHARI' . str_pad((string) random_int(0, 99999), 5, '0', STR_PAD_LEFT));
+        }
+
+        $otpLength = (int) env('OTP_LENGTH', 6);
+        $otp       = str_pad((string) random_int(0, (10 ** $otpLength) - 1), $otpLength, '0', STR_PAD_LEFT);
+        $ttlMin    = (int) env('OTP_TTL_MINUTES', 10);
+
+        $user->otp    = $otp; // You can swap to hashing if you prefer (and compare via hash on verify)
+        $user->expiry = Carbon::now()->addMinutes($ttlMin);
+        $user->channel = 'whatsapp';
+        $user->save();
+
+        // Send via MSG91 WhatsApp Template API
+        $payload  = $this->buildMsg91Payload($msisdn, $otp);
+        $authkey  = env('MSG91_AUTHKEY', '');
+        $endpoint = 'https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/';
+
+        try {
+            $resp = Http::withHeaders([
+                        'Content-Type' => 'application/json',
+                        'authkey'      => $authkey,
+                    ])
+                    ->timeout(20)
+                    ->post($endpoint, $payload);
+
+            // Log minimal info (avoid logging otp in production)
+            Log::info('MSG91 WA sendOtp response', [
+                'to'       => $msisdn,
+                'status'   => $resp->status(),
+                'ok'       => $resp->successful(),
+            ]);
+
+            if (!$resp->successful()) {
+                return response()->json([
+                    'message' => 'Failed to send OTP via WhatsApp',
+                    'status'  => $resp->status(),
+                    'error'   => $resp->json() ?: $resp->body(),
+                ], 502);
             }
-            if (isset($providerBody['error'])) {
-                $err = $providerBody['error'];
-                if (is_array($err)) {
-                    $provider['code'] = $provider['code'] ?? ($err['code'] ?? ($err['error_code'] ?? null));
-                    if (!$provider['message']) $provider['message'] = $err['message'] ?? null;
-                } elseif (is_string($err)) {
-                    $provider['message'] = $provider['message'] ?? $err;
-                }
+
+            return response()->json([
+                'message'       => 'OTP sent successfully via WhatsApp',
+                'expires_in'    => $ttlMin * 60,  // seconds
+                'mobile_number' => $msisdn,
+            ], 200);
+        } catch (\Throwable $e) {
+            Log::error('MSG91 WA sendOtp exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return response()->json([
+                'message' => 'Could not send OTP at the moment',
+            ], 500);
+        }
+    }
+
+    // ===================== VERIFY OTP =====================
+    public function verifyOtp(Request $request)
+    {
+        $v = Validator::make($request->all(), [
+            'mobile'    => 'required|string',
+            'otp'       => 'required|string',
+            'device_id' => 'nullable|string|max:255',
+        ]);
+
+        if ($v->fails()) {
+            return response()->json(['message' => 'Invalid input', 'errors' => $v->errors()], 422);
+        }
+
+        $msisdn = $this->normalizeMsisdn($request->input('mobile'), '91');
+        if ($msisdn === '' || strlen($msisdn) < 12) {
+            return response()->json(['message' => 'Invalid mobile number'], 422);
+        }
+
+        $user = User::where('mobile_number', $msisdn)->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        if (!$user->otp || !$user->expiry) {
+            return response()->json(['message' => 'No OTP pending verification'], 400);
+        }
+
+        if (Carbon::now()->greaterThan($user->expiry)) {
+            return response()->json(['message' => 'OTP expired'], 400);
+        }
+
+        if (trim($request->input('otp')) !== (string) $user->otp) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        // OTP OK — clear it, login, and optionally bind device
+        $user->otp = null;
+        $user->expiry = null;
+        $user->save();
+
+        // Issue Sanctum token
+        $token = $user->createToken('mobile-login')->plainTextToken;
+
+        // Save device if provided
+        if ($request->filled('device_id')) {
+            try {
+                UserDevice::updateOrCreate(
+                    [
+                        'pratihari_id' => $user->pratihari_id,
+                        'device_id'    => $request->input('device_id'),
+                    ],
+                    ['last_seen_at' => Carbon::now()]
+                );
+            } catch (\Throwable $e) {
+                Log::warning('verifyOtp: device save failed: '.$e->getMessage());
             }
         }
 
         return response()->json([
-            'success'  => false,
-            'message'  => $fallbackMessage,
-            'provider' => $provider,
-        ], 502);
+            'message'       => 'OTP verified successfully',
+            'token'         => $token,
+            'pratihari_id'  => $user->pratihari_id,
+            'mobile_number' => $msisdn,
+        ], 200);
     }
 
-    // ----------------- Logout -----------------
+    // ===== Your existing logout stays here =====
     public function userLogout(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
@@ -176,13 +235,11 @@ class OtpController extends Controller
             if ($deviceId) {
                 $device = UserDevice::where('pratihari_id', $user->pratihari_id)
                     ->where('device_id', $deviceId)->first();
-
                 if ($device) {
                     $device->delete();
                     $user->currentAccessToken()?->delete();
-                    Log::info("User logged out & device removed", [
-                        'pratihari_id' => $user->pratihari_id,
-                        'device_id'    => $deviceId
+                    Log::info("User logged out and device removed", [
+                        'pratihari_id' => $user->pratihari_id, 'device_id' => $deviceId
                     ]);
                 } else {
                     return response()->json(['message' => 'Device not found.'], 404);
@@ -196,170 +253,8 @@ class OtpController extends Controller
 
             return response()->json(['message' => 'User logged out successfully.'], 200);
         } catch (\Throwable $e) {
-            Log::error("Logout Error: ".$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            Log::error("Logout Error: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             return response()->json(['message' => 'An error occurred while logging out.'], 500);
         }
-    }
-
-    // ----------------- SEND OTP -----------------
-    public function sendOtp(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'mobile_number' => ['required','string','regex:/^\+?\d{10,15}$/'],
-        ], [
-            'mobile_number.regex' => 'The mobile number must be 10 to 15 digits (a leading + is allowed).'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        try {
-            $cfg = $this->msg91ConfigOrFail();
-        } catch (\RuntimeException $e) {
-            Log::error('MSG91 config error: '.$e->getMessage());
-            return response()->json([
-                'success'  => false,
-                'message'  => 'OTP service is not configured properly.',
-                'provider' => [
-                    'http_status' => 500,
-                    'type'        => 'config_error',
-                    'message'     => $e->getMessage(),
-                ],
-            ], 500);
-        }
-
-        $toMsisdn = $this->normalizeMsisdn($request->mobile_number, '91');
-        if (!$toMsisdn) {
-            return response()->json(['message' => 'Phone number format is invalid.'], 422);
-        }
-
-        $otp        = (string) random_int(100000, 999999);
-        $shortToken = Str::upper(Str::random(6)); // if template has 2 vars
-        $expiresAt  = Carbon::now()->addMinutes(10);
-
-        $user = User::updateOrCreate(
-            ['mobile_number' => $toMsisdn],
-            ['otp' => $otp, 'otp_expires_at' => $expiresAt]
-        );
-
-        // ⚠️ Build body values list in correct order for body_1, body_2 ...
-        $bodyValues   = [$otp];
-        if ($cfg['body_params'] === 2) {
-            $bodyValues[] = $shortToken;
-        }
-
-        // ✅ Pass "to" as ARRAY, "components" as OBJECT
-        $payload = $this->buildMsg91Payload(
-            $cfg['from'],
-            [$toMsisdn],            // <-- array as required by MSG91
-            $cfg['template'],
-            $cfg['namespace'],
-            $bodyValues,
-            $cfg['lang_code'],
-            $cfg['lang_policy'],
-        );
-
-        try {
-            $resp = $this->sendViaMsg91($payload, $cfg['auth']);
-            $json = $resp->json();
-            $body = $json ?: $resp->body();
-
-            Log::info('MSG91 sendOtp response', [
-                'http_status' => $resp->status(),
-                'ok'          => $resp->successful(),
-                'to'          => $toMsisdn,
-                'from'        => $cfg['from'],
-                'template'    => $cfg['template'],
-                'namespace'   => $cfg['namespace'],
-                'body_params' => $cfg['body_params'],
-                'resp'        => is_array($body) ? $body : (string) $body,
-            ]);
-
-            if (!$resp->successful()) {
-                return $this->providerErrorResponse(
-                    $resp->status(),
-                    $body,
-                    'Failed to send OTP.'
-                );
-            }
-
-            if (is_array($json) && isset($json['type']) && strtolower((string) $json['type']) === 'error') {
-                return $this->providerErrorResponse(
-                    200,
-                    $json,
-                    'OTP could not be sent.'
-                );
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'OTP sent successfully via WhatsApp.',
-                'debug_otp' => app()->environment('local') ? $otp : null,
-                'expires_in_seconds' => 600,
-            ], 200);
-
-        } catch (\Throwable $e) {
-            Log::error('MSG91 exception: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json([
-                'success'  => false,
-                'message'  => 'OTP service unavailable. Please try again.',
-                'provider' => [
-                    'http_status' => 503,
-                    'type'        => 'exception',
-                    'message'     => $e->getMessage(),
-                ],
-            ], 503);
-        }
-    }
-
-    // ----------------- VERIFY OTP -----------------
-    public function verifyOtp(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'mobile_number' => ['required','string','regex:/^\+?\d{10,15}$/'],
-            'otp' => ['required','digits:6'],
-        ], [
-            'mobile_number.regex' => 'The mobile number must be 10 to 15 digits (a leading + is allowed).'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->first()], 422);
-        }
-
-        $toMsisdn = $this->normalizeMsisdn($request->mobile_number, '91');
-
-        $user = User::where('mobile_number', $toMsisdn)->first();
-        if (!$user || !$user->otp) {
-            return response()->json(['message' => 'OTP not found. Please request a new one.'], 404);
-        }
-
-        if ($user->otp_expires_at && Carbon::parse($user->otp_expires_at)->isPast()) {
-            $user->otp = null;
-            $user->otp_expires_at = null;
-            $user->save();
-            return response()->json(['message' => 'OTP expired. Please request a new one.'], 410);
-        }
-
-        if (!hash_equals((string) $user->otp, (string) $request->otp)) {
-            return response()->json(['message' => 'Invalid OTP.'], 401);
-        }
-
-        $user->otp = null;
-        $user->otp_expires_at = null;
-
-        if (empty($user->pratihari_id)) {
-            $user->pratihari_id = 'PRATIHARI' . random_int(10000, 99999);
-        }
-        $user->save();
-
-        $token = $user->createToken('API Token')->plainTextToken;
-
-        return response()->json([
-            'message'    => 'User authenticated successfully.',
-            'token'      => $token,
-            'token_type' => 'Bearer',
-            'user'       => $user,
-        ], 200);
     }
 }
