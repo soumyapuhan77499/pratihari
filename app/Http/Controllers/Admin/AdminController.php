@@ -651,78 +651,130 @@ class AdminController extends Controller
         return redirect()->route('admin.AdminLogin');
     }
 
-    public function sebaCalendar()
-    {
-        // Get seba_ids by type
-        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
-        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
+  public function sebaCalendar(Request $request)
+{
+    // Get seba_ids by type
+    $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+    $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
-        // Get unique pratihari_ids
-        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
-            ->distinct()
-            ->pluck('pratihari_id');
+    // Get unique pratihari_ids (active only if you use status)
+    $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
+        ->when(schema_has_column('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
+        ->distinct()->pluck('pratihari_id');
 
-        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
-            ->distinct()
-            ->pluck('pratihari_id');
+    $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
+        ->when(schema_has_column('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
+        ->distinct()->pluck('pratihari_id');
 
-        // Fetch profile names
-        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
-        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
+    // Fetch profile names (sorted for nicer UX)
+    $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
+        ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
 
-        return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
+    $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
+        ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
+
+    // Optional: simple guard if user flips dates
+    $from = $request->query('from');
+    $to   = $request->query('to');
+    if ($from && $to && $from > $to) {
+        // swap so the UI still works even if they inverted dates
+        [$from, $to] = [$to, $from];
+        // rebuild the URL with corrected dates
+        return redirect()->to($request->fullUrlWithQuery(['from' => $from, 'to' => $to]));
     }
 
-    public function sebaDate(Request $request)
-    {
-        $pratihariId = $request->input('pratihari_id');
-        $events = [];
+    return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
+}
 
-        if ($pratihariId) {
-            $sebas = PratihariSeba::with('sebaMaster')
-                ->where('pratihari_id', $pratihariId)
-                ->get();
+public function sebaDate(Request $request)
+{
+    $pratihariId   = $request->input('pratihari_id');
+    $gochhikarId   = $request->input('gochhikar_id');
 
-            foreach ($sebas as $seba) {
-                $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-                $sebaType = $seba->sebaMaster->type ?? null; // Fetch from master__seba.type
-                $sebaId = $seba->seba_id;
-                $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', $seba->beddha_id);
+    // Date range (optional)
+    $from = $request->input('from'); // YYYY-MM-DD
+    $to   = $request->input('to');   // YYYY-MM-DD
 
-                foreach ($beddhaIds as $beddhaId) {
-                    $beddhaId = (int) trim($beddhaId);
+    // Normalize & guard
+    $fromDate = $from ? Carbon::parse($from)->startOfDay() : null;
+    $toDate   = $to   ? Carbon::parse($to)->endOfDay()   : null;
 
-                    if ($beddhaId < 1 || $beddhaId > 47) continue;
+    if ($fromDate && $toDate && $fromDate->gt($toDate)) {
+        // swap if inverted
+        [$fromDate, $toDate] = [$toDate, $fromDate];
+    }
 
-                    if ($sebaType === 'gochhikar') {
-                        $intervalDays = 16;
-                        $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2055, 12, 31);
-                    } else {
-                        $intervalDays = 47;
-                        $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                        $endDate = Carbon::create(2050, 12, 31);
-                    }
+    // Require at least one identity filter (keeps behavior consistent with UI)
+    if (!$pratihariId && !$gochhikarId) {
+        return response()->json([]);
+    }
 
-                    $nextDate = $startDate->copy();
+    // If both are provided, prioritize pratihari_id (you can change this rule if needed)
+    $activeId = $pratihariId ?: $gochhikarId;
 
-                    while ($nextDate->lte($endDate)) {
-                        $events[] = [
-                            'title' => "$sebaName - Beddha $beddhaId",
-                            'start' => $nextDate->toDateString(),
-                            'extendedProps' => [
-                                'sebaName' => $sebaName,
-                                'beddhaId' => $beddhaId,
-                                'sebaId' => $sebaId
-                            ]
-                        ];
-                        $nextDate->addDays($intervalDays);
-                    }
+    // Pull assignments with master to know seba type
+    $sebas = PratihariSeba::with('sebaMaster')
+        ->where('pratihari_id', $activeId)
+        ->get();
+
+    $events = [];
+
+    foreach ($sebas as $seba) {
+        $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+        $sebaType = $seba->sebaMaster->type ?? null; // 'pratihari' | 'gochhikar'
+        $sebaId   = $seba->seba_id;
+
+        // Accessor may already return array; if not, normalize
+        $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', (string) $seba->beddha_id);
+
+        foreach ($beddhaIds as $rawBeddhaId) {
+            $beddhaId = (int) trim($rawBeddhaId);
+            if ($beddhaId < 1 || $beddhaId > 47) continue;
+
+            // Schedule seeds (your existing logic kept intact)
+            if ($sebaType === 'gochhikar') {
+                $intervalDays = 16;
+                $seedStart    = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
+                $seedEnd      = Carbon::create(2055, 12, 31)->endOfDay();
+            } else {
+                $intervalDays = 47;
+                $seedStart    = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                $seedEnd      = Carbon::create(2050, 12, 31)->endOfDay();
+            }
+
+            // Apply global 'to' cap
+            $hardEnd = $toDate ? min($seedEnd, $toDate->copy()) : $seedEnd;
+
+            // If there’s a 'from', jump directly to the first occurrence >= fromDate
+            if ($fromDate && $fromDate->gt($seedStart)) {
+                $daysDiff = $seedStart->diffInDays($fromDate, false); // negative if from < seedStart
+                // How many intervals to skip forward?
+                $skip = (int) ceil(max(0, $daysDiff) / $intervalDays);
+                $nextDate = $seedStart->copy()->addDays($skip * $intervalDays);
+            } else {
+                $nextDate = $seedStart->copy();
+            }
+
+            // Generate within [fromDate..hardEnd] inclusive
+            while ($nextDate->lte($hardEnd)) {
+                // Respect lower bound if present
+                if (!$fromDate || $nextDate->gte($fromDate)) {
+                    $events[] = [
+                        'title' => "{$sebaName} - Beddha {$beddhaId}",
+                        'start' => $nextDate->toDateString(),
+                        'extendedProps' => [
+                            'sebaName' => $sebaName,
+                            'beddhaId' => $beddhaId,
+                            'sebaId'   => $sebaId,
+                            'sebaType' => $sebaType,
+                        ],
+                    ];
                 }
+                $nextDate->addDays($intervalDays);
             }
         }
-
-        return response()->json($events);
     }
 
+    return response()->json($events);
+}
 }

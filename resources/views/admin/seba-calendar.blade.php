@@ -115,6 +115,12 @@
                         @if(request('gochhikar_id'))
                             <input type="hidden" name="gochhikar_id" value="{{ request('gochhikar_id') }}">
                         @endif
+                        @if(request('from'))
+                            <input type="hidden" name="from" value="{{ request('from') }}">
+                        @endif
+                        @if(request('to'))
+                            <input type="hidden" name="to" value="{{ request('to') }}">
+                        @endif
                     </form>
                 </div>
             </div>
@@ -144,10 +150,59 @@
                         @if(request('pratihari_id'))
                             <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
                         @endif
+                        @if(request('from'))
+                            <input type="hidden" name="from" value="{{ request('from') }}">
+                        @endif
+                        @if(request('to'))
+                            <input type="hidden" name="to" value="{{ request('to') }}">
+                        @endif
                     </form>
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="row g-3 mt-0">
+      <div class="col-lg-12">
+        <div class="card custom-card">
+          <div class="card-header" style="background:#0ea5e9;color:#fff;">
+            <i class="fa-solid fa-calendar-range me-1"></i> Filter by Date Range
+          </div>
+          <div class="card-body">
+            <form method="GET" action="{{ url()->current() }}" class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">From</label>
+                <input type="date" name="from" class="form-control" value="{{ request('from') }}">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">To</label>
+                <input type="date" name="to" class="form-control" value="{{ request('to') }}">
+              </div>
+
+              <!-- Preserve identity filters -->
+              @if(request('pratihari_id'))
+                <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
+              @endif
+              @if(request('gochhikar_id'))
+                <input type="hidden" name="gochhikar_id" value="{{ request('gochhikar_id') }}">
+              @endif
+
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fa-solid fa-magnifying-glass me-1"></i> Apply
+                </button>
+              </div>
+              <div class="col-md-3">
+                <a href="{{ url()->current() }}?{{ http_build_query(collect(request()->except(['from','to']))->all()) }}"
+                   class="btn btn-outline-secondary w-100">
+                  Reset Dates
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Calendar -->
@@ -161,7 +216,7 @@
                     @if(!request('pratihari_id') && !request('gochhikar_id'))
                         <div class="alert alert-info d-flex align-items-center" role="alert">
                             <i class="fa-solid fa-circle-info me-2"></i>
-                            Select a Pratihari or Gochhikar to load events.
+                            Select a Pratihari or Gochhikar, and optionally choose a date range.
                         </div>
                     @endif
                     <div id="custom-calendar"></div>
@@ -202,15 +257,16 @@
 
     <script>
         $(function () {
-            // Init Select2 once
             $('.select2').select2({ placeholder: 'Select name', allowClear: true, width: '100%' });
         });
 
         document.addEventListener('DOMContentLoaded', function () {
-            const calendarEl = document.getElementById('custom-calendar');
-            const urlParams  = new URLSearchParams(window.location.search);
+            const calendarEl  = document.getElementById('custom-calendar');
+            const urlParams   = new URLSearchParams(window.location.search);
             const pratihariId = urlParams.get('pratihari_id');
             const gochhikarId = urlParams.get('gochhikar_id');
+            const fromDate    = urlParams.get('from'); // YYYY-MM-DD
+            const toDate      = urlParams.get('to');   // YYYY-MM-DD
 
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
@@ -221,17 +277,21 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 events: function (fetchInfo, success, failure) {
-                    // Only load when at least one filter is present
+                    // Only load when at least one identity filter is present
                     if (!pratihariId && !gochhikarId) {
                         success([]);
                         return;
                     }
 
-                    // Build query preserving both filters if present
                     const qs = new URLSearchParams();
-                    if (pratihariId)  qs.set('pratihari_id', pratihariId);
-                    if (gochhikarId)  qs.set('gochhikar_id', gochhikarId);
-                    // Prevent caches in some proxies
+                    if (pratihariId) qs.set('pratihari_id', pratihariId);
+                    if (gochhikarId) qs.set('gochhikar_id', gochhikarId);
+
+                    // Pass date range if provided
+                    if (fromDate) qs.set('from', fromDate);
+                    if (toDate)   qs.set('to', toDate);
+
+                    // Prevent caching
                     qs.set('_', Date.now());
 
                     fetch(`{{ route('admin.sebaDate') }}?` + qs.toString())
