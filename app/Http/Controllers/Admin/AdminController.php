@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;   // <-- add this
+
 
 
 use Carbon\Carbon;
