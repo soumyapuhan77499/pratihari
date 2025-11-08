@@ -462,7 +462,7 @@ class AdminController extends Controller
 
         return view('admin.pratihari-manage-profile', compact('profiles'));
     }
-      private function isValidIndianMobile(?string $raw): bool
+ private function isValidIndianMobile(?string $raw): bool
     {
         if (!$raw) return false;
         $digits = preg_replace('/\D+/', '', $raw);
@@ -546,8 +546,6 @@ class AdminController extends Controller
         }
         return $errStr;
     }
-
-    /* ==================== Send OTP ==================== */
 
     public function sendOtp(Request $request)
     {
@@ -770,8 +768,6 @@ class AdminController extends Controller
         }
     }
 
-    /* ==================== Verify OTP ==================== */
-
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -820,6 +816,7 @@ class AdminController extends Controller
 
         return redirect()->route('admin.dashboard')->with('success', 'OTP verified. You are logged in.');
     }
+
 
     public function logout()
     {
