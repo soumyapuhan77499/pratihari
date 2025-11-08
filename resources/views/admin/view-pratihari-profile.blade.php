@@ -46,7 +46,7 @@
             padding:.35rem .55rem; border-radius:999px; font-weight:600; white-space:nowrap; backdrop-filter:blur(2px);
         }
 
-        /* Donut rail (ROW-WISE) */
+        /* Donut rail */
         .donut-card{
             border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08);
             border-radius:14px; box-shadow:inset 0 1px 0 rgba(255,255,255,.15), 0 8px 20px rgba(2,6,23,.15);
@@ -130,6 +130,38 @@
             padding:10px 16px; display:flex; justify-content:flex-end; gap:.5rem; border-top:1px solid var(--border);
         }
         .addr-card .addr-foot .btn{ border-radius:999px; padding:.35rem .7rem; }
+
+        /* SEBA cards */
+        .seba-card{
+            border:1px solid var(--border);
+            border-radius:14px;
+            overflow:hidden;
+            background:var(--surface);
+            box-shadow:0 10px 28px rgba(2,6,23,.06);
+            height:100%;
+        }
+        .seba-card .seba-head{
+            color:#fff; padding:14px 16px; display:flex; align-items:center; gap:.6rem; font-weight:800;
+        }
+        .seba-card .seba-title{ flex:1; }
+        .seba-card .seba-body{ padding:14px 16px; }
+        .seba-card .row-line{ display:flex; gap:.6rem; padding:.45rem 0; border-bottom:1px dashed rgba(2,6,23,.08); }
+        .seba-card .row-line:last-child{ border-bottom:0; }
+        .seba-card .row-line i{ width:22px; text-align:center; color:#334155; opacity:.9; margin-top:.2rem; }
+        .seba-card .k{ font-size:.78rem; color:var(--muted); display:block; }
+        .seba-card .v{ font-weight:700; color:var(--ink); }
+        .seba-chip{
+            display:inline-flex; align-items:center; gap:.35rem; padding:.3rem .55rem; border-radius:999px;
+            background:linear-gradient(90deg, var(--brand-a), var(--brand-b)); color:#fff; font-weight:700; font-size:.8rem;
+            box-shadow:0 6px 14px rgba(124,58,237,.18);
+        }
+        /* Gradient palette for variety */
+        .grad-1{ background:linear-gradient(120deg,#0ea5e9,#22c55e); }  /* blue->green */
+        .grad-2{ background:linear-gradient(120deg,#7c3aed,#f43f5e); }  /* violet->rose */
+        .grad-3{ background:linear-gradient(120deg,#06b6d4,#3b82f6); }  /* cyan->blue */
+        .grad-4{ background:linear-gradient(120deg,#f59e0b,#ef4444); }  /* amber->red */
+        .grad-5{ background:linear-gradient(120deg,#10b981,#14b8a6); }  /* emerald->teal */
+        .grad-6{ background:linear-gradient(120deg,#ec4899,#8b5cf6); }  /* pink->violet */
 
         /* Focus */
         :focus-visible{
@@ -346,7 +378,7 @@
                 </div>
             </div>
 
-            <!-- ADDRESS (NEW TWO-CARD DESIGN) -->
+            <!-- ADDRESS (two colorful cards) -->
             <div class="tab-pane fade" id="address" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
@@ -502,37 +534,78 @@
                 </div>
             </div>
 
-            <!-- SEBA -->
+            <!-- SEBA (NEW COLORFUL CARD GRID) -->
             <div class="tab-pane fade" id="seba" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
                         <h6 class="section-title"><i class="fa-solid fa-gears me-2" style="color:var(--amber)"></i>Seba Details</h6>
-                        <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                        <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-sm btn-amber">
+                            <i class="fa-regular fa-pen-to-square me-1"></i>Edit
+                        </a>
                     </div>
 
-                    @forelse ($sebaDetails as $s)
-                        <div class="profile-item">
-                            <i class="fa-solid fa-hand-holding-heart"></i>
-                            <div class="w-100">
-                                <div><span class="key">Seba Name</span>
-                                    <span class="val">{{ $s->sebaMaster->seba_name ?? 'Not Available' }}</span>
+                    @php
+                        $grads = ['grad-1','grad-2','grad-3','grad-4','grad-5','grad-6'];
+                    @endphp
+
+                    @forelse ($sebaDetails as $idx => $s)
+                        @php
+                            $beddhas = $s->beddhas();
+                            $grad = $grads[$idx % count($grads)];
+                            $sebaName = $s->sebaMaster->seba_name ?? 'Not Available';
+                        @endphp
+
+                        @if ($idx % 3 === 0)
+                            <div class="row g-3 g-lg-4">
+                        @endif
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="seba-card">
+                                <div class="seba-head {{ $grad }}">
+                                    <i class="fa-solid fa-hand-holding-heart"></i>
+                                    <div class="seba-title">{{ $sebaName }}</div>
+                                    <span class="badge-soft">Seba</span>
                                 </div>
-                                <div class="mt-2">
-                                    <span class="key">Bheddha Assigned</span>
-                                    @php $beddhas = $s->beddhas(); @endphp
-                                    @if ($beddhas->isNotEmpty())
-                                        <div class="mt-1">
-                                            @foreach ($beddhas as $beddha)
-                                                <span class="beddha-pill"><i class="fa-solid fa-user-tag"></i>{{ $beddha->beddha_name }}</span>
-                                            @endforeach
+                                <div class="seba-body">
+                                    <div class="row-line">
+                                        <i class="fa-solid fa-tags"></i>
+                                        <div>
+                                            <span class="k">Seba Name</span>
+                                            <span class="v">{{ $sebaName }}</span>
                                         </div>
-                                    @else
-                                        <div class="text-muted">Not Assigned</div>
+                                    </div>
+                                    <div class="row-line">
+                                        <i class="fa-solid fa-user-group"></i>
+                                        <div class="w-100">
+                                            <span class="k">Bheddha Assigned</span>
+                                            @if ($beddhas->isNotEmpty())
+                                                <div class="mt-1 d-flex flex-wrap gap-1">
+                                                    @foreach ($beddhas as $beddha)
+                                                        <span class="seba-chip"><i class="fa-solid fa-user-tag"></i>{{ $beddha->beddha_name }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <div class="text-muted">Not Assigned</div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    @if (!empty($s->remarks))
+                                        <div class="row-line">
+                                            <i class="fa-solid fa-note-sticky"></i>
+                                            <div>
+                                                <span class="k">Remarks</span>
+                                                <span class="v">{{ $s->remarks }}</span>
+                                            </div>
+                                        </div>
                                     @endif
                                 </div>
                             </div>
                         </div>
-                        <hr class="my-3">
+
+                        @if ($idx % 3 === 2 || $loop->last)
+                            </div>
+                        @endif
                     @empty
                         <p class="text-muted mb-0">No seba details available.</p>
                     @endforelse
