@@ -21,16 +21,12 @@ class OtpController extends Controller
         $digits = preg_replace('/\D+/', '', (string) $raw);
         if ($digits === '') return '';
 
-        // 10 local digits -> prefix country code
         if (strlen($digits) === 10 && $defaultCountryCode) {
             return $defaultCountryCode . $digits;
         }
-
-        // 11 digits starting with 0 -> strip 0, then prefix country code
         if (strlen($digits) === 11 && $digits[0] === '0' && $defaultCountryCode) {
             return $defaultCountryCode . substr($digits, 1);
         }
-
         return $digits;
     }
 
@@ -55,7 +51,6 @@ class OtpController extends Controller
             throw new \RuntimeException('MSG91 config missing keys: '.implode(', ', $missing));
         }
 
-        // Normalize sender (integrated WA number) to digits only
         $cfg['from'] = $this->normalizeMsisdn($cfg['from_raw'], '91');
         if (!$cfg['from']) {
             throw new \RuntimeException('MSG91 sender (wa_number) is invalid. Check MSG91_WA_NUMBER.');
@@ -68,47 +63,51 @@ class OtpController extends Controller
         return $cfg;
     }
 
-    /** Build MSG91 WhatsApp template payload (1 or 2 body variables) */
-   /** Build MSG91 WhatsApp template payload (bulk format with to_and_components) */
-private function buildMsg91Payload(
-    string $fromIntegrated,
-    string $toMsisdn,
-    string $template,
-    string $namespace,
-    array $bodyParams, // array of ['type'=>'text','text'=>'...'] in correct order
-    string $langCode = 'en_US',
-    string $langPolicy = 'deterministic'
-): array {
-    return [
-        "integrated_number" => $fromIntegrated, // digits only, e.g. 919124420330
-        "content_type"      => "template",
-        "payload"           => [
-            // IMPORTANT: no "messaging_product" here for MSG91 bulk
-            "type"      => "template",
-            "template"  => [
-                "name"      => $template,
-                "namespace" => $namespace,
-                "language"  => [
-                    "code"   => $langCode,
-                    "policy" => $langPolicy,
+    /**
+     * ✅ Build MSG91 bulk payload using to_and_components (EXPECTED FORMAT)
+     * components must be an OBJECT keyed as body_1, body_2, ... each => {type:"text", value:"..."}
+     * "to" must be an ARRAY of msisdns (strings).
+     */
+    private function buildMsg91Payload(
+        string $fromIntegrated,
+        array $toList,                 // <-- array of digits-only msisdns
+        string $template,
+        string $namespace,
+        array $bodyValues,             // <-- ['123456'] or ['123456','TOKEN123']
+        string $langCode = 'en_US',
+        string $langPolicy = 'deterministic'
+    ): array {
+        // Build components object: body_1, body_2 ...
+        $components = [];
+        foreach ($bodyValues as $i => $val) {
+            $components['body_' . ($i + 1)] = [
+                'type'  => 'text',
+                'value' => (string) $val,
+            ];
+        }
+
+        return [
+            "integrated_number" => $fromIntegrated, // digits only
+            "content_type"      => "template",
+            "payload"           => [
+                "type"      => "template",
+                "template"  => [
+                    "name"      => $template,
+                    "namespace" => $namespace,
+                    "language"  => [
+                        "code"   => $langCode,
+                        "policy" => $langPolicy,
+                    ],
                 ],
-            ],
-            // Per-recipient array with its own components
-            "to_and_components" => [
-                [
-                    "to" => $toMsisdn, // digits only, e.g. 91XXXXXXXXXX
-                    "components" => [
-                        [
-                            "type"       => "body",
-                            "parameters" => $bodyParams, // e.g. [ {"type":"text","text":"123456"} ]
-                        ],
+                "to_and_components" => [
+                    [
+                        "to"         => $toList,     // array of "91XXXXXXXXXX"
+                        "components" => $components, // object: { "body_1": {...}, "body_2": {...} }
                     ],
                 ],
             ],
-        ],
-    ];
-}
-
+        ];
+    }
 
     private function sendViaMsg91(array $payload, string $authKey)
     {
@@ -117,7 +116,6 @@ private function buildMsg91Payload(
         return Http::withHeaders([
             'Content-Type' => 'application/json',
             'Accept'       => 'application/json',
-            // Some infra expects lowercase, some capitalized
             'authkey'      => $authKey,
             'Authkey'      => $authKey,
         ])
@@ -125,10 +123,9 @@ private function buildMsg91Payload(
         ->post($url, $payload);
     }
 
-    /** Create a uniform, **detailed** error response for Postman */
+    /** Build consistent provider error response */
     private function providerErrorResponse(int $httpStatus, $providerBody, string $fallbackMessage = 'Failed to send OTP.')
     {
-        // Extract useful fields if JSON; else return string body
         $provider = [
             'http_status' => $httpStatus,
             'code'        => null,
@@ -138,13 +135,11 @@ private function buildMsg91Payload(
         ];
 
         if (is_array($providerBody)) {
-            // Common MSG91 fields: 'type', 'message', sometimes 'errors' or 'error'
             $provider['type']    = $providerBody['type']    ?? null;
-            $provider['message'] = $providerBody['message'] ?? null;
-            // attempt to surface nested codes/messages if provided
+            $provider['message'] = $providerBody['message'] ?? ($providerBody['errors'] ?? null);
             if (isset($providerBody['errors']) && is_array($providerBody['errors']) && isset($providerBody['errors'][0])) {
                 $first = $providerBody['errors'][0];
-                $provider['code'] = $first['code']    ?? ($first['error_code'] ?? null);
+                $provider['code'] = $first['code'] ?? ($first['error_code'] ?? null);
                 if (!$provider['message'] && isset($first['message'])) {
                     $provider['message'] = $first['message'];
                 }
@@ -223,7 +218,6 @@ private function buildMsg91Payload(
             $cfg = $this->msg91ConfigOrFail();
         } catch (\RuntimeException $e) {
             Log::error('MSG91 config error: '.$e->getMessage());
-            // Also expose this clearly in API response
             return response()->json([
                 'success'  => false,
                 'message'  => 'OTP service is not configured properly.',
@@ -235,37 +229,33 @@ private function buildMsg91Payload(
             ], 500);
         }
 
-        // Normalize destination to MSG91 format (digits, no +)
         $toMsisdn = $this->normalizeMsisdn($request->mobile_number, '91');
         if (!$toMsisdn) {
             return response()->json(['message' => 'Phone number format is invalid.'], 422);
         }
 
-        // Create OTP & (optional) token
         $otp        = (string) random_int(100000, 999999);
-        $shortToken = Str::upper(Str::random(6)); // used only if template expects 2 vars
+        $shortToken = Str::upper(Str::random(6)); // if template has 2 vars
         $expiresAt  = Carbon::now()->addMinutes(10);
 
-        // Persist user/OTP (mutator will normalize +91 -> digits)
         $user = User::updateOrCreate(
             ['mobile_number' => $toMsisdn],
             ['otp' => $otp, 'otp_expires_at' => $expiresAt]
         );
 
-        // Build BODY parameters according to template variable count
-        $bodyParams = [
-            ["type" => "text", "text" => $otp],
-        ];
+        // ⚠️ Build body values list in correct order for body_1, body_2 ...
+        $bodyValues   = [$otp];
         if ($cfg['body_params'] === 2) {
-            $bodyParams[] = ["type" => "text", "text" => $shortToken];
+            $bodyValues[] = $shortToken;
         }
 
+        // ✅ Pass "to" as ARRAY, "components" as OBJECT
         $payload = $this->buildMsg91Payload(
             $cfg['from'],
-            $toMsisdn,
+            [$toMsisdn],            // <-- array as required by MSG91
             $cfg['template'],
             $cfg['namespace'],
-            $bodyParams,
+            $bodyValues,
             $cfg['lang_code'],
             $cfg['lang_policy'],
         );
@@ -275,7 +265,6 @@ private function buildMsg91Payload(
             $json = $resp->json();
             $body = $json ?: $resp->body();
 
-            // Log minimal but actionable info (no secrets)
             Log::info('MSG91 sendOtp response', [
                 'http_status' => $resp->status(),
                 'ok'          => $resp->successful(),
@@ -287,7 +276,6 @@ private function buildMsg91Payload(
                 'resp'        => is_array($body) ? $body : (string) $body,
             ]);
 
-            // Hard failures (HTTP non-2xx)
             if (!$resp->successful()) {
                 return $this->providerErrorResponse(
                     $resp->status(),
@@ -296,7 +284,6 @@ private function buildMsg91Payload(
                 );
             }
 
-            // Soft failures (MSG91 returns 200 but type=error)
             if (is_array($json) && isset($json['type']) && strtolower((string) $json['type']) === 'error') {
                 return $this->providerErrorResponse(
                     200,
@@ -358,7 +345,6 @@ private function buildMsg91Payload(
             return response()->json(['message' => 'Invalid OTP.'], 401);
         }
 
-        // Success -> clear OTP
         $user->otp = null;
         $user->otp_expires_at = null;
 
