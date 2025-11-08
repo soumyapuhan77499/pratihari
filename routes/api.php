@@ -30,8 +30,8 @@ use App\Http\Controllers\Api\StatusController;
 // ->name('admin.verifyOtp');
 
 
-Route::post('/otp/send', [OtpController::class, 'sendOtp']);
-Route::post('/otp/verify', [OtpController::class, 'verifyOtp']);
+Route::post('/send-otp', [OtpController::class, 'sendOtp']);
+Route::post('/otp/pratihari/verify-otp', [OtpController::class, 'verifyOtp']);
 
 /*
 |--------------------------------------------------------------------------
