@@ -117,11 +117,11 @@ class OtpController extends Controller
     {
         // accept mobile or mobile_number
         $request->merge([
-            'mobile' => $request->input('mobile') ?? $request->input('mobile_number')
+            'mobile_number' => $request->input('mobile_number') ?? $request->input('mobile_number')
         ]);
 
         $v = Validator::make($request->all(), [
-            'mobile'    => 'required|string',
+            'mobile_number'    => 'required|string',
             'device_id' => 'nullable|string|max:255',
         ]);
 
@@ -129,7 +129,7 @@ class OtpController extends Controller
             return response()->json(['message' => 'Invalid input', 'errors' => $v->errors()], 422);
         }
 
-        $msisdn = $this->normalizeMsisdn($request->input('mobile'), '91');
+        $msisdn = $this->normalizeMsisdn($request->input('mobile_number'), '91');
         if ($msisdn === '' || strlen($msisdn) < 12) {
             return response()->json(['message' => 'Invalid mobile number'], 422);
         }
@@ -194,11 +194,11 @@ class OtpController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->merge([
-            'mobile' => $request->input('mobile') ?? $request->input('mobile_number')
+            'mobile_number' => $request->input('mobile_number') ?? $request->input('mobile_number')
         ]);
 
         $v = Validator::make($request->all(), [
-            'mobile'    => 'required|string',
+            'mobile_number'    => 'required|string',
             'otp'       => 'required|string',
             'device_id' => 'nullable|string|max:255',
         ]);
@@ -207,7 +207,7 @@ class OtpController extends Controller
             return response()->json(['message' => 'Invalid input', 'errors' => $v->errors()], 422);
         }
 
-        $msisdn = $this->normalizeMsisdn($request->input('mobile'), '91');
+        $msisdn = $this->normalizeMsisdn($request->input('mobile_number'), '91');
         if ($msisdn === '' || strlen($msisdn) < 12) {
             return response()->json(['message' => 'Invalid mobile number'], 422);
         }
