@@ -7,12 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    <!-- Friendly, legible fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
-        rel="stylesheet" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- DataTables / Select2 CSS (optional, if used elsewhere) -->
+    <!-- (Optional) plugins you use elsewhere -->
     <link href="{{ asset('assets/plugins/datatable/css/dataTables.bootstrap5.css') }}" rel="stylesheet" />
     <link href="{{ asset('assets/plugins/datatable/css/buttons.bootstrap5.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/plugins/datatable/responsive.bootstrap5.css') }}" rel="stylesheet" />
@@ -72,7 +70,7 @@
             outline-color: var(--brand-b)
         }
 
-        :is(a, button, .panel, .kpi, .pill, .nav-link, .chip):focus-visible {
+        :is(a, button, .panel, .kpi, .pill, .nav-link):focus-visible {
             box-shadow: 0 0 0 4px var(--ring)
         }
 
@@ -137,7 +135,7 @@
             color: var(--muted);
         }
 
-        /* Header */
+        /* Header block */
         .gradient-header {
             position: relative;
             border-radius: 18px;
@@ -205,99 +203,73 @@
             border-color: transparent;
         }
 
-        /* Small “chip cards” for users */
-        .strip {
+        /* USER GRID (row-wise, scrollable) */
+        .usergrid-wrap {
+            max-height: 420px;
+            overflow: auto;
+            padding: 2px;
+        }
+
+        .usergrid {
             display: grid;
-            grid-auto-flow: column;
-            grid-auto-columns: minmax(220px, 30%);
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 10px;
-            overflow-x: auto;
-            padding: 2px 2px 10px;
-            scroll-snap-type: x mandatory;
         }
 
-        .strip::-webkit-scrollbar {
-            height: 8px
-        }
-
-        .strip::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 8px
-        }
-
-        html.dark .strip::-webkit-scrollbar-thumb {
-            background: #475569
-        }
-
-        .chipcard {
-            scroll-snap-align: start;
+        .usercard {
             background: color-mix(in oklab, var(--panel) 92%, var(--surface-2));
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px 12px;
+            border-radius: 14px;
+            padding: 10px 8px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 10px;
-            min-height: 56px
+            gap: 8px;
+            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+            min-height: 130px;
         }
 
-        .chip-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: grid;
-            place-items: center;
-            background: #eef2ff;
-            color: #4f46e5;
-            font-weight: 800;
+        .usercard:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: rgba(124, 58, 237, .35);
+        }
+
+        .photo-wrap {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 12px;
+            overflow: hidden;
             border: 1px solid var(--border);
-            flex: 0 0 auto;
+            background: #f1f5f9;
         }
 
-        .chip-main {
-            min-width: 0;
-            display: flex;
-            flex-direction: column
+        .photo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform .2s ease;
         }
 
-        .chip-name {
+        /* Big preview on hover (zoom) */
+        .photo-wrap:hover img {
+            transform: scale(1.7);
+        }
+
+        .uname {
             font-weight: 800;
             line-height: 1.1;
+            text-align: center;
+            font-size: .92rem;
+            width: 100%;
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis
+            text-overflow: ellipsis;
         }
 
-        .chip-meta {
-            font-size: .82rem;
-            color: var(--muted);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis
-        }
-
-        .chip-badge {
-            margin-left: auto;
-            font-size: .72rem;
-            border: 1px solid var(--border);
-            border-radius: 999px;
-            padding: 2px 8px;
-            color: var(--ink-soft)
-        }
-
-        .chip-badge.ok {
-            color: #16a34a;
-            border-color: rgba(16, 185, 129, .25);
-            background: rgba(16, 185, 129, .10)
-        }
-
-        .chip-badge.warn {
-            color: #f59e0b;
-            border-color: rgba(245, 158, 11, .25);
-            background: rgba(245, 158, 11, .12)
-        }
-
-        /* KPIs */
+        /* KPI */
         .kpi {
             position: relative;
             background: var(--panel);
@@ -393,13 +365,9 @@
             --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc)
         }
 
-        .mono {
-            font-family: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace
-        }
-
-        @media (max-width:576px) {
-            .header-actions {
-                margin-top: 12px
+        @media (max-width: 576px) {
+            .usergrid-wrap {
+                max-height: 360px;
             }
         }
     </style>
@@ -407,7 +375,22 @@
 
 @section('content')
     @php
-        // Helpers for name/initials (no photos to keep chips small)
+        use Illuminate\Support\Facades\Storage;
+
+        // Avatar URL helper (supports public disk or absolute)
+        $avatarUrl = function ($u) {
+            $cand = $u->photo ?? ($u->profile_photo ?? ($u->profile_photo_path ?? ($u->avatar ?? null)));
+            if (!$cand) {
+                return null;
+            }
+            if (preg_match('/^https?:\/\//i', $cand)) {
+                return $cand;
+            }
+            if (Storage::disk('public')->exists($cand)) {
+                return Storage::disk('public')->url($cand);
+            }
+            return asset($cand);
+        };
         $fullName = function ($u) {
             $n = trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? ''));
             return $n !== '' ? $n : $u->name ?? '—';
@@ -422,28 +405,6 @@
             }
             return $both;
         };
-
-        // KPI payloads (kept simple, no modals)
-        $mapProfile = fn($u) => ['name' => $fullName($u), 'phone' => $u->phone_no ?? ''];
-        $mapApplication = fn($a) => [
-            'name' => $a->header ?? 'N/A',
-            'phone' => '',
-            'meta' => $a->date ?? '',
-            'link' => '',
-        ];
-
-        $arrTodayProfiles = $todayProfiles->map($mapProfile)->values();
-        $arrPendingProfiles = $pendingProfile->map($mapProfile)->values();
-        $arrActiveProfiles = $totalActiveUsers->map($mapProfile)->values();
-        $arrIncompleteProfiles = $incompleteProfiles->map($mapProfile)->values();
-        $arrTodayApproved = $todayApprovedProfiles->map($mapProfile)->values();
-        $arrTodayRejected = $todayRejectedProfiles->map($mapProfile)->values();
-        $arrUpdatedProfiles = $updatedProfiles->map($mapProfile)->values();
-        $arrRejectedAll = $rejectedProfiles->map($mapProfile)->values();
-
-        $arrAppsToday = $todayApplications->map($mapApplication)->values();
-        $arrAppsApproved = $approvedApplication->map($mapApplication)->values();
-        $arrAppsRejected = $rejectedApplication->map($mapApplication)->values();
     @endphp
 
     <!-- App Bar -->
@@ -455,7 +416,7 @@
                         class="dot"></span>{{ \Carbon\Carbon::now()->format('d M Y') }}</span>
             </div>
             <div class="d-flex align-items-center gap-2">
-                <div class="d-none d-sm-flex align-items-center gap-2 subtle mono">
+                <div class="d-none d-sm-flex align-items-center gap-2 subtle">
                     <i class="bi bi-clock-history"></i><span id="live-time"></span>
                 </div>
                 <button id="themeToggle" class="btn-theme" type="button" aria-pressed="false">
@@ -473,10 +434,10 @@
             <div class="d-flex align-items-start align-items-md-center gap-3 flex-column flex-md-row">
                 <span class="icon-hero"><i class="bi bi-speedometer2"></i></span>
                 <div class="flex-grow-1">
-                    <div class="fw-800 fs-5">Pratihari Admin Dashboard</div>
-                    <div class="subtitle">Compact, chip-style cards — no popups.</div>
+                    <div class="fw-bold fs-5">Pratihari Admin Dashboard</div>
+                    <div class="small">Clean row-wise cards with photo + name. Hover the photo to zoom.</div>
                 </div>
-                <div class="header-actions d-flex gap-2 ms-md-auto">
+                <div class="d-flex gap-2 ms-md-auto">
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'today') }}"
                         style="color:#fff"><i class="bi bi-funnel"></i> Today</a>
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"
@@ -485,6 +446,7 @@
                         style="color:#fff"><i class="bi bi-hourglass-split"></i> Pending</a>
                 </div>
             </div>
+
             <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
                 <span class="pill"><i class="bi bi-badge-ad"></i><span class="fw-bold">Pratihari Beddha:</span><span
                         class="ms-1">{{ $pratihariBeddha ?: 'N/A' }}</span></span>
@@ -494,18 +456,19 @@
         </div>
 
         <div class="row g-3">
-            <!-- LEFT: Pratihari & Nijoga (small cards directly) -->
+
+            <!-- LEFT: Pratihari & Nijoga (row-wise user grid, scrollable) -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
                     <div class="px-3 pt-3">
                         <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero"
-                                    style="background:transparent;border-color:rgba(255,255,255,.35);"><i
-                                        class="bi bi-person-badge"></i></span>
+                                <span class="icon-hero" style="background:transparent;border-color:rgba(255,255,255,.35);">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
                                 <div class="flex-grow-1">
                                     <div class="fw-bold">Today’s Pratihari Seba</div>
-                                    <div class="small" style="opacity:.9;">Assigned users shown as compact chips</div>
+                                    <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
                                 </div>
                                 <div class="d-flex align-items-center gap-2">
                                     <span
@@ -539,92 +502,98 @@
                         </ul>
 
                         <div class="tab-content" id="sebaTabsContent">
-                            <!-- Pratihari chips -->
+
+                            <!-- Pratihari -->
                             <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel"
                                 aria-labelledby="pratihari-tab">
                                 @forelse ($pratihariEvents as $label => $entries)
-                                    <div class="mb-2">
-                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-semibold">{{ $label }}</span>
                                                 <span class="badge text-bg-light border">{{ count($entries) }}</span>
                                             </div>
-                                            <span class="chip-badge ok">Today</span>
                                         </div>
-                                        <div class="strip">
-                                            @foreach ($entries as $e)
-                                                @php
-                                                    $u = $e['profile'];
-                                                    $name = $fullName($u);
-                                                    $ini = $initials($u);
-                                                    $phone = $u->phone_no ?? '—';
-                                                    $beddha = $e['beddha'] ?? '—';
-                                                    $by = $e['assigned_by'] ?? 'Unknown';
-                                                @endphp
-                                                <div class="chipcard" title="{{ $name }}">
-                                                    <div class="chip-avatar">{{ $ini }}</div>
-                                                    <div class="chip-main">
-                                                        <div class="chip-name">{{ $name }}</div>
-                                                        <div class="chip-meta">
-                                                            {{ $phone !== '—' ? '☎ ' . $phone : 'No phone' }}</div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($entries as $e)
+                                                    @php
+                                                        $u = $e['profile'];
+                                                        $name = $fullName($u);
+                                                        $photo = $avatarUrl($u);
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <div class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
                                                     </div>
-                                                    <span class="chip-badge">{{ 'Beddha ' . $beddha }}</span>
-                                                    <span
-                                                        class="chip-badge {{ $by === 'User' ? 'ok' : 'warn' }}">{{ $by }}</span>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="alert alert-light border d-flex align-items-center"><i
-                                            class="bi bi-info-circle me-2"></i>No seba assigned for today.</div>
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No seba assigned for today.
+                                    </div>
                                 @endforelse
                             </div>
 
-                            <!-- Nijoga chips -->
+                            <!-- Nijoga -->
                             <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
                                 @forelse ($nijogaAssign as $label => $entries)
-                                    <div class="mb-2">
-                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <span class="fw-semibold">{{ $label }}</span>
                                                 <span class="badge text-bg-light border">{{ count($entries) }}</span>
                                             </div>
-                                            <span class="chip-badge warn">Nijoga</span>
                                         </div>
-                                        <div class="strip">
-                                            @foreach ($entries as $e)
-                                                @php
-                                                    $u = $e['profile'];
-                                                    $name = $fullName($u);
-                                                    $ini = $initials($u);
-                                                    $phone = $u->phone_no ?? '—';
-                                                    $beddha = $e['beddha'] ?? '—';
-                                                @endphp
-                                                <div class="chipcard" title="{{ $name }}">
-                                                    <div class="chip-avatar">{{ $ini }}</div>
-                                                    <div class="chip-main">
-                                                        <div class="chip-name">{{ $name }}</div>
-                                                        <div class="chip-meta">
-                                                            {{ $phone !== '—' ? '☎ ' . $phone : 'No phone' }}</div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($entries as $e)
+                                                    @php
+                                                        $u = $e['profile'];
+                                                        $name = $fullName($u);
+                                                        $photo = $avatarUrl($u);
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <div class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
                                                     </div>
-                                                    <span class="chip-badge">{{ 'Beddha ' . $beddha }}</span>
-                                                    <span class="chip-badge warn">Admin</span>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="alert alert-light border d-flex align-items-center"><i
-                                            class="bi bi-info-circle me-2"></i>No nijoga seba assigned for today.</div>
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No nijoga seba assigned for today.
+                                    </div>
                                 @endforelse
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT: Gochhikar Today (small chips directly) -->
+            <!-- RIGHT: Gochhikar (row-wise user grid, scrollable) -->
             <div class="col-12 col-xl-4">
                 <div class="panel">
                     <div class="px-3 pt-3">
@@ -638,7 +607,7 @@
                                 @endphp
                                 <div class="flex-grow-1">
                                     <div class="fw-bold">Gochhikar Today</div>
-                                    <div class="small" style="opacity:.9;">Normal & Nijoga assignments</div>
+                                    <div class="small" style="opacity:.9;">Normal & Nijoga lists</div>
                                 </div>
                                 <span class="badge bg-light text-dark border-0">{{ $gochhikarCount + $nijogaCount }}
                                     total</span>
@@ -652,94 +621,109 @@
                                 <button class="nav-link active d-flex align-items-center gap-2" id="gochhikar-tab"
                                     data-bs-toggle="pill" data-bs-target="#gochhikar-pane" type="button" role="tab"
                                     aria-controls="gochhikar-pane" aria-selected="true">
-                                    <i class="bi bi-check2-circle"></i><span>Gochhikar</span><span
-                                        class="badge text-bg-light border ms-1">{{ $gochhikarCount }}</span>
+                                    <i class="bi bi-check2-circle"></i><span>Gochhikar</span>
+                                    <span class="badge text-bg-light border ms-1">{{ $gochhikarCount }}</span>
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link d-flex align-items-center gap-2" id="nijoga-g-tab"
                                     data-bs-toggle="pill" data-bs-target="#nijoga-g-pane" type="button" role="tab"
                                     aria-controls="nijoga-g-pane" aria-selected="false">
-                                    <i class="bi bi-exclamation-circle"></i><span>Nijoga Assign</span><span
-                                        class="badge text-bg-light border ms-1">{{ $nijogaCount }}</span>
+                                    <i class="bi bi-exclamation-circle"></i><span>Nijoga Assign</span>
+                                    <span class="badge text-bg-light border ms-1">{{ $nijogaCount }}</span>
                                 </button>
                             </li>
                         </ul>
 
                         <div class="tab-content" id="gochhikarTabsContent">
+                            <!-- Normal -->
                             <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel"
                                 aria-labelledby="gochhikar-tab">
                                 @forelse ($gochhikarEvents as $label => $users)
-                                    <div class="mb-2">
-                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
                                             <div class="small fw-semibold">{{ $label }}</div>
                                             <span
                                                 class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
                                         </div>
-                                        <div class="strip">
-                                            @foreach ($users as $u)
-                                                @php
-                                                    $name = $fullName($u);
-                                                    $ini = $initials($u);
-                                                    $phone = $u->phone_no ?? '—';
-                                                @endphp
-                                                <div class="chipcard" title="{{ $name }}">
-                                                    <div class="chip-avatar">{{ $ini }}</div>
-                                                    <div class="chip-main">
-                                                        <div class="chip-name">{{ $name }}</div>
-                                                        <div class="chip-meta">
-                                                            {{ $phone !== '—' ? '☎ ' . $phone : 'No phone' }}</div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($users as $u)
+                                                    @php
+                                                        $name = $fullName($u);
+                                                        $photo = $avatarUrl($u);
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <div class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
                                                     </div>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="alert alert-light border d-flex align-items-center"><i
-                                            class="bi bi-info-circle me-2"></i>No Gochhikar assigned (normal) for today.
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No Gochhikar assigned (normal) for today.
                                     </div>
                                 @endforelse
                             </div>
 
+                            <!-- Nijoga -->
                             <div class="tab-pane fade" id="nijoga-g-pane" role="tabpanel"
                                 aria-labelledby="nijoga-g-tab">
                                 @forelse ($nijogaGochhikarEvents as $label => $users)
-                                    <div class="mb-2">
-                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
                                             <div class="small fw-semibold">{{ $label }}</div>
                                             <span
                                                 class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
                                         </div>
-                                        <div class="strip">
-                                            @foreach ($users as $u)
-                                                @php
-                                                    $name = $fullName($u);
-                                                    $ini = $initials($u);
-                                                    $phone = $u->phone_no ?? '—';
-                                                @endphp
-                                                <div class="chipcard" title="{{ $name }}">
-                                                    <div class="chip-avatar">{{ $ini }}</div>
-                                                    <div class="chip-main">
-                                                        <div class="chip-name">{{ $name }}</div>
-                                                        <div class="chip-meta">
-                                                            {{ $phone !== '—' ? '☎ ' . $phone : 'No phone' }}</div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($users as $u)
+                                                    @php
+                                                        $name = $fullName($u);
+                                                        $photo = $avatarUrl($u);
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <div class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
                                                     </div>
-                                                    <span class="chip-badge warn">Nijoga</span>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
                                     </div>
                                 @empty
-                                    <div class="alert alert-light border d-flex align-items-center"><i
-                                            class="bi bi-info-circle me-2"></i>No Nijoga Gochhikar for today.</div>
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No Nijoga Gochhikar for today.
+                                    </div>
                                 @endforelse
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- KPI GRID (no “View all” links; compact display only) -->
+            <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-1">
                 <div class="row g-3">
                     <div class="col-12 col-sm-6 col-xl-3">
@@ -867,22 +851,7 @@
 @endsection
 
 @section('scripts')
-    <!-- (Optional) DataTables & helpers -->
-    <script src="{{ asset('assets/plugins/datatable/js/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/dataTables.bootstrap5.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/dataTables.buttons.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/buttons.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/jszip.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/pdfmake/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/pdfmake/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/buttons.html5.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/buttons.print.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/js/buttons.colVis.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/dataTables.responsive.min.js') }}"></script>
-    <script src="{{ asset('assets/plugins/datatable/responsive.bootstrap5.min.js') }}"></script>
-    <script src="{{ asset('assets/js/table-data.js') }}"></script>
-
-    <!-- Select2, SweetAlert, Bootstrap -->
+    <!-- Optional scripts you use elsewhere -->
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -895,16 +864,12 @@
             setTimeout(tick, 1000);
         })();
 
-        // Theme toggle with persistence
-        (function themeInit() {
+        // Theme toggle
+        (function() {
             const html = document.documentElement;
             const saved = localStorage.getItem('theme') || '';
-            if (saved) {
-                html.classList.toggle('dark', saved === 'dark');
-            } else {
-                const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                html.classList.toggle('dark', prefers);
-            }
+            html.classList.toggle('dark', saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)')
+                .matches);
             updateThemeButton();
         })();
 
@@ -923,96 +888,22 @@
             updateThemeButton();
         });
 
-        // Preserve active tab via URL hash (left tabs)
+        // Preserve left and right tabs via hash (optional)
         (function() {
-            const triggerTabList = [...document.querySelectorAll('#sebaTabs button[data-bs-toggle="pill"]')];
-            triggerTabList.forEach((btn) => btn.addEventListener('shown.bs.tab', (e) => {
-                const target = e.target.getAttribute('data-bs-target');
-                history.replaceState(null, '', target);
-            }));
+            const groups = ['#sebaTabs', '#gochhikarTabs'];
+            groups.forEach(sel => {
+                document.querySelectorAll(`${sel} button[data-bs-toggle="pill"]`).forEach(btn => {
+                    btn.addEventListener('shown.bs.tab', e => {
+                        const target = e.target.getAttribute('data-bs-target');
+                        history.replaceState(null, '', target);
+                    });
+                });
+            });
             const hash = window.location.hash;
             if (hash) {
-                const tabTrigger = document.querySelector(`#sebaTabs button[data-bs-target="${hash}"]`);
-                if (tabTrigger) new bootstrap.Tab(tabTrigger).show();
+                const btn = document.querySelector(`button[data-bs-target="${hash}"]`);
+                if (btn) new bootstrap.Tab(btn).show();
             }
         })();
-
-        // Select2 init (if exists)
-        if (window.jQuery && $("#sebaUserSelect").length) {
-            $("#sebaUserSelect").select2({
-                width: '100%',
-                placeholder: "Select user…"
-            });
-        }
-
-        // Approve / Reject (if you have buttons elsewhere)
-        document.addEventListener('click', function(e) {
-            const approveBtn = e.target.closest('.approve-btn');
-            const rejectBtn = e.target.closest('.reject-btn');
-
-            if (approveBtn) {
-                const profileId = approveBtn.dataset.id;
-                Swal.fire({
-                    title: 'Approve profile?',
-                    text: 'This will mark the profile as approved.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#16a34a',
-                    cancelButtonColor: '#6b7280',
-                    confirmButtonText: 'Approve'
-                }).then((res) => {
-                    if (res.isConfirmed) {
-                        fetch(`/admin/pratihari/approve/${profileId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({})
-                        }).then(r => r.json()).then(resp => {
-                            Swal.fire('Approved!', resp.message || 'Profile approved.', 'success')
-                                .then(() => location.reload());
-                        }).catch(() => Swal.fire('Error', 'Unable to approve. Try again.', 'error'));
-                    }
-                });
-            }
-
-            if (rejectBtn) {
-                const profileId = rejectBtn.dataset.id;
-                Swal.fire({
-                    title: 'Reject Profile',
-                    input: 'textarea',
-                    inputLabel: 'Reason for rejection',
-                    inputPlaceholder: 'Type your reason here...',
-                    inputAttributes: {
-                        'aria-label': 'Type your reason here'
-                    },
-                    showCancelButton: true,
-                    confirmButtonColor: '#ef4444',
-                    cancelButtonColor: '#6b7280',
-                    confirmButtonText: 'Reject',
-                    preConfirm: (reason) => {
-                        if (!reason) Swal.showValidationMessage('Reject reason is required');
-                        return reason;
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/admin/pratihari/reject/${profileId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                            },
-                            body: JSON.stringify({
-                                reason: result.value
-                            })
-                        }).then(r => r.json()).then(resp => {
-                            Swal.fire('Rejected', resp.message || 'Profile rejected.', 'error')
-                                .then(() => location.reload());
-                        }).catch(() => Swal.fire('Error', 'Unable to reject. Try again.', 'error'));
-                    }
-                });
-            }
-        });
     </script>
 @endsection
