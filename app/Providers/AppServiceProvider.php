@@ -9,12 +9,12 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Intentionally empty. Let the framework bind UrlGenerator & Request.
+        // Do not bind UrlGenerator or Request here.
     }
 
     public function boot(): void
     {
-        // Only force URLs in HTTP context (not during Artisan)
+        // Avoid forcing URLs during Artisan (no real request there)
         if ($this->app->runningInConsole()) {
             return;
         }
