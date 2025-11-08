@@ -25,9 +25,13 @@ use App\Http\Controllers\Api\StatusController;
 // Route::post('/pratihari/verify-otp', [OtpController::class, 'verifyOtp'])
 //     ->name('admin.verifyOtp');
 
-Route::match(['POST', 'OPTIONS'], '/send-otp', [OtpController::class, 'sendOtp']);
-Route::match(['POST', 'OPTIONS'], '/pratihari/verify-otp', [OtpController::class, 'verifyOtp'])
-->name('admin.verifyOtp');
+// Route::match(['POST', 'OPTIONS'], '/send-otp', [OtpController::class, 'sendOtp']);
+// Route::match(['POST', 'OPTIONS'], '/pratihari/verify-otp', [OtpController::class, 'verifyOtp'])
+// ->name('admin.verifyOtp');
+
+
+Route::post('/otp/send', [OtpController::class, 'sendOtp']);
+Route::post('/otp/verify', [OtpController::class, 'verifyOtp']);
 
 /*
 |--------------------------------------------------------------------------

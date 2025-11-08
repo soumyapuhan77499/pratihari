@@ -33,11 +33,6 @@ class OtpController extends Controller
         return $digits;
     }
 
-    /**
-     * Build MSG91 WhatsApp Template BULK payload.
-     * Adjust "parameters" to match your approved template variables exactly.
-     * Here we assume two vars: {{1}}=OTP, {{2}}=short token.
-     */
     private function buildMsg91Payload(
         string $fromIntegrated,
         string $toMsisdn,
