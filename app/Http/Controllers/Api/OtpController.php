@@ -69,41 +69,46 @@ class OtpController extends Controller
     }
 
     /** Build MSG91 WhatsApp template payload (1 or 2 body variables) */
-    private function buildMsg91Payload(
-        string $fromIntegrated,
-        string $toMsisdn,
-        string $template,
-        string $namespace,
-        array $bodyParams, // array of ['type'=>'text','text'=>'...']
-        string $langCode = 'en_US',
-        string $langPolicy = 'deterministic'
-    ): array {
-        return [
-            "integrated_number" => $fromIntegrated, // digits only
-            "content_type"      => "template",
-            "payload"           => [
-                "messaging_product" => "whatsapp",
-                "type"              => "template",
-                "template" => [
-                    "name"       => $template,
-                    "language"   => [
-                        "code"   => $langCode,
-                        "policy" => $langPolicy,
-                    ],
-                    "namespace"  => $namespace,
+   /** Build MSG91 WhatsApp template payload (bulk format with to_and_components) */
+private function buildMsg91Payload(
+    string $fromIntegrated,
+    string $toMsisdn,
+    string $template,
+    string $namespace,
+    array $bodyParams, // array of ['type'=>'text','text'=>'...'] in correct order
+    string $langCode = 'en_US',
+    string $langPolicy = 'deterministic'
+): array {
+    return [
+        "integrated_number" => $fromIntegrated, // digits only, e.g. 919124420330
+        "content_type"      => "template",
+        "payload"           => [
+            // IMPORTANT: no "messaging_product" here for MSG91 bulk
+            "type"      => "template",
+            "template"  => [
+                "name"      => $template,
+                "namespace" => $namespace,
+                "language"  => [
+                    "code"   => $langCode,
+                    "policy" => $langPolicy,
+                ],
+            ],
+            // Per-recipient array with its own components
+            "to_and_components" => [
+                [
+                    "to" => $toMsisdn, // digits only, e.g. 91XXXXXXXXXX
                     "components" => [
                         [
                             "type"       => "body",
-                            "parameters" => $bodyParams,
+                            "parameters" => $bodyParams, // e.g. [ {"type":"text","text":"123456"} ]
                         ],
                     ],
                 ],
-                "to" => [
-                    ["phone_number" => $toMsisdn], // digits only
-                ],
             ],
-        ];
-    }
+        ],
+    ];
+}
+
 
     private function sendViaMsg91(array $payload, string $authKey)
     {
