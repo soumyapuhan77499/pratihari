@@ -30,11 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     
- 'msg91' => [
-        'auth_key'    => env('MSG91_AUTH_KEY'),        // <-- matches .env
-        'wa_template' => env('MSG91_WA_TEMPLATE'),
-        'wa_namespace'=> env('MSG91_WA_NAMESPACE'),
-        'wa_number'   => env('MSG91_WA_NUMBER'),       // e.g. +917327096968
+  'msg91' => [
+        'auth_key'      => env('MSG91_AUTHKEY'),
+        'wa_template'   => env('MSG91_WA_TEMPLATE'),
+        'wa_namespace'  => env('MSG91_WA_NAMESPACE'),
+        'wa_number'     => env('MSG91_WA_NUMBER'),
+        'wa_lang_code'  => env('MSG91_WA_LANG_CODE', 'en_US'),
+        'wa_lang_policy'=> env('MSG91_WA_LANG_POLICY', 'deterministic'),
     ],
 
     

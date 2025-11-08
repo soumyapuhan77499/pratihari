@@ -16,7 +16,7 @@ class User extends Authenticatable
         'name',
         'mobile_number',
         'otp',
-        'otp_expires_at',   // <- add this
+        'otp_expires_at',
         'email',
         'order_id',
         'expiry',
@@ -28,15 +28,31 @@ class User extends Authenticatable
         'userphoto',
     ];
 
-    protected $hidden = [
-        'client_secret',
-        'hash',
-    ];
+    protected $hidden = ['client_secret', 'hash'];
 
     protected $casts = [
         'expiry'         => 'datetime',
-        'otp_expires_at' => 'datetime', // <- add this
+        'otp_expires_at' => 'datetime',
     ];
+
+    /** Ensure we always store digits-only with country code (e.g., 91XXXXXXXXXX). */
+    public function setMobileNumberAttribute($value)
+    {
+        $digits = preg_replace('/\D+/', '', (string) $value);
+        if ($digits === '') {
+            $this->attributes['mobile_number'] = null;
+            return;
+        }
+        // local 10 -> add 91
+        if (strlen($digits) === 10) {
+            $digits = '91'.$digits;
+        }
+        // 11 with leading 0 -> strip 0 then add 91
+        if (strlen($digits) === 11 && $digits[0] === '0') {
+            $digits = '91'.substr($digits, 1);
+        }
+        $this->attributes['mobile_number'] = $digits;
+    }
 
     public function devices()
     {

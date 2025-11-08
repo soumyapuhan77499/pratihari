@@ -22,14 +22,13 @@ class OtpController extends Controller
         if ($digits === '') return '';
 
         if (strlen($digits) === 10 && $defaultCountryCode) {
-            return $defaultCountryCode . $digits; // local -> add CC
+            return $defaultCountryCode . $digits;
         }
 
         if (strlen($digits) === 11 && $digits[0] === '0' && $defaultCountryCode) {
-            return $defaultCountryCode . substr($digits, 1); // strip leading 0, add CC
+            return $defaultCountryCode . substr($digits, 1);
         }
 
-        // otherwise assume caller gave CC already
         return $digits;
     }
 
@@ -39,12 +38,20 @@ class OtpController extends Controller
         string $template,
         string $namespace,
         string $otp,
-        string $shortToken,
+        ?string $shortToken = null,
         string $langCode = 'en_US',
         string $langPolicy = 'deterministic'
     ): array {
+        // If your WA template has only one variable, send only OTP param.
+        $bodyParams = [
+            ["type" => "text", "text" => (string) $otp],
+        ];
+        if ($shortToken) {
+            $bodyParams[] = ["type" => "text", "text" => (string) $shortToken];
+        }
+
         return [
-            "integrated_number" => $fromIntegrated,   // 919124420330
+            "integrated_number" => $fromIntegrated,   // digits only
             "content_type"      => "template",
             "payload"           => [
                 "messaging_product" => "whatsapp",
@@ -59,21 +66,17 @@ class OtpController extends Controller
                     "components" => [
                         [
                             "type"       => "body",
-                            "parameters" => [
-                                ["type" => "text", "text" => (string) $otp],
-                                ["type" => "text", "text" => (string) $shortToken],
-                            ],
+                            "parameters" => $bodyParams,
                         ],
                     ],
                 ],
                 "to" => [
-                    ["phone_number" => $toMsisdn], // 91XXXXXXXXXX
+                    ["phone_number" => $toMsisdn], // digits only
                 ],
             ],
         ];
     }
 
-    /** POST to MSG91 */
     private function sendViaMsg91(array $payload, string $authKey)
     {
         $url = 'https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/';
@@ -81,12 +84,13 @@ class OtpController extends Controller
         return Http::withHeaders([
             'Content-Type' => 'application/json',
             'Accept'       => 'application/json',
+            // Both casings to dodge infra/proxy quirks
             'authkey'      => $authKey,
             'Authkey'      => $authKey,
-        ])->timeout(20)->post($url, $payload);
+        ])->timeout(25)->post($url, $payload);
     }
 
-    // ----------------- Logout (unchanged except logs) -----------------
+    // ----------------- Logout -----------------
     public function userLogout(Request $request)
     {
         $user = Auth::guard('sanctum')->user();
@@ -147,10 +151,10 @@ class OtpController extends Controller
         }
 
         $otp        = (string) random_int(100000, 999999);
-        $shortToken = Str::upper(Str::random(6));
+        $shortToken = Str::upper(Str::random(6));     // keep optional in payload
         $expiresAt  = Carbon::now()->addMinutes(10);
 
-        // Persist OTP + expiry (make sure columns exist)
+        // Persist (set mutator will normalize +91 -> digits)
         $user = User::updateOrCreate(
             ['mobile_number' => $toMsisdn],
             ['otp' => $otp, 'otp_expires_at' => $expiresAt]
@@ -168,27 +172,28 @@ class OtpController extends Controller
         );
 
         try {
-            $resp = $this->sendViaMsg91($payload, (string) config('services.msg91.auth_key'));
+            $resp   = $this->sendViaMsg91($payload, (string) config('services.msg91.auth_key'));
+            $json   = $resp->json();
+            $body   = $json ?: $resp->body();
 
-            $body = $resp->json() ?: $resp->body();
             Log::info('MSG91 sendOtp response', [
-                'status' => $resp->status(),
-                'body'   => $body,
-                'to'     => $toMsisdn,
-                'from'   => $integratedFrom,
+                'status'   => $resp->status(),
+                'headers'  => $resp->headers(),
+                'body'     => $body,
+                'payload'  => $payload,
+                'to'       => $toMsisdn,
+                'from'     => $integratedFrom,
             ]);
 
-            // Non-2xx
             if (!$resp->successful()) {
                 $msg = 'Failed to send OTP. Please try again.';
-                if (is_array($resp->json()) && isset($resp->json()['message'])) {
-                    $msg .= ' Reason: ' . $resp->json()['message'];
+                if (is_array($json) && isset($json['message'])) {
+                    $msg .= ' Reason: ' . $json['message'];
                 }
                 return response()->json(['message' => $msg], 502);
             }
 
-            // Some MSG91 errors come with 200 + {"type":"error"}
-            $json = $resp->json();
+            // MSG91 sometimes returns 200 + {"type":"error", ...}
             if (is_array($json) && isset($json['type']) && strtolower((string) $json['type']) === 'error') {
                 $reason = $json['message'] ?? 'Unknown MSG91 error';
                 return response()->json(['message' => 'OTP could not be sent. '.$reason], 502);
