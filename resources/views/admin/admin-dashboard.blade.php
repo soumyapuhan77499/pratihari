@@ -724,7 +724,7 @@
             </div>
 
             <!-- KPI GRID (unchanged counts) -->
-            <div class="col-12 mt-1">
+            <div class="col-12 mt-4">
                 <div class="row g-3">
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="kpi violet h-100">
