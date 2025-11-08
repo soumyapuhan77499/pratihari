@@ -15,6 +15,14 @@ $app = new Illuminate\Foundation\Application(
     $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
 );
 
+if ($app->runningInConsole()) {
+    $url = env('APP_URL', 'https://pratiharinijog.mandirparikrama.com');
+    if (!preg_match('~^https?://~i', $url)) {
+        $url = 'https://pratiharinijog.mandirparikrama.com';
+    }
+    $app->instance('request', Request::create(rtrim($url, '/'), 'GET'));
+}
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
