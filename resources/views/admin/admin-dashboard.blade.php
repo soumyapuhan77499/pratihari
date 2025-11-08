@@ -520,9 +520,10 @@
                                                     @php
                                                         $u = $e['profile'];
                                                         $name = $fullName($u);
-                                                        $photo = $avatarUrl($u);
+                                                        $photo = $u->photo_url; // ✅ use accessor from model
                                                         $ini = $initials($u);
                                                     @endphp
+
                                                     <div class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
@@ -536,6 +537,7 @@
                                                         <div class="uname">{{ $name }}</div>
                                                     </div>
                                                 @endforeach
+
                                             </div>
                                         </div>
                                     </div>
@@ -651,9 +653,10 @@
                                                 @foreach ($users as $u)
                                                     @php
                                                         $name = $fullName($u);
-                                                        $photo = $avatarUrl($u);
+                                                        $photo = $u->photo_url; // ✅ accessor again
                                                         $ini = $initials($u);
                                                     @endphp
+
                                                     <div class="usercard" title="{{ $name }}">
                                                         <div class="photo-wrap">
                                                             @if ($photo)
@@ -667,6 +670,7 @@
                                                         <div class="uname">{{ $name }}</div>
                                                     </div>
                                                 @endforeach
+
                                             </div>
                                         </div>
                                     </div>
@@ -722,7 +726,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
             <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-4">
