@@ -16,7 +16,6 @@ use App\Http\Controllers\Admin\PratihariNoticeController;
 
 use App\Http\Controllers\SuperAdmin\SuperAdminController;
 
-
 Route::prefix('super-admin')->controller(SuperAdminController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('superadmin.login');
     Route::post('/login/submit', 'loginSubmit')->name('superadmin.login.submit');

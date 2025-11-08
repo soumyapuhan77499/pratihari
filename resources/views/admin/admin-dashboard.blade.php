@@ -80,7 +80,6 @@
         }
 
         * { outline-color: var(--brand-b); }
-
         :is(a, button, .panel, .kpi, .pill, .nav-link, .chip):focus-visible { box-shadow: 0 0 0 4px var(--ring); }
 
         /* Sticky app bar */
@@ -93,155 +92,104 @@
             border-bottom: 1px solid var(--border);
         }
 
-        .brand {
-            font-weight: 800;
-            letter-spacing: .3px;
-            background: var(--g-brand);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
+        .brand { font-weight: 800; letter-spacing: .3px; background: var(--g-brand); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
         .btn-theme {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid var(--border);
-            background: var(--panel);
-            border-radius: 999px;
-            padding: 8px 12px;
-            font-weight: 700;
+            display: inline-flex; align-items: center; gap: 8px;
+            border: 1px solid var(--border); background: var(--panel);
+            border-radius: 999px; padding: 8px 12px; font-weight: 700;
             transition: transform .15s ease, box-shadow .15s ease;
         }
         .btn-theme:hover { transform: translateY(-1px); box-shadow: var(--shadow); }
 
         /* Panels */
-        .panel {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-        }
-        .panel-head {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            background: var(--g-soft);
-            border-top-left-radius: 18px;
-            border-top-right-radius: 18px;
-        }
+        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); }
+        .panel-head { padding: 14px 16px; border-bottom: 1px solid var(--border); background: var(--g-soft); border-top-left-radius: 18px; border-top-right-radius: 18px; }
         .section-title { font-weight: 800; letter-spacing: .2px; }
         .subtle { color: var(--muted); }
         .divider { height: 1px; background: var(--border); }
 
         /* Gradient overview header block */
         .gradient-header {
-            position: relative;
-            border-radius: 18px;
-            padding: 24px;
-            background: var(--g-brand);
-            color: #fff;
-            overflow: hidden;
-            box-shadow: var(--shadow);
+            position: relative; border-radius: 18px; padding: 24px;
+            background: var(--g-brand); color: #fff; overflow: hidden; box-shadow: var(--shadow);
         }
-        .gradient-header .bg-icons {
-            position: absolute; inset: 0; pointer-events: none; opacity: .14;
+        .gradient-header .bg-icons { position: absolute; inset: 0; pointer-events: none; opacity: .14;
             background: radial-gradient(160px 160px at 15% 40%, #fff 0, transparent 60%),
-                        radial-gradient(130px 130px at 85% 30%, #fff 0, transparent 60%);
-            mix-blend-mode: soft-light;
-        }
-        .icon-hero {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 46px; height: 46px; border-radius: 12px;
-            background: rgba(255, 255, 255, .18); color: #fff; font-size: 20px;
-            border: 1px solid rgba(255, 255, 255, .35);
-        }
+                        radial-gradient(130px 130px at 85% 30%, #fff 0, transparent 60%); mix-blend-mode: soft-light; }
+        .icon-hero { display: inline-flex; place-content:center; width:46px; height:46px; border-radius:12px; background: rgba(255,255,255,.18); color:#fff; font-size:20px; border: 1px solid rgba(255,255,255,.35); }
         .title { font-weight: 800; letter-spacing: .3px; font-size: clamp(20px, 2.2vw, 26px); }
         .subtitle { color: rgba(255, 255, 255, .92); }
 
         /* Pills */
-        .pill {
-            display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 999px;
-            font-weight: 700; border: 1px solid var(--border); background: var(--panel); color: var(--ink-soft);
-        }
-        .pill .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--brand-a); }
+        .pill { display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius: 999px; font-weight:700; border:1px solid var(--border); background: var(--panel); color: var(--ink-soft); }
+        .pill .dot { width:8px; height:8px; border-radius:999px; background: var(--brand-a); }
 
         /* Tabs */
-        .tabs .nav-link {
-            border: 1px solid var(--border); background: var(--panel); color: var(--ink-soft);
-            font-weight: 800; border-radius: 12px; padding: .55rem 1rem;
-        }
+        .tabs .nav-link { border: 1px solid var(--border); background: var(--panel); color: var(--ink-soft); font-weight: 800; border-radius: 12px; padding: .55rem 1rem; }
         .tabs .nav-link.active { color: #fff; background: var(--g-brand); border-color: transparent; }
 
         /* Horizontal strip */
         .strip {
-            display: grid; grid-auto-flow: column; grid-auto-columns: clamp(260px, 38vw, 420px);
+            display: grid; grid-auto-flow: column; grid-auto-columns: clamp(140px, 24vw, 180px);
             gap: 14px; overflow-x: auto; padding: 2px 2px 10px; scroll-snap-type: x mandatory;
         }
-        .mini-card {
+        .strip::-webkit-scrollbar { height: 8px; }
+        .strip::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
+        html.dark .strip::-webkit-scrollbar-thumb { background: #475569; }
+
+        /* Compact user card */
+        .user-card {
             scroll-snap-align: start;
-            background: color-mix(in oklab, var(--panel) 90%, var(--surface-2));
             border: 1px solid var(--border);
+            background: color-mix(in oklab, var(--panel) 92%, var(--surface-2));
             border-radius: 14px;
-            padding: 14px;
-            min-height: 88px;
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: var(--shadow);
             transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-            text-decoration: none; color: inherit;
+            min-height: 180px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px;
         }
-        .mini-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(124, 58, 237, .35); }
-        .mini-card .label { font-weight: 800; }
-        .mini-card .meta { color: var(--muted); font-size: .9rem; }
-        .mini-card .count { font-weight: 800; font-size: 1.4rem; }
-        .mini-card .go { font-size: 1.4rem; opacity: .7; }
+        .user-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: rgba(124, 58, 237, .35); }
+        .avatar {
+            width: 84px; height: 84px; border-radius: 16px; overflow: hidden;
+            display: grid; place-items:center; background: #eef2ff; color:#4f46e5; font-weight: 800;
+            border: 1px solid var(--border);
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; display:block; }
+        .user-name { font-weight: 800; line-height: 1.2; }
+        .user-meta { font-size: .8rem; color: var(--muted); }
+        .badge-soft {
+            border: 1px solid var(--border); background: #fff; color: var(--ink-soft);
+            border-radius: 999px; padding: 2px 8px; font-size: .75rem; font-weight: 700;
+        }
 
         /* Chips */
-        .chip {
-            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .8rem;
-            font-weight: 700; border: 1px solid var(--border); background: var(--panel); color: var(--ink-soft);
-        }
+        .chip { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius: 999px; font-size:.8rem; font-weight:700; border:1px solid var(--border); background: var(--panel); color: var(--ink-soft); }
         .chip.ok { color: var(--ok); background: rgba(16, 185, 129, .10); border-color: rgba(16, 185, 129, .25); }
         .chip.warn { color: var(--warn); background: rgba(245, 158, 11, .12); border-color: rgba(245, 158, 11, .25); }
-        .chip.danger { color: var(--danger); background: rgba(244, 63, 94, .12); border-color: rgba(244, 63, 94, .25); }
-
-        /* Scrollbars */
-        .strip::-webkit-scrollbar, .list-max::-webkit-scrollbar { height: 8px; width: 8px; }
-        .strip::-webkit-scrollbar-thumb, .list-max::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
-        html.dark .strip::-webkit-scrollbar-thumb, html.dark .list-max::-webkit-scrollbar-thumb { background: #475569; }
 
         /* KPIs */
-        .kpi {
-            position: relative; background: var(--panel); border: 1px solid var(--border);
-            border-radius: 16px; padding: 16px 16px 14px; box-shadow: var(--shadow); overflow: hidden;
-        }
+        .kpi { position: relative; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 16px 16px 14px; box-shadow: var(--shadow); overflow: hidden; }
         .kpi::before { content: ''; position: absolute; inset: 0 0 auto 0; height: 6px; background: var(--kpi-grad, var(--g-brand)); }
-        .kpi::after {
-            content: ''; position: absolute; inset: auto -20% -20% -20%; height: 60%;
-            background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent, #7c3aed) 28%, transparent), transparent 70%);
-            opacity: .35;
-        }
-        .kpi .meta { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink-soft); }
-        .kpi .meta i {
-            display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 10px;
-            background: var(--kpi-icon-bg, #eee); color: var(--kpi-icon, #444);
-        }
+        .kpi::after { content: ''; position: absolute; inset: auto -20% -20% -20%; height: 60%; background: radial-gradient(60% 40% at 80% 0%, color-mix(in oklab, var(--kpi-accent, #7c3aed) 28%, transparent), transparent 70%); opacity:.35; }
+        .kpi .meta { display:flex; align-items:center; gap:10px; font-weight:700; color: var(--ink-soft); }
+        .kpi .meta i { display: inline-grid; place-items:center; width: 34px; height: 34px; border-radius: 10px; background: var(--kpi-icon-bg, #eee); color: var(--kpi-icon, #444); }
         .kpi .value { font-size: clamp(1.8rem, 2.6vw, 2.3rem); font-weight: 800; letter-spacing: -.4px; color: var(--ink); }
         .kpi .subtle { color: var(--muted); }
+        .kpi.violet { --kpi-grad: linear-gradient(90deg, #8b5cf6, #a78bfa); --kpi-icon-bg: rgba(139,92,246,.12); --kpi-icon:#8b5cf6; --kpi-accent:#8b5cf6; }
+        .kpi.cyan   { --kpi-grad: linear-gradient(90deg, #06b6d4, #22d3ee); --kpi-icon-bg: rgba(6,182,212,.12); --kpi-icon:#06b6d4; --kpi-accent:#06b6d4; }
+        .kpi.emerald{ --kpi-grad: linear-gradient(90deg, #10b981, #34d399); --kpi-icon-bg: rgba(16,185,129,.12); --kpi-icon:#10b981; --kpi-accent:#10b981; }
+        .kpi.amber  { --kpi-grad: linear-gradient(90deg, #f59e0b, #fbbf24); --kpi-icon-bg: rgba(245,158,11,.12); --kpi-icon:#f59e0b; --kpi-accent:#f59e0b; }
+        .kpi.rose   { --kpi-grad: linear-gradient(90deg, #f43f5e, #fb7185); --kpi-icon-bg: rgba(244,63,94,.12); --kpi-icon:#f43f5e; --kpi-accent:#f43f5e; }
+        .kpi.blue   { --kpi-grad: linear-gradient(90deg, #3b82f6, #60a5fa); --kpi-icon-bg: rgba(59,130,246,.12); --kpi-icon:#3b82f6; --kpi-accent:#3b82f6; }
+        .kpi.indigo { --kpi-grad: linear-gradient(90deg, #4f46e5, #818cf8); --kpi-icon-bg: rgba(79,70,229,.12); --kpi-icon:#4f46e5; --kpi-accent:#4f46e5; }
+        .kpi.fuchsia{ --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc); --kpi-icon-bg: rgba(217,70,239,.12); --kpi-icon:#d946ef; --kpi-accent:#d946ef; }
+        .kpi-progress { height: 6px; background: rgba(148,163,184,.3); border-radius: 999px; overflow: hidden; margin-top: 10px; }
+        .kpi-progress>span { display:block; height:100%; width: var(--p,40%); background: var(--kpi-grad); border-radius:999px; }
 
-        .kpi.violet { --kpi-grad: linear-gradient(90deg, #8b5cf6, #a78bfa); --kpi-icon-bg: rgba(139, 92, 246, .12); --kpi-icon: #8b5cf6; --kpi-accent: #8b5cf6; }
-        .kpi.cyan { --kpi-grad: linear-gradient(90deg, #06b6d4, #22d3ee); --kpi-icon-bg: rgba(6, 182, 212, .12); --kpi-icon: #06b6d4; --kpi-accent: #06b6d4; }
-        .kpi.emerald { --kpi-grad: linear-gradient(90deg, #10b981, #34d399); --kpi-icon-bg: rgba(16, 185, 129, .12); --kpi-icon: #10b981; --kpi-accent: #10b981; }
-        .kpi.amber { --kpi-grad: linear-gradient(90deg, #f59e0b, #fbbf24); --kpi-icon-bg: rgba(245, 158, 11, .12); --kpi-icon: #f59e0b; --kpi-accent: #f59e0b; }
-        .kpi.rose { --kpi-grad: linear-gradient(90deg, #f43f5e, #fb7185); --kpi-icon-bg: rgba(244, 63, 94, .12); --kpi-icon: #f43f5e; --kpi-accent: #f43f5e; }
-        .kpi.blue { --kpi-grad: linear-gradient(90deg, #3b82f6, #60a5fa); --kpi-icon-bg: rgba(59, 130, 246, .12); --kpi-icon: #3b82f6; --kpi-accent: #3b82f6; }
-        .kpi.indigo { --kpi-grad: linear-gradient(90deg, #4f46e5, #818cf8); --kpi-icon-bg: rgba(79, 70, 229, .12); --kpi-icon: #4f46e5; --kpi-accent: #4f46e5; }
-        .kpi.fuchsia { --kpi-grad: linear-gradient(90deg, #d946ef, #f0abfc); --kpi-icon-bg: rgba(217, 70, 239, .12); --kpi-icon: #d946ef; --kpi-accent: #d946ef; }
-
-        .kpi-progress { height: 6px; background: rgba(148, 163, 184, .3); border-radius: 999px; overflow: hidden; margin-top: 10px; }
-        .kpi-progress>span { display: block; height: 100%; width: var(--p, 40%); background: var(--kpi-grad); border-radius: 999px; }
-
-        .mono {
-            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
+        .mono { font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
         @media (max-width: 576px) { .header-actions { margin-top: 12px; } }
     </style>
@@ -253,7 +201,38 @@
          Precompute JSON payloads
          ========================= --}}
     @php
-        // Helpers to keep things tidy
+        use Illuminate\Support\Facades\Storage;
+
+        // Helper to avatar URL (public disk or absolute). Fallback: null.
+        $avatarUrl = function($u) {
+            $cand = $u->photo ?? $u->profile_photo ?? $u->profile_photo_path ?? $u->avatar ?? null;
+            if (!$cand) return null;
+            if (preg_match('/^https?:\/\//i', $cand)) return $cand;
+            if (Storage::disk('public')->exists($cand)) return Storage::disk('public')->url($cand);
+            return asset($cand);
+        };
+
+        // Initials for placeholder block
+        $initials = function($u) {
+            $f = trim($u->first_name ?? '');
+            $l = trim($u->last_name ?? '');
+            $fi = $f !== '' ? mb_substr($f,0,1) : '';
+            $li = $l !== '' ? mb_substr($l,0,1) : '';
+            $both = strtoupper($fi.$li);
+            if ($both === '') {
+                $name = trim(($u->name ?? '') ?: (($u->first_name ?? '').' '.($u->last_name ?? '')));
+                $both = $name ? strtoupper(mb_substr($name,0,1)) : 'P';
+            }
+            return $both;
+        };
+
+        // Name formatter
+        $fullName = function($u) {
+            $n = trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? ''));
+            return $n !== '' ? $n : ($u->name ?? '—');
+        };
+
+        // Map helpers used elsewhere (kept)
         $mapProfile = function($u) {
             return [
                 'name'  => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
@@ -276,7 +255,7 @@
             ];
         };
 
-        // KPI data arrays (not JSON yet)
+        // KPI arrays
         $arrTodayProfiles        = $todayProfiles->map($mapProfile)->values();
         $arrPendingProfiles      = $pendingProfile->map($mapProfile)->values();
         $arrActiveProfiles       = $totalActiveUsers->map($mapProfile)->values();
@@ -354,7 +333,7 @@
         <!-- ===== MAIN GRID ===== -->
         <div class="row g-3">
 
-            <!-- Left: Pratihari Seba & Nijoga (count-only, clickable) -->
+            <!-- Left: Pratihari Seba & Nijoga (cards with photos) -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
                     <!-- Compact gradient sub-header -->
@@ -403,22 +382,7 @@
                             <!-- Pratihari -->
                             <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel" aria-labelledby="pratihari-tab">
                                 @forelse ($pratihariEvents as $label => $entries)
-                                    @php
-                                        // Build modal payload with beddha + assigned_by + both beddha numbers for context
-                                        $pratihariList = collect($entries)->map(function ($e) use ($pratihariBeddha, $gochhikarBeddha) {
-                                            $u = $e['profile'];
-                                            return [
-                                                'name'              => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
-                                                'phone'             => $u->phone_no ?? '',
-                                                'beddha'            => $e['beddha'] ?? null,
-                                                'assigned_by'       => $e['assigned_by'] ?? 'Unknown',
-                                                'pratihari_beddha'  => $pratihariBeddha,
-                                                'gochhikar_beddha'  => $gochhikarBeddha,
-                                            ];
-                                        })->values();
-
-                                        $count = $pratihariList->count();
-                                    @endphp
+                                    @php $count = count($entries); @endphp
                                     <div class="mb-3">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
@@ -427,20 +391,34 @@
                                             </div>
                                             <span class="chip ok"><i class="bi bi-calendar-event"></i> Today</span>
                                         </div>
+
                                         <div class="strip">
-                                            <a href="#" class="mini-card summary-card seba-card"
-                                               data-title="Pratihari · {{ $label }}"
-                                               data-users='@json($pratihariList)'
-                                               aria-label="View all {{ $count }} Pratihari in {{ $label }}">
-                                                <div>
-                                                    <div class="label">All Pratihari</div>
-                                                    <div class="meta">Click to view list</div>
+                                            @foreach($entries as $e)
+                                                @php
+                                                    $u = $e['profile'];
+                                                    $name = $fullName($u);
+                                                    $photo = $avatarUrl($u);
+                                                    $ini = $initials($u);
+                                                    $beddha = $e['beddha'] ?? null;
+                                                    $by = $e['assigned_by'] ?? 'Unknown';
+                                                @endphp
+                                                <div class="user-card" title="{{ $name }}">
+                                                    <div class="avatar">
+                                                        @if($photo)
+                                                            <img src="{{ $photo }}" alt="{{ $name }}">
+                                                        @else
+                                                            <span>{{ $ini }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="user-name text-truncate w-100">{{ $name }}</div>
+                                                    @if($beddha !== null)
+                                                        <div class="user-meta">Beddha: <span class="badge-soft">{{ $beddha }}</span></div>
+                                                    @endif
+                                                    <div class="user-meta">
+                                                        {{ $u->phone_no ? '☎ ' . $u->phone_no : '' }}
+                                                    </div>
                                                 </div>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <span class="count">{{ $count }}</span>
-                                                    <i class="bi bi-arrow-right-circle go"></i>
-                                                </div>
-                                            </a>
+                                            @endforeach
                                         </div>
                                     </div>
                                 @empty
@@ -454,20 +432,7 @@
                             <!-- Nijoga (Admin-assigned = beddha_status 0) -->
                             <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
                                 @forelse ($nijogaAssign as $label => $entries)
-                                    @php
-                                        $nijogaList = collect($entries)->map(function ($e) use ($pratihariBeddha, $gochhikarBeddha) {
-                                            $u = $e['profile'];
-                                            return [
-                                                'name'              => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
-                                                'phone'             => $u->phone_no ?? '',
-                                                'beddha'            => $e['beddha'] ?? null,
-                                                'assigned_by'       => $e['assigned_by'] ?? 'Admin',
-                                                'pratihari_beddha'  => $pratihariBeddha,
-                                                'gochhikar_beddha'  => $gochhikarBeddha,
-                                            ];
-                                        })->values();
-                                        $count = $nijogaList->count();
-                                    @endphp
+                                    @php $count = count($entries); @endphp
                                     <div class="mb-3">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                                             <div class="d-flex align-items-center gap-2">
@@ -476,20 +441,33 @@
                                             </div>
                                             <span class="chip warn"><i class="bi bi-clipboard2-pulse"></i> Nijoga</span>
                                         </div>
+
                                         <div class="strip">
-                                            <a href="#" class="mini-card summary-card seba-card"
-                                               data-title="Nijoga · {{ $label }}"
-                                               data-users='@json($nijogaList)'
-                                               aria-label="View all {{ $count }} Nijoga in {{ $label }}">
-                                                <div>
-                                                    <div class="label">All Nijoga</div>
-                                                    <div class="meta">Click to view list</div>
+                                            @foreach($entries as $e)
+                                                @php
+                                                    $u = $e['profile'];
+                                                    $name = $fullName($u);
+                                                    $photo = $avatarUrl($u);
+                                                    $ini = $initials($u);
+                                                    $beddha = $e['beddha'] ?? null;
+                                                @endphp
+                                                <div class="user-card" title="{{ $name }}">
+                                                    <div class="avatar">
+                                                        @if($photo)
+                                                            <img src="{{ $photo }}" alt="{{ $name }}">
+                                                        @else
+                                                            <span>{{ $ini }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="user-name text-truncate w-100">{{ $name }}</div>
+                                                    @if($beddha !== null)
+                                                        <div class="user-meta">Beddha: <span class="badge-soft">{{ $beddha }}</span></div>
+                                                    @endif
+                                                    <div class="user-meta">
+                                                        {{ $u->phone_no ? '☎ ' . $u->phone_no : '' }}
+                                                    </div>
                                                 </div>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <span class="count">{{ $count }}</span>
-                                                    <i class="bi bi-arrow-right-circle go"></i>
-                                                </div>
-                                            </a>
+                                            @endforeach
                                         </div>
                                     </div>
                                 @empty
@@ -504,7 +482,7 @@
                 </div>
             </div>
 
-            <!-- Right: Gochhikar Today (count-only, clickable) -->
+            <!-- Right: Gochhikar Today (cards with photos) -->
             <div class="col-12 col-xl-4">
                 <div class="panel mb-3">
                     <!-- Compact gradient sub-header -->
@@ -558,33 +536,30 @@
                             <!-- Gochhikar (Normal) -->
                             <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel" aria-labelledby="gochhikar-tab" tabindex="0">
                                 @forelse ($gochhikarEvents as $label => $users)
-                                    @php
-                                        $gList = collect($users)->map(function ($u) {
-                                            return [
-                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
-                                                'phone' => $u->phone_no ?? '',
-                                            ];
-                                        })->values();
-                                    @endphp
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
                                             <div class="small fw-semibold">{{ $label }}</div>
                                             <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
                                         </div>
                                         <div class="strip">
-                                            <a href="#" class="mini-card summary-card"
-                                               data-title="Gochhikar · {{ $label }}"
-                                               data-users='@json($gList)'
-                                               aria-label="View all {{ count($users) }} Gochhikar in {{ $label }}">
-                                                <div>
-                                                    <div class="label">All Gochhikar</div>
-                                                    <div class="meta">Click to view list</div>
+                                            @foreach($users as $u)
+                                                @php
+                                                    $name = $fullName($u);
+                                                    $photo = $avatarUrl($u);
+                                                    $ini = $initials($u);
+                                                @endphp
+                                                <div class="user-card" title="{{ $name }}">
+                                                    <div class="avatar">
+                                                        @if($photo)
+                                                            <img src="{{ $photo }}" alt="{{ $name }}">
+                                                        @else
+                                                            <span>{{ $ini }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="user-name text-truncate w-100">{{ $name }}</div>
+                                                    <div class="user-meta">{{ $u->phone_no ? '☎ ' . $u->phone_no : '' }}</div>
                                                 </div>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <span class="count">{{ count($users) }}</span>
-                                                    <i class="bi bi-arrow-right-circle go"></i>
-                                                </div>
-                                            </a>
+                                            @endforeach
                                         </div>
                                     </div>
                                 @empty
@@ -598,33 +573,30 @@
                             <!-- Nijoga (Gochhikar) -->
                             <div class="tab-pane fade" id="nijoga-g-pane" role="tabpanel" aria-labelledby="nijoga-g-tab" tabindex="0">
                                 @forelse ($nijogaGochhikarEvents as $label => $users)
-                                    @php
-                                        $ngList = collect($users)->map(function ($u) {
-                                            return [
-                                                'name' => trim(($u->first_name ?? '') . ' ' . ($u->last_name ?? '')),
-                                                'phone' => $u->phone_no ?? '',
-                                            ];
-                                        })->values();
-                                    @endphp
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center justify-content-between mb-1">
                                             <div class="small fw-semibold">{{ $label }}</div>
                                             <span class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
                                         </div>
                                         <div class="strip">
-                                            <a href="#" class="mini-card summary-card"
-                                               data-title="Nijoga · {{ $label }}"
-                                               data-users='@json($ngList)'
-                                               aria-label="View all {{ count($users) }} Nijoga Gochhikar in {{ $label }}">
-                                                <div>
-                                                    <div class="label">All Nijoga</div>
-                                                    <div class="meta">Click to view list</div>
+                                            @foreach($users as $u)
+                                                @php
+                                                    $name = $fullName($u);
+                                                    $photo = $avatarUrl($u);
+                                                    $ini = $initials($u);
+                                                @endphp
+                                                <div class="user-card" title="{{ $name }}">
+                                                    <div class="avatar">
+                                                        @if($photo)
+                                                            <img src="{{ $photo }}" alt="{{ $name }}">
+                                                        @else
+                                                            <span>{{ $ini }}</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="user-name text-truncate w-100">{{ $name }}</div>
+                                                    <div class="user-meta">{{ $u->phone_no ? '☎ ' . $u->phone_no : '' }}</div>
                                                 </div>
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <span class="count">{{ count($users) }}</span>
-                                                    <i class="bi bi-arrow-right-circle go"></i>
-                                                </div>
-                                            </a>
+                                            @endforeach
                                         </div>
                                     </div>
                                 @empty
@@ -639,7 +611,7 @@
                 </div>
             </div>
 
-            <!-- ===== KPI GRID ===== -->
+            <!-- ===== KPI GRID (unchanged) ===== -->
             <div class="col-12 mt-1">
                 <div class="row g-3">
 
@@ -898,36 +870,7 @@
         </div>
     </div>
 
-    <!-- Modal used by RIGHT summary cards (and any non-seba 'summary-card') -->
-    <div class="modal fade" id="listModal" tabindex="-1" aria-labelledby="listModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h6 class="modal-title fw-bold" id="listModalLabel">List</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="table-light">
-                                <tr>
-                                    <th style="width:56px;">#</th>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                </tr>
-                            </thead>
-                            <tbody id="listModalBody"><!-- filled by JS --></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal used by KPI tiles -->
+    <!-- Modal used by KPI tiles (kept) -->
     <div class="modal fade" id="kpiListModal" tabindex="-1" aria-labelledby="kpiListModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
@@ -956,41 +899,6 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    {{-- Modal for LEFT Pratihari/Nijoga cards (with Beddha + Assigned By) --}}
-    <div class="modal fade" id="sebaListModal" tabindex="-1" aria-labelledby="sebaListModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg modal-dialog-scrollable">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h6 class="modal-title fw-bold" id="sebaListModalLabel">Users</h6>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="small text-muted mb-2">
-                Today • Pratihari Beddha: <span id="modalPrBeddha">—</span> • Gochhikar Beddha: <span id="modalGoBeddha">—</span>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-sm align-middle">
-                <thead>
-                  <tr>
-                    <th style="width: 35%;">Name</th>
-                    <th style="width: 20%;">Phone</th>
-                    <th style="width: 15%;">Beddha</th>
-                    <th style="width: 30%;">Assigned By</th>
-                  </tr>
-                </thead>
-                <tbody id="sebaModalRows">
-                  <tr><td colspan="4" class="text-muted">No data.</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
     </div>
 @endsection
 
@@ -1067,10 +975,10 @@
             }
         })();
 
-        // Enable tooltips if any appear in other parts
+        // Enable tooltips (if any)
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
 
-        // Select2 (if user list provided)
+        // Select2 (if user list provided somewhere else)
         if (window.jQuery && $("#sebaUserSelect").length) {
             $("#sebaUserSelect").select2({ width: '100%', placeholder: "Select user…" });
         }
@@ -1146,99 +1054,6 @@
                 });
             }
         });
-
-        // ===== RIGHT summary cards (non-seba) -> listModal =====
-        (function() {
-            const modalEl = document.getElementById('listModal');
-            const modal = new bootstrap.Modal(modalEl);
-            const tbody = document.getElementById('listModalBody');
-            const titleEl = document.getElementById('listModalLabel');
-
-            function renderRows(users) {
-                if (!Array.isArray(users)) return '';
-                return users.map((u, idx) => {
-                    const name = (u && u.name) ? u.name : '—';
-                    const phone = (u && u.phone) ? u.phone : '—';
-                    return `<tr>
-                        <td class="text-muted">${idx+1}</td>
-                        <td>${name}</td>
-                        <td>${ phone !== '—' ? `<a href="tel:${phone}">${phone}</a>` : '—' }</td>
-                    </tr>`;
-                }).join('');
-            }
-
-            document.addEventListener('click', function(e) {
-                const card = e.target.closest('.summary-card');
-                if (!card || card.classList.contains('seba-card')) return; // ignore left-panel seba cards
-                e.preventDefault();
-
-                titleEl.textContent = card.getAttribute('data-title') || 'List';
-                let users = [];
-                try { users = JSON.parse(card.getAttribute('data-users') || '[]'); } catch (e) { users = []; }
-                tbody.innerHTML = renderRows(users);
-                modal.show();
-            });
-        })();
-
-        // ===== LEFT Pratihari/Nijoga cards (seba-card) -> sebaListModal (with beddha + assigned_by) =====
-        (function(){
-            const modalEl = document.getElementById('sebaListModal');
-            const modal = new bootstrap.Modal(modalEl);
-            const titleEl = document.getElementById('sebaListModalLabel');
-            const rowsEl  = document.getElementById('sebaModalRows');
-            const prEl    = document.getElementById('modalPrBeddha');
-            const goEl    = document.getElementById('modalGoBeddha');
-
-            document.addEventListener('click', function(e){
-                const a = e.target.closest('.seba-card');
-                if (!a) return;
-                e.preventDefault();
-
-                const title = a.getAttribute('data-title') || 'Users';
-                let users   = [];
-                try { users = JSON.parse(a.getAttribute('data-users') || '[]'); } catch(_){ users = []; }
-
-                titleEl.textContent = title;
-
-                if (users.length) {
-                    prEl.textContent = users[0].pratihari_beddha ?? '—';
-                    goEl.textContent = users[0].gochhikar_beddha ?? '—';
-                } else {
-                    prEl.textContent = '—';
-                    goEl.textContent = '—';
-                }
-
-                rowsEl.innerHTML = '';
-                if (!users.length) {
-                    rowsEl.innerHTML = '<tr><td colspan="4" class="text-muted">No data.</td></tr>';
-                } else {
-                    users.forEach(function(u){
-                        const name   = (u.name || '').trim() || '—';
-                        const phone  = (u.phone || '').trim() || '—';
-                        const beddha = (u.beddha != null) ? u.beddha : '—';
-                        const by     = (u.assigned_by || 'Unknown');
-
-                        const badge  = by === 'User'
-                            ? '<span class="badge bg-success-subtle text-success border border-success-subtle">User Assigned</span>'
-                            : '<span class="badge bg-warning-subtle text-warning border border-warning-subtle">Admin Assigned</span>';
-
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td>
-                                <div class="fw-semibold">${name}</div>
-                                <div class="small text-muted">Pratihari: ${u.pratihari_beddha ?? '—'} • Gochhikar: ${u.gochhikar_beddha ?? '—'}</div>
-                            </td>
-                            <td>${ phone !== '—' ? `<a href="tel:${phone}">${phone}</a>` : '—' }</td>
-                            <td>${beddha}</td>
-                            <td>${badge}</td>
-                        `;
-                        rowsEl.appendChild(tr);
-                    });
-                }
-
-                modal.show();
-            }, false);
-        })();
 
         // ===== KPI tiles -> Modal list (kpiListModal) =====
         (function(){
