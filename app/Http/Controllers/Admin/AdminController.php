@@ -652,39 +652,38 @@ class AdminController extends Controller
     }
 
   public function sebaCalendar(Request $request)
-{
-    // Get seba_ids by type
-    $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
-    $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
+    {
+        // Get seba_ids by type
+        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
-    // Get unique pratihari_ids (active only if you use status)
-    $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
-        ->when(schema_has_column('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
-        ->distinct()->pluck('pratihari_id');
+        // Get unique pratihari_ids (only active if column exists)
+        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
+            ->when(Schema::hasColumn('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
+            ->distinct()
+            ->pluck('pratihari_id');
 
-    $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
-        ->when(schema_has_column('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
-        ->distinct()->pluck('pratihari_id');
+        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
+            ->when(Schema::hasColumn('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
+            ->distinct()
+            ->pluck('pratihari_id');
 
-    // Fetch profile names (sorted for nicer UX)
-    $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
-        ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
+        // Fetch profile names (sorted)
+        $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
+            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
 
-    $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
-        ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
+        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
+            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
 
-    // Optional: simple guard if user flips dates
-    $from = $request->query('from');
-    $to   = $request->query('to');
-    if ($from && $to && $from > $to) {
-        // swap so the UI still works even if they inverted dates
-        [$from, $to] = [$to, $from];
-        // rebuild the URL with corrected dates
-        return redirect()->to($request->fullUrlWithQuery(['from' => $from, 'to' => $to]));
+        // Optional: normalize inverted date range in query
+        $from = $request->query('from');
+        $to   = $request->query('to');
+        if ($from && $to && $from > $to) {
+            return redirect()->to($request->fullUrlWithQuery(['from' => $to, 'to' => $from]));
+        }
+
+        return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
     }
-
-    return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
-}
 
 public function sebaDate(Request $request)
 {
