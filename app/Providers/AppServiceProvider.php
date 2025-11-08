@@ -7,25 +7,18 @@ use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        // Do NOT bind UrlGenerator here. Let Laravel handle it.
+        // Intentionally empty. Let the framework bind UrlGenerator & Request.
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        // Only force URLs when handling HTTP, not in console (Artisan).
+        // Only force URLs in HTTP context (not during Artisan)
         if ($this->app->runningInConsole()) {
             return;
         }
 
-        // If you want to force the app URL/scheme, read it from APP_URL.
         if ($appUrl = config('app.url')) {
             URL::forceRootUrl($appUrl);
             $scheme = parse_url($appUrl, PHP_URL_SCHEME) ?: 'http';
