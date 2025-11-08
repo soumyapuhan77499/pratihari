@@ -36,23 +36,22 @@ class User extends Authenticatable
     ];
 
     /** Ensure we always store digits-only with country code (e.g., 91XXXXXXXXXX). */
-    public function setMobileNumberAttribute($value)
-    {
-        $digits = preg_replace('/\D+/', '', (string) $value);
-        if ($digits === '') {
-            $this->attributes['mobile_number'] = null;
-            return;
-        }
-        // local 10 -> add 91
-        if (strlen($digits) === 10) {
-            $digits = '91'.$digits;
-        }
-        // 11 with leading 0 -> strip 0 then add 91
-        if (strlen($digits) === 11 && $digits[0] === '0') {
-            $digits = '91'.substr($digits, 1);
-        }
-        $this->attributes['mobile_number'] = $digits;
+ public function setMobileNumberAttribute($value)
+{
+    $digits = preg_replace('/\D+/', '', (string) $value);
+    if ($digits === '') {
+        $this->attributes['mobile_number'] = null;
+        return;
     }
+    if (strlen($digits) === 10) {
+        $digits = '91'.$digits;
+    }
+    if (strlen($digits) === 11 && $digits[0] === '0') {
+        $digits = '91'.substr($digits, 1);
+    }
+    $this->attributes['mobile_number'] = $digits;
+}
+
 
     public function devices()
     {

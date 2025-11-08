@@ -30,13 +30,15 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     
-  'msg91' => [
-        'auth_key'      => env('MSG91_AUTHKEY'),
-        'wa_template'   => env('MSG91_WA_TEMPLATE'),
-        'wa_namespace'  => env('MSG91_WA_NAMESPACE'),
-        'wa_number'     => env('MSG91_WA_NUMBER'),
-        'wa_lang_code'  => env('MSG91_WA_LANG_CODE', 'en_US'),
-        'wa_lang_policy'=> env('MSG91_WA_LANG_POLICY', 'deterministic'),
+   'msg91' => [
+        'auth_key'       => env('MSG91_AUTHKEY'),
+        'wa_template'    => env('MSG91_WA_TEMPLATE'),
+        'wa_namespace'   => env('MSG91_WA_NAMESPACE'),
+        'wa_number'      => env('MSG91_WA_NUMBER'),            // may include +; we'll normalize
+        'wa_lang_code'   => env('MSG91_WA_LANG_CODE', 'en_US'),
+        'wa_lang_policy' => env('MSG91_WA_LANG_POLICY', 'deterministic'),
+        // how many variables your approved template’s BODY expects: 1 (OTP only) or 2 (OTP + token)
+        'wa_body_params' => (int) env('MSG91_WA_BODY_PARAMS', 1),
     ],
 
     

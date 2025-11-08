@@ -21,10 +21,12 @@ class OtpController extends Controller
         $digits = preg_replace('/\D+/', '', (string) $raw);
         if ($digits === '') return '';
 
+        // 10 local digits -> prefix country code
         if (strlen($digits) === 10 && $defaultCountryCode) {
             return $defaultCountryCode . $digits;
         }
 
+        // 11 digits starting with 0 -> strip 0, then prefix country code
         if (strlen($digits) === 11 && $digits[0] === '0' && $defaultCountryCode) {
             return $defaultCountryCode . substr($digits, 1);
         }
@@ -32,26 +34,52 @@ class OtpController extends Controller
         return $digits;
     }
 
+    /** Validate & fetch MSG91 config, return array or throw \RuntimeException */
+    private function msg91ConfigOrFail(): array
+    {
+        $cfg = [
+            'auth'        => (string) config('services.msg91.auth_key'),
+            'template'    => (string) config('services.msg91.wa_template'),
+            'namespace'   => (string) config('services.msg91.wa_namespace'),
+            'from_raw'    => (string) config('services.msg91.wa_number'),
+            'lang_code'   => (string) config('services.msg91.wa_lang_code', 'en_US'),
+            'lang_policy' => (string) config('services.msg91.wa_lang_policy', 'deterministic'),
+            'body_params' => (int)    config('services.msg91.wa_body_params', 1),
+        ];
+
+        $missing = [];
+        foreach (['auth','template','namespace','from_raw'] as $k) {
+            if (empty($cfg[$k])) $missing[] = $k;
+        }
+        if ($missing) {
+            throw new \RuntimeException('MSG91 config missing keys: '.implode(', ', $missing));
+        }
+
+        // Normalize sender (integrated WA number) to digits only
+        $cfg['from'] = $this->normalizeMsisdn($cfg['from_raw'], '91');
+        if (!$cfg['from']) {
+            throw new \RuntimeException('MSG91 sender (wa_number) is invalid. Check MSG91_WA_NUMBER.');
+        }
+
+        if (!in_array($cfg['body_params'], [1,2], true)) {
+            throw new \RuntimeException('MSG91_WA_BODY_PARAMS must be 1 or 2.');
+        }
+
+        return $cfg;
+    }
+
+    /** Build MSG91 WhatsApp template payload (1 or 2 body variables) */
     private function buildMsg91Payload(
         string $fromIntegrated,
         string $toMsisdn,
         string $template,
         string $namespace,
-        string $otp,
-        ?string $shortToken = null,
+        array $bodyParams, // array of ['type'=>'text','text'=>'...']
         string $langCode = 'en_US',
         string $langPolicy = 'deterministic'
     ): array {
-        // If your WA template has only one variable, send only OTP param.
-        $bodyParams = [
-            ["type" => "text", "text" => (string) $otp],
-        ];
-        if ($shortToken) {
-            $bodyParams[] = ["type" => "text", "text" => (string) $shortToken];
-        }
-
         return [
-            "integrated_number" => $fromIntegrated,   // digits only
+            "integrated_number" => $fromIntegrated, // digits only
             "content_type"      => "template",
             "payload"           => [
                 "messaging_product" => "whatsapp",
@@ -84,10 +112,12 @@ class OtpController extends Controller
         return Http::withHeaders([
             'Content-Type' => 'application/json',
             'Accept'       => 'application/json',
-            // Both casings to dodge infra/proxy quirks
+            // Some infra expects lowercase, some capitalized
             'authkey'      => $authKey,
             'Authkey'      => $authKey,
-        ])->timeout(25)->post($url, $payload);
+        ])
+        ->timeout(25)
+        ->post($url, $payload);
     }
 
     // ----------------- Logout -----------------
@@ -142,61 +172,82 @@ class OtpController extends Controller
             return response()->json(['message' => $validator->errors()->first()], 422);
         }
 
-        // Normalize to MSG91 format (digits, no +)
-        $toMsisdn       = $this->normalizeMsisdn($request->mobile_number, '91');
-        $integratedFrom = $this->normalizeMsisdn((string) config('services.msg91.wa_number'), '91');
+        try {
+            $cfg = $this->msg91ConfigOrFail();
+        } catch (\RuntimeException $e) {
+            Log::error('MSG91 config error: '.$e->getMessage());
+            return response()->json(['message' => 'OTP service is not configured properly.'], 500);
+        }
 
-        if (!$toMsisdn || !$integratedFrom) {
+        // Normalize destination to MSG91 format (digits, no +)
+        $toMsisdn = $this->normalizeMsisdn($request->mobile_number, '91');
+        if (!$toMsisdn) {
             return response()->json(['message' => 'Phone number format is invalid.'], 422);
         }
 
+        // Create OTP & (optional) token
         $otp        = (string) random_int(100000, 999999);
-        $shortToken = Str::upper(Str::random(6));     // keep optional in payload
+        $shortToken = Str::upper(Str::random(6)); // used only if template expects 2 vars
         $expiresAt  = Carbon::now()->addMinutes(10);
 
-        // Persist (set mutator will normalize +91 -> digits)
+        // Persist user/OTP (mutator will normalize +91 -> digits)
         $user = User::updateOrCreate(
             ['mobile_number' => $toMsisdn],
             ['otp' => $otp, 'otp_expires_at' => $expiresAt]
         );
 
+        // Build BODY parameters according to template variable count
+        $bodyParams = [
+            ["type" => "text", "text" => $otp],
+        ];
+        if ($cfg['body_params'] === 2) {
+            $bodyParams[] = ["type" => "text", "text" => $shortToken];
+        }
+
         $payload = $this->buildMsg91Payload(
-            $integratedFrom,
+            $cfg['from'],
             $toMsisdn,
-            (string) config('services.msg91.wa_template'),
-            (string) config('services.msg91.wa_namespace'),
-            $otp,
-            $shortToken,
-            (string) config('services.msg91.wa_lang_code', 'en_US'),
-            (string) config('services.msg91.wa_lang_policy', 'deterministic'),
+            $cfg['template'],
+            $cfg['namespace'],
+            $bodyParams,
+            $cfg['lang_code'],
+            $cfg['lang_policy'],
         );
 
         try {
-            $resp   = $this->sendViaMsg91($payload, (string) config('services.msg91.auth_key'));
-            $json   = $resp->json();
-            $body   = $json ?: $resp->body();
+            $resp = $this->sendViaMsg91($payload, $cfg['auth']);
+            $json = $resp->json();
+            $body = $json ?: $resp->body();
 
+            // Log minimal but actionable info (no secrets)
             Log::info('MSG91 sendOtp response', [
-                'status'   => $resp->status(),
-                'headers'  => $resp->headers(),
-                'body'     => $body,
-                'payload'  => $payload,
-                'to'       => $toMsisdn,
-                'from'     => $integratedFrom,
+                'http_status' => $resp->status(),
+                'ok'          => $resp->successful(),
+                'to'          => $toMsisdn,
+                'from'        => $cfg['from'],
+                'template'    => $cfg['template'],
+                'namespace'   => $cfg['namespace'],
+                'body_params' => $cfg['body_params'],
+                'resp'        => is_array($body) ? $body : (string) $body,
             ]);
 
+            // Hard failures (HTTP)
             if (!$resp->successful()) {
                 $msg = 'Failed to send OTP. Please try again.';
-                if (is_array($json) && isset($json['message'])) {
-                    $msg .= ' Reason: ' . $json['message'];
+                // In non-production, surface provider message to speed up debugging
+                if (!app()->isProduction() && is_array($json) && isset($json['message'])) {
+                    $msg .= ' Provider says: '.$json['message'];
                 }
                 return response()->json(['message' => $msg], 502);
             }
 
-            // MSG91 sometimes returns 200 + {"type":"error", ...}
+            // Soft failures (MSG91 returns 200 but type=error)
             if (is_array($json) && isset($json['type']) && strtolower((string) $json['type']) === 'error') {
                 $reason = $json['message'] ?? 'Unknown MSG91 error';
-                return response()->json(['message' => 'OTP could not be sent. '.$reason], 502);
+                if (!app()->isProduction()) {
+                    return response()->json(['message' => 'OTP could not be sent. '.$reason], 502);
+                }
+                return response()->json(['message' => 'OTP could not be sent. Please try again.'], 502);
             }
 
             return response()->json([
@@ -244,7 +295,7 @@ class OtpController extends Controller
             return response()->json(['message' => 'Invalid OTP.'], 401);
         }
 
-        // success -> clear OTP
+        // Success -> clear OTP
         $user->otp = null;
         $user->otp_expires_at = null;
 
