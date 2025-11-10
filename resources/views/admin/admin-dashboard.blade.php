@@ -438,11 +438,11 @@
                         <i class="bi bi-funnel"></i> Today
                     </a>
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"
-                        style="color:#fff">
+                       >
                         <i class="bi bi-check2-circle"></i> Approved
                     </a>
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'pending') }}"
-                        style="color:#fff">
+                        >
                         <i class="bi bi-hourglass-split"></i> Pending
                     </a>
                 </div>
