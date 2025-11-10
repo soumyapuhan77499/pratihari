@@ -305,29 +305,6 @@
                             <div class="section-title">Family Details</div>
                             <div class="section-hint">Add parents, spouse, and dependents.</div>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="father_name">Father’s Name</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-user"></i></span>
-                                    <input type="text" class="form-control" id="father_name" name="father_name" placeholder="Enter name">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="mother_name">Mother’s Name</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-person-dress"></i></span>
-                                    <input type="text" class="form-control" id="mother_name" name="mother_name" placeholder="Enter name">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="spouse_name">Spouse Name</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-people-arrows-left-right"></i></span>
-                                    <input type="text" class="form-control" id="spouse_name" name="spouse_name" placeholder="Enter name">
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     {{-- ID CARD --}}
@@ -335,22 +312,6 @@
                         <div class="mb-2">
                             <div class="section-title">Identity Card</div>
                             <div class="section-hint">Govt-issued identity details.</div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="aadhaar_no">Aadhaar Number</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-regular fa-id-card"></i></span>
-                                    <input type="text" class="form-control" id="aadhaar_no" name="aadhaar_no" placeholder="XXXX XXXX XXXX">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="pan_no">PAN</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-id-badge"></i></span>
-                                    <input type="text" class="form-control" id="pan_no" name="pan_no" placeholder="ABCDE1234F">
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -360,29 +321,6 @@
                             <div class="section-title">Address</div>
                             <div class="section-hint">Current and permanent address.</div>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="address_line">Address Line</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-location-dot"></i></span>
-                                    <input type="text" class="form-control" id="address_line" name="address_line" placeholder="Street, area">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <label class="form-label" for="city">City</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-city"></i></span>
-                                    <input type="text" class="form-control" id="city" name="city" placeholder="City">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <label class="form-label" for="pincode">Pincode</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-hashtag"></i></span>
-                                    <input type="text" class="form-control" id="pincode" name="pincode" maxlength="6" placeholder="6 digits">
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     {{-- OCCUPATION --}}
@@ -390,22 +328,6 @@
                         <div class="mb-2">
                             <div class="section-title">Occupation</div>
                             <div class="section-hint">Employment and skills.</div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="profession">Profession</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-briefcase"></i></span>
-                                    <input type="text" class="form-control" id="profession" name="profession" placeholder="Your role">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="organization">Organization</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-building"></i></span>
-                                    <input type="text" class="form-control" id="organization" name="organization" placeholder="Company / Org">
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -415,15 +337,6 @@
                             <div class="section-title">Seba</div>
                             <div class="section-hint">Volunteering and services.</div>
                         </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label class="form-label" for="seba_area">Area of Service</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-solid fa-handshake-angle"></i></span>
-                                    <input type="text" class="form-control" id="seba_area" name="seba_area" placeholder="e.g., Event coordination">
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     {{-- SOCIAL --}}
@@ -431,29 +344,6 @@
                         <div class="mb-2">
                             <div class="section-title">Social Media</div>
                             <div class="section-hint">Links to public profiles.</div>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="facebook">Facebook</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-brands fa-facebook-f"></i></span>
-                                    <input type="url" class="form-control" id="facebook" name="facebook" placeholder="https://facebook.com/username">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="instagram">Instagram</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-brands fa-instagram"></i></span>
-                                    <input type="url" class="form-control" id="instagram" name="instagram" placeholder="https://instagram.com/username">
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-4">
-                                <label class="form-label" for="twitter">Twitter/X</label>
-                                <div class="input-group">
-                                    <span class="chip"><i class="fa-brands fa-x-twitter"></i></span>
-                                    <input type="url" class="form-control" id="twitter" name="twitter" placeholder="https://x.com/handle">
-                                </div>
-                            </div>
                         </div>
                     </div>
 
