@@ -434,7 +434,7 @@
                 </div>
                 <div class="d-flex gap-2 ms-md-auto">
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'today') }}"
-                        style="color:#fff">
+                       >
                         <i class="bi bi-funnel"></i> Today
                     </a>
                     <a class="btn btn-sm btn-outline-light" href="{{ route('admin.pratihari.filterUsers', 'approved') }}"
