@@ -186,13 +186,13 @@
                                                 @foreach ($beddhas[$seba->id] ?? [] as $beddha)
                                                     <div class="form-check me-2">
                                                         <input class="form-check-input"
-                                                               type="checkbox"
-                                                               name="beddha_id[{{ $seba->id }}][]"
-                                                               value="{{ $beddha->id }}"
-                                                               id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
-                                                               {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
+                                                            type="checkbox"
+                                                            name="beddha_id[{{ $seba->id }}][]"
+                                                            value="{{ $beddha->id }}"
+                                                            id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
+                                                            {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
-                                                            <i class="fa-solid fa-user-tag me-1 text-primary"></i>{{ $beddha->beddha_name }}
+                                                           {{ $beddha->beddha_name }}
                                                         </label>
                                                     </div>
                                                 @endforeach
