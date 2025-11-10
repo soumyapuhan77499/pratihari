@@ -57,6 +57,14 @@
             background:linear-gradient(90deg,var(--brand-a),var(--brand-b)); color:#fff;
         }
         .form-label{ font-weight:700; color:var(--ink); }
+
+        /* Clickable thumbnail */
+        .thumb-btn{
+            padding:0; border:0; background:transparent; cursor:pointer;
+            display:inline-block; line-height:0;
+        }
+        .thumb-btn img{ transition:transform .12s ease; }
+        .thumb-btn:hover img{ transform:scale(1.03); }
     </style>
 @endsection
 
@@ -106,7 +114,7 @@
                     <thead>
                         <tr>
                             <th>SlNo</th>
-                            <th>Photo</th> <!-- NEW -->
+                            <th>Photo</th>
                             <th>Notice</th>
                             <th>From Date</th>
                             <th>To Date</th>
@@ -122,11 +130,18 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
 
-                                <!-- NEW: photo thumbnail -->
+                                <!-- Clickable Photo Thumbnail (opens preview modal) -->
                                 <td>
                                     @if($photoUrl)
-                                        <img src="{{ $photoUrl }}" class="rounded border"
-                                             style="width:60px;height:60px;object-fit:cover" alt="Photo">
+                                        <button type="button"
+                                                class="thumb-btn"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#photoPreviewModal"
+                                                data-photo-url="{{ $photoUrl }}"
+                                                data-title="{{ $notice->notice_name }}">
+                                            <img src="{{ $photoUrl }}" class="rounded border"
+                                                 style="width:60px;height:60px;object-fit:cover" alt="Photo thumbnail">
+                                        </button>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
@@ -177,7 +192,7 @@
                     </tbody>
                 </table>
 
-                <!-- Edit Modal -->
+                <!-- Edit Modal (unchanged except preview area) -->
                 <div class="modal fade" id="editNoticeModal" tabindex="-1" aria-labelledby="editNoticeModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-scrollable">
                         <form method="POST" id="editNoticeForm" enctype="multipart/form-data">
@@ -242,7 +257,33 @@
                             </div>
                         </form>
                     </div>
-                </div><!-- /modal -->
+                </div><!-- /edit modal -->
+
+                <!-- NEW: Photo Preview Modal -->
+                <div class="modal fade" id="photoPreviewModal" tabindex="-1" aria-labelledby="photoPreviewLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="photoPreviewLabel">
+                                    <i class="fa-regular fa-image me-2"></i>
+                                    <span id="photoPreviewTitle">Photo</span>
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-2">
+                                <div class="w-100 text-center">
+                                    <img id="photoPreviewImg" src="" alt="Notice photo" class="img-fluid rounded" style="max-height:80vh; object-fit:contain;">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a id="photoOpenNewTab" href="#" target="_blank" class="btn btn-light">
+                                    <i class="fa-solid fa-up-right-from-square me-1"></i> Open in new tab
+                                </a>
+                                <button type="button" class="btn btn-brand" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- /photo preview modal -->
             </div>
         </div>
     </div>
@@ -320,7 +361,7 @@
             const imgPreview = document.getElementById('edit-photo-preview');
             const noPhotoTxt = document.getElementById('no-photo-text');
 
-            // Show modal: fill data
+            // Show edit modal: fill data
             editModal.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const id    = button.getAttribute('data-id');
@@ -357,7 +398,7 @@
                 }
             }, false);
 
-            // Live preview when selecting a new image
+            // Live preview when selecting a new image in edit modal
             inputFile.addEventListener('change', function(){
                 if (this.files && this.files[0]) {
                     const url = URL.createObjectURL(this.files[0]);
@@ -365,6 +406,29 @@
                     imgPreview.style.display = 'block';
                     noPhotoTxt.style.display = 'none';
                 }
+            });
+
+            // Photo Preview Modal: set image + title from clicked thumbnail
+            const photoModal = document.getElementById('photoPreviewModal');
+            photoModal.addEventListener('show.bs.modal', function (event) {
+                const trigger = event.relatedTarget; // the thumbnail button
+                const url = trigger.getAttribute('data-photo-url') || '';
+                const title = trigger.getAttribute('data-title') || 'Photo';
+
+                const img = document.getElementById('photoPreviewImg');
+                const titleSpan = document.getElementById('photoPreviewTitle');
+                const openLink = document.getElementById('photoOpenNewTab');
+
+                titleSpan.textContent = title;
+                img.src = url;
+                img.alt = title + ' photo';
+                openLink.href = url;
+            });
+
+            // Clear image on modal hide to free memory (optional)
+            photoModal.addEventListener('hidden.bs.modal', function(){
+                const img = document.getElementById('photoPreviewImg');
+                img.removeAttribute('src');
             });
         });
     </script>
