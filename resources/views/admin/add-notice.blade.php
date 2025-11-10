@@ -9,42 +9,88 @@
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
     <style>
-        :root{
-            --brand-a:#7c3aed; /* violet  */
-            --brand-b:#06b6d4; /* cyan    */
-            --ink:#0b1220;
-            --muted:#64748b;
-            --border:rgba(2,6,23,.10);
+        :root {
+            --brand-a: #7c3aed;
+            /* violet  */
+            --brand-b: #06b6d4;
+            /* cyan    */
+            --ink: #0b1220;
+            --muted: #64748b;
+            --border: rgba(2, 6, 23, .10);
         }
 
-        .page-header{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            color:#fff;border-radius:1rem;padding:1rem 1.25rem;
-            box-shadow:0 10px 24px rgba(6,182,212,.18);
-        }
-        .page-header .title{font-weight:800;letter-spacing:.3px;}
-
-        .card{ border:1px solid var(--border); border-radius:14px; box-shadow:0 8px 22px rgba(2,6,23,.06); }
-        .card-header{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            color:#fff; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
-            border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem; justify-content:center;
+        .page-header {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color: #fff;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 10px 24px rgba(6, 182, 212, .18);
         }
 
-        .input-group-text{ background:#fff; }
-        .form-label{ font-weight:700; color:var(--ink); }
-        .text-hint{ color:var(--muted); font-size:.9rem; }
-
-        .custom-gradient-btn{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            border:0; color:#fff; font-weight:800; border-radius:10px;
-            box-shadow:0 12px 24px rgba(124,58,237,.22);
+        .page-header .title {
+            font-weight: 800;
+            letter-spacing: .3px;
         }
-        .custom-gradient-btn:hover{ opacity:.96; }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            justify-content: center;
+        }
+
+        .input-group-text {
+            background: #fff;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .text-hint {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .custom-gradient-btn {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            border: 0;
+            color: #fff;
+            font-weight: 800;
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(124, 58, 237, .22);
+        }
+
+        .custom-gradient-btn:hover {
+            opacity: .96;
+        }
 
         /* Flash fade */
-        .fade-out{ animation: fadeout .5s ease-in-out forwards; }
-        @keyframes fadeout{ to{ opacity:0; height:0; margin:0; padding:0; } }
+        .fade-out {
+            animation: fadeout .5s ease-in-out forwards;
+        }
+
+        @keyframes fadeout {
+            to {
+                opacity: 0;
+                height: 0;
+                margin: 0;
+                padding: 0;
+            }
+        }
     </style>
 @endsection
 
@@ -78,7 +124,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="{{ route('saveNotice') }}" method="POST" novalidate>
+                    <form action="{{ route('saveNotice') }}" method="POST" enctype="multipart/form-data" novalidate>
                         @csrf
 
                         <div class="row g-3">
@@ -86,13 +132,12 @@
                                 <label for="notice_name" class="form-label">Notice Name</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-pen"></i></span>
-                                    <input type="text"
-                                           class="form-control"
-                                           id="notice_name"
-                                           name="notice_name"
-                                           required
-                                           maxlength="150"
-                                           placeholder="Enter Notice Name">
+                                    <input type="text" class="form-control @error('notice_name') is-invalid @enderror"
+                                        id="notice_name" name="notice_name" required maxlength="150"
+                                        value="{{ old('notice_name') }}" placeholder="Enter Notice Name">
+                                    @error('notice_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -100,11 +145,11 @@
                                 <label for="from_date" class="form-label">From Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
-                                    <input type="date"
-                                           class="form-control"
-                                           id="from_date"
-                                           name="from_date"
-                                           required>
+                                    <input type="date" class="form-control @error('from_date') is-invalid @enderror"
+                                        id="from_date" name="from_date" value="{{ old('from_date') }}" required>
+                                    @error('from_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -112,19 +157,39 @@
                                 <label for="to_date" class="form-label">To Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar-days"></i></span>
-                                    <input type="date"
-                                           class="form-control"
-                                           id="to_date"
-                                           name="to_date"
-                                           required>
+                                    <input type="date" class="form-control @error('to_date') is-invalid @enderror"
+                                        id="to_date" name="to_date" value="{{ old('to_date') }}" required>
+                                    @error('to_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
+                            <!-- NEW: Notice Photo -->
+                            <div class="col-md-6">
+                                <label for="notice_photo" class="form-label">Notice Photo <span
+                                        class="text-hint">(optional)</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-regular fa-image"></i></span>
+                                    <input type="file" class="form-control @error('notice_photo') is-invalid @enderror"
+                                        id="notice_photo" name="notice_photo" accept="image/*">
+                                    @error('notice_photo')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <small class="text-muted">Accepted: JPG, PNG, WebP; max 2MB.</small>
+                            </div>
+
                             <div class="col-12">
-                                <label for="description" class="form-label">Description <span class="text-hint">(optional)</span></label>
+                                <label for="description" class="form-label">Description <span
+                                        class="text-hint">(optional)</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-align-left"></i></span>
-                                    <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter Description"></textarea>
+                                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
+                                        rows="4" placeholder="Enter Description">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -135,6 +200,7 @@
                             </div>
                         </div><!-- /row -->
                     </form>
+
                 </div>
             </div>
         </div>
@@ -157,14 +223,17 @@
         });
 
         // Date guard: to_date cannot be before from_date
-        (function(){
+        (function() {
             const from = document.getElementById('from_date');
-            const to   = document.getElementById('to_date');
+            const to = document.getElementById('to_date');
 
-            function syncMin(){
-                if(!from.value) { to.min = ''; return; }
+            function syncMin() {
+                if (!from.value) {
+                    to.min = '';
+                    return;
+                }
                 to.min = from.value;
-                if(to.value && to.value < from.value){
+                if (to.value && to.value < from.value) {
                     to.value = from.value;
                 }
             }

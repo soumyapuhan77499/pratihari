@@ -10,7 +10,7 @@ class PratihariNotice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'notice_name', 'from_date', 'to_date', 'description', 'status'
+        'notice_name','notice_photo', 'from_date', 'to_date', 'description', 'status'
     ];
 
     protected $table = 'pratihari__news_notice';

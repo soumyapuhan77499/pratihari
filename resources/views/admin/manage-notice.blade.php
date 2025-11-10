@@ -106,17 +106,32 @@
                     <thead>
                         <tr>
                             <th>SlNo</th>
+                            <th>Photo</th> <!-- NEW -->
                             <th>Notice</th>
                             <th>From Date</th>
                             <th>To Date</th>
                             <th>Description</th>
-                            <th style="width:140px;">Action</th>
+                            <th style="width:160px;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($notices as $notice)
+                            @php
+                                $photoUrl = $notice->notice_photo ? asset('storage/'.$notice->notice_photo) : '';
+                            @endphp
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
+
+                                <!-- NEW: photo thumbnail -->
+                                <td>
+                                    @if($photoUrl)
+                                        <img src="{{ $photoUrl }}" class="rounded border"
+                                             style="width:60px;height:60px;object-fit:cover" alt="Photo">
+                                    @else
+                                        <span class="text-muted">—</span>
+                                    @endif
+                                </td>
+
                                 <td class="fw-bold">{{ $notice->notice_name }}</td>
                                 <td>
                                     <span class="badge rounded-pill date-badge">
@@ -140,7 +155,8 @@
                                                 data-name="{{ $notice->notice_name }}"
                                                 data-from="{{ $notice->from_date }}"
                                                 data-to="{{ $notice->to_date }}"
-                                                data-description="{{ $notice->description }}">
+                                                data-description="{{ $notice->description }}"
+                                                data-photo-url="{{ $photoUrl }}">
                                             <i class="fa fa-edit"></i>
                                         </button>
 
@@ -163,8 +179,8 @@
 
                 <!-- Edit Modal -->
                 <div class="modal fade" id="editNoticeModal" tabindex="-1" aria-labelledby="editNoticeModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <form method="POST" id="editNoticeForm">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <form method="POST" id="editNoticeForm" enctype="multipart/form-data">
                             @csrf
                             @method('PUT')
                             <div class="modal-content">
@@ -174,24 +190,49 @@
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" id="notice-id">
-                                    <div class="mb-3">
-                                        <label class="form-label">Notice Name</label>
-                                        <input type="text" name="notice_name" class="form-control" id="notice-name" required>
-                                    </div>
                                     <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label">From Date</label>
-                                            <input type="date" name="from_date" class="form-control" id="notice-from" required>
+                                        <div class="col-md-8">
+                                            <div class="mb-3">
+                                                <label class="form-label">Notice Name</label>
+                                                <input type="text" name="notice_name" class="form-control" id="notice-name" required maxlength="150">
+                                            </div>
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">From Date</label>
+                                                    <input type="date" name="from_date" class="form-control" id="notice-from" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">To Date</label>
+                                                    <input type="date" name="to_date" class="form-control" id="notice-to" required>
+                                                </div>
+                                            </div>
+                                            <div class="mt-3">
+                                                <label class="form-label">Description</label>
+                                                <textarea name="description" class="form-control" id="notice-description" rows="4" placeholder="Optional"></textarea>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label">To Date</label>
-                                            <input type="date" name="to_date" class="form-control" id="notice-to" required>
+
+                                        <!-- Right column: current preview + upload -->
+                                        <div class="col-md-4">
+                                            <label class="form-label d-block">Current Photo</label>
+                                            <div class="border rounded p-2 text-center">
+                                                <img id="edit-photo-preview" src="" alt="No photo" class="img-fluid rounded"
+                                                     style="max-height:180px;object-fit:contain;display:none;">
+                                                <div id="no-photo-text" class="text-muted small">No photo available</div>
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <label class="form-label">Upload New Photo <span class="text-hint">(optional)</span></label>
+                                                <input type="file" class="form-control" id="notice-photo" name="notice_photo" accept="image/*">
+                                                <small class="text-muted d-block mt-1">Max 2MB (JPG/PNG/WebP). Uploading replaces the existing photo.</small>
+
+                                                <div class="form-check mt-2">
+                                                    <input class="form-check-input" type="checkbox" value="1" id="remove-photo" name="remove_photo">
+                                                    <label class="form-check-label" for="remove-photo">Remove existing photo</label>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <label class="form-label">Description</label>
-                                        <textarea name="description" class="form-control" id="notice-description" rows="3" placeholder="Optional"></textarea>
-                                    </div>
+                                    </div> <!-- /row -->
                                 </div>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-brand">
@@ -232,7 +273,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // DataTable init (if you don't already init in table-data.js, you can inline it here)
+        // DataTable init
         $(function () {
             const dt = $('#file-datatable').DataTable({
                 dom: 'Bfrtip',
@@ -271,27 +312,60 @@
             });
         }
 
-        // Populate Edit Modal
+        // Populate Edit Modal + photo preview
         document.addEventListener('DOMContentLoaded', function(){
             const editModal = document.getElementById('editNoticeModal');
+            const form = document.getElementById('editNoticeForm');
+            const inputFile = document.getElementById('notice-photo');
+            const imgPreview = document.getElementById('edit-photo-preview');
+            const noPhotoTxt = document.getElementById('no-photo-text');
+
+            // Show modal: fill data
             editModal.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const id    = button.getAttribute('data-id');
-                const name  = button.getAttribute('data-name');
-                const from  = button.getAttribute('data-from');
-                const to    = button.getAttribute('data-to');
-                const desc  = button.getAttribute('data-description');
+                const name  = button.getAttribute('data-name') || '';
+                const from  = button.getAttribute('data-from') || '';
+                const to    = button.getAttribute('data-to') || '';
+                const desc  = button.getAttribute('data-description') || '';
+                const photo = button.getAttribute('data-photo-url') || '';
 
-                // Set form action (must match your route)
-                document.getElementById('editNoticeForm').setAttribute('action', '/admin/notice/update/' + id);
+                // Set form action (match your route)
+                form.setAttribute('action', '/admin/notice/update/' + id); // adjust if route differs
 
                 // Fill fields
                 document.getElementById('notice-id').value = id;
-                document.getElementById('notice-name').value = name || '';
-                document.getElementById('notice-from').value = from || '';
-                document.getElementById('notice-to').value   = to || '';
-                document.getElementById('notice-description').value = (desc || '');
+                document.getElementById('notice-name').value = name;
+                // Ensure yyyy-mm-dd for date inputs
+                document.getElementById('notice-from').value = from ? from.substring(0,10) : '';
+                document.getElementById('notice-to').value   = to ? to.substring(0,10) : '';
+                document.getElementById('notice-description').value = desc;
+
+                // Reset file input & remove checkbox
+                inputFile.value = '';
+                document.getElementById('remove-photo').checked = false;
+
+                // Set current preview
+                if (photo) {
+                    imgPreview.src = photo;
+                    imgPreview.style.display = 'block';
+                    noPhotoTxt.style.display = 'none';
+                } else {
+                    imgPreview.removeAttribute('src');
+                    imgPreview.style.display = 'none';
+                    noPhotoTxt.style.display = 'block';
+                }
             }, false);
+
+            // Live preview when selecting a new image
+            inputFile.addEventListener('change', function(){
+                if (this.files && this.files[0]) {
+                    const url = URL.createObjectURL(this.files[0]);
+                    imgPreview.src = url;
+                    imgPreview.style.display = 'block';
+                    noPhotoTxt.style.display = 'none';
+                }
+            });
         });
     </script>
 @endsection
