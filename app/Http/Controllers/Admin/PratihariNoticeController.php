@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PratihariNotice;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 
 class PratihariNoticeController extends Controller
 {
