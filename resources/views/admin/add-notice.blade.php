@@ -128,7 +128,7 @@
                         @csrf
 
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="notice_name" class="form-label">Notice Name</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-pen"></i></span>
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="from_date" class="form-label">From Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
@@ -153,7 +153,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label for="to_date" class="form-label">To Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar-days"></i></span>
@@ -166,7 +166,7 @@
                             </div>
 
                             <!-- NEW: Notice Photo -->
-                            <div class="col-md-6">
+                            <div class="col-md-3">
                                 <label for="notice_photo" class="form-label">Notice Photo <span
                                         class="text-hint">(optional)</span></label>
                                 <div class="input-group">
