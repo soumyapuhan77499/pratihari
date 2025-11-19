@@ -70,7 +70,7 @@
 <div class="row">
     <div class="col-12 mt-3">
         <div class="card shadow-lg">
-            <div class="card-header py-3 text-center">
+            <div class="card-header py-3">
                 <a href="{{ route('admin.pratihariManageProfile')}}" class="btn btn-danger">
                             </i> Back
                         </a>
