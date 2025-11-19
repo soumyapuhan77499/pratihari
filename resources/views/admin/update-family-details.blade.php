@@ -7,12 +7,9 @@
 
     <style>
         :root {
-            --brand-a: #7c3aed;
-            /* violet */
-            --brand-b: #06b6d4;
-            /* cyan   */
-            --accent: #f5c12e;
-            /* amber  */
+            --brand-a: #7c3aed; /* violet */
+            --brand-b: #06b6d4; /* cyan   */
+            --accent: #f5c12e; /* amber  */
             --ink: #0b1220;
             --muted: #64748b;
             --border: rgba(2, 6, 23, .10);
@@ -106,7 +103,7 @@
         }
 
         /* Section spacing */
-        .section-gap>[class^="col-"] {
+        .section-gap > [class^="col-"] {
             margin-bottom: 14px;
         }
 
@@ -130,11 +127,10 @@
                     @endphp
 
                     <a href="{{ $pratihariId ? route('admin.viewProfile', $pratihariId) : route('admin.pratihariProfile') }}"
-                        class="btn btn-light btn-sm d-inline-flex align-items-center">
+                       class="btn btn-light btn-sm d-inline-flex align-items-center">
                         <i class="fa-solid fa-arrow-left me-1"></i>
                         <span>Back to Profile</span>
                     </a>
-
 
                     {{-- Title on the right / center-ish --}}
                     <div class="text-uppercase fw-bold d-flex align-items-center">
@@ -158,15 +154,21 @@
                             </a>
                         </li>
 
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-id-card"></i> ID Card</a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-id-card"></i> ID Card</a>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-map-marker-alt"></i>
-                                Address</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-briefcase"></i>
-                                Occupation</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-cogs"></i> Seba</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-share-alt"></i> Social
-                                Media</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-map-marker-alt"></i> Address</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-briefcase"></i> Occupation</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Seba</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#"><i class="fas fa-share-alt"></i> Social Media</a>
+                        </li>
                     </ul>
                 </div>
 
@@ -181,17 +183,18 @@
 
                         <div class="row section-gap">
                             <input type="hidden" name="pratihari_id"
-                                value="{{ old('pratihari_id', $family->pratihari_id ?? '') }}">
+                                   value="{{ old('pratihari_id', $family->pratihari_id ?? '') }}">
 
                             <!-- Father Name -->
                             <div class="col-md-6">
                                 <label for="father_name">Father Name</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-user"
-                                            style="color:var(--accent)"></i></span>
+                                    <span class="input-group-text">
+                                        <i class="fa fa-user" style="color:var(--accent)"></i>
+                                    </span>
                                     <input type="text" class="form-control" id="father_name" name="father_name" required
-                                        placeholder="Enter Father's Name"
-                                        value="{{ old('father_name', $family->father_name ?? '') }}">
+                                           placeholder="Enter Father's Name"
+                                           value="{{ old('father_name', $family->father_name ?? '') }}">
                                 </div>
                             </div>
 
@@ -199,13 +202,14 @@
                             <div class="col-md-6">
                                 <label for="father_photo">Father Photo</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-camera"
-                                            style="color:var(--accent)"></i></span>
+                                    <span class="input-group-text">
+                                        <i class="fa fa-camera" style="color:var(--accent)"></i>
+                                    </span>
                                     <input type="file" class="form-control" id="father_photo" name="father_photo">
                                 </div>
                                 @if (isset($family) && $family->father_photo)
                                     <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
-                                        data-bs-toggle="modal" data-bs-target="#fatherPhotoModal">
+                                            data-bs-toggle="modal" data-bs-target="#fatherPhotoModal">
                                         <i class="fa-solid fa-image me-1"></i> View Image
                                     </button>
                                 @endif
@@ -213,18 +217,18 @@
 
                             <!-- Father Photo Modal -->
                             <div class="modal fade" id="fatherPhotoModal" tabindex="-1"
-                                aria-labelledby="fatherPhotoModalLabel" aria-hidden="true">
+                                 aria-labelledby="fatherPhotoModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="fatherPhotoModalLabel">Father Photo</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                                    aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body text-center">
                                             @if (!empty($family) && !empty($family->father_photo))
                                                 <img src="{{ asset($family->father_photo) }}" class="img-fluid rounded"
-                                                    alt="Father Photo">
+                                                     alt="Father Photo">
                                             @else
                                                 <p class="text-muted mb-0">No father photo available.</p>
                                             @endif
@@ -237,11 +241,12 @@
                             <div class="col-md-6">
                                 <label for="mother_name">Mother Name</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-user"
-                                            style="color:var(--accent)"></i></span>
+                                    <span class="input-group-text">
+                                        <i class="fa fa-user" style="color:var(--accent)"></i>
+                                    </span>
                                     <input type="text" class="form-control" id="mother_name" name="mother_name"
-                                        required placeholder="Enter Mother's Name"
-                                        value="{{ old('mother_name', $family->mother_name ?? '') }}">
+                                           required placeholder="Enter Mother's Name"
+                                           value="{{ old('mother_name', $family->mother_name ?? '') }}">
                                 </div>
                             </div>
 
@@ -249,13 +254,14 @@
                             <div class="col-md-6">
                                 <label for="mother_photo">Mother Photo</label>
                                 <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-camera"
-                                            style="color:var(--accent)"></i></span>
+                                    <span class="input-group-text">
+                                        <i class="fa fa-camera" style="color:var(--accent)"></i>
+                                    </span>
                                     <input type="file" class="form-control" id="mother_photo" name="mother_photo">
                                 </div>
                                 @if (isset($family) && $family->mother_photo)
                                     <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
-                                        data-bs-toggle="modal" data-bs-target="#motherPhotoModal">
+                                            data-bs-toggle="modal" data-bs-target="#motherPhotoModal">
                                         <i class="fa-solid fa-image me-1"></i> View Full Image
                                     </button>
                                 @endif
@@ -263,18 +269,18 @@
 
                             <!-- Mother Photo Modal -->
                             <div class="modal fade" id="motherPhotoModal" tabindex="-1"
-                                aria-labelledby="motherPhotoModalLabel" aria-hidden="true">
+                                 aria-labelledby="motherPhotoModalLabel" aria-hidden="true">
                                 <div class="modal-dialog modal-dialog-centered">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="motherPhotoModalLabel">Mother Photo</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
+                                                    aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body text-center">
                                             @if (!empty($family) && !empty($family->mother_photo))
                                                 <img src="{{ asset($family->mother_photo) }}" class="img-fluid rounded"
-                                                    alt="Mother Photo">
+                                                     alt="Mother Photo">
                                             @else
                                                 <p class="text-muted mb-0">No mother photo available.</p>
                                             @endif
@@ -285,19 +291,21 @@
 
                             <!-- Marital Status -->
                             <div class="col-md-6">
-                                <label class="form-label d-block"><i class="fa fa-heart me-1"
-                                        style="color:var(--accent)"></i> Marital Status</label>
+                                <label class="form-label d-block">
+                                    <i class="fa fa-heart me-1" style="color:var(--accent)"></i>
+                                    Marital Status
+                                </label>
                                 <div class="d-flex align-items-center gap-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="marital_status"
-                                            id="married" value="married"
-                                            {{ old('marital_status', $family->marital_status ?? '') == 'married' ? 'checked' : '' }}>
+                                               id="married" value="married"
+                                               {{ old('marital_status', $family->marital_status ?? '') == 'married' ? 'checked' : '' }}>
                                         <label class="form-check-label" for="married">Married</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="marital_status"
-                                            id="unmarried" value="unmarried"
-                                            {{ old('marital_status', $family->marital_status ?? '') == 'unmarried' ? 'checked' : '' }}>
+                                               id="unmarried" value="unmarried"
+                                               {{ old('marital_status', $family->marital_status ?? '') == 'unmarried' ? 'checked' : '' }}>
                                         <label class="form-check-label" for="unmarried">Unmarried</label>
                                     </div>
                                 </div>
@@ -308,25 +316,26 @@
                                 <div class="col-md-6">
                                     <label for="spouse_name">Spouse Name</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fa fa-user"
-                                                style="color:var(--accent)"></i></span>
+                                        <span class="input-group-text">
+                                            <i class="fa fa-user" style="color:var(--accent)"></i>
+                                        </span>
                                         <input type="text" class="form-control" id="spouse_name" name="spouse_name"
-                                            placeholder="Enter Spouse's Name"
-                                            value="{{ old('spouse_name', $family->spouse_name ?? '') }}">
+                                               placeholder="Enter Spouse's Name"
+                                               value="{{ old('spouse_name', $family->spouse_name ?? '') }}">
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="spouse_photo">Spouse Photo</label>
                                     <div class="input-group">
-                                        <span class="input-group-text"><i class="fa fa-camera"
-                                                style="color:var(--accent)"></i></span>
-                                        <input type="file" class="form-control" id="spouse_photo"
-                                            name="spouse_photo">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-camera" style="color:var(--accent)"></i>
+                                        </span>
+                                        <input type="file" class="form-control" id="spouse_photo" name="spouse_photo">
                                     </div>
                                     @if (isset($family) && $family->spouse_photo)
                                         <button type="button" class="btn btn-outline-secondary btn-sm mt-2"
-                                            data-bs-toggle="modal" data-bs-target="#spousePhotoModal">
+                                                data-bs-toggle="modal" data-bs-target="#spousePhotoModal">
                                             <i class="fa-solid fa-image me-1"></i> View Full Image
                                         </button>
                                     @endif
@@ -334,18 +343,18 @@
 
                                 <!-- Spouse Photo Modal -->
                                 <div class="modal fade" id="spousePhotoModal" tabindex="-1"
-                                    aria-labelledby="spousePhotoModalLabel" aria-hidden="true">
+                                     aria-labelledby="spousePhotoModalLabel" aria-hidden="true">
                                     <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="spousePhotoModalLabel">Spouse Photo</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
+                                                        aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body text-center">
                                                 @if (!empty($family) && !empty($family->spouse_photo))
-                                                    <img src="{{ asset($family->spouse_photo) }}"
-                                                        class="img-fluid rounded" alt="Spouse Photo">
+                                                    <img src="{{ asset($family->spouse_photo) }}" class="img-fluid rounded"
+                                                         alt="Spouse Photo">
                                                 @else
                                                     <p class="text-muted mb-0">No spouse photo available.</p>
                                                 @endif
@@ -356,10 +365,12 @@
                             </div>
 
                             <!-- Children -->
-                            <div class="col-12 mt-3">
+                            <div class="col-12 mt-3" id="childrenSection">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <h5 class="mb-0"><i class="fas fa-child me-2"
-                                            style="color:var(--accent)"></i>Children Details</h5>
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-child me-2" style="color:var(--accent)"></i>
+                                        Children Details
+                                    </h5>
                                     <button type="button" id="addChild" class="btn btn-sm btn-brand">
                                         <i class="fa fa-plus-circle me-1"></i> Add Child
                                     </button>
@@ -375,72 +386,80 @@
                                         @foreach ($childrenList as $index => $child)
                                             <div class="row child-row mt-3 border p-3 rounded bg-light-subtle">
                                                 <input type="hidden" name="children[{{ $index }}][id]"
-                                                    value="{{ $child->id }}">
+                                                       value="{{ $child->id }}">
                                                 <div class="col-md-4">
-                                                    <label class="form-label"><i class="fa fa-user me-1"></i> Child
-                                                        Name</label>
+                                                    <label class="form-label">
+                                                        <i class="fa fa-user me-1"></i> Child Name
+                                                    </label>
                                                     <input type="text" class="form-control"
-                                                        name="children[{{ $index }}][name]"
-                                                        value="{{ old('children.' . $index . '.name', $child->children_name) }}"
-                                                        placeholder="Enter Child's Name">
+                                                           name="children[{{ $index }}][name]"
+                                                           value="{{ old('children.' . $index . '.name', $child->children_name) }}"
+                                                           placeholder="Enter Child's Name">
                                                 </div>
                                                 <div class="col-md-3">
-                                                    <label class="form-label"><i class="fa fa-calendar me-1"></i> Date of
-                                                        Birth</label>
+                                                    <label class="form-label">
+                                                        <i class="fa fa-calendar me-1"></i> Date of Birth
+                                                    </label>
                                                     <input type="date" class="form-control"
-                                                        name="children[{{ $index }}][dob]"
-                                                        value="{{ old('children.' . $index . '.dob', $child->date_of_birth) }}">
+                                                           name="children[{{ $index }}][dob]"
+                                                           value="{{ old('children.' . $index . '.dob', $child->date_of_birth) }}">
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="form-label"><i class="fa fa-venus-mars me-1"></i>
-                                                        Gender</label>
+                                                    <label class="form-label">
+                                                        <i class="fa fa-venus-mars me-1"></i> Gender
+                                                    </label>
                                                     <select class="form-control"
-                                                        name="children[{{ $index }}][gender]">
+                                                            name="children[{{ $index }}][gender]">
                                                         <option value="male"
                                                             {{ old('children.' . $index . '.gender', $child->gender) == 'male' ? 'selected' : '' }}>
-                                                            Male</option>
+                                                            Male
+                                                        </option>
                                                         <option value="female"
                                                             {{ old('children.' . $index . '.gender', $child->gender) == 'female' ? 'selected' : '' }}>
-                                                            Female</option>
+                                                            Female
+                                                        </option>
                                                     </select>
                                                 </div>
                                                 <div class="col-md-2">
-                                                    <label class="form-label"><i class="fa fa-camera me-1"></i>
-                                                        Photo</label>
+                                                    <label class="form-label">
+                                                        <i class="fa fa-camera me-1"></i> Photo
+                                                    </label>
                                                     <input type="file" class="form-control"
-                                                        name="children[{{ $index }}][photo]">
+                                                           name="children[{{ $index }}][photo]">
                                                     @if ($child->photo)
                                                         <button type="button"
-                                                            class="btn btn-outline-secondary btn-sm mt-2"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#childPhotoModal{{ $index }}">
+                                                                class="btn btn-outline-secondary btn-sm mt-2"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#childPhotoModal{{ $index }}">
                                                             View Full Image
                                                         </button>
                                                     @endif
                                                 </div>
                                                 <div class="col-md-1 d-flex align-items-end">
-                                                    <button type="button" class="btn btn-danger removeChild"><i
-                                                            class="fa fa-trash-alt"></i></button>
+                                                    <button type="button" class="btn btn-danger removeChild">
+                                                        <i class="fa fa-trash-alt"></i>
+                                                    </button>
                                                 </div>
 
                                                 @if ($child->photo)
                                                     <div class="modal fade" id="childPhotoModal{{ $index }}"
-                                                        tabindex="-1"
-                                                        aria-labelledby="childPhotoModalLabel{{ $index }}"
-                                                        aria-hidden="true">
+                                                         tabindex="-1"
+                                                         aria-labelledby="childPhotoModalLabel{{ $index }}"
+                                                         aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
                                                                     <h5 class="modal-title"
-                                                                        id="childPhotoModalLabel{{ $index }}">Child
-                                                                        Photo</h5>
+                                                                        id="childPhotoModalLabel{{ $index }}">
+                                                                        Child Photo
+                                                                    </h5>
                                                                     <button type="button" class="btn-close"
-                                                                        data-bs-dismiss="modal"
-                                                                        aria-label="Close"></button>
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body text-center">
                                                                     <img src="{{ asset($child->photo) }}"
-                                                                        class="img-fluid rounded" alt="Child Photo">
+                                                                         class="img-fluid rounded" alt="Child Photo">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -457,7 +476,8 @@
                             <!-- Submit -->
                             <div class="col-12 text-center mt-3">
                                 <button type="submit" class="btn btn-lg w-50 btn-brand">
-                                    <i class="fa fa-save me-1"></i> {{ isset($family) ? 'Update' : 'Submit' }}
+                                    <i class="fa fa-save me-1"></i>
+                                    {{ isset($family) ? 'Update' : 'Submit' }}
                                 </button>
                             </div>
                         </div> <!-- /row -->
@@ -496,24 +516,36 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ----- Marital status toggle (vanilla JS) -----
-        const marriedRadio = document.getElementById('married');
-        const unmarriedRadio = document.getElementById('unmarried');
-        const spouseDetails = document.getElementById('spouseDetails');
+        // ----- Marital status toggle (spouse + children) -----
+        const marriedRadio    = document.getElementById('married');
+        const unmarriedRadio  = document.getElementById('unmarried');
+        const spouseDetails   = document.getElementById('spouseDetails');
+        const childrenSection = document.getElementById('childrenSection');
 
-        function updateSpouseVisibility() {
-            spouseDetails.style.display = marriedRadio.checked ? 'flex' : 'none';
+        function updateMaritalSections() {
+            if (!spouseDetails || !childrenSection) return;
+
+            if (marriedRadio && marriedRadio.checked) {
+                // Show spouse + children when married
+                spouseDetails.style.display   = 'flex';
+                childrenSection.style.display = 'block';
+            } else {
+                // Hide both when unmarried (or neither selected)
+                spouseDetails.style.display   = 'none';
+                childrenSection.style.display = 'none';
+            }
         }
-        if (marriedRadio && unmarriedRadio && spouseDetails) {
-            marriedRadio.addEventListener('change', updateSpouseVisibility);
-            unmarriedRadio.addEventListener('change', updateSpouseVisibility);
-            // Initialize on load
-            updateSpouseVisibility();
+
+        if (marriedRadio && unmarriedRadio) {
+            marriedRadio.addEventListener('change', updateMaritalSections);
+            unmarriedRadio.addEventListener('change', updateMaritalSections);
+            // Initialize on load (uses old()/DB value)
+            updateMaritalSections();
         }
 
         // ----- Children dynamic rows (vanilla JS) -----
         const addChildBtn = document.getElementById('addChild');
-        const container = document.getElementById('childrenContainer');
+        const container   = document.getElementById('childrenContainer');
 
         function childRowTemplate(idx) {
             return `
