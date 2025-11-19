@@ -112,9 +112,20 @@
 <div class="row">
     <div class="col-12 mt-3">
         <div class="card">
-            <div class="card-header">
-                <i class="fa-solid fa-user-pen me-2"></i> Pratihari — Manage Profile
-            </div>
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    {{-- Back button on the left --}}
+                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $profile->pratihari_id]) }}"
+                        class="btn btn-light btn-sm d-inline-flex align-items-center">
+                        <i class="fa-solid fa-arrow-left me-1"></i>
+                        <span>Back to Profile</span>
+                    </a>
+
+                    {{-- Title on the right / center-ish --}}
+                    <div class="text-uppercase fw-bold d-flex align-items-center">
+                        <i class="fa-solid fa-location-dot me-2"></i>
+                        <span>Profile Details</span>
+                    </div>
+                </div>
 
             <div class="p-3">
                 <ul class="nav nav-tabs flex-nowrap" role="tablist">
