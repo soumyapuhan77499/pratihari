@@ -251,7 +251,7 @@
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-map-pin"
                                             style="color:var(--accent)"></i></span>
-                                    <input type="text" class="form-control" id="pincode" name="pincode"
+                                    <input type="number" class="form-control" id="pincode" name="pincode"
                                         value="{{ old('pincode', $pratihariAddress->pincode) }}" inputmode="numeric"
                                         pattern="[0-9]{6}" maxlength="6" placeholder="6-digit pincode">
                                 </div>
@@ -371,7 +371,7 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-map-pin"
                                                 style="color:var(--accent)"></i></span>
-                                        <input type="text" class="form-control" id="per_pincode" name="per_pincode"
+                                        <input type="number" class="form-control" id="per_pincode" name="per_pincode"
                                             value="{{ old('per_pincode', $pratihariAddress->per_pincode) }}"
                                             inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
                                             placeholder="6-digit pincode">
