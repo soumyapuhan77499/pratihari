@@ -331,6 +331,11 @@
                             <i class="fa fa-save me-1"></i> Update
                         </button>
                     </div>
+                     <div class="text-center mt-4">
+                        <a href="{{ route('admin.pratihariManageProfile')}}" class="btn btn-warning">
+                            <i class="fa fa-save me-1"></i> Update
+                        </a>
+                    </div>
 
                 </form>
             </div>
