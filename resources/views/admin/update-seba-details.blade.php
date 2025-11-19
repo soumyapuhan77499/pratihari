@@ -79,7 +79,7 @@
 
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     {{-- Back button on the left --}}
-                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $seba->pratihari_id]) }}"
+                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $pratihari_id]) }}"
                         class="btn btn-light btn-sm d-inline-flex align-items-center">
                         <i class="fa-solid fa-arrow-left me-1"></i>
                         <span>Back to Profile</span>
