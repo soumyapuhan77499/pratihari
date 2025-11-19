@@ -456,10 +456,10 @@ class AdminController extends Controller
 
         // Fetch profile names (sorted)
         $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
-            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
+            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->where('pratihari_status','approved')->get();
 
         $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
-            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->get();
+            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->where('pratihari_status','approved')->get();
 
         // Optional: normalize inverted date range in query
         $from = $request->query('from');
