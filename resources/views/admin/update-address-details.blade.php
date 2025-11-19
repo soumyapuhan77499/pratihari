@@ -72,7 +72,16 @@
         <div class="card shadow-lg">
             <div class="card-header py-3 text-center">
                 <i class="fa-solid fa-location-dot me-2"></i> Address Details
+">
+                        <a href="{{ route('admin.pratihariManageProfile')}}" class="btn btn-danger">
+                            <i class="fa fa-save me-1"></i> Cancel
+                        </a>
             </div>
+            <div class="text-center">
+                        <a href="{{ route('admin.pratihariManageProfile')}}" class="btn btn-danger">
+                            <i class="fa fa-save me-1"></i> Cancel
+                        </a>
+                    </div>
 
             <!-- Section Nav (routes where available; Address marked active) -->
             <div class="px-3 pt-3">
@@ -331,11 +340,7 @@
                             <i class="fa fa-save me-1"></i> Update
                         </button>
                     </div>
-                     <div class="text-center mt-4">
-                        <a href="{{ route('admin.pratihariManageProfile')}}" class="btn btn-warning">
-                            <i class="fa fa-save me-1"></i> Update
-                        </a>
-                    </div>
+                     
 
                 </form>
             </div>
