@@ -123,35 +123,25 @@
     <div class="row">
         <div class="col-12 mt-3">
             <div class="card shadow-lg">
-                @php
-                    // Works for both edit (has $family) and create (takes from request or old())
-                    $pratihariId = $family->pratihari_id ?? (request('pratihari_id') ?? old('pratihari_id'));
-                @endphp
-
                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
                     {{-- Back button on the left --}}
-                    @if ($pratihariId)
-                        <a href="{{ route('admin.viewProfile', $pratihariId) }}"
-                            class="btn btn-light btn-sm d-inline-flex align-items-center">
-                            <i class="fa-solid fa-arrow-left me-1"></i>
-                            <span>Back to Profile</span>
-                        </a>
-                    @else
-                        {{-- Fallback: no ID, so just go back to generic list/dashboard --}}
-                        <a href="{{ route('admin.pratihariProfile') }}"
-                            class="btn btn-light btn-sm d-inline-flex align-items-center">
-                            <i class="fa-solid fa-arrow-left me-1"></i>
-                            <span>Back</span>
-                        </a>
-                    @endif
+                    @php
+                        $pratihariId = $family->pratihari_id ?? (request('pratihari_id') ?? old('pratihari_id'));
+                    @endphp
 
-                    {{-- Title --}}
+                    <a href="{{ $pratihariId ? route('admin.viewProfile', $pratihariId) : route('admin.pratihariProfile') }}"
+                        class="btn btn-light btn-sm d-inline-flex align-items-center">
+                        <i class="fa-solid fa-arrow-left me-1"></i>
+                        <span>Back to Profile</span>
+                    </a>
+
+
+                    {{-- Title on the right / center-ish --}}
                     <div class="text-uppercase fw-bold d-flex align-items-center">
                         <i class="fa-solid fa-location-dot me-2"></i>
                         <span>Family Details</span>
                     </div>
                 </div>
-
 
                 <!-- Tabs -->
                 <div class="px-3 pt-3">
