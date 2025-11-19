@@ -123,7 +123,7 @@
                         @forelse ($idCards as $idCard)
                             @php $idx = $loop->index; @endphp
                             <div class="row id-entry align-items-end g-3 mb-3">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label>ID Type</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-id-card" style="color:var(--accent)"></i></span>
@@ -144,7 +144,7 @@
                                     </div> --}}
                                 </div>
 
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <label>ID Photo Upload</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fa fa-camera" style="color:var(--accent)"></i></span>
