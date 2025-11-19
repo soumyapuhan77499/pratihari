@@ -132,9 +132,10 @@
                                 <label for="notice_name" class="form-label">Notice Name</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-pen"></i></span>
-                                    <input type="text" class="form-control @error('notice_name') is-invalid @enderror"
-                                        id="notice_name" name="notice_name" required maxlength="150"
-                                        value="{{ old('notice_name') }}" placeholder="Enter Notice Name">
+                                    <input type="text"
+                                           class="form-control @error('notice_name') is-invalid @enderror"
+                                           id="notice_name" name="notice_name" required maxlength="150"
+                                           value="{{ old('notice_name') }}" placeholder="Enter Notice Name">
                                     @error('notice_name')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -145,8 +146,12 @@
                                 <label for="from_date" class="form-label">From Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
-                                    <input type="date" class="form-control @error('from_date') is-invalid @enderror"
-                                        id="from_date" name="from_date" value="{{ old('from_date') }}" required>
+                                    <input type="date"
+                                           class="form-control @error('from_date') is-invalid @enderror"
+                                           id="from_date" name="from_date"
+                                           value="{{ old('from_date') }}"
+                                           min="{{ now()->format('Y-m-d') }}" {{-- block past dates in picker --}}
+                                           required>
                                     @error('from_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -157,22 +162,28 @@
                                 <label for="to_date" class="form-label">To Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar-days"></i></span>
-                                    <input type="date" class="form-control @error('to_date') is-invalid @enderror"
-                                        id="to_date" name="to_date" value="{{ old('to_date') }}" required>
+                                    <input type="date"
+                                           class="form-control @error('to_date') is-invalid @enderror"
+                                           id="to_date" name="to_date"
+                                           value="{{ old('to_date') }}"
+                                           min="{{ now()->format('Y-m-d') }}" {{-- block past dates in picker --}}
+                                           required>
                                     @error('to_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                             </div>
 
-                            <!-- NEW: Notice Photo -->
+                            <!-- Notice Photo -->
                             <div class="col-md-3">
-                                <label for="notice_photo" class="form-label">Notice Photo <span
-                                        class="text-hint">(optional)</span></label>
+                                <label for="notice_photo" class="form-label">Notice Photo
+                                    <span class="text-hint">(optional)</span>
+                                </label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-image"></i></span>
-                                    <input type="file" class="form-control @error('notice_photo') is-invalid @enderror"
-                                        id="notice_photo" name="notice_photo" accept="image/*">
+                                    <input type="file"
+                                           class="form-control @error('notice_photo') is-invalid @enderror"
+                                           id="notice_photo" name="notice_photo" accept="image/*">
                                     @error('notice_photo')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -181,12 +192,14 @@
                             </div>
 
                             <div class="col-12">
-                                <label for="description" class="form-label">Description <span
-                                        class="text-hint">(optional)</span></label>
+                                <label for="description" class="form-label">Description
+                                    <span class="text-hint">(optional)</span>
+                                </label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-align-left"></i></span>
-                                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
-                                        rows="4" placeholder="Enter Description">{{ old('description') }}</textarea>
+                                    <textarea class="form-control @error('description') is-invalid @enderror"
+                                              id="description" name="description"
+                                              rows="4" placeholder="Enter Description">{{ old('description') }}</textarea>
                                     @error('description')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -216,29 +229,47 @@
     <script src="{{ asset('assets/plugins/select2/js/select2.min.js') }}"></script>
 
     <script>
-        // Flash messages auto-hide
         document.addEventListener("DOMContentLoaded", function() {
+            // Flash messages auto-hide
             setTimeout(() => document.getElementById("successMessage")?.classList.add("fade-out"), 3000);
             setTimeout(() => document.getElementById("errorMessage")?.classList.add("fade-out"), 3000);
-        });
 
-        // Date guard: to_date cannot be before from_date
-        (function() {
+            // Date guard: prevent past dates and enforce to_date >= from_date
             const from = document.getElementById('from_date');
-            const to = document.getElementById('to_date');
+            const to   = document.getElementById('to_date');
 
-            function syncMin() {
-                if (!from.value) {
-                    to.min = '';
-                    return;
+            if (from && to) {
+                const today = new Date().toISOString().split('T')[0];
+
+                // Ensure min attributes are at least today
+                from.min = today;
+                to.min   = today;
+
+                // Normalize existing values (from old() or defaults)
+                if (!from.value || from.value < today) {
+                    from.value = today;
                 }
-                to.min = from.value;
-                if (to.value && to.value < from.value) {
+
+                if (!to.value || to.value < from.value) {
                     to.value = from.value;
                 }
+
+                function syncToMin() {
+                    // When from_date changes, adjust to_date
+                    const fromVal = from.value || today;
+
+                    // to_date cannot be before from_date and not before today
+                    to.min = fromVal < today ? today : fromVal;
+
+                    if (to.value < to.min) {
+                        to.value = to.min;
+                    }
+                }
+
+                from.addEventListener('change', syncToMin);
+                // run once to be safe
+                syncToMin();
             }
-            from.addEventListener('change', syncMin);
-            document.addEventListener('DOMContentLoaded', syncMin);
-        })();
+        });
     </script>
 @endsection

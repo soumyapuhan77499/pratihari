@@ -186,7 +186,7 @@
                                         <option value="Driving License">Driving License</option>
                                         <option value="Passport">Passport</option>
                                         <option value="PAN Card">PAN Card</option>
-                                        <option value="Health Card">Health Card</option>
+                                        {{-- <option value="Health Card">Health Card</option> --}}
                                     </select>
                                 </div>
                             </div>
