@@ -235,7 +235,7 @@ class PratihariSebaController extends Controller
         $pratihari_id = $request->get('pratihari_id');
         $year = $request->get('year'); // ← NEW
 
-        $pratiharis = PratihariProfile::all()->mapWithKeys(function ($item) {
+        $pratiharis = PratihariProfile::where('pratihari_status','approved')->all()->mapWithKeys(function ($item) {
             $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
             return [$item->pratihari_id => $fullName];
         });

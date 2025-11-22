@@ -80,7 +80,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pratihari-family', 'show');
     });
     Route::controller(PratihariAddressApiController::class)->group(function () {
-
             Route::get('/get-sahi', 'getSahi');
     });
 
