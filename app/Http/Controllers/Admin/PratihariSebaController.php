@@ -230,7 +230,6 @@ class PratihariSebaController extends Controller
         }
     }
 
-
     public function PratihariSebaAssign(Request $request)
     {
         $pratihari_id = $request->get('pratihari_id');

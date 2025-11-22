@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\PratihariAddress;
+use App\Models\PratihariSahi;
 
 class PratihariAddressApiController extends Controller
 {
@@ -86,6 +87,29 @@ class PratihariAddressApiController extends Controller
                 'status' => false,
                 'message' => 'Failed to save address.',
                 'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getSahi()
+    {
+        try {
+            // Get applications
+            $pratihari_sahi = PratihariSahi::where('status', 'active')->get();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Sahi fetched successfully.',
+                'data' => $pratihari_sahi
+            ], 200);
+
+        } catch (\Exception $e) {
+            \Log::error('Error fetching applications: ' . $e->getMessage());
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to fetch applications.',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
