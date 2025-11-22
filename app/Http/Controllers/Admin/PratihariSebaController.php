@@ -233,17 +233,22 @@ class PratihariSebaController extends Controller
     public function PratihariSebaAssign(Request $request)
     {
         $pratihari_id = $request->get('pratihari_id');
-        $year = $request->get('year'); // ← NEW
+        $year         = $request->get('year'); // if you want to use year later
 
-        $pratiharis = PratihariProfile::where('pratihari_status','approved')->all()->mapWithKeys(function ($item) {
-            $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
-            return [$item->pratihari_id => $fullName];
-        });
+        // ✅ Only approved pratiharis
+        $pratiharis = PratihariProfile::query()
+            ->where('pratihari_status', 'approved')
+            ->orderBy('first_name')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
+                return [$item->pratihari_id => $fullName];
+            });
 
-        $sebas = PratihariSebaMaster::where('status', 'active')->get();
-        $assignedBeddhas = [];
-        $beddhas = [];
-        $sebaNames = [];
+        $sebas            = PratihariSebaMaster::where('status', 'active')->get();
+        $assignedBeddhas  = [];
+        $beddhas          = [];
+        $sebaNames        = [];
 
         foreach ($sebas as $seba) {
             $seba_id = $seba->id;
@@ -255,15 +260,19 @@ class PratihariSebaController extends Controller
 
             $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
 
-            // ← Fetch assigned beddhas for specific pratihari, seba, and year
-            $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
-                ->where('seba_id', $seba_id)
-                // ->where('year', $year)
-                ->value('beddha_id');
+            // Assigned beddhas for selected pratihari + seba (+ year if needed)
+            $assignedBeddhaStr = null;
 
-            $assignedBeddhas[$seba_id] = is_array($assignedBeddhaStr)
-                ? $assignedBeddhaStr
-                : ($assignedBeddhaStr ? explode(',', $assignedBeddhaStr) : []);
+            if ($pratihari_id) {
+                $assignedBeddhaStr = PratihariSeba::where('pratihari_id', $pratihari_id)
+                    ->where('seba_id', $seba_id)
+                    // ->where('year', $year)  // uncomment if `year` column exists and you want to filter
+                    ->value('beddha_id');
+            }
+
+            $assignedBeddhas[$seba_id] = $assignedBeddhaStr
+                ? explode(',', $assignedBeddhaStr)
+                : [];
         }
 
         return view('admin.assign-pratihari-seba', compact(
@@ -271,7 +280,9 @@ class PratihariSebaController extends Controller
             'sebas',
             'beddhas',
             'assignedBeddhas',
-            'sebaNames'
+            'sebaNames',
+            'pratihari_id',
+            'year'
         ));
     }
 
