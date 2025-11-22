@@ -64,7 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(PratihariAddressApiController::class)->group(function () {
         Route::post('/save-address', 'saveAddress');
-        Route::get('/get-sahi', 'getSahi');
     });
 
     Route::controller(PratihariOccupationApiController::class)->group(function () {
@@ -80,6 +79,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(PratihariFamilyApiController::class)->group(function () {
         Route::get('/pratihari-family', 'show');
     });
+    Route::controller(PratihariAddressApiController::class)->group(function () {
+
+            Route::get('/get-sahi', 'getSahi');
+    });
+
 
 
 /*
