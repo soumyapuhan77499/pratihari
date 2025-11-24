@@ -107,42 +107,6 @@ class PratihariSebaController extends Controller
         }
     }
 
-    // public function saveSeba(Request $request)
-    // {
-    //     try {
-    //         $sebaIds = $request->seba_id;
-    //         $beddhaIds = $request->beddha_id ?? [];
-    //         $pratihariId = $request->pratihari_id;
-
-    //         foreach ($sebaIds as $sebaId) {
-    //             // Get corresponding Beddha IDs for this Seba ID
-    //             $beddhaList = isset($beddhaIds[$sebaId]) ? $beddhaIds[$sebaId] : [];
-
-    //             // Skip if no Beddha IDs are provided
-    //             if (empty($beddhaList)) {
-    //                 continue;
-    //             }
-
-    //             $beddhaIdsString = implode(',', $beddhaList);
-
-    //             PratihariSeba::create([
-    //                 'pratihari_id' => $pratihariId,
-    //                 'seba_id' => $sebaId,
-    //                 'beddha_id' => $beddhaIdsString,
-    //             ]);
-    //         }
-
-    //         return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
-    //                         ->with('success', 'Pratihari Seba details saved successfully');
-
-    //     } catch (\Illuminate\Validation\ValidationException $e) {
-    //         return redirect()->back()->withErrors($e->validator)->withInput();
-
-    //     } catch (\Exception $e) {
-    //         return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
-    //     }
-    // }
-
     public function edit($pratihari_id)
     {
         $assignedSebas = PratihariSeba::where('pratihari_id', $pratihari_id)
@@ -324,12 +288,11 @@ class PratihariSebaController extends Controller
         ));
     }
 
-private function looksLikeJsonArray(string $s): bool
-{
-    $s = trim($s);
-    return (substr($s, 0, 1) === '[' && substr($s, -1) === ']');
-}
-
+    private function looksLikeJsonArray(string $s): bool
+    {
+        $s = trim($s);
+        return (substr($s, 0, 1) === '[' && substr($s, -1) === ']');
+    }
 
     public function savePratihariAssignSeba(Request $request)
     {
@@ -342,7 +305,7 @@ private function looksLikeJsonArray(string $s): bool
 
             $assigned_by = $admins->admin_id;
             $sebaIds = $request->input('seba_id', []);
-            $beddhaIds = $request->input('beddha_id', []);
+            $beddhaIdsFromRequest = $request->input('beddha_id', []); // array keyed by seba_id
             $pratihariId = $request->input('pratihari_id');
             $year = $request->input('year');
 
@@ -350,37 +313,86 @@ private function looksLikeJsonArray(string $s): bool
                 return redirect()->back()->with('error', 'Missing pratihari_id or year in request.');
             }
 
-            foreach ($sebaIds as $sebaId) {
-                $beddhaList = $beddhaIds[$sebaId] ?? [];
+            DB::transaction(function () use (
+                $sebaIds,
+                $beddhaIdsFromRequest,
+                $pratihariId,
+                $assigned_by,
+                $year
+            ) {
+                foreach ($sebaIds as $sebaId) {
+                    // Requested admin selection for this seba (may be missing)
+                    $requestedList = $beddhaIdsFromRequest[$sebaId] ?? [];
+                    // normalize to ints and unique
+                    $requestedList = collect($requestedList)->map(fn($v) => (int) $v)->filter()->unique()->values()->all();
 
-                if (empty($beddhaList)) {
-                    PratihariSeba::where('pratihari_id', $pratihariId)
+                    // All beddhas that are admin-assignable for this seba (beddha_status = 0)
+                    $adminAllowed = PratihariSebaBeddhaAssign::where('seba_id', $sebaId)
+                        ->where('beddha_status', 0)
+                        ->pluck('beddha_id')
+                        ->map(fn($v) => (int) $v)
+                        ->unique()
+                        ->values()
+                        ->all();
+
+                    // Keep only admin-allowed beddhas from the requested selection
+                    $adminSelected = collect($requestedList)->intersect($adminAllowed)->values()->all();
+
+                    // Load existing PratihariSeba record if any (we want to preserve user-assigned beddhas)
+                    $existing = PratihariSeba::where('pratihari_id', $pratihariId)
                         ->where('seba_id', $sebaId)
-                        ->delete();
-                    continue;
+                        ->first();
+
+                    $existingBeddhas = $existing ? $existing->beddha_id : []; // accessor returns array
+
+                    // Partition existing into admin-assigned (status=0) and user-assigned (status!=0)
+                    // Determine which of existing beddhas are admin-allowed (so considered admin-owned)
+                    $existingAdmin = collect($existingBeddhas)->intersect($adminAllowed)->values()->all();
+                    $existingUser = collect($existingBeddhas)->diff($existingAdmin)->values()->all();
+
+                    // Final saved beddhas = keep user-assigned always + adminSelected (from form)
+                    $finalBeddhas = collect($existingUser)->merge($adminSelected)->unique()->values()->all();
+
+                    if (empty($finalBeddhas)) {
+                        // nothing remains -> delete row if exists
+                        if ($existing) {
+                            $existing->delete();
+                        }
+                        // still record admin transaction as empty (admin cleared their selection)
+                        PratihariSebaAssignTransaction::create([
+                            'pratihari_id' => $pratihariId,
+                            'assigned_by' => $assigned_by,
+                            'seba_id' => $sebaId,
+                            'beddha_id' => '', // admin cleared
+                            'year' => $year,
+                            'date_time' => now('Asia/Kolkata'),
+                        ]);
+                        continue;
+                    }
+
+                    // Save (create or update). Use array so model mutator stores CSV consistently.
+                    PratihariSeba::updateOrCreate(
+                        [
+                            'pratihari_id' => $pratihariId,
+                            'seba_id' => $sebaId,
+                        ],
+                        [
+                            'beddha_id' => $finalBeddhas,
+                        ]
+                    );
+
+                    // Log the admin-assigned list (only the admin-provided/allowed set)
+                    $adminCsvForLog = implode(',', $adminSelected);
+                    PratihariSebaAssignTransaction::create([
+                        'pratihari_id' => $pratihariId,
+                        'assigned_by' => $assigned_by,
+                        'seba_id' => $sebaId,
+                        'beddha_id' => $adminCsvForLog,
+                        'year' => $year,
+                        'date_time' => now('Asia/Kolkata'),
+                    ]);
                 }
-
-                $beddhaIdsString = implode(',', $beddhaList);
-
-                // PratihariSeba::updateOrCreate(
-                //     [
-                //         'pratihari_id' => $pratihariId,
-                //         'seba_id' => $sebaId,
-                //     ],
-                //     [
-                //         'beddha_id' => $beddhaIdsString,
-                //     ]
-                // );
-
-                PratihariSebaAssignTransaction::create([
-                    'pratihari_id' => $pratihariId,
-                    'assigned_by' => $assigned_by,
-                    'seba_id' => $sebaId,
-                    'beddha_id' => $beddhaIdsString,
-                    'year' => $year,
-                    'date_time' => now('Asia/Kolkata'),
-                ]);
-            }
+            });
 
             return redirect()->back()->with('success', 'Assignments updated successfully!');
 
@@ -391,13 +403,5 @@ private function looksLikeJsonArray(string $s): bool
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
-
-//     public function getBeddha($sebaId)
-// {
-//     $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $sebaId)->pluck('beddha_id');
-//     $beddhas = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
-
-//     return response()->json($beddhas);
-// }
 
 }
