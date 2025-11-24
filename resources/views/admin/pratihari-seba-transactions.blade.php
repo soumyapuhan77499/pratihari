@@ -22,14 +22,14 @@
                 <h5 class="mb-0">Admin — Pratihari Seba Assign Transactions</h5>
 
                 <div>
-                    <a href="{{ route('admin.pratihariSebaTransactions.index', array_merge(request()->query(), ['export' => 'csv'])) }}"
+                    <a href="{{ route('pratihariSebaTransactions.index', array_merge(request()->query(), ['export' => 'csv'])) }}"
                        class="btn btn-outline-secondary btn-sm">
                         <i class="fa-regular fa-file-csv me-1"></i> Export CSV
                     </a>
                 </div>
             </div>
 
-            <form id="filterForm" method="GET" action="{{ route('admin.pratihariSebaTransactions.index') }}">
+            <form id="filterForm" method="GET" action="{{ route('pratihariSebaTransactions.index') }}">
                 <div class="filter-bar mb-3">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-3">
