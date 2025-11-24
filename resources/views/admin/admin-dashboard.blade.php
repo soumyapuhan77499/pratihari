@@ -738,86 +738,114 @@
                         </a>
                     </div>
 
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
+                            <div class="kpi amber h-100">
+                                <div class="meta"><i class="bi bi-hourglass-split"></i> Pending Profiles</div>
+                                <div class="value mt-2">{{ count($pendingProfile) }}</div>
+                                <div class="subtle">Awaiting review</div>
+                                <div class="kpi-progress"><span style="--p:62%"></span></div>
+                            </div>
+                        </a>
+                    </div>
 
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi amber h-100">
-                            <div class="meta"><i class="bi bi-hourglass-split"></i> Pending Profiles</div>
-                            <div class="value mt-2">{{ count($pendingProfile) }}</div>
-                            <div class="subtle">Awaiting review</div>
-                            <div class="kpi-progress"><span style="--p:62%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
+                            <div class="kpi emerald h-100">
+                                <div class="meta"><i class="bi bi-person-check"></i> Active Profiles</div>
+                                <div class="value mt-2">{{ count($totalActiveUsers) }}</div>
+                                <div class="subtle">Approved & active</div>
+                                <div class="kpi-progress"><span style="--p:74%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi emerald h-100">
-                            <div class="meta"><i class="bi bi-person-check"></i> Active Profiles</div>
-                            <div class="value mt-2">{{ count($totalActiveUsers) }}</div>
-                            <div class="subtle">Approved & active</div>
-                            <div class="kpi-progress"><span style="--p:74%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.pratihari.filterUsers', 'incomplete') }}">
+                            <div class="kpi cyan h-100">
+                                <div class="meta"><i class="bi bi-clipboard2-data"></i> Incomplete Profiles</div>
+                                <div class="value mt-2">{{ count($incompleteProfiles) }}</div>
+                                <div class="subtle">Need more info</div>
+                                <div class="kpi-progress"><span style="--p:45%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi cyan h-100">
-                            <div class="meta"><i class="bi bi-clipboard2-data"></i> Incomplete Profiles</div>
-                            <div class="value mt-2">{{ count($incompleteProfiles) }}</div>
-                            <div class="subtle">Need more info</div>
-                            <div class="kpi-progress"><span style="--p:45%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.pratihari.filterUsers', 'todayapproved') }}">
+                            <div class="kpi blue h-100">
+                                <div class="meta"><i class="bi bi-check2-circle"></i> Today Approved</div>
+                                <div class="value mt-2">{{ count($todayApprovedProfiles) }}</div>
+                                <div class="subtle">Approved today</div>
+                                <div class="kpi-progress"><span style="--p:52%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi blue h-100">
-                            <div class="meta"><i class="bi bi-check2-circle"></i> Today Approved</div>
-                            <div class="value mt-2">{{ count($todayApprovedProfiles) }}</div>
-                            <div class="subtle">Approved today</div>
-                            <div class="kpi-progress"><span style="--p:52%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.pratihari.filterUsers', 'todayrejected') }}">
+                            <div class="kpi rose h-100">
+                                <div class="meta"><i class="bi bi-x-circle"></i> Today Rejected</div>
+                                <div class="value mt-2">{{ count($todayRejectedProfiles) }}</div>
+                                <div class="subtle">Rejected today</div>
+                                <div class="kpi-progress"><span style="--p:30%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi rose h-100">
-                            <div class="meta"><i class="bi bi-x-circle"></i> Today Rejected</div>
-                            <div class="value mt-2">{{ count($todayRejectedProfiles) }}</div>
-                            <div class="subtle">Rejected today</div>
-                            <div class="kpi-progress"><span style="--p:30%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.pratihari.filterUsers', 'updated') }}">
+                            <div class="kpi indigo h-100">
+                                <div class="meta"><i class="bi bi-arrow-repeat"></i> Updated Profiles</div>
+                                <div class="value mt-2">{{ count($updatedProfiles) }}</div>
+                                <div class="subtle">Recently modified</div>
+                                <div class="kpi-progress"><span style="--p:66%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi indigo h-100">
-                            <div class="meta"><i class="bi bi-arrow-repeat"></i> Updated Profiles</div>
-                            <div class="value mt-2">{{ count($updatedProfiles) }}</div>
-                            <div class="subtle">Recently modified</div>
-                            <div class="kpi-progress"><span style="--p:66%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.pratihari.filterUsers', 'rejected') }}">
+                            <div class="kpi fuchsia h-100">
+                                <div class="meta"><i class="bi bi-emoji-frown"></i> Total Rejected</div>
+                                <div class="value mt-2">{{ count($rejectedProfiles) }}</div>
+                                <div class="subtle">All-time rejected</div>
+                                <div class="kpi-progress"><span style="--p:22%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi fuchsia h-100">
-                            <div class="meta"><i class="bi bi-emoji-frown"></i> Total Rejected</div>
-                            <div class="value mt-2">{{ count($rejectedProfiles) }}</div>
-                            <div class="subtle">All-time rejected</div>
-                            <div class="kpi-progress"><span style="--p:22%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.application.filter', 'today') }}">
+                            <div class="kpi cyan h-100">
+                                <div class="meta"><i class="bi bi-calendar-check"></i> Today’s Applications</div>
+                                <div class="value mt-2">{{ count($todayApplications) }}</div>
+                                <div class="subtle">Submitted today</div>
+                                <div class="kpi-progress"><span style="--p:48%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi cyan h-100">
-                            <div class="meta"><i class="bi bi-calendar-check"></i> Today’s Applications</div>
-                            <div class="value mt-2">{{ count($todayApplications) }}</div>
-                            <div class="subtle">Submitted today</div>
-                            <div class="kpi-progress"><span style="--p:48%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.application.filter', 'approved') }}">
+                            <div class="kpi emerald h-100">
+                                <div class="meta"><i class="bi bi-file-earmark-check"></i> Approved Applications</div>
+                                <div class="value mt-2">{{ count($approvedApplication) }}</div>
+                                <div class="subtle">Accepted</div>
+                                <div class="kpi-progress"><span style="--p:70%"></span></div>
+                            </div>
+                        </a>
                     </div>
+
                     <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi emerald h-100">
-                            <div class="meta"><i class="bi bi-file-earmark-check"></i> Approved Applications</div>
-                            <div class="value mt-2">{{ count($approvedApplication) }}</div>
-                            <div class="subtle">Accepted</div>
-                            <div class="kpi-progress"><span style="--p:70%"></span></div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi rose h-100">
-                            <div class="meta"><i class="bi bi-file-earmark-x"></i> Rejected Applications</div>
-                            <div class="value mt-2">{{ count($rejectedApplication) }}</div>
-                            <div class="subtle">Declined</div>
-                            <div class="kpi-progress"><span style="--p:28%"></span></div>
-                        </div>
+                        <a href="{{ route('admin.application.filter', 'rejected') }}">
+                            <div class="kpi rose h-100">
+                                <div class="meta"><i class="bi bi-file-earmark-x"></i> Rejected Applications</div>
+                                <div class="value mt-2">{{ count($rejectedApplication) }}</div>
+                                <div class="subtle">Declined</div>
+                                <div class="kpi-progress"><span style="--p:28%"></span></div>
+                            </div>
+                        </a>
                     </div>
 
                     <!-- Quick Actions -->
