@@ -728,34 +728,13 @@
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="kpi violet h-100">
                             <div class="meta"><i class="bi bi-person-plus"></i> Today’s Registrations</div>
+                            <a class="small-muted text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'today') }}">View</a>
                             <div class="value mt-2">{{ count($todayProfiles) }}</div>
                             <div class="subtle">New profiles created</div>
                             <div class="kpi-progress"><span style="--p:38%"></span></div>
                         </div>
                     </div>
-                     <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="stat">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <span class="badge-pill"><i class="bi bi-person-plus"></i> Today’s Registrations</span>
-                            <a class="small-muted text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'today') }}">View</a>
-                        </div>
-                        <div class="count mt-2">{{ count($todayProfiles) }}</div>
-                        <div class="label">New profiles created</div>
-                        <div class="user-list mt-2">
-                            @foreach ($todayProfiles->take(5) as $user)
-                                <div class="user-item d-flex align-items-center justify-content-between py-2 px-1 border-bottom">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <img class="rounded-circle" src="{{ $user->profile_photo ? asset($user->profile_photo) : asset('assets/img/brand/monk.png') }}" alt="Profile" width="36" height="36">
-                                        <div>
-                                            <a href="{{ route('admin.viewProfile', $user->pratihari_id) }}" class="fw-semibold text-decoration-none">{{ $user->first_name }} {{ $user->last_name }}</a>
-                                            <div class="small-muted">{{ $user->phone_no }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
+                    
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="kpi amber h-100">
                             <div class="meta"><i class="bi bi-hourglass-split"></i> Pending Profiles</div>
