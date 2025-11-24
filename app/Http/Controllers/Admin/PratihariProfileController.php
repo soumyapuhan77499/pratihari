@@ -123,13 +123,24 @@ class PratihariProfileController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
+public function pratihariManageProfile()
+{
+    // Load profiles with relations (only active)
+    $profiles = PratihariProfile::with(['occupation', 'address'])
+        ->where('status', 'active')
+        ->get();
 
-    public function pratihariManageProfile()
-    {
-        $profiles = PratihariProfile::with(['occupation', 'address'])->where('pratihari_status','pending')->get();
+    // Counts for tabs
+    $counts = [
+        'pending'  => $profiles->where('pratihari_status', 'pending')->count(),
+        'approved' => $profiles->where('pratihari_status', 'approved')->count(),
+        'rejected' => $profiles->where('pratihari_status', 'rejected')->count(),
+    ];
 
-        return view('admin.pratihari-manage-profile', compact('profiles'));
-    }
+    // Pass full list plus counts (we filter client-side)
+    return view('admin.pratihari-manage-profile', compact('profiles', 'counts'));
+}
+
 
     public function approve($id)
     {
