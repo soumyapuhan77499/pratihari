@@ -725,8 +725,9 @@
             <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-4">
                 <div class="row g-3">
-                    <a href="{{ route('admin.pratihari.filterUsers', 'today') }}">
-                        <div class="col-12 col-sm-6 col-xl-3">
+
+                    <div class="col-12 col-sm-6 col-xl-3">
+                        <a href="{{ route('admin.pratihari.filterUsers', 'today') }}">
                             <div class="kpi violet h-100">
                                 <div class="meta"><i class="bi bi-person-plus"></i> Today’s Registrations</div>
 
@@ -734,8 +735,9 @@
                                 <div class="subtle">New profiles created</div>
                                 <div class="kpi-progress"><span style="--p:38%"></span></div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
+
 
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="kpi amber h-100">
