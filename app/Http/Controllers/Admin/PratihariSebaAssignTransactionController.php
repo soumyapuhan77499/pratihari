@@ -127,7 +127,7 @@ class PratihariSebaAssignTransactionController extends Controller
             ->orderBy('seba_name')
             ->pluck('seba_name', 'id');
 
-        return view('admin.pratihari-seba-transactions.index', [
+        return view('admin.pratihari-seba-transactions', [
             'rows' => $rows,
             'pratiharis' => $pratiharis,
             'sebas' => $sebas,
