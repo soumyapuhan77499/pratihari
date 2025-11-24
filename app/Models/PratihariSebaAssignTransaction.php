@@ -19,4 +19,17 @@ class PratihariSebaAssignTransaction extends Model
         'date_time',
         'status',
     ];
+
+    // app/Models/PratihariSebaAssignTransaction.php
+
+    public function pratihari()
+    {
+        return $this->belongsTo(\App\Models\PratihariProfile::class, 'pratihari_id', 'pratihari_id');
+    }
+
+    public function seba()
+    {
+        return $this->belongsTo(\App\Models\PratihariSebaMaster::class, 'seba_id', 'seba_id');
+    }
+
 }

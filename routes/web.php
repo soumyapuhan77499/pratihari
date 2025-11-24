@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\MasterNijogaSebaController;
 use App\Http\Controllers\Admin\PratihariSebaController;
 use App\Http\Controllers\Admin\PratihariSocialMediaController;
 use App\Http\Controllers\Admin\PratihariNoticeController;
+use App\Http\Controllers\Admin\PratihariSebaAssignTransactionController;
 
 use App\Http\Controllers\SuperAdmin\SuperAdminController;
 
@@ -142,5 +143,14 @@ Route::prefix('admin')->group(function () {
         Route::delete('/delete-notice/{id}', 'deleteNotice')->name('deleteNotice');
         Route::put('/notice/update/{id}', 'updateNotice')->name('notice.update');
     });
+
+    // Admin routes - add inside your admin middleware group if you have one
+
+    Route::get('pratihari-seba-transactions', [PratihariSebaAssignTransactionController::class, 'index'])
+        ->name('pratihariSebaTransactions.index');
+
+    Route::get('pratihari-seba-transactions/{id}', [PratihariSebaAssignTransactionController::class, 'show'])
+        ->name('pratihariSebaTransactions.show');
+
 
 });
