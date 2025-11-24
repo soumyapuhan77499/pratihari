@@ -21,7 +21,15 @@ class PratihariSebaAssignTransaction extends Model
         'status',
     ];
 
-    // app/Models/PratihariSebaAssignTransaction.php
+    /**
+     * Casts - keep date_time as datetime and year as string.
+     */
+    protected $casts = [
+        'date_time' => 'datetime',
+        'year' => 'string',
+    ];
+
+    public $timestamps = false; // if your table does not use created_at/updated_at
 
     public function pratihari()
     {
@@ -32,5 +40,4 @@ class PratihariSebaAssignTransaction extends Model
     {
         return $this->belongsTo(\App\Models\PratihariSebaMaster::class, 'seba_id', 'seba_id');
     }
-
 }

@@ -299,7 +299,7 @@ class PratihariSebaController extends Controller
         try {
             $admins = Auth::guard('admins')->user();
 
-            if (!$admins) {
+            if (! $admins) {
                 return redirect()->back()->with('error', 'User not authenticated.');
             }
 
@@ -309,7 +309,7 @@ class PratihariSebaController extends Controller
             $pratihariId = $request->input('pratihari_id');
             $year = $request->input('year');
 
-            if (!$pratihariId || !$year) {
+            if (! $pratihariId || ! $year) {
                 return redirect()->back()->with('error', 'Missing pratihari_id or year in request.');
             }
 
@@ -345,7 +345,6 @@ class PratihariSebaController extends Controller
 
                     $existingBeddhas = $existing ? $existing->beddha_id : []; // accessor returns array
 
-                    // Partition existing into admin-assigned (status=0) and user-assigned (status!=0)
                     // Determine which of existing beddhas are admin-allowed (so considered admin-owned)
                     $existingAdmin = collect($existingBeddhas)->intersect($adminAllowed)->values()->all();
                     $existingUser = collect($existingBeddhas)->diff($existingAdmin)->values()->all();
@@ -358,7 +357,7 @@ class PratihariSebaController extends Controller
                         if ($existing) {
                             $existing->delete();
                         }
-                        // still record admin transaction as empty (admin cleared their selection)
+                        // still record admin transaction as empty (admin cleared)
                         PratihariSebaAssignTransaction::create([
                             'pratihari_id' => $pratihariId,
                             'assigned_by' => $assigned_by,
@@ -403,5 +402,5 @@ class PratihariSebaController extends Controller
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
-
+    
 }
