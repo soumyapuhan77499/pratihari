@@ -183,6 +183,13 @@
                                             </div>
 
                                             <div class="beddha-items mt-2 group-{{ $seba->id }}">
+                                                @php
+                                                    // ensure there's always an array to use in the view
+                                                    $assignedForThisSeba = isset($assignedBeddhas[$seba->id]) ? (array) $assignedBeddhas[$seba->id] : [];
+                                                    // normalize to string values for strict comparison
+                                                    $assignedForThisSebaStr = array_map('strval', $assignedForThisSeba);
+                                                @endphp
+
                                                 @foreach ($beddhas[$seba->id] ?? [] as $beddha)
                                                     <div class="form-check me-2">
                                                         <input class="form-check-input"
@@ -190,12 +197,13 @@
                                                             name="beddha_id[{{ $seba->id }}][]"
                                                             value="{{ $beddha->id }}"
                                                             id="beddha_{{ $seba->id }}_{{ $beddha->id }}"
-                                                            {{ in_array($beddha->id, $assignedBeddhas[$seba->id] ?? []) ? 'checked' : '' }}>
+                                                            {{ in_array((string)$beddha->id, $assignedForThisSebaStr, true) ? 'checked' : '' }}>
                                                         <label class="form-check-label" for="beddha_{{ $seba->id }}_{{ $beddha->id }}">
                                                            {{ $beddha->beddha_name }}
                                                         </label>
                                                     </div>
                                                 @endforeach
+
                                                 @if (empty($beddhas[$seba->id]) || count($beddhas[$seba->id]) === 0)
                                                     <div class="text-muted small">No Beddhas available for this Seba.</div>
                                                 @endif
