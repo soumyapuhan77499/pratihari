@@ -231,102 +231,99 @@ class PratihariSebaController extends Controller
     }
 
     public function PratihariSebaAssign(Request $request)
-{
-    $pratihari_id = $request->get('pratihari_id');
-    $year         = $request->get('year'); // if you want to use year later
+    {
+        $pratihari_id = $request->get('pratihari_id');
+        $year         = $request->get('year'); // if you want to use year later
 
-    // ✅ Only approved pratiharis
-    $pratiharis = PratihariProfile::query()
-        ->where('pratihari_status', 'approved')
-        ->orderBy('first_name')
-        ->get()
-        ->mapWithKeys(function ($item) {
-            $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
-            return [$item->pratihari_id => $fullName];
-        });
+        // ✅ Only approved pratiharis
+        $pratiharis = PratihariProfile::query()
+            ->where('pratihari_status', 'approved')
+            ->orderBy('first_name')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                $fullName = trim("{$item->first_name} {$item->middle_name} {$item->last_name}");
+                return [$item->pratihari_id => $fullName];
+            });
 
-    $sebas           = PratihariSebaMaster::where('status', 'active')->get();
-    $assignedBeddhas = [];
-    $beddhas         = [];
-    $sebaNames       = [];
+        $sebas           = PratihariSebaMaster::where('status', 'active')->get();
+        $assignedBeddhas = [];
+        $beddhas         = [];
+        $sebaNames       = [];
 
-    foreach ($sebas as $seba) {
-        $seba_id = $seba->id;
-        $sebaNames[$seba_id] = $seba->seba_name;
+        foreach ($sebas as $seba) {
+            $seba_id = $seba->id;
+            $sebaNames[$seba_id] = $seba->seba_name;
 
-        $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
-            ->where('beddha_status', 0)
-            ->pluck('beddha_id');
+            $beddhaIds = PratihariSebaBeddhaAssign::where('seba_id', $seba_id)
+                ->where('beddha_status', 0)
+                ->pluck('beddha_id');
 
-        $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
+            $beddhas[$seba_id] = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->get();
 
-        // Assigned beddhas for selected pratihari + seba (+ year if needed)
-        $assignedValue = null;
+            // Assigned beddhas for selected pratihari + seba (+ year if needed)
+            $assignedValue = null;
 
-        if ($pratihari_id) {
-            // use ->value() to get raw column value; it can still be string, json-string, array (if cast), or collection
-            $assignedValue = PratihariSeba::where('pratihari_id', $pratihari_id)
-                ->where('seba_id', $seba_id)
-                // ->where('year', $year) // uncomment if you want to filter by year
-                ->value('beddha_id');
-        }
+            if ($pratihari_id) {
+                // use ->value() to get raw column value; it can still be string, json-string, array (if cast), or collection
+                $assignedValue = PratihariSeba::where('pratihari_id', $pratihari_id)
+                    ->where('seba_id', $seba_id)
+                    // ->where('year', $year) // uncomment if you want to filter by year
+                    ->value('beddha_id');
+            }
 
-        // Normalize to array of IDs
-        $assignedArray = [];
-
-        if (is_null($assignedValue) || $assignedValue === '') {
+            // Normalize to array of IDs
             $assignedArray = [];
-        } elseif (is_array($assignedValue)) {
-            // already an array
-            $assignedArray = array_values($assignedValue);
-        } elseif ($assignedValue instanceof \Illuminate\Support\Collection) {
-            $assignedArray = $assignedValue->values()->all();
-        } elseif (is_string($assignedValue)) {
-            $trimmed = trim($assignedValue);
 
-            // If JSON array string like "[1,2,3]" -> json_decode
-            if ($this->looksLikeJsonArray($trimmed)) {
-                $decoded = json_decode($trimmed, true);
-                $assignedArray = is_array($decoded) ? array_values($decoded) : [];
-            } else {
-                // fallback: comma-separated string "1,2,3"
-                // explode and trim each item, ignore empty pieces
-                $parts = array_filter(array_map('trim', explode(',', $trimmed)), function ($v) {
-                    return $v !== '';
-                });
-                $assignedArray = array_values($parts);
-            }
-        } else {
-            // final fallback: try json decode if possible
-            $maybeJson = @json_decode($assignedValue, true);
-            if (is_array($maybeJson)) {
-                $assignedArray = array_values($maybeJson);
-            } else {
+            if (is_null($assignedValue) || $assignedValue === '') {
                 $assignedArray = [];
+            } elseif (is_array($assignedValue)) {
+                // already an array
+                $assignedArray = array_values($assignedValue);
+            } elseif ($assignedValue instanceof \Illuminate\Support\Collection) {
+                $assignedArray = $assignedValue->values()->all();
+            } elseif (is_string($assignedValue)) {
+                $trimmed = trim($assignedValue);
+
+                // If JSON array string like "[1,2,3]" -> json_decode
+                if ($this->looksLikeJsonArray($trimmed)) {
+                    $decoded = json_decode($trimmed, true);
+                    $assignedArray = is_array($decoded) ? array_values($decoded) : [];
+                } else {
+                    // fallback: comma-separated string "1,2,3"
+                    // explode and trim each item, ignore empty pieces
+                    $parts = array_filter(array_map('trim', explode(',', $trimmed)), function ($v) {
+                        return $v !== '';
+                    });
+                    $assignedArray = array_values($parts);
+                }
+            } else {
+                // final fallback: try json decode if possible
+                $maybeJson = @json_decode($assignedValue, true);
+                if (is_array($maybeJson)) {
+                    $assignedArray = array_values($maybeJson);
+                } else {
+                    $assignedArray = [];
+                }
             }
+
+            // ensure values are simple scalars (string/int)
+            $assignedBeddhas[$seba_id] = array_map(function ($v) {
+                // keep as string/int (trim)
+                return is_scalar($v) ? (string)$v : (string)json_encode($v);
+            }, $assignedArray);
         }
 
-        // ensure values are simple scalars (string/int)
-        $assignedBeddhas[$seba_id] = array_map(function ($v) {
-            // keep as string/int (trim)
-            return is_scalar($v) ? (string)$v : (string)json_encode($v);
-        }, $assignedArray);
+        return view('admin.assign-pratihari-seba', compact(
+            'pratiharis',
+            'sebas',
+            'beddhas',
+            'assignedBeddhas',
+            'sebaNames',
+            'pratihari_id',
+            'year'
+        ));
     }
 
-    return view('admin.assign-pratihari-seba', compact(
-        'pratiharis',
-        'sebas',
-        'beddhas',
-        'assignedBeddhas',
-        'sebaNames',
-        'pratihari_id',
-        'year'
-    ));
-}
-
-/**
- * Helper to quickly detect a JSON array string.
- */
 private function looksLikeJsonArray(string $s): bool
 {
     $s = trim($s);
@@ -365,15 +362,15 @@ private function looksLikeJsonArray(string $s): bool
 
                 $beddhaIdsString = implode(',', $beddhaList);
 
-                PratihariSeba::updateOrCreate(
-                    [
-                        'pratihari_id' => $pratihariId,
-                        'seba_id' => $sebaId,
-                    ],
-                    [
-                        'beddha_id' => $beddhaIdsString,
-                    ]
-                );
+                // PratihariSeba::updateOrCreate(
+                //     [
+                //         'pratihari_id' => $pratihariId,
+                //         'seba_id' => $sebaId,
+                //     ],
+                //     [
+                //         'beddha_id' => $beddhaIdsString,
+                //     ]
+                // );
 
                 PratihariSebaAssignTransaction::create([
                     'pratihari_id' => $pratihariId,

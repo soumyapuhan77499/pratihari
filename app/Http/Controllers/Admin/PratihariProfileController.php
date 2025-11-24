@@ -123,24 +123,24 @@ class PratihariProfileController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-public function pratihariManageProfile()
-{
-    // Load profiles with relations (only active)
-    $profiles = PratihariProfile::with(['occupation', 'address'])
-        ->where('status', 'active')
-        ->get();
+        
+    public function pratihariManageProfile()
+    {
+        // Load profiles with relations (only active)
+        $profiles = PratihariProfile::with(['occupation', 'address'])
+            ->where('status', 'active')
+            ->get();
 
-    // Counts for tabs
-    $counts = [
-        'pending'  => $profiles->where('pratihari_status', 'pending')->count(),
-        'approved' => $profiles->where('pratihari_status', 'approved')->count(),
-        'rejected' => $profiles->where('pratihari_status', 'rejected')->count(),
-    ];
+        // Counts for tabs
+        $counts = [
+            'pending'  => $profiles->where('pratihari_status', 'pending')->count(),
+            'approved' => $profiles->where('pratihari_status', 'approved')->count(),
+            'rejected' => $profiles->where('pratihari_status', 'rejected')->count(),
+        ];
 
-    // Pass full list plus counts (we filter client-side)
-    return view('admin.pratihari-manage-profile', compact('profiles', 'counts'));
-}
-
+        // Pass full list plus counts (we filter client-side)
+        return view('admin.pratihari-manage-profile', compact('profiles', 'counts'));
+    }
 
     public function approve($id)
     {
@@ -443,72 +443,71 @@ public function pratihariManageProfile()
     }
 
     public function filterApplication($type = null)
-{
-    $query = PratihariApplication::with('profile');
+    {
+        $query = PratihariApplication::with('profile');
 
-    if ($type === 'approved') {
-        $query->where('status', 'approved');
-    } elseif ($type === 'rejected') {
-        $query->where('status', 'rejected');
-    } elseif ($type === 'today') {
-        $query->whereDate('created_at', Carbon::today());
-    }
-
-    $applications = $query->latest()->get();
-
-    return view('admin.manage-application', compact('applications', 'type'));
-}
-
-
-    public function updateApplication(Request $request, $id)
-        {
-            try {
-                
-                $application = PratihariApplication::findOrFail($id);
-
-                $application->header = $request->header;
-                $application->body = $request->body;
-
-                if ($request->hasFile('photo')) {
-                    $file = $request->file('photo');
-                    $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('uploads/application'), $fileName);
-
-                    // Full URL using .env APP_PHOTO_URL
-                    $fullPath = config('app.photo_url') . 'uploads/application/' . $fileName;
-
-                    $application->photo = $fullPath;
-                }
-
-                $application->save();
-
-                return redirect()->back()->with('success', 'Application updated successfully.');
-            } catch (\Exception $e) {
-                \Log::error('Application update failed: ' . $e->getMessage());
-                return redirect()->back()->with('error', 'Failed to update application.');
-            }
+        if ($type === 'approved') {
+            $query->where('status', 'approved');
+        } elseif ($type === 'rejected') {
+            $query->where('status', 'rejected');
+        } elseif ($type === 'today') {
+            $query->whereDate('created_at', Carbon::today());
         }
 
-      public function approveApplication($id)
-{
-    $application = PratihariApplication::findOrFail($id);
-    $application->status = 'approved';
-    $application->save();
+        $applications = $query->latest()->get();
 
-    return redirect()->back()->with('success', 'Application approved successfully.');
-}
+        return view('admin.manage-application', compact('applications', 'type'));
+    }
 
-public function rejectApplication(Request $request, $id)
-{
-    $request->validate([
-        'rejection_reason' => 'required|string|max:1000',
-    ]);
+    public function updateApplication(Request $request, $id)
+    {
+        try {
+            
+            $application = PratihariApplication::findOrFail($id);
 
-    $application = PratihariApplication::findOrFail($id);
-    $application->status = 'rejected';
-    $application->rejection_reason = $request->rejection_reason;
-    $application->save();
+            $application->header = $request->header;
+            $application->body = $request->body;
 
-    return redirect()->back()->with('success', 'Application rejected with reason.');
-}
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/application'), $fileName);
+
+                // Full URL using .env APP_PHOTO_URL
+                $fullPath = config('app.photo_url') . 'uploads/application/' . $fileName;
+
+                $application->photo = $fullPath;
+            }
+
+            $application->save();
+
+            return redirect()->back()->with('success', 'Application updated successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Application update failed: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update application.');
+        }
+    }
+
+    public function approveApplication($id)
+    {
+        $application = PratihariApplication::findOrFail($id);
+        $application->status = 'approved';
+        $application->save();
+
+        return redirect()->back()->with('success', 'Application approved successfully.');
+    }
+
+    public function rejectApplication(Request $request, $id)
+    {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
+        $application = PratihariApplication::findOrFail($id);
+        $application->status = 'rejected';
+        $application->rejection_reason = $request->rejection_reason;
+        $application->save();
+
+        return redirect()->back()->with('success', 'Application rejected with reason.');
+    }
 }
