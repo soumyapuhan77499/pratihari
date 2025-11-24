@@ -9,29 +9,54 @@ use App\Models\PratihariProfile;
 use App\Models\PratihariSebaMaster;
 use App\Models\PratihariBeddhaMaster;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PratihariSebaAssignTransactionController extends Controller
 {
-    /**
-     * Display a listing of admin assign transactions with filters and CSV export.
-     */
+    protected function detectAdminDisplayExpr(string $adminTable): string
+    {
+        // candidate columns in preferred order
+        $candidates = ['name', 'admin_name', 'username', 'email', 'admin_id'];
+
+        $found = [];
+        foreach ($candidates as $col) {
+            if (Schema::hasColumn($adminTable, $col)) {
+                $found[] = "a.{$col}";
+            }
+        }
+
+        // always include admin_id fallback even if not detected (safe)
+        if (!in_array('a.admin_id', $found)) {
+            $found[] = 'a.admin_id';
+        }
+
+        // build COALESCE list
+        $coalesce = implode(', ', $found);
+
+        return "COALESCE({$coalesce})";
+    }
+
     public function index(Request $request)
     {
-        // Determine actual table names from models to avoid hard-coded table names
+        // table names from models
         $txModel = new PratihariSebaAssignTransaction();
-        $txTable = $txModel->getTable(); // e.g. 'pratihari__seba_assign_transaction'
+        $txTable = $txModel->getTable();
 
         $profileModel = new PratihariProfile();
-        $profileTable = $profileModel->getTable(); // e.g. 'pratihari__profile_details'
+        $profileTable = $profileModel->getTable();
 
         $sebaModel = new PratihariSebaMaster();
-        $sebaTable = $sebaModel->getTable(); // e.g. 'pratihari__seba_master'
+        $sebaTable = $sebaModel->getTable();
 
-        // Admins table assumed 'admins' (change if different)
+        // admins table (change if your admin table name is different)
         $adminTable = 'admins';
 
+        // detect admin display expression (safe against missing columns)
+        $adminCoalesce = $this->detectAdminDisplayExpr($adminTable); // returns something like "COALESCE(a.name, a.email, a.admin_id)"
+
+        // Build base query using Query Builder and the real table names
         $query = DB::table($txTable . ' as t')
             ->leftJoin($profileTable . ' as p', "t.pratihari_id", '=', "p.pratihari_id")
             ->leftJoin($sebaTable . ' as s', "t.seba_id", '=', "s.id")
@@ -40,10 +65,10 @@ class PratihariSebaAssignTransactionController extends Controller
                 't.*',
                 DB::raw("CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name"),
                 's.seba_name as seba_name',
-                DB::raw("COALESCE(a.name, a.email, a.admin_id) as admin_name")
+                DB::raw("{$adminCoalesce} as admin_name")
             );
 
-        // Filters
+        // filters
         $pratihariId = $request->query('pratihari_id');
         $sebaId      = $request->query('seba_id');
         $dateFrom    = $request->query('date_from');
@@ -62,18 +87,14 @@ class PratihariSebaAssignTransactionController extends Controller
             try {
                 $df = Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay();
                 $query->where("t.date_time", '>=', $df);
-            } catch (\Exception $e) {
-                // ignore parse error
-            }
+            } catch (\Exception $e) {}
         }
 
         if ($dateTo) {
             try {
                 $dt = Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay();
                 $query->where("t.date_time", '<=', $dt);
-            } catch (\Exception $e) {
-                // ignore parse error
-            }
+            } catch (\Exception $e) {}
         }
 
         if ($search) {
@@ -87,17 +108,16 @@ class PratihariSebaAssignTransactionController extends Controller
 
         $query = $query->orderBy('t.date_time', 'desc');
 
-        // CSV export if requested
+        // CSV export
         if ($request->query('export') === 'csv') {
             $rows = $query->get();
             return $this->exportCsv($rows);
         }
 
         $perPage = 15;
-        // Use simplePaginate because we're using Query Builder with joins
         $rows = $query->paginate($perPage)->withQueryString();
 
-        // filter dropdowns data (use models to build correct table names)
+        // filter dropdowns
         $pratiharis = DB::table($profileTable)
             ->select('pratihari_id', DB::raw("CONCAT_WS(' ', first_name, middle_name, last_name) AS name"))
             ->orderBy('first_name')
@@ -114,9 +134,6 @@ class PratihariSebaAssignTransactionController extends Controller
         ]);
     }
 
-    /**
-     * Show single transaction details (used by modal / detail page)
-     */
     public function show($id)
     {
         $txModel = new PratihariSebaAssignTransaction();
@@ -143,7 +160,6 @@ class PratihariSebaAssignTransactionController extends Controller
             return response()->json(['error' => 'Transaction not found'], 404);
         }
 
-        // Resolve beddha ids to names where possible
         $beddhaIds = array_filter(array_map('trim', explode(',', (string)$tx->beddha_id)));
         $beddhaNames = [];
         if (!empty($beddhaIds)) {
@@ -159,28 +175,20 @@ class PratihariSebaAssignTransactionController extends Controller
         ]);
     }
 
-    /**
-     * Export CSV helper
-     *
-     * @param \Illuminate\Support\Collection $rows
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
-     */
     protected function exportCsv($rows)
     {
         $response = new StreamedResponse(function () use ($rows) {
             $handle = fopen('php://output', 'w');
 
-            // header row
             fputcsv($handle, [
                 'ID', 'Pratihari ID', 'Pratihari Name', 'Seba ID', 'Seba Name',
                 'Beddha IDs (CSV)', 'Year', 'Assigned By', 'Date Time', 'Status'
             ]);
 
             foreach ($rows as $r) {
-                // get pratihari name and seba name if present in joined columns
                 $pratName = property_exists($r, 'pratihari_name') ? $r->pratihari_name : '';
                 $sebaName = property_exists($r, 'seba_name') ? $r->seba_name : '';
-                $assignedBy = property_exists($r, 'assigned_by') ? $r->assigned_by : '';
+                $assignedBy = property_exists($r, 'admin_name') ? $r->admin_name : ($r->assigned_by ?? '');
 
                 fputcsv($handle, [
                     $r->id ?? '',
