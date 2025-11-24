@@ -293,7 +293,7 @@ class PratihariSebaController extends Controller
         $s = trim($s);
         return (substr($s, 0, 1) === '[' && substr($s, -1) === ']');
     }
-        
+
     public function savePratihariAssignSeba(Request $request)
     {
         try {
@@ -324,7 +324,12 @@ class PratihariSebaController extends Controller
                     // Requested admin selection for this seba (may be missing)
                     $requestedList = $beddhaIdsFromRequest[$sebaId] ?? [];
                     // normalize to ints and unique
-                    $requestedList = collect($requestedList)->map(fn($v) => (int) $v)->filter()->unique()->values()->all();
+                    $requestedList = collect($requestedList)
+                        ->map(fn($v) => (int) $v)
+                        ->filter()
+                        ->unique()
+                        ->values()
+                        ->all();
 
                     // All beddhas that are admin-assignable for this seba (beddha_status = 0)
                     $adminAllowed = PratihariSebaBeddhaAssign::where('seba_id', $sebaId)
@@ -336,7 +341,10 @@ class PratihariSebaController extends Controller
                         ->all();
 
                     // Keep only admin-allowed beddhas from the requested selection
-                    $adminSelected = collect($requestedList)->intersect($adminAllowed)->values()->all();
+                    $adminSelected = collect($requestedList)
+                        ->intersect($adminAllowed)
+                        ->values()
+                        ->all();
 
                     // Load existing PratihariSeba record if any (we want to preserve user-assigned beddhas)
                     $existing = PratihariSeba::where('pratihari_id', $pratihariId)
@@ -346,50 +354,66 @@ class PratihariSebaController extends Controller
                     $existingBeddhas = $existing ? $existing->beddha_id : []; // accessor returns array
 
                     // Determine which of existing beddhas are admin-allowed (so considered admin-owned)
-                    $existingAdmin = collect($existingBeddhas)->intersect($adminAllowed)->values()->all();
-                    $existingUser = collect($existingBeddhas)->diff($existingAdmin)->values()->all();
+                    $existingAdmin = collect($existingBeddhas)
+                        ->intersect($adminAllowed)
+                        ->values()
+                        ->all();
+
+                    $existingUser = collect($existingBeddhas)
+                        ->diff($existingAdmin)
+                        ->values()
+                        ->all();
 
                     // Final saved beddhas = keep user-assigned always + adminSelected (from form)
-                    $finalBeddhas = collect($existingUser)->merge($adminSelected)->unique()->values()->all();
+                    $finalBeddhas = collect($existingUser)
+                        ->merge($adminSelected)
+                        ->unique()
+                        ->values()
+                        ->all();
 
+                    /**
+                     * CASE 1: No beddhas remain after merge
+                     * - Delete existing seba row (if any)
+                     * - DO NOT create a transaction row (this is the "skip empty" behaviour)
+                     */
                     if (empty($finalBeddhas)) {
-                        // nothing remains -> delete row if exists
                         if ($existing) {
                             $existing->delete();
                         }
-                        // still record admin transaction as empty (admin cleared)
-                        PratihariSebaAssignTransaction::create([
-                            'pratihari_id' => $pratihariId,
-                            'assigned_by' => $assigned_by,
-                            'seba_id' => $sebaId,
-                            'beddha_id' => '', // admin cleared
-                            'year' => $year,
-                            'date_time' => now('Asia/Kolkata'),
-                        ]);
+                        // Skip creating PratihariSebaAssignTransaction when no beddha was selected
                         continue;
                     }
 
+                    /**
+                     * CASE 2: We have some beddhas to save
+                     */
                     // Save (create or update). Use array so model mutator stores CSV consistently.
                     PratihariSeba::updateOrCreate(
                         [
                             'pratihari_id' => $pratihariId,
-                            'seba_id' => $sebaId,
+                            'seba_id'      => $sebaId,
                         ],
                         [
                             'beddha_id' => $finalBeddhas,
                         ]
                     );
 
-                    // Log the admin-assigned list (only the admin-provided/allowed set)
-                    $adminCsvForLog = implode(',', $adminSelected);
-                    PratihariSebaAssignTransaction::create([
-                        'pratihari_id' => $pratihariId,
-                        'assigned_by' => $assigned_by,
-                        'seba_id' => $sebaId,
-                        'beddha_id' => $adminCsvForLog,
-                        'year' => $year,
-                        'date_time' => now('Asia/Kolkata'),
-                    ]);
+                    /**
+                     * Only log the transaction if admin actually selected something
+                     * => avoids rows with empty beddha_id
+                     */
+                    if (!empty($adminSelected)) {
+                        $adminCsvForLog = implode(',', $adminSelected);
+
+                        PratihariSebaAssignTransaction::create([
+                            'pratihari_id' => $pratihariId,
+                            'assigned_by'  => $assigned_by,
+                            'seba_id'      => $sebaId,
+                            'beddha_id'    => $adminCsvForLog,
+                            'year'         => $year,
+                            'date_time'    => now('Asia/Kolkata'),
+                        ]);
+                    }
                 }
             });
 
