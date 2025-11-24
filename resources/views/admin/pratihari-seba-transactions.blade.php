@@ -7,10 +7,14 @@
     <style>
         :root {
             --brand-a: #7c3aed;
-            --brand-b: #06b6d4;
-            --ink: #0b1220;
-            --muted: #64748b;
             --chip-bg: #f1f5f9;
+       
+            --brand-b:#06b6d4; /* cyan    */
+            --accent:#f5c12e;  /* amber   */
+            --ink:#0b1220;
+            --muted:#64748b;
+            --border:rgba(2,6,23,.10);
+            --soft:#f8fafc;
         }
 
         .card { border-radius: 12px; border: 1px solid #e5e7eb; }
@@ -49,6 +53,11 @@
             border-radius: 10px;
             padding: .75rem 1rem;
         }
+          .card-header{
+            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
+            color:#fff; font-weight:800; letter-spacing:.3px; text-transform:uppercase;
+            border-radius:14px 14px 0 0; display:flex; align-items:center; gap:.6rem;
+        }
     </style>
 @endsection
 
@@ -57,7 +66,11 @@
     <div class="col-12 mt-3">
         <div class="card p-3">
             <div class="d-flex align-items-center justify-content-between mb-3">
-                <h5 class="mb-0">Admin — Pratihari Seba Assign Transactions</h5>
+                
+ <div class="card-header">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                   Admin — Pratihari Seba Assign Transactions
+                </div>
 
                 <div>
                     <a href="{{ route('pratihariSebaTransactions.index', array_merge(request()->query(), ['export' => 'csv'])) }}"
