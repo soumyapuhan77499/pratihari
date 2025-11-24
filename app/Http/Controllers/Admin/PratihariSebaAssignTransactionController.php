@@ -15,9 +15,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class PratihariSebaAssignTransactionController extends Controller
 {
+    /**
+     * Build a safe COALESCE expression for admin display name depending on available columns.
+     */
     protected function detectAdminDisplayExpr(string $adminTable): string
     {
-        // candidate columns in preferred order
+        // preferred columns in order of readability
         $candidates = ['name', 'admin_name', 'username', 'email', 'admin_id'];
 
         $found = [];
@@ -27,46 +30,40 @@ class PratihariSebaAssignTransactionController extends Controller
             }
         }
 
-        // always include admin_id fallback even if not detected (safe)
-        if (!in_array('a.admin_id', $found)) {
+        // fallback to admin_id if nothing else found
+        if (empty($found)) {
             $found[] = 'a.admin_id';
         }
 
-        // build COALESCE list
-        $coalesce = implode(', ', $found);
-
-        return "COALESCE({$coalesce})";
+        return 'COALESCE(' . implode(', ', $found) . ')';
     }
 
+    /**
+     * Index - list transactions with filters and optional CSV export.
+     */
     public function index(Request $request)
     {
-        // table names from models
+        // derive table names dynamically from models (avoid hard-coded table names)
         $txModel = new PratihariSebaAssignTransaction();
-        $txTable = $txModel->getTable();
+        $txTable = $txModel->getTable(); // e.g. 'pratihari__seba_assign_transaction'
 
         $profileModel = new PratihariProfile();
-        $profileTable = $profileModel->getTable();
+        $profileTable = $profileModel->getTable(); // e.g. 'pratihari__profile_details'
 
         $sebaModel = new PratihariSebaMaster();
-        $sebaTable = $sebaModel->getTable();
+        $sebaTable = $sebaModel->getTable(); // e.g. 'pratihari__seba_master' or 'master__seba'
 
-        // admins table (change if your admin table name is different)
-        $adminTable = 'admins';
+        $adminTable = 'admins'; // change if your admin table name is different
 
-        // detect admin display expression (safe against missing columns)
-        $adminCoalesce = $this->detectAdminDisplayExpr($adminTable); // returns something like "COALESCE(a.name, a.email, a.admin_id)"
+        // build admin name expression dynamically
+        $adminCoalesce = $this->detectAdminDisplayExpr($adminTable); // returns "COALESCE(a.name, ...)"
 
-        // Build base query using Query Builder and the real table names
-        $query = DB::table($txTable . ' as t')
-            ->leftJoin($profileTable . ' as p', "t.pratihari_id", '=', "p.pratihari_id")
-            ->leftJoin($sebaTable . ' as s', "t.seba_id", '=', "s.id")
-            ->leftJoin($adminTable . ' as a', "t.assigned_by", '=', "a.admin_id")
-            ->select(
-                't.*',
-                DB::raw("CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name"),
-                's.seba_name as seba_name',
-                DB::raw("{$adminCoalesce} as admin_name")
-            );
+        // base query using query builder (select t.* to include year and other columns)
+        $query = DB::table("{$txTable} as t")
+            ->leftJoin("{$profileTable} as p", "t.pratihari_id", '=', "p.pratihari_id")
+            ->leftJoin("{$sebaTable} as s", "t.seba_id", '=', "s.id")
+            ->leftJoin("{$adminTable} as a", "t.assigned_by", '=', "a.admin_id")
+            ->selectRaw("t.*, CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name, s.seba_name as seba_name, {$adminCoalesce} as admin_name");
 
         // filters
         $pratihariId = $request->query('pratihari_id');
@@ -76,25 +73,25 @@ class PratihariSebaAssignTransactionController extends Controller
         $search      = $request->query('search');
 
         if ($pratihariId) {
-            $query->where("t.pratihari_id", $pratihariId);
+            $query->where('t.pratihari_id', $pratihariId);
         }
 
         if ($sebaId) {
-            $query->where("t.seba_id", $sebaId);
+            $query->where('t.seba_id', $sebaId);
         }
 
         if ($dateFrom) {
             try {
                 $df = Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay();
-                $query->where("t.date_time", '>=', $df);
-            } catch (\Exception $e) {}
+                $query->where('t.date_time', '>=', $df);
+            } catch (\Exception $e) { /* ignore */ }
         }
 
         if ($dateTo) {
             try {
                 $dt = Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay();
-                $query->where("t.date_time", '<=', $dt);
-            } catch (\Exception $e) {}
+                $query->where('t.date_time', '<=', $dt);
+            } catch (\Exception $e) { /* ignore */ }
         }
 
         if ($search) {
@@ -106,7 +103,7 @@ class PratihariSebaAssignTransactionController extends Controller
             });
         }
 
-        $query = $query->orderBy('t.date_time', 'desc');
+        $query->orderBy('t.date_time', 'desc');
 
         // CSV export
         if ($request->query('export') === 'csv') {
@@ -117,7 +114,7 @@ class PratihariSebaAssignTransactionController extends Controller
         $perPage = 15;
         $rows = $query->paginate($perPage)->withQueryString();
 
-        // filter dropdowns
+        // filter dropdown data (derived from actual tables)
         $pratiharis = DB::table($profileTable)
             ->select('pratihari_id', DB::raw("CONCAT_WS(' ', first_name, middle_name, last_name) AS name"))
             ->orderBy('first_name')
@@ -127,13 +124,12 @@ class PratihariSebaAssignTransactionController extends Controller
             ->orderBy('seba_name')
             ->pluck('seba_name', 'id');
 
-        return view('admin.pratihari-seba-transactions', [
-            'rows' => $rows,
-            'pratiharis' => $pratiharis,
-            'sebas' => $sebas,
-        ]);
+        return view('admin.pratihari-seba-transactions', compact('rows', 'pratiharis', 'sebas'));
     }
 
+    /**
+     * Show single transaction details (JSON for modal).
+     */
     public function show($id)
     {
         $txModel = new PratihariSebaAssignTransaction();
@@ -145,21 +141,18 @@ class PratihariSebaAssignTransactionController extends Controller
         $sebaModel = new PratihariSebaMaster();
         $sebaTable = $sebaModel->getTable();
 
-        $tx = DB::table($txTable . ' as t')
-            ->leftJoin($profileTable . ' as p', "t.pratihari_id", '=', "p.pratihari_id")
-            ->leftJoin($sebaTable . ' as s', "t.seba_id", '=', "s.id")
+        $tx = DB::table("{$txTable} as t")
+            ->leftJoin("{$profileTable} as p", "t.pratihari_id", '=', "p.pratihari_id")
+            ->leftJoin("{$sebaTable} as s", "t.seba_id", '=', "s.id")
             ->where('t.id', $id)
-            ->select(
-                't.*',
-                DB::raw("CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name"),
-                's.seba_name as seba_name'
-            )
+            ->selectRaw("t.*, CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name, s.seba_name as seba_name")
             ->first();
 
         if (!$tx) {
             return response()->json(['error' => 'Transaction not found'], 404);
         }
 
+        // Resolve beddha ids to names
         $beddhaIds = array_filter(array_map('trim', explode(',', (string)$tx->beddha_id)));
         $beddhaNames = [];
         if (!empty($beddhaIds)) {
@@ -175,11 +168,17 @@ class PratihariSebaAssignTransactionController extends Controller
         ]);
     }
 
+    /**
+     * CSV export helper
+     *
+     * @param \Illuminate\Support\Collection $rows
+     */
     protected function exportCsv($rows)
     {
         $response = new StreamedResponse(function () use ($rows) {
             $handle = fopen('php://output', 'w');
 
+            // header
             fputcsv($handle, [
                 'ID', 'Pratihari ID', 'Pratihari Name', 'Seba ID', 'Seba Name',
                 'Beddha IDs (CSV)', 'Year', 'Assigned By', 'Date Time', 'Status'

@@ -81,7 +81,7 @@
                             <th>Seba</th>
                             <th>Beddha(s)</th>
                             <th>Year</th>
-                            <th>Assigned By (Admin ID)</th>
+                            <th>Assigned By</th>
                             <th>Date / Time (Asia/Kolkata)</th>
                             <th>Actions</th>
                         </tr>
@@ -113,10 +113,10 @@
                                         </div>
                                     @endif
                                 </td>
-                                <td>{{ $row->year }}</td>
-                                <td>{{ $row->assigned_by }}</td>
+                                <td>{{ $row->year ?? '—' }}</td>
+                                <td>{{ $row->admin_name ?? $row->assigned_by }}</td>
                                 <td>
-                                    @if($row->date_time)
+                                    @if(!empty($row->date_time))
                                         {{ \Carbon\Carbon::parse($row->date_time)->setTimezone('Asia/Kolkata')->format('d M Y, h:i A') }}
                                     @endif
                                 </td>
@@ -191,9 +191,9 @@
                         html += `<dt class="col-sm-4">Seba</dt><dd class="col-sm-8">${res.transaction.seba_name ?? ('#' + res.transaction.seba_id)}</dd>`;
                         html += `<dt class="col-sm-4">Beddha IDs</dt><dd class="col-sm-8">${res.transaction.beddha_id || '—'}</dd>`;
                         html += `<dt class="col-sm-4">Beddha Names (resolved)</dt><dd class="col-sm-8">${(res.beddha_names && res.beddha_names.length) ? res.beddha_names.join(', ') : '—'}</dd>`;
-                        html += `<dt class="col-sm-4">Year</dt><dd class="col-sm-8">${res.transaction.year}</dd>`;
-                        html += `<dt class="col-sm-4">Assigned By (Admin)</dt><dd class="col-sm-8">${res.transaction.assigned_by}</dd>`;
-                        html += `<dt class="col-sm-4">Date / Time</dt><dd class="col-sm-8">${res.transaction.date_time}</dd>`;
+                        html += `<dt class="col-sm-4">Year</dt><dd class="col-sm-8">${res.transaction.year ?? '—'}</dd>`;
+                        html += `<dt class="col-sm-4">Assigned By (Admin)</dt><dd class="col-sm-8">${res.transaction.assigned_by ?? '—'}</dd>`;
+                        html += `<dt class="col-sm-4">Date / Time</dt><dd class="col-sm-8">${res.transaction.date_time ?? '—'}</dd>`;
                         html += `</dl>`;
 
                         $('#transactionModalBody').html(html);
@@ -206,4 +206,3 @@
         });
     </script>
 @endsection
- 
