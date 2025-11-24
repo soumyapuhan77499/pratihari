@@ -725,16 +725,18 @@
             <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-4">
                 <div class="row g-3">
-                    <div class="col-12 col-sm-6 col-xl-3">
-                        <div class="kpi violet h-100">
-                            <div class="meta"><i class="bi bi-person-plus"></i> Today’s Registrations</div>
-                            <a class="small-muted text-decoration-none" href="{{ route('admin.pratihari.filterUsers', 'today') }}">View</a>
-                            <div class="value mt-2">{{ count($todayProfiles) }}</div>
-                            <div class="subtle">New profiles created</div>
-                            <div class="kpi-progress"><span style="--p:38%"></span></div>
+                    <a href="{{ route('admin.pratihari.filterUsers', 'today') }}">
+                        <div class="col-12 col-sm-6 col-xl-3">
+                            <div class="kpi violet h-100">
+                                <div class="meta"><i class="bi bi-person-plus"></i> Today’s Registrations</div>
+
+                                <div class="value mt-2">{{ count($todayProfiles) }}</div>
+                                <div class="subtle">New profiles created</div>
+                                <div class="kpi-progress"><span style="--p:38%"></span></div>
+                            </div>
                         </div>
-                    </div>
-                    
+                    </a>
+
                     <div class="col-12 col-sm-6 col-xl-3">
                         <div class="kpi amber h-100">
                             <div class="meta"><i class="bi bi-hourglass-split"></i> Pending Profiles</div>
