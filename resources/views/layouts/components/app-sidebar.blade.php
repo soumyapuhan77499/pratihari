@@ -78,6 +78,15 @@
                     </a>
                 </li>
 
+                <!-- Manage Seba Transactions -->
+                <li class="slide">
+                    <a class="side-menu__item {{ request()->is('admin/pratihari-seba-transactions') ? 'is-active' : '' }}"
+                       href="{{ url('admin/pratihari-seba-transactions') }}">
+                        <i class="bi bi-journal-text icon gradient-5"></i>
+                        <span class="side-menu__label">Mng Seba Assign</span>
+                    </a>
+                </li>
+
                 <!-- Manage Notice -->
                 <li class="slide">
                     <a class="side-menu__item {{ request()->is('admin/manage-notice') ? 'is-active' : '' }}"

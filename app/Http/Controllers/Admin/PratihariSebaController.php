@@ -293,7 +293,7 @@ class PratihariSebaController extends Controller
         $s = trim($s);
         return (substr($s, 0, 1) === '[' && substr($s, -1) === ']');
     }
-
+        
     public function savePratihariAssignSeba(Request $request)
     {
         try {
@@ -402,5 +402,5 @@ class PratihariSebaController extends Controller
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
-    
+
 }
