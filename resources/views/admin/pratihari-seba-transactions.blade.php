@@ -5,11 +5,50 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <style>
-        .card { border-radius: 12px; }
+        :root {
+            --brand-a: #7c3aed;
+            --brand-b: #06b6d4;
+            --ink: #0b1220;
+            --muted: #64748b;
+            --chip-bg: #f1f5f9;
+        }
+
+        .card { border-radius: 12px; border: 1px solid #e5e7eb; }
         .filter-bar { padding: 12px; border-radius: 10px; border:1px solid #e6edf3; background:#fff; }
         .table-responsive { max-height: 68vh; overflow: auto; }
         .small-muted { font-size: .85rem; color:#65748b; }
-        .badge-beddha { background: linear-gradient(90deg,#7c3aed,#06b6d4); color:#fff; font-weight:700; padding:.25rem .5rem; border-radius:999px; }
+
+        .badge-beddha {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color:#fff;
+            font-weight:600;
+            padding:.25rem .65rem;
+            border-radius:999px;
+            font-size: .75rem;
+            box-shadow: 0 1px 2px rgba(15,23,42,.2);
+        }
+
+        .badge-beddha-id {
+            background: var(--chip-bg);
+            color: var(--muted);
+            border-radius: 999px;
+            padding: .2rem .55rem;
+            font-size: .7rem;
+            border: 1px solid #cbd5f5;
+        }
+
+        thead.table-light th {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .transaction-header {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color: #fff;
+            border-radius: 10px;
+            padding: .75rem 1rem;
+        }
     </style>
 @endsection
 
@@ -105,10 +144,22 @@
                                     @if(empty($bids))
                                         <span class="small-muted">—</span>
                                     @else
-                                        <div class="d-flex flex-wrap gap-1">
-                                            @foreach($bids as $bid)
-                                                <span class="badge badge-beddha">{{ $bid }}</span>
-                                            @endforeach
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach($bids as $bid)
+                                                    <span class="badge-beddha-id">#{{ $bid }}</span>
+                                                @endforeach
+                                            </div>
+                                            <div class="d-flex flex-wrap gap-1">
+                                                @foreach($bids as $bid)
+                                                    @php
+                                                        $label = $beddhaNames[$bid] ?? $bid;
+                                                    @endphp
+                                                    <span class="badge badge-beddha" title="ID {{ $bid }}">
+                                                        {{ $label }}
+                                                    </span>
+                                                @endforeach
+                                            </div>
                                         </div>
                                     @endif
                                 </td>
@@ -117,6 +168,8 @@
                                 <td>
                                     @if(!empty($row->date_time))
                                         {{ \Carbon\Carbon::parse($row->date_time)->setTimezone('Asia/Kolkata')->format('d M Y, h:i A') }}
+                                    @else
+                                        <span class="small-muted">—</span>
                                     @endif
                                 </td>
                                 <td>
@@ -133,7 +186,9 @@
             </div>
 
             <div class="mt-3 d-flex justify-content-between align-items-center">
-                <div class="small-muted">Showing {{ $rows->firstItem() ?? 0 }} - {{ $rows->lastItem() ?? 0 }} of {{ $rows->total() }} records</div>
+                <div class="small-muted">
+                    Showing {{ $rows->firstItem() ?? 0 }} - {{ $rows->lastItem() ?? 0 }} of {{ $rows->total() }} records
+                </div>
                 <div>{{ $rows->links() }}</div>
             </div>
         </div>
@@ -144,14 +199,18 @@
 <div class="modal fade" id="transactionModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Transaction Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header border-0 pb-0">
+        <div class="transaction-header w-100 d-flex justify-content-between align-items-center">
+            <h5 class="modal-title mb-0">Transaction Details</h5>
+            <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal" aria-label="Close">
+                Close
+            </button>
+        </div>
       </div>
       <div class="modal-body" id="transactionModalBody">
-        <div class="text-center small-muted">Loading…</div>
+        <div class="text-center small-muted py-3">Loading…</div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer border-0 pt-0">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>
@@ -172,7 +231,7 @@
             // View transaction details
             $(document).on('click', '.show-transaction', function () {
                 const id = $(this).data('id');
-                $('#transactionModalBody').html('<div class="text-center small-muted">Loading…</div>');
+                $('#transactionModalBody').html('<div class="text-center small-muted py-3">Loading…</div>');
                 $('#transactionModal').modal('show');
 
                 $.ajax({
@@ -180,25 +239,49 @@
                     method: 'GET',
                     success: function (res) {
                         if (!res.transaction) {
-                            $('#transactionModalBody').html('<div class="text-danger">Not found</div>');
+                            $('#transactionModalBody').html('<div class="text-danger py-3 text-center">Not found</div>');
                             return;
                         }
 
-                        let html = '<dl class="row">';
-                        html += `<dt class="col-sm-4">Transaction ID</dt><dd class="col-sm-8">${res.transaction.id}</dd>`;
-                        html += `<dt class="col-sm-4">Pratihari</dt><dd class="col-sm-8">${res.transaction.pratihari_name ?? ('#' + res.transaction.pratihari_id)}</dd>`;
-                        html += `<dt class="col-sm-4">Seba</dt><dd class="col-sm-8">${res.transaction.seba_name ?? ('#' + res.transaction.seba_id)}</dd>`;
-                        html += `<dt class="col-sm-4">Beddha IDs</dt><dd class="col-sm-8">${res.transaction.beddha_id || '—'}</dd>`;
-                        html += `<dt class="col-sm-4">Beddha Names (resolved)</dt><dd class="col-sm-8">${(res.beddha_names && res.beddha_names.length) ? res.beddha_names.join(', ') : '—'}</dd>`;
-                        html += `<dt class="col-sm-4">Year</dt><dd class="col-sm-8">${res.transaction.year ?? '—'}</dd>`;
-                        html += `<dt class="col-sm-4">Assigned By (Admin)</dt><dd class="col-sm-8">${res.transaction.assigned_by ?? '—'}</dd>`;
-                        html += `<dt class="col-sm-4">Date / Time</dt><dd class="col-sm-8">${res.transaction.date_time ?? '—'}</dd>`;
+                        const t = res.transaction;
+
+                        // Prepare beddha IDs badges
+                        let idsHtml = '—';
+                        if (t.beddha_id) {
+                            const ids = t.beddha_id.split(',')
+                                .map(s => s.trim())
+                                .filter(Boolean);
+
+                            if (ids.length) {
+                                idsHtml = ids.map(id =>
+                                    `<span class="badge-beddha-id me-1 mb-1">#${id}</span>`
+                                ).join(' ');
+                            }
+                        }
+
+                        // Prepare beddha Names badges (resolved)
+                        let namesHtml = '—';
+                        if (res.beddha_names && res.beddha_names.length) {
+                            namesHtml = res.beddha_names.map(name =>
+                                `<span class="badge badge-beddha me-1 mb-1">${name}</span>`
+                            ).join(' ');
+                        }
+
+                        let html = '<dl class="row mt-3">';
+                        html += `<dt class="col-sm-4">Transaction ID</dt><dd class="col-sm-8">${t.id}</dd>`;
+                        html += `<dt class="col-sm-4">Pratihari</dt><dd class="col-sm-8">${t.pratihari_name ?? ('#' + t.pratihari_id)}</dd>`;
+                        html += `<dt class="col-sm-4">Seba</dt><dd class="col-sm-8">${t.seba_name ?? ('#' + t.seba_id)}</dd>`;
+                        html += `<dt class="col-sm-4">Beddha IDs</dt><dd class="col-sm-8">${idsHtml}</dd>`;
+                        html += `<dt class="col-sm-4">Beddha Names</dt><dd class="col-sm-8">${namesHtml}</dd>`;
+                        html += `<dt class="col-sm-4">Year</dt><dd class="col-sm-8">${t.year ?? '—'}</dd>`;
+                        html += `<dt class="col-sm-4">Assigned By (Admin)</dt><dd class="col-sm-8">${t.assigned_by ?? '—'}</dd>`;
+                        html += `<dt class="col-sm-4">Date / Time</dt><dd class="col-sm-8">${t.date_time ?? '—'}</dd>`;
                         html += `</dl>`;
 
                         $('#transactionModalBody').html(html);
                     },
                     error: function () {
-                        $('#transactionModalBody').html('<div class="text-danger">Error loading details.</div>');
+                        $('#transactionModalBody').html('<div class="text-danger py-3 text-center">Error loading details.</div>');
                     }
                 });
             });

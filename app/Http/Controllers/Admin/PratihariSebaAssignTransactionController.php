@@ -62,7 +62,12 @@ class PratihariSebaAssignTransactionController extends Controller
             ->leftJoin("{$profileTable} as p", "t.pratihari_id", '=', "p.pratihari_id")
             ->leftJoin("{$sebaTable} as s", "t.seba_id", '=', "s.id")
             ->leftJoin("{$adminTable} as a", "t.assigned_by", '=', "a.admin_id")
-            ->selectRaw("t.*, CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name, s.seba_name as seba_name, {$adminCoalesce} as admin_name");
+            ->selectRaw(
+                "t.*, 
+                 CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name, 
+                 s.seba_name as seba_name, 
+                 {$adminCoalesce} as admin_name"
+            );
 
         // filters
         $pratihariId = $request->query('pratihari_id');
@@ -96,13 +101,15 @@ class PratihariSebaAssignTransactionController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('t.beddha_id', 'like', "%{$search}%")
-                  ->orWhere('s.seba_name', 'like', "%{$search}%")
-                  ->orWhere(DB::raw("CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name)"), 'like', "%{$search}%")
-                  ->orWhere('t.year', 'like', "%{$search}%");
+                    ->orWhere('s.seba_name', 'like', "%{$search}%")
+                    ->orWhere(DB::raw("CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name)"), 'like', "%{$search}%")
+                    ->orWhere('t.year', 'like', "%{$search}%");
             });
         }
 
-        $query->orderBy('t.date_time', 'desc');
+        // DESC order wise data (by date and id)
+        $query->orderBy('t.date_time', 'desc')
+              ->orderBy('t.id', 'desc');
 
         // CSV export
         if ($request->query('export') === 'csv') {
@@ -112,6 +119,26 @@ class PratihariSebaAssignTransactionController extends Controller
 
         $perPage = 15;
         $rows = $query->paginate($perPage)->withQueryString();
+
+        // --------- Preload Beddha Names for list (colorful UI) ----------
+        $allBeddhaIds = [];
+        foreach ($rows as $row) {
+            $ids = array_filter(array_map('trim', explode(',', (string) $row->beddha_id)));
+            $allBeddhaIds = array_merge($allBeddhaIds, $ids);
+        }
+        $allBeddhaIds = array_unique($allBeddhaIds);
+
+        $beddhaNames = [];
+        if (!empty($allBeddhaIds)) {
+            $beddhaModel = new PratihariBeddhaMaster();
+            $beddhaKey = $beddhaModel->getKeyName(); // supports id or beddha_id
+
+            $beddhaNames = $beddhaModel->newQuery()
+                ->whereIn($beddhaKey, $allBeddhaIds)
+                ->pluck('beddha_name', $beddhaKey)
+                ->toArray();
+        }
+        // ---------------------------------------------------------------
 
         // filter dropdowns
         $pratiharis = DB::table($profileTable)
@@ -123,7 +150,7 @@ class PratihariSebaAssignTransactionController extends Controller
             ->orderBy('seba_name')
             ->pluck('seba_name', 'id');
 
-        return view('admin.pratihari-seba-transactions', compact('rows', 'pratiharis', 'sebas'));
+        return view('admin.pratihari-seba-transactions', compact('rows', 'pratiharis', 'sebas', 'beddhaNames'));
     }
 
     /**
@@ -144,26 +171,37 @@ class PratihariSebaAssignTransactionController extends Controller
             ->leftJoin("{$profileTable} as p", "t.pratihari_id", '=', "p.pratihari_id")
             ->leftJoin("{$sebaTable} as s", "t.seba_id", '=', "s.id")
             ->where('t.id', $id)
-            ->selectRaw("t.*, CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name, s.seba_name as seba_name")
+            ->selectRaw(
+                "t.*, 
+                 CONCAT_WS(' ', p.first_name, p.middle_name, p.last_name) as pratihari_name, 
+                 s.seba_name as seba_name"
+            )
             ->first();
 
         if (!$tx) {
             return response()->json(['error' => 'Transaction not found'], 404);
         }
 
-        // Resolve beddha ids => names
-        $beddhaIds = array_filter(array_map('trim', explode(',', (string)$tx->beddha_id)));
+        // Resolve beddha ids => names (support id or beddha_id as PK)
+        $beddhaIds = array_filter(array_map('trim', explode(',', (string) $tx->beddha_id)));
         $beddhaNames = [];
         if (!empty($beddhaIds)) {
-            $masters = PratihariBeddhaMaster::whereIn('id', $beddhaIds)->pluck('beddha_name', 'id')->toArray();
+            $beddhaModel = new PratihariBeddhaMaster();
+            $beddhaKey = $beddhaModel->getKeyName();
+
+            $masters = $beddhaModel->newQuery()
+                ->whereIn($beddhaKey, $beddhaIds)
+                ->pluck('beddha_name', $beddhaKey)
+                ->toArray();
+
             foreach ($beddhaIds as $bid) {
                 $beddhaNames[] = $masters[$bid] ?? ("#{$bid}");
             }
         }
 
         return response()->json([
-            'transaction' => $tx,
-            'beddha_names' => $beddhaNames,
+            'transaction'   => $tx,
+            'beddha_names'  => $beddhaNames,
         ]);
     }
 
@@ -181,8 +219,8 @@ class PratihariSebaAssignTransactionController extends Controller
             ]);
 
             foreach ($rows as $r) {
-                $pratName = property_exists($r, 'pratihari_name') ? $r->pratihari_name : '';
-                $sebaName = property_exists($r, 'seba_name') ? $r->seba_name : '';
+                $pratName   = property_exists($r, 'pratihari_name') ? $r->pratihari_name : '';
+                $sebaName   = property_exists($r, 'seba_name') ? $r->seba_name : '';
                 $assignedBy = property_exists($r, 'admin_name') ? $r->admin_name : ($r->assigned_by ?? '');
 
                 fputcsv($handle, [
