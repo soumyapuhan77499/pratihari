@@ -17,6 +17,7 @@ class PratihariSebaAssignTransaction extends Model
         'seba_id',
         'beddha_id',
         'date_time',
+        'year',
         'status',
     ];
 

@@ -1,10 +1,9 @@
 @extends('layouts.app')
 
 @section('styles')
-    <!-- Bootstrap + Select2 + Flatpickr for date picking -->
+    <!-- Select2 + Flatpickr -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-
     <style>
         .card { border-radius: 12px; }
         .filter-bar { padding: 12px; border-radius: 10px; border:1px solid #e6edf3; background:#fff; }

@@ -20,17 +20,16 @@ class PratihariSebaAssignTransactionController extends Controller
      */
     protected function detectAdminDisplayExpr(string $adminTable): string
     {
-        // preferred columns in order of readability
+        // preferred admin display columns in order
         $candidates = ['name', 'admin_name', 'username', 'email', 'admin_id'];
-
         $found = [];
+
         foreach ($candidates as $col) {
             if (Schema::hasColumn($adminTable, $col)) {
                 $found[] = "a.{$col}";
             }
         }
 
-        // fallback to admin_id if nothing else found
         if (empty($found)) {
             $found[] = 'a.admin_id';
         }
@@ -43,7 +42,7 @@ class PratihariSebaAssignTransactionController extends Controller
      */
     public function index(Request $request)
     {
-        // derive table names dynamically from models (avoid hard-coded table names)
+        // derive table names from models
         $txModel = new PratihariSebaAssignTransaction();
         $txTable = $txModel->getTable(); // e.g. 'pratihari__seba_assign_transaction'
 
@@ -53,12 +52,12 @@ class PratihariSebaAssignTransactionController extends Controller
         $sebaModel = new PratihariSebaMaster();
         $sebaTable = $sebaModel->getTable(); // e.g. 'pratihari__seba_master' or 'master__seba'
 
-        $adminTable = 'admins'; // change if your admin table name is different
+        $adminTable = 'admins'; // change if your admin table name differs
 
-        // build admin name expression dynamically
-        $adminCoalesce = $this->detectAdminDisplayExpr($adminTable); // returns "COALESCE(a.name, ...)"
+        // admin display expression
+        $adminCoalesce = $this->detectAdminDisplayExpr($adminTable);
 
-        // base query using query builder (select t.* to include year and other columns)
+        // base query (select t.* so 'year' is included)
         $query = DB::table("{$txTable} as t")
             ->leftJoin("{$profileTable} as p", "t.pratihari_id", '=', "p.pratihari_id")
             ->leftJoin("{$sebaTable} as s", "t.seba_id", '=', "s.id")
@@ -84,14 +83,14 @@ class PratihariSebaAssignTransactionController extends Controller
             try {
                 $df = Carbon::createFromFormat('Y-m-d', $dateFrom)->startOfDay();
                 $query->where('t.date_time', '>=', $df);
-            } catch (\Exception $e) { /* ignore */ }
+            } catch (\Exception $e) { /* ignore parse error */ }
         }
 
         if ($dateTo) {
             try {
                 $dt = Carbon::createFromFormat('Y-m-d', $dateTo)->endOfDay();
                 $query->where('t.date_time', '<=', $dt);
-            } catch (\Exception $e) { /* ignore */ }
+            } catch (\Exception $e) { /* ignore parse error */ }
         }
 
         if ($search) {
@@ -114,7 +113,7 @@ class PratihariSebaAssignTransactionController extends Controller
         $perPage = 15;
         $rows = $query->paginate($perPage)->withQueryString();
 
-        // filter dropdown data (derived from actual tables)
+        // filter dropdowns
         $pratiharis = DB::table($profileTable)
             ->select('pratihari_id', DB::raw("CONCAT_WS(' ', first_name, middle_name, last_name) AS name"))
             ->orderBy('first_name')
@@ -128,7 +127,7 @@ class PratihariSebaAssignTransactionController extends Controller
     }
 
     /**
-     * Show single transaction details (JSON for modal).
+     * Show single transaction details (JSON).
      */
     public function show($id)
     {
@@ -152,7 +151,7 @@ class PratihariSebaAssignTransactionController extends Controller
             return response()->json(['error' => 'Transaction not found'], 404);
         }
 
-        // Resolve beddha ids to names
+        // Resolve beddha ids => names
         $beddhaIds = array_filter(array_map('trim', explode(',', (string)$tx->beddha_id)));
         $beddhaNames = [];
         if (!empty($beddhaIds)) {
@@ -170,15 +169,12 @@ class PratihariSebaAssignTransactionController extends Controller
 
     /**
      * CSV export helper
-     *
-     * @param \Illuminate\Support\Collection $rows
      */
     protected function exportCsv($rows)
     {
         $response = new StreamedResponse(function () use ($rows) {
             $handle = fopen('php://output', 'w');
 
-            // header
             fputcsv($handle, [
                 'ID', 'Pratihari ID', 'Pratihari Name', 'Seba ID', 'Seba Name',
                 'Beddha IDs (CSV)', 'Year', 'Assigned By', 'Date Time', 'Status'
