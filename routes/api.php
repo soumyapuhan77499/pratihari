@@ -52,14 +52,12 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
 
-Route::middleware('auth:sanctum')
-    ->controller(PratihariProfileApiController::class)
-    ->group(function () {
-        Route::any('/application/save', 'saveApplication');
-        Route::get('/get-application', 'getApplication');
+Route::middleware('auth:sanctum')->group(function () {
+
+    Route::controller(PratihariProfileApiController::class)->group(function () {
+            Route::post('/application/save', 'saveApplication');
     });
 
-Route::middleware('auth:sanctum')->group(function () {
     Route::controller(PratihariFamilyApiController::class)->group(function () {
         Route::post('/save-family', 'saveFamily');
     });
