@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;   // 👈 Api with capital A
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -24,13 +24,60 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Config;
-
-// ✅ add these two:
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PratihariProfileApiController extends Controller
 {
+
+    public function saveApplication(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
+
+            $pratihari_id = $user->pratihari_id;
+
+            $photoPath = null;
+
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/application'), $fileName);
+
+                // Make sure there is exactly one slash between base URL and uploads
+                $photoPath = rtrim(Config::get('app.photo_url'), '/')
+                           . '/uploads/application/' . $fileName;
+            }
+
+            $application = PratihariApplication::create([
+                'pratihari_id' => $pratihari_id,
+                'date'         => $request->date,
+                'header'       => $request->header,
+                'body'         => $request->body,
+                'photo'        => $photoPath,
+            ]);
+
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Application submitted successfully.',
+                'data'    => $application
+            ], 200);
+
+        } catch (\Exception $e) {
+            Log::error('Application Save Error: ' . $e->getMessage());
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Something went wrong.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 public function saveProfile(Request $request)
 {
@@ -440,51 +487,7 @@ public function manageDesignation()
         ], 500);
     }
 }
- public function saveApplication(Request $request)
-    {
-        try {
-            $user = Auth::user();
-
-            if (!$user) {
-                return response()->json(['error' => 'User not authenticated'], 401);
-            }
-
-            $pratihari_id = $user->pratihari_id;
-
-            $photoPath = null;
-
-            if ($request->hasFile('photo')) {
-                $file = $request->file('photo');
-                $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads/application'), $fileName);
-
-                $photoPath = rtrim(Config::get('app.photo_url'), '/').'/uploads/application/' . $fileName;
-            }
-
-            $application = PratihariApplication::create([
-                'pratihari_id' => $pratihari_id,
-                'date'         => $request->date,
-                'header'       => $request->header,
-                'body'         => $request->body,
-                'photo'        => $photoPath,
-            ]);
-
-            return response()->json([
-                'status'  => 'success',
-                'message' => 'Application submitted successfully.',
-                'data'    => $application
-            ], 200);
-
-        } catch (\Exception $e) {
-            \Log::error('Application Save Error: ' . $e->getMessage());
-
-            return response()->json([
-                'status'  => 'error',
-                'message' => 'Something went wrong.',
-                'error'   => $e->getMessage()
-            ], 500);
-        }
-    }
+    
 public function getApplication()
 {
     try {

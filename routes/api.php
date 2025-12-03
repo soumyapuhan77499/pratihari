@@ -37,21 +37,27 @@ Route::post('/pratihari/verify-otp', [OtpController::class, 'verifyOtp']);
 |--------------------------------------------------------------------------
 | Pratihari Profile Routes
 |--------------------------------------------------------------------------
-*/
-Route::controller(PratihariProfileApiController::class)->group(function () {
+*/Route::controller(PratihariProfileApiController::class)->group(function () {
+
+    // 🔒 All these need Sanctum token
     Route::middleware('auth:sanctum')->group(function () {
+
         Route::post('/save-profile', 'saveProfile');
         Route::get('/get-home-page', 'getHomePage');
         Route::get('/get-all-pratihari-profile', 'getAllData');
         Route::get('/get-application', 'getApplication');
-        Route::post('/application/save','saveApplication')->name('application.save');
+
+        // 👇 This is your application save route
+        Route::post('/application/save', 'saveApplication')->name('application.save');
     });
 
+    // Public / non-auth routes
     Route::post('/update-profile/{pratihari_id}', 'updateProfile');
     Route::get('/designations', 'manageDesignation');
     Route::get('/get-profile-by-id/{pratihari_id}', 'getPofileDataByPratihariId');
     Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
+
     Route::middleware('auth:sanctum')->group(function () {
 
 
