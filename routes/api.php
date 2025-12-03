@@ -55,7 +55,7 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
 Route::middleware('auth:sanctum')
     ->controller(PratihariProfileApiController::class)
     ->group(function () {
-        Route::post('/application/save', 'saveApplication');
+        Route::any('/application/save', 'saveApplication');
         Route::get('/get-application', 'getApplication');
     });
 
