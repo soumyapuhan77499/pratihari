@@ -33,8 +33,8 @@ class StatusController extends Controller
             'social_media' => PratihariSocialMedia::where('pratihari_id', $pratihari_id)->exists(),
         ];
     
-        $filledTables = array_keys(array_filter($tables));
-        $emptyTables = array_keys(array_filter($tables, fn($filled) => !$filled));
+        $emptyTables = array_keys(array_filter($tables));
+        $filledTables = array_keys(array_filter($tables, fn($filled) => !$filled));
     
         return response()->json([
             'pratihari_id' => $pratihari_id,

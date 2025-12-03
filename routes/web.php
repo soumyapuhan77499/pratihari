@@ -152,5 +152,4 @@ Route::prefix('admin')->group(function () {
     Route::get('pratihari-seba-transactions/{id}', [PratihariSebaAssignTransactionController::class, 'show'])
         ->name('pratihariSebaTransactions.show');
 
-
 });
