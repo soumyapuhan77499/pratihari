@@ -53,10 +53,12 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    
+  Route::post(
+        '/application/save',
+        [PratihariProfileApiController::class, 'saveApplication']
+    );
 
-    Route::controller(PratihariProfileApiController::class)->group(function () {
-            Route::post('/application/save', 'saveApplication');
-    });
 
     Route::controller(PratihariFamilyApiController::class)->group(function () {
         Route::post('/save-family', 'saveFamily');
