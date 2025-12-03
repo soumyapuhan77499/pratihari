@@ -3,15 +3,15 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
 use Illuminate\Auth\AuthenticationException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
     /**
      * A list of the exception types that are not reported.
      *
-     * @var array<int, class-string<\Throwable>>
+     * @var array<int, class-string<Throwable>>
      */
     protected $dontReport = [
         //
@@ -30,26 +30,34 @@ class Handler extends ExceptionHandler
 
     /**
      * Register the exception handling callbacks for the application.
+     *
+     * @return void
      */
-    public function register(): void
+    public function register()
     {
-        //
+        $this->reportable(function (Throwable $e) {
+            //
+        });
     }
 
     /**
      * Handle unauthenticated user access.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Auth\AuthenticationException  $exception
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        // For API routes or JSON requests, return JSON 401 instead of redirecting.
-        if ($request->is('api/*') || $request->expectsJson()) {
+        // For API or JSON requests, return JSON 401 instead of redirecting to login route
+        if ($request->expectsJson() || $request->is('api/*')) {
             return response()->json([
                 'message' => 'Unauthenticated.',
             ], 401);
         }
 
-        // If you have no web login route, DO NOT redirect to route('login').
-        // Just send them somewhere safe or show a generic 401 page.
+        // If you don't have a web login route, DON'T use route('login') here.
+        // Either redirect to home or show a 401 page.
         return redirect('/'); // or: abort(401);
     }
 }
