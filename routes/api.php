@@ -47,7 +47,7 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
         // Route::any('/application/save', 'saveApplication');
         Route::get('/get-application', 'getApplication');
     });
-
+    Route::match(['get', 'post'], '/application/save', 'saveApplication');
     Route::post('/update-profile/{pratihari_id}', 'updateProfile');
     Route::get('/designations', 'manageDesignation');
     Route::get('/get-profile-by-id/{pratihari_id}', 'getPofileDataByPratihariId');
