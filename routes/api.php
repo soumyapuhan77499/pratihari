@@ -43,8 +43,6 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
         Route::post('/save-profile', 'saveProfile');
         Route::get('/get-home-page', 'getHomePage');
         Route::get('/get-all-pratihari-profile', 'getAllData');
-        Route::match(['get', 'post'], '/application/save', 'saveApplication');
-        // Route::any('/application/save', 'saveApplication');
         Route::get('/get-application', 'getApplication');
     });
 
@@ -53,6 +51,13 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     Route::get('/get-profile-by-id/{pratihari_id}', 'getPofileDataByPratihariId');
     Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
+
+Route::middleware('auth:sanctum')
+    ->controller(PratihariProfileApiController::class)
+    ->group(function () {
+        Route::post('/application/save', 'saveApplication');
+        Route::get('/get-application', 'getApplication');
+    });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(PratihariFamilyApiController::class)->group(function () {
