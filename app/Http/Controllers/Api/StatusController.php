@@ -27,7 +27,6 @@ class StatusController extends Controller
         // 3. Use the pratihari_id from the logged-in user
         $pratihari_id = $user->pratihari_id;
 
-        dd($pratihari_id);
         // 4. Check which related records exist for this pratihari_id
         $tables = [
             'profile'       => PratihariProfile::where('pratihari_id', $pratihari_id)->exists(),
