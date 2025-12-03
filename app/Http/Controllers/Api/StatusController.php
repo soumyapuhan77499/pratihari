@@ -19,8 +19,6 @@ class StatusController extends Controller
         // 1. Get the currently authenticated user
         $user = Auth::user();
 
-        dd($user);
-
         // 2. If no user, return 401
         if (!$user) {
             return response()->json(['error' => 'User not authenticated'], 401);
@@ -29,6 +27,7 @@ class StatusController extends Controller
         // 3. Use the pratihari_id from the logged-in user
         $pratihari_id = $user->pratihari_id;
 
+        dd($pratihari_id);
         // 4. Check which related records exist for this pratihari_id
         $tables = [
             'profile'       => PratihariProfile::where('pratihari_id', $pratihari_id)->exists(),
