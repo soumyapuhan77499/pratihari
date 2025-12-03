@@ -144,8 +144,6 @@ class PratihariProfileController extends Controller
                 [
                     'name'          => $fullName,
                     'mobile_number' => $mobileNumber,
-                    'email'         => $request->email,
-                    // other fields like otp, expiry, etc. are handled by your OTP flow
                 ]
             );
             // =====================================================================
