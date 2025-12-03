@@ -440,8 +440,7 @@ public function manageDesignation()
         ], 500);
     }
 }
-
-    public function saveApplication(Request $request)
+ public function saveApplication(Request $request)
     {
         try {
             $user = Auth::user();
@@ -459,7 +458,7 @@ public function manageDesignation()
                 $fileName = 'application_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/application'), $fileName);
 
-                $photoPath = Config::get('app.photo_url') . 'uploads/application/' . $fileName;
+                $photoPath = rtrim(Config::get('app.photo_url'), '/').'/uploads/application/' . $fileName;
             }
 
             $application = PratihariApplication::create([
@@ -486,7 +485,6 @@ public function manageDesignation()
             ], 500);
         }
     }
-
 public function getApplication()
 {
     try {

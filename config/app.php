@@ -12,8 +12,7 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
-    // ✅ Single, safe definition (no url() helper here)
-    // Uses APP_PHOTO_URL if set, otherwise falls back to APP_URL or localhost
+    // Single, safe definition (no url() helper here)
     'photo_url' => env('APP_PHOTO_URL', env('APP_URL', 'http://localhost/')),
 
     /*
@@ -30,7 +29,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'debug' =>(bool) env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -118,16 +117,17 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-        App\Providers\ConsoleRequestFallbackServiceProvider::class,
+        // 🔴 TEMPORARILY DISABLED – this is likely crashing artisan
+        // App\Providers\ConsoleRequestFallbackServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
+        // App\Providers\AppServiceProvider::class,
+        // App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        // App\Providers\EventServiceProvider::class,
+        // App\Providers\RouteServiceProvider::class,
 
     ],
 

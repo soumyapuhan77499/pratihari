@@ -44,6 +44,7 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
         Route::get('/get-home-page', 'getHomePage');
         Route::get('/get-all-pratihari-profile', 'getAllData');
         Route::get('/get-application', 'getApplication');
+        Route::post('/application/save','saveApplication')->name('application.save');
     });
 
     Route::post('/update-profile/{pratihari_id}', 'updateProfile');
@@ -51,13 +52,6 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     Route::get('/get-profile-by-id/{pratihari_id}', 'getPofileDataByPratihariId');
     Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
-
-Route::middleware('auth:sanctum')->group(function () {
-    
-  Route::post(
-        '/application/save',
-        [PratihariProfileApiController::class, 'saveApplication']
-    );
 
 
     Route::controller(PratihariFamilyApiController::class)->group(function () {
