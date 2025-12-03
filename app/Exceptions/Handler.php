@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Auth\AuthenticationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -37,5 +38,16 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    /**
+     * Handle unauthenticated users (no redirect to login route).
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        // For API/Sanctum, always return JSON 401 instead of redirecting to a "login" route.
+        return response()->json([
+            'message' => 'Unauthenticated.',
+        ], 401);
     }
 }
