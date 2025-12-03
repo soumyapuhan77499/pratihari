@@ -18,6 +18,8 @@ use App\Models\PratihariSocialMedia;
 use App\Models\PratihariDesignation;
 use App\Models\PratihariApplication;
 use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class PratihariProfileController extends Controller
 {
@@ -29,64 +31,69 @@ class PratihariProfileController extends Controller
     public function saveProfile(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
+            'first_name'   => 'required|string|max:255',
             // add more validation as needed
+            // 'phone_no'   => 'required|string', // if you want to force phone_no
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        DB::beginTransaction();
+
         try {
             $pratihariProfile = new PratihariProfile();
 
+            // Generate PRATIHARI ID
             $pratihariId = 'PRATIHARI' . rand(10000, 99999);
-            $pratihariProfile->pratihari_id = $pratihariId;
-            $pratihariProfile->first_name = $request->first_name;
-            $pratihariProfile->middle_name = $request->middle_name;
-            $pratihariProfile->last_name = $request->last_name;
-            $pratihariProfile->alias_name = $request->alias_name;
-            $pratihariProfile->email = $request->email;
-            $pratihariProfile->whatsapp_no = $request->whatsapp_no;
-            $pratihariProfile->phone_no = $request->phone_no;
-            // $pratihariProfile->alt_phone_no = $request->alt_phone_no;
-            $pratihariProfile->blood_group = $request->blood_group;
-            $pratihariProfile->healthcard_no = $request->healthcard_no;
+            $pratihariProfile->pratihari_id   = $pratihariId;
+            $pratihariProfile->first_name     = $request->first_name;
+            $pratihariProfile->middle_name    = $request->middle_name;
+            $pratihariProfile->last_name      = $request->last_name;
+            $pratihariProfile->alias_name     = $request->alias_name;
+            $pratihariProfile->email          = $request->email;
+            $pratihariProfile->whatsapp_no    = $request->whatsapp_no;
+            $pratihariProfile->phone_no       = $request->phone_no;
+            $pratihariProfile->blood_group    = $request->blood_group;
+            $pratihariProfile->healthcard_no  = $request->healthcard_no;
 
+            // ----------------- NIJOGA ID LOGIC -----------------
             $healthcard_no = $request->healthcard_no;
-        $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
+            $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
 
-        // --- FAMILY NUMBER (YYY) ---
-        // Only check for exact same healthcard_no
-        $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
-            ->whereNotNull('nijoga_id')
-            ->get();
+            // --- FAMILY NUMBER (YYY) ---
+            // Only check for exact same healthcard_no
+            $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
+                ->whereNotNull('nijoga_id')
+                ->get();
 
-        if ($existingSameHealthcard->isEmpty()) {
-            $familyCount = 1; // Start at 001
-        } else {
-            $lastFamily = $existingSameHealthcard->map(function ($member) {
-                return (int) substr($member->nijoga_id, 5, 3); // Extract YYY
-            })->max();
+            if ($existingSameHealthcard->isEmpty()) {
+                $familyCount = 1; // Start at 001
+            } else {
+                $lastFamily = $existingSameHealthcard->map(function ($member) {
+                    return (int) substr($member->nijoga_id, 5, 3); // Extract YYY
+                })->max();
 
-            $familyCount = $lastFamily + 1;
-        }
+                $familyCount = $lastFamily + 1;
+            }
 
-        // --- GLOBAL SERIAL NUMBER (ZZZZ) ---
-        $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
-            ->orderByDesc('id')
-            ->get()
-            ->map(function ($member) {
-                return (int) substr($member->nijoga_id, -4); // Extract ZZZZ
-            })->max();
+            // --- GLOBAL SERIAL NUMBER (ZZZZ) ---
+            $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
+                ->orderByDesc('id')
+                ->get()
+                ->map(function ($member) {
+                    return (int) substr($member->nijoga_id, -4); // Extract ZZZZ
+                })->max();
 
-        $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
+            $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
 
-        // --- FORMAT NIJOGA ID: XXXX-YYY-ZZZZ ---
-        $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
-        $pratihariProfile->nijoga_id = $nijoga_id;
+            // --- FORMAT NIJOGA ID: XXXX-YYY-ZZZZ ---
+            $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
+            $pratihariProfile->nijoga_id = $nijoga_id;
+            // --------------------------------------------------
 
-
+            // Upload healthcard photo
             if ($request->hasFile('healthcard_photo')) {
                 $file = $request->file('healthcard_photo');
                 $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
@@ -94,6 +101,7 @@ class PratihariProfileController extends Controller
                 $pratihariProfile->healthcard_photo = 'uploads/healthcard_photo/' . $filename;
             }
 
+            // Upload original/profile photo
             if ($request->hasFile('original_photo')) {
                 $file = $request->file('original_photo');
                 $filename = 'profile_photo_' . time() . '.' . $file->getClientOriginalExtension();
@@ -101,29 +109,59 @@ class PratihariProfileController extends Controller
                 $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $filename;
             }
 
-            // Handle joining date/year separately:
+            // Handle joining date/year
             if ($request->filled('joining_date')) {
-                // exact date selected
-                $pratihariProfile->joining_date = $request->joining_date; // format: YYYY-MM-DD
+                // exact date selected: format YYYY-MM-DD
+                $pratihariProfile->joining_date = $request->joining_date;
             } elseif ($request->filled('joining_year')) {
-                // only year selected - store as YYYY-01-01 (or change column type to year or string as needed)
+                // only year selected: you can store as year or YYYY-01-01
                 $pratihariProfile->joining_date = $request->joining_year;
             } else {
-                // no date selected
                 $pratihariProfile->joining_date = null;
             }
 
             $pratihariProfile->date_of_birth = $request->date_of_birth;
 
+            // Save profile first
             $pratihariProfile->save();
 
-            return redirect()->route('admin.pratihariFamily', ['pratihari_id' => $pratihariProfile->pratihari_id])->with('success', 'User added successfully!');
+            // ================== CREATE / UPDATE USER FOR LOGIN ==================
+            // Decide which mobile number to use for login (phone_no preferred, else whatsapp_no)
+            $mobileNumber = $request->phone_no ?? $request->whatsapp_no;
+
+            // Build full name
+            $fullName = trim(
+                $request->first_name . ' ' .
+                ($request->middle_name ?? '') . ' ' .
+                ($request->last_name ?? '')
+            );
+
+            // If user with same pratihari_id already exists, update it; else create new
+            User::updateOrCreate(
+                [
+                    'pratihari_id' => $pratihariId,   // search condition
+                ],
+                [
+                    'name'          => $fullName,
+                    'mobile_number' => $mobileNumber,
+                    'email'         => $request->email,
+                    // other fields like otp, expiry, etc. are handled by your OTP flow
+                ]
+            );
+            // =====================================================================
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.pratihariFamily', ['pratihari_id' => $pratihariProfile->pratihari_id])
+                ->with('success', 'User added successfully!');
         } catch (\Exception $e) {
+            DB::rollBack();
             \Log::error('Error in Pratihari Profile Store: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-        
+
     public function pratihariManageProfile()
     {
         // Load profiles with relations (only active)
