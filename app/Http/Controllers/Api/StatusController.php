@@ -19,6 +19,8 @@ class StatusController extends Controller
         // 1. Get the currently authenticated user
         $user = Auth::user();
 
+        dd($user);
+
         // 2. If no user, return 401
         if (!$user) {
             return response()->json(['error' => 'User not authenticated'], 401);
