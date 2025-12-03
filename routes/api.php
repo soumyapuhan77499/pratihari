@@ -52,6 +52,7 @@ Route::controller(PratihariProfileApiController::class)->group(function () {
     Route::get('/get-profile-by-id/{pratihari_id}', 'getPofileDataByPratihariId');
     Route::get('/approved-pratihari-profiles', 'getApprovedProfiles');
 });
+    Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::controller(PratihariFamilyApiController::class)->group(function () {
