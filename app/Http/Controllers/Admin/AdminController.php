@@ -39,7 +39,7 @@ class AdminController extends Controller
         return view('admin.admin-login');
     }
 
-    public function dashboard()
+public function dashboard()
 {
     $today     = Carbon::today();
     $todayStr  = $today->toDateString();
@@ -169,7 +169,7 @@ class AdminController extends Controller
     if (Auth::check()) {
         $pid = Auth::user()->pratihari_id;
         $profileStatus = [
-            'profile'      => PratihariProfile::where('pratihari_id', $pid)->exists(),
+            'profile'      => PratihariProfile::where('pratihari_id', $pid)->where('pratihari_status','approved')->exists(),
             'family'       => PratihariFamily::where('pratihari_id', $pid)->exists(),
             'id_card'      => PratihariIdcard::where('pratihari_id', $pid)->exists(),
             'address'      => PratihariAddress::where('pratihari_id', $pid)->exists(),
