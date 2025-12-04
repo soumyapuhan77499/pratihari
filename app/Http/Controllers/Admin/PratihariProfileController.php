@@ -29,7 +29,7 @@ class PratihariProfileController extends Controller
     {
         return view('admin.pratihari-profile-details');
     }
-
+        
     public function saveProfile(Request $request)
     {
         // Basic validation
@@ -173,7 +173,7 @@ class PratihariProfileController extends Controller
                 ->with('success', 'User added successfully!');
         }
 
-        // --------- FRIENDLY ERROR HANDLING (short messages) ---------
+        // --------- FRIENDLY ERROR HANDLING (short messages + field name) ---------
         catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
 
@@ -184,14 +184,48 @@ class PratihariProfileController extends Controller
             if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
                 $raw = $e->errorInfo[2] ?? $e->getMessage();
 
-                // Detect which field caused duplicate, and customise message
-                if (\Illuminate\Support\Str::contains($raw, 'healthcard_no')) {
-                    $userMessage = 'This Health Card No is already registered.';
-                } elseif (\Illuminate\Support\Str::contains($raw, 'pratihari_id')) {
-                    $userMessage = 'Generated Pratihari ID already exists. Please try again.';
-                } elseif (\Illuminate\Support\Str::contains($raw, 'nijoga_id')) {
-                    $userMessage = 'Generated Nijoga ID already exists. Please try again.';
+                // Try to capture the key/index name from the message: "for key 'xxx'"
+                $indexName = null;
+                if (preg_match("/for key '([^']+)'/i", $raw, $matches)) {
+                    $indexName = $matches[1];
+                }
+
+                // Map index/column to a friendly field label
+                $fieldMap = [
+                    // index names (adjust to your real ones)
+                    'pratihari_profiles_healthcard_no_unique' => 'Health Card No',
+                    'pratihari_profiles_pratihari_id_unique'  => 'Pratihari ID',
+                    'pratihari_profiles_nijoga_id_unique'     => 'Nijoga ID',
+                    'users_mobile_number_unique'              => 'Mobile No',
+                    'users_pratihari_id_unique'               => 'Pratihari ID',
+
+                    // fallback: column names that might appear in message
+                    'healthcard_no'                           => 'Health Card No',
+                    'pratihari_id'                            => 'Pratihari ID',
+                    'nijoga_id'                               => 'Nijoga ID',
+                    'mobile_number'                           => 'Mobile No',
+                    'email'                                   => 'Email',
+                ];
+
+                $fieldLabel = null;
+
+                // 1) Try direct match on index name
+                if ($indexName && isset($fieldMap[$indexName])) {
+                    $fieldLabel = $fieldMap[$indexName];
                 } else {
+                    // 2) Fallback: search by substring of raw message
+                    foreach ($fieldMap as $key => $label) {
+                        if (\Illuminate\Support\Str::contains($raw, $key)) {
+                            $fieldLabel = $label;
+                            break;
+                        }
+                    }
+                }
+
+                if ($fieldLabel) {
+                    $userMessage = "This {$fieldLabel} is already in use. Please enter a different {$fieldLabel}.";
+                } else {
+                    // final fallback
                     $userMessage = 'Duplicate entry found for one of the fields. Please change the value and try again.';
                 }
             }
