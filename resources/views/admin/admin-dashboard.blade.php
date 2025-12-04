@@ -454,141 +454,7 @@
         </div>
 
         <div class="row g-3">
-            <!-- LEFT: Pratihari & Nijoga -->
-            <div class="col-12 col-xl-8">
-                <div class="panel">
-                    <div class="px-3 pt-3">
-                        <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero" style="background:transparent;border-color:rgba(255,255,255,.35);">
-                                    <i class="bi bi-person-badge"></i>
-                                </span>
-                                <div class="flex-grow-1">
-                                    <div class="fw-bold">Today’s Pratihari Seba</div>
-                                    <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span
-                                        class="badge bg-light text-dark border-0">{{ collect($pratihariEvents)->flatten(1)->count() }}
-                                        Pratihari</span>
-                                    <span
-                                        class="badge bg-light text-dark border-0">{{ collect($nijogaAssign)->flatten(1)->count() }}
-                                        Nijoga</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-3"
-                        style="background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(6,182,212,.06));border-bottom-left-radius:18px;border-bottom-right-radius:18px;">
-                        <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill"
-                                    data-bs-target="#pratihari-pane" type="button" role="tab"
-                                    aria-controls="pratihari-pane" aria-selected="true">
-                                    <i class="bi bi-person-badge me-1"></i> Pratihari
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill" data-bs-target="#nijoga-pane"
-                                    type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
-                                    <i class="bi bi-clipboard2-check me-1"></i> Nijoga Assigned
-                                </button>
-                            </li>
-                        </ul>
-
-                        <div class="tab-content" id="sebaTabsContent">
-                            <!-- Pratihari -->
-                            <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel"
-                                aria-labelledby="pratihari-tab">
-                                @forelse ($pratihariEvents as $label => $entries)
-                                    <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="fw-semibold">{{ $label }}</span>
-                                                <span class="badge text-bg-light border">{{ count($entries) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="usergrid-wrap">
-                                            <div class="usergrid">
-                                                @foreach ($entries as $e)
-                                                    @php
-                                                        $u = $e['profile'];
-                                                        $name = $fullName($u);
-                                                        $photo = $u->photo_url ?? null;
-                                                        $ini = $initials($u);
-                                                    @endphp
-                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
-                                                        class="usercard" title="{{ $name }}">
-                                                        <div class="photo-wrap">
-                                                            @if ($photo)
-                                                                <img src="{{ $photo }}"
-                                                                    alt="{{ $name }}">
-                                                            @else
-                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
-                                                                    alt="{{ $name }}">
-                                                            @endif
-                                                        </div>
-                                                        <div class="uname">{{ $name }}</div>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="alert alert-light border d-flex align-items-center">
-                                        <i class="bi bi-info-circle me-2"></i>No seba assigned for today.
-                                    </div>
-                                @endforelse
-                            </div>
-
-                            <!-- Nijoga -->
-                            <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
-                                @forelse ($nijogaAssign as $label => $entries)
-                                    <div class="mb-3">
-                                        <div class="d-flex align-items-center justify-content-between mb-2">
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="fw-semibold">{{ $label }}</span>
-                                                <span class="badge text-bg-light border">{{ count($entries) }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="usergrid-wrap">
-                                            <div class="usergrid">
-                                                @foreach ($entries as $e)
-                                                    @php
-                                                        $u = $e['profile'];
-                                                        $name = $fullName($u);
-                                                        $photo = $u->photo_url ?? null;
-                                                        $ini = $initials($u);
-                                                    @endphp
-                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
-                                                        class="usercard" title="{{ $name }}">
-                                                        <div class="photo-wrap">
-                                                            @if ($photo)
-                                                                <img src="{{ $photo }}"
-                                                                    alt="{{ $name }}">
-                                                            @else
-                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
-                                                                    alt="{{ $name }}">
-                                                            @endif
-                                                        </div>
-                                                        <div class="uname">{{ $name }}</div>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="alert alert-light border d-flex align-items-center">
-                                        <i class="bi bi-info-circle me-2"></i>No nijoga seba assigned for today.
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+           
             <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-4">
                 <div class="row g-3">
@@ -747,7 +613,143 @@
                 </div><!-- /row -->
             </div>
 
-             <div class="col-12 col-xl-4">
+             <!-- LEFT: Pratihari & Nijoga -->
+            <div class="col-12 col-xl-8">
+                <div class="panel">
+                    <div class="px-3 pt-3">
+                        <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="icon-hero" style="background:transparent;border-color:rgba(255,255,255,.35);">
+                                    <i class="bi bi-person-badge"></i>
+                                </span>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">Today’s Pratihari Seba</div>
+                                    <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span
+                                        class="badge bg-light text-dark border-0">{{ collect($pratihariEvents)->flatten(1)->count() }}
+                                        Pratihari</span>
+                                    <span
+                                        class="badge bg-light text-dark border-0">{{ collect($nijogaAssign)->flatten(1)->count() }}
+                                        Nijoga</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3"
+                        style="background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(6,182,212,.06));border-bottom-left-radius:18px;border-bottom-right-radius:18px;">
+                        <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="pratihari-tab" data-bs-toggle="pill"
+                                    data-bs-target="#pratihari-pane" type="button" role="tab"
+                                    aria-controls="pratihari-pane" aria-selected="true">
+                                    <i class="bi bi-person-badge me-1"></i> Pratihari
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill" data-bs-target="#nijoga-pane"
+                                    type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
+                                    <i class="bi bi-clipboard2-check me-1"></i> Nijoga Assigned
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="sebaTabsContent">
+                            <!-- Pratihari -->
+                            <div class="tab-pane fade show active" id="pratihari-pane" role="tabpanel"
+                                aria-labelledby="pratihari-tab">
+                                @forelse ($pratihariEvents as $label => $entries)
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-semibold">{{ $label }}</span>
+                                                <span class="badge text-bg-light border">{{ count($entries) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($entries as $e)
+                                                    @php
+                                                        $u = $e['profile'];
+                                                        $name = $fullName($u);
+                                                        $photo = $u->photo_url ?? null;
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No seba assigned for today.
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <!-- Nijoga -->
+                            <div class="tab-pane fade" id="nijoga-pane" role="tabpanel" aria-labelledby="nijoga-tab">
+                                @forelse ($nijogaAssign as $label => $entries)
+                                    <div class="mb-3">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="fw-semibold">{{ $label }}</span>
+                                                <span class="badge text-bg-light border">{{ count($entries) }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($entries as $e)
+                                                    @php
+                                                        $u = $e['profile'];
+                                                        $name = $fullName($u);
+                                                        $photo = $u->photo_url ?? null;
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No nijoga seba assigned for today.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: Gochhikar -->
+            <div class="col-12 col-xl-4">
                 <div class="panel">
                     <div class="px-3 pt-3">
                         <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
@@ -878,6 +880,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 @endsection
