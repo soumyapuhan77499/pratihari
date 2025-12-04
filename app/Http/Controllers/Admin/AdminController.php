@@ -38,7 +38,7 @@ class AdminController extends Controller
     {
         return view('admin.admin-login');
     }
-public function dashboard()
+    public function dashboard()
 {
     $today     = Carbon::today();
     $todayStr  = $today->toDateString();
@@ -161,7 +161,11 @@ public function dashboard()
     $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)->pluck('pratihari_id')->unique();
     $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)->pluck('pratihari_id')->unique();
 
-    // Only approved profiles for name lists as well (not strictly required for the sections, but consistent)
+    // All approved pratihari IDs (used to avoid cross-table collation issues)
+    $approvedPratihariIds = PratihariProfile::where('pratihari_status', 'approved')
+        ->pluck('pratihari_id');
+
+    // Only approved profiles for name lists as well
     $profile_name   = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
         ->where('pratihari_status', 'approved')
         ->get();
@@ -194,7 +198,7 @@ public function dashboard()
     $todayPrBeddha = is_numeric($pratihariBeddha) ? (int) $pratihariBeddha : null;
     $todayGoBeddha = is_numeric($gochhikarBeddha) ? (int) $gochhikarBeddha : null;
 
-    // ---------- LEFT PANEL: PRATIHARI (ONLY APPROVED PROFILES) ----------
+    // ---------- LEFT PANEL: PRATIHARI (ONLY APPROVED PROFILES, NO CROSS-COLLATION JOIN) ----------
 
     $pratihariEvents = [];
     $nijogaAssign    = [];
@@ -203,10 +207,8 @@ public function dashboard()
         $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
             ->whereIn('seba_id', $pratihariSebaIds)
             ->where('status', 'active')
-            // 🔴 NEW: only show seba whose profile is approved
-            ->whereHas('pratihari', function ($q) {
-                $q->where('pratihari_status', 'approved');
-            })
+            // instead of whereHas('pratihari'), filter by preloaded approved IDs
+            ->whereIn('pratihari_id', $approvedPratihariIds)
             ->get();
 
         foreach ($sebas as $seba) {
@@ -220,7 +222,7 @@ public function dashboard()
 
             $label = "{$sebaName} | Beddha {$todayPrBeddha}";
             $entry = [
-                'profile'     => $seba->pratihari,
+                'profile'     => $seba->pratihari, // already only approved
                 'beddha'      => $todayPrBeddha,
                 'assigned_by' => $assignedBy,
             ];
@@ -242,7 +244,7 @@ public function dashboard()
         )->toArray();
     }
 
-    // ---------- RIGHT PANEL: GOCHHIKAR (ONLY APPROVED PROFILES) ----------
+    // ---------- RIGHT PANEL: GOCHHIKAR (ONLY APPROVED PROFILES, NO CROSS-COLLATION JOIN) ----------
 
     $gochhikarEvents = [];
     $nijogaGochhikarEvents = [];
@@ -251,10 +253,8 @@ public function dashboard()
         $gsebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
             ->whereIn('seba_id', $gochhikarSebaIds)
             ->where('status', 'active')
-            // 🔴 NEW: only show seba whose profile is approved
-            ->whereHas('pratihari', function ($q) {
-                $q->where('pratihari_status', 'approved');
-            })
+            // instead of whereHas('pratihari'), filter by preloaded approved IDs
+            ->whereIn('pratihari_id', $approvedPratihariIds)
             ->get();
 
         foreach ($gsebas as $seba) {
@@ -266,9 +266,9 @@ public function dashboard()
             $label    = "{$sebaName} | Beddha {$todayGoBeddha}";
 
             if ($assign && (int) $assign->beddha_status === 1) {
-                $gochhikarEvents[$label][] = $seba->pratihari;
+                $gochhikarEvents[$label][] = $seba->pratihari;     // approved
             } else {
-                $nijogaGochhikarEvents[$label][] = $seba->pratihari;
+                $nijogaGochhikarEvents[$label][] = $seba->pratihari; // approved
             }
         }
 
@@ -315,6 +315,7 @@ public function dashboard()
         'profileStatus'
     ));
 }
+
 
     public function pratihariManageProfile()
     {
