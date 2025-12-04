@@ -9,47 +9,54 @@ use App\Models\PratihariNotice;
 class PratihariNoticeController extends Controller
 {
     public function getNotice(Request $request)
-    {
-        try {
-            $notices = PratihariNotice::where('status', 'active')
-                ->orderBy('created_at', 'desc')
-                ->get()
-                ->map(function ($notice) {
-                    // Base URL from .env
-                    $baseUrl = rtrim(env('APP_PHOTO_URL', config('app.url')), '/');
+{
+    try {
+        $notices = PratihariNotice::where('status', 'active')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($notice) {
+                // Base URL from .env
+                $baseUrl = rtrim(env('APP_PHOTO_URL', config('app.url')), '/');
 
-                    if ($notice->notice_photo) {
-                        // If value already like "notices/xxx.jpg"
-                        if (str_starts_with($notice->notice_photo, 'notices/')) {
-                            $path = 'storage/' . $notice->notice_photo;
-                        } else {
-                            // If only filename stored, put into notices folder
-                            $path = 'storage/notices/' . ltrim($notice->notice_photo, '/');
-                        }
+                if ($notice->notice_photo) {
+                    // Clean initial value
+                    $photo = ltrim($notice->notice_photo, '/'); // remove leading "/"
 
-                        $photoUrl = $baseUrl . '/' . $path;
-                    } else {
-                        $photoUrl = '';
+                    // 1. Remove "notice_photos/" if present
+                    if (str_starts_with($photo, 'notice_photos/')) {
+                        $photo = substr($photo, strlen('notice_photos/'));
                     }
 
-                    // Add URL field to response
-                    $notice->notice_photo_url = $photoUrl;
+                    // 2. Ensure it starts with "notices/"
+                    if (!str_starts_with($photo, 'notices/')) {
+                        $photo = 'notices/' . $photo;
+                    }
 
-                    return $notice;
-                });
+                    // 3. Final URL: https://domain.com/storage/notices/xxx.jpeg
+                    $photoUrl = $baseUrl . '/storage/' . $photo;
+                } else {
+                    $photoUrl = '';
+                }
 
-            return response()->json([
-                'status'  => true,
-                'message' => 'Notice fetched successfully',
-                'data'    => $notices
-            ], 200);
+                // Add URL field to response
+                $notice->notice_photo_url = $photoUrl;
 
-        } catch (\Exception $e) {
-            return response()->json([
-                'status'  => false,
-                'message' => 'Something went wrong',
-                'error'   => $e->getMessage()
-            ], 500);
-        }
+                return $notice;
+            });
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Notice fetched successfully',
+            'data'    => $notices
+        ], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Something went wrong',
+            'error'   => $e->getMessage()
+        ], 500);
     }
+}
+
 }
