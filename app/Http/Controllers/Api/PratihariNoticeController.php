@@ -15,13 +15,24 @@ class PratihariNoticeController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->get()
                 ->map(function ($notice) {
+                    // Base URL from .env
                     $baseUrl = rtrim(env('APP_PHOTO_URL', config('app.url')), '/');
-                    
-                    $photoUrl = $notice->notice_photo
-                        ? $baseUrl . '/storage/' . ltrim($notice->notice_photo, '/')
-                        : '';
 
-                    // Add new field to response
+                    if ($notice->notice_photo) {
+                        // If value already like "notices/xxx.jpg"
+                        if (str_starts_with($notice->notice_photo, 'notices/')) {
+                            $path = 'storage/' . $notice->notice_photo;
+                        } else {
+                            // If only filename stored, put into notices folder
+                            $path = 'storage/notices/' . ltrim($notice->notice_photo, '/');
+                        }
+
+                        $photoUrl = $baseUrl . '/' . $path;
+                    } else {
+                        $photoUrl = '';
+                    }
+
+                    // Add URL field to response
                     $notice->notice_photo_url = $photoUrl;
 
                     return $notice;
