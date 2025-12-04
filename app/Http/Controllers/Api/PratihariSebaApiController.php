@@ -179,61 +179,6 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-    // public function sebaDate(Request $request)
-    // {
-    //     try {
-    //         $pratihariId = $request->input('pratihari_id');
-    //         $events = [];
-
-    //         if ($pratihariId) {
-    //             $sebas = PratihariSeba::with('sebaMaster')
-    //                 ->where('pratihari_id', $pratihariId)
-    //                 ->get();
-
-    //             foreach ($sebas as $seba) {
-    //                 $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-    //                 $beddhaIds = $seba->beddha_id;
-
-    //                 foreach ($beddhaIds as $beddhaId) {
-    //                     $beddhaId = (int) trim($beddhaId);
-
-    //                     if ($beddhaId >= 1 && $beddhaId <= 47) {
-    //                         $startDate = Carbon::create(2025, 6, 1)->addDays($beddhaId - 1);
-    //                         $endDate = Carbon::create(2030, 12, 31);
-    //                         $nextDate = $startDate->copy();
-
-    //                         while ($nextDate->lte($endDate)) {
-    //                             $events[] = [
-    //                                 'title' => "$sebaName - $beddhaId",
-    //                                 'start' => $nextDate->toDateString(),
-    //                                 'extendedProps' => [
-    //                                     'sebaName' => $sebaName,
-    //                                     'beddhaId' => $beddhaId
-    //                                 ]
-    //                             ];
-    //                             $nextDate->addDays(47);
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-
-    //         return response()->json([
-    //             'status' => true,
-    //             'message' => 'Events fetched successfully.',
-    //             'data' => $events
-    //         ], 200);
-
-    //     } catch (\Exception $e) {
-    //         Log::error('Error fetching seba dates: ' . $e->getMessage());
-
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Server Error. Please try again later.',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
     public function todayBeddha()
     {
@@ -357,81 +302,7 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-    // public function sebaDateList()
-    // {
-    //     try {
-    //         $user = Auth::user();
-
-    //         if (!$user) {
-    //             return response()->json(['status' => false, 'message' => 'Unauthorized'], 401);
-    //         }
-
-    //         $pratihariId = $user->pratihari_id;
-    //         $data = [];
-
-    //         $sebas = PratihariSeba::with('sebaMaster')
-    //             ->where('pratihari_id', $pratihariId)
-    //             ->get();
-
-    //         foreach ($sebas as $seba) {
-    //             $sebaId = $seba->sebaMaster->id ?? 'Unknown Seba';
-    //             $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-    //             $sebaType = $seba->sebaMaster->type ?? 'pratihari';
-
-    //             $beddhaIds = is_array($seba->beddha_id)
-    //                 ? $seba->beddha_id
-    //                 : explode(',', $seba->beddha_id);
-
-    //             foreach ($beddhaIds as $beddhaId) {
-    //                 $beddhaId = (int) trim($beddhaId);
-
-    //                 if ($beddhaId < 1 || $beddhaId > 47) {
-    //                     continue;
-    //                 }
-
-    //                 // Define start, end, and interval for the calendar loop
-    //                 if ($sebaType === 'gochhikar') {
-    //                     $intervalDays = 16;
-    //                     $startDate = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
-    //                     $endDate = Carbon::create(2055, 12, 31);
-    //                 } else { // pratihari
-    //                     $intervalDays = 47;
-    //                     $startDate = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-    //                     $endDate = Carbon::create(2050, 12, 31);
-    //                 }
-
-    //                 $nextDate = $startDate->copy();
-
-    //                 while ($nextDate->lte($endDate)) {
-    //                     $dateStr = $nextDate->toDateString();
-
-    //                     $data[$dateStr][] = [
-    //                         'sebaId' => $sebaId,
-    //                         'seba' => $sebaName,
-    //                         'beddha_id' => $beddhaId,
-    //                         'type' => $sebaType,
-    //                     ];
-
-    //                     $nextDate->addDays($intervalDays);
-    //                 }
-    //             }
-    //         }
-
-    //         return response()->json([
-    //             'status' => true,
-    //             'message' => 'Seba data loaded successfully',
-    //             'data' => $data
-    //         ], 200);
-
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Server error',
-    //             'error' => $e->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
+    
     public function getTodaySebaAssignments(Request $request)
     {
         try {
@@ -673,54 +544,54 @@ class PratihariSebaApiController extends Controller
         }
     }
 
-  public function sebaHistory()
-{
-    try {
-        $user = Auth::user();
+    public function sebaHistory()
+    {
+        try {
+            $user = Auth::user();
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'User not authenticated'
+                ], 401);
+            }
+
+            $pratihariId = $user->pratihari_id;
+
+            $history = PratihariSebaManagement::with(['seba:seba_id,seba_name,type'])
+                        ->where('pratihari_id', $pratihariId)
+                        ->orderBy('date', 'desc')
+                        ->get();
+
+            $history = $history->map(function ($row) {
+                return [
+                    'id'          => $row->id ?? null,
+                    'pratihari_id'=> $row->pratihari_id,
+                    'seba_id'     => $row->seba_id,
+                    'seba_name'   => optional($row->seba)->seba_name,
+                    'type'        => optional($row->seba)->type,
+                    'beddha_id'   => $row->beddha_id,
+                    'date'        => $row->date,
+                    'start_time'  => $row->start_time,
+                    'end_time'    => $row->end_time,
+                    'seba_status' => $row->seba_status,
+                ];
+            });
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'History fetched successfully',
+                'data'    => $history,
+            ], 200);
+
+        } catch (\Exception $e) {
             return response()->json([
                 'status'  => false,
-                'message' => 'User not authenticated'
-            ], 401);
+                'message' => 'Something went wrong',
+                'error'   => $e->getMessage(),
+            ], 500);
         }
-
-        $pratihariId = $user->pratihari_id;
-
-        $history = PratihariSebaManagement::with(['seba:seba_id,seba_name,type'])
-                    ->where('pratihari_id', $pratihariId)
-                    ->orderBy('date', 'desc')
-                    ->get();
-
-        $history = $history->map(function ($row) {
-            return [
-                'id'          => $row->id ?? null,
-                'pratihari_id'=> $row->pratihari_id,
-                'seba_id'     => $row->seba_id,
-                'seba_name'   => optional($row->seba)->seba_name,
-                'type'        => optional($row->seba)->type,
-                'beddha_id'   => $row->beddha_id,
-                'date'        => $row->date,
-                'start_time'  => $row->start_time,
-                'end_time'    => $row->end_time,
-                'seba_status' => $row->seba_status,
-            ];
-        });
-
-        return response()->json([
-            'status'  => true,
-            'message' => 'History fetched successfully',
-            'data'    => $history,
-        ], 200);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status'  => false,
-            'message' => 'Something went wrong',
-            'error'   => $e->getMessage(),
-        ], 500);
     }
-}
 
 
 }
