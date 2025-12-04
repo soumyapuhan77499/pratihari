@@ -38,7 +38,6 @@ class AdminController extends Controller
     {
         return view('admin.admin-login');
     }
-
 public function dashboard()
 {
     $today     = Carbon::today();
@@ -155,16 +154,24 @@ public function dashboard()
     $rejectedApplication = PratihariApplication::where('status', 'rejected')->get();
 
     // ---------- Seba master groups ----------
+
     $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
     $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
 
     $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)->pluck('pratihari_id')->unique();
     $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)->pluck('pratihari_id')->unique();
 
-    $profile_name   = PratihariProfile::whereIn('pratihari_id', $pratihariIds)->get();
-    $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)->get();
+    // Only approved profiles for name lists as well (not strictly required for the sections, but consistent)
+    $profile_name   = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
+        ->where('pratihari_status', 'approved')
+        ->get();
+
+    $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
+        ->where('pratihari_status', 'approved')
+        ->get();
 
     // ---------- Current user table presence (optional UI checklist) ----------
+
     $profileStatus = [];
     if (Auth::check()) {
         $pid = Auth::user()->pratihari_id;
@@ -179,6 +186,7 @@ public function dashboard()
     }
 
     // ---------- Today’s mapped beddha numbers ----------
+
     $beddhaMapping   = DateBeddhaMapping::where('date', $todayStr)->first();
     $pratihariBeddha = $beddhaMapping->pratihari_beddha ?? 'N/A';
     $gochhikarBeddha = $beddhaMapping->gochhikar_beddha ?? 'N/A';
@@ -186,7 +194,8 @@ public function dashboard()
     $todayPrBeddha = is_numeric($pratihariBeddha) ? (int) $pratihariBeddha : null;
     $todayGoBeddha = is_numeric($gochhikarBeddha) ? (int) $gochhikarBeddha : null;
 
-    // ---------- LEFT PANEL: PRATIHARI ----------
+    // ---------- LEFT PANEL: PRATIHARI (ONLY APPROVED PROFILES) ----------
+
     $pratihariEvents = [];
     $nijogaAssign    = [];
 
@@ -194,6 +203,10 @@ public function dashboard()
         $sebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
             ->whereIn('seba_id', $pratihariSebaIds)
             ->where('status', 'active')
+            // 🔴 NEW: only show seba whose profile is approved
+            ->whereHas('pratihari', function ($q) {
+                $q->where('pratihari_status', 'approved');
+            })
             ->get();
 
         foreach ($sebas as $seba) {
@@ -229,7 +242,8 @@ public function dashboard()
         )->toArray();
     }
 
-    // ---------- RIGHT PANEL: GOCHHIKAR ----------
+    // ---------- RIGHT PANEL: GOCHHIKAR (ONLY APPROVED PROFILES) ----------
+
     $gochhikarEvents = [];
     $nijogaGochhikarEvents = [];
 
@@ -237,6 +251,10 @@ public function dashboard()
         $gsebas = PratihariSeba::with(['sebaMaster', 'pratihari', 'beddhaAssigns'])
             ->whereIn('seba_id', $gochhikarSebaIds)
             ->where('status', 'active')
+            // 🔴 NEW: only show seba whose profile is approved
+            ->whereHas('pratihari', function ($q) {
+                $q->where('pratihari_status', 'approved');
+            })
             ->get();
 
         foreach ($gsebas as $seba) {
@@ -264,10 +282,12 @@ public function dashboard()
     }
 
     // ---------- Display chips ----------
+
     $currentPratihariBeddhaDisplay = $todayPrBeddha ? (string) $todayPrBeddha : '—';
     $currentGochhikarBeddhaDisplay = $todayGoBeddha ? (string) $todayGoBeddha : '—';
 
     // ---------- Return view ----------
+
     return view('admin.admin-dashboard', compact(
         'todayProfiles',
         'incompleteProfiles',
@@ -295,7 +315,6 @@ public function dashboard()
         'profileStatus'
     ));
 }
-
 
     public function pratihariManageProfile()
     {
