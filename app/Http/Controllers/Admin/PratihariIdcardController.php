@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\PratihariIdcard;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 
 class PratihariIdcardController extends Controller
 {
@@ -14,40 +18,104 @@ class PratihariIdcardController extends Controller
     {
         return view('admin.pratihari-idcard-details');
     }
+public function saveIdcard(Request $request)
+{
+    try {
+        // Start transaction so all ID cards save atomically
+        \DB::beginTransaction();
 
-    public function saveIdcard(Request $request)
-    {
-        try {
-            // Loop through each ID card entry and save them
-            foreach ($request->id_type as $key => $type) {
-                $idCard = new PratihariIdcard();
-                $idCard->pratihari_id = $request->pratihari_id;
-                $idCard->id_type = $request->id_type[$key];
-
-                // Handle file upload
-                if ($request->hasFile('id_photo') && isset($request->file('id_photo')[$key])) {
-                    $idPhoto = $request->file('id_photo')[$key];
-                
-                    if ($idPhoto->isValid()) {
-                        $imageName = time() . '_id.' . $idPhoto->getClientOriginalExtension();
-                        $idPhoto->move(public_path('uploads/id_photo'), $imageName);
-                        $idCard->id_photo = asset('uploads/id_photo/' . $imageName); // Save full file path
-                    }
-                }
-                
-
-                $idCard->save();
-            }
-            return redirect()->route('admin.pratihariAddress', ['pratihari_id' => $idCard->pratihari_id])->with('success', 'ID cards added successfully');
-
-        } catch (ValidationException $e) {
-            // Catch validation exceptions and handle the error messages
-            return redirect()->back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            // Catch any other exceptions and handle the error
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+        // Optional: basic safety check
+        if (!is_array($request->id_type) || empty($request->id_type)) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', 'Please add at least one ID card.');
         }
+
+        // Loop through each ID card entry and save them
+        foreach ($request->id_type as $key => $type) {
+            $idCard = new PratihariIdcard();
+            $idCard->pratihari_id = $request->pratihari_id;
+            $idCard->id_type      = $type;
+
+            // Handle file upload
+            if ($request->hasFile('id_photo') && isset($request->file('id_photo')[$key])) {
+                $idPhoto = $request->file('id_photo')[$key];
+
+                if ($idPhoto && $idPhoto->isValid()) {
+                    $imageName = time() . '_id.' . $idPhoto->getClientOriginalExtension();
+                    $idPhoto->move(public_path('uploads/id_photo'), $imageName);
+                    // Store full path (as you were doing)
+                    $idCard->id_photo = asset('uploads/id_photo/' . $imageName);
+                }
+            }
+
+            $idCard->save();
+        }
+
+        \DB::commit();
+
+        return redirect()
+            ->route('admin.pratihariAddress', ['pratihari_id' => $idCard->pratihari_id])
+            ->with('success', 'ID cards added successfully');
     }
+
+    // Validation errors (if you ever throw/trigger them for this form)
+    catch (\Illuminate\Validation\ValidationException $e) {
+        \DB::rollBack();
+
+        return redirect()
+            ->back()
+            ->withErrors($e->errors())
+            ->withInput();
+    }
+
+    // Database / query errors (e.g. duplicate entry)
+    catch (\Illuminate\Database\QueryException $e) {
+        \DB::rollBack();
+
+        // Default friendly message
+        $userMessage = 'Something went wrong while saving ID cards. Please try again.';
+
+        // MySQL duplicate entry error code = 1062
+        if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
+            $raw = $e->errorInfo[2] ?? $e->getMessage();
+
+            // Adjust these checks to match your unique indexes
+            if (\Illuminate\Support\Str::contains($raw, 'pratihari_id')) {
+                $userMessage = 'ID card details for this member already exist.';
+            } elseif (\Illuminate\Support\Str::contains($raw, 'id_type')) {
+                $userMessage = 'This ID type is already added for this member.';
+            } else {
+                $userMessage = 'Duplicate entry detected. Please check your ID card details and try again.';
+            }
+        }
+
+        // Log full error for debugging (not shown to user)
+        \Log::error('DB error in saveIdcard: ' . $e->getMessage(), [
+            'exception' => $e,
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', $userMessage);
+    }
+
+    // Any other generic errors
+    catch (\Exception $e) {
+        \DB::rollBack();
+
+        \Log::error('Error in saveIdcard: ' . $e->getMessage(), [
+            'exception' => $e,
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', 'Something went wrong while saving ID cards. Please try again.');
+    }
+}
 
     public function edit($pratihariId)
     {

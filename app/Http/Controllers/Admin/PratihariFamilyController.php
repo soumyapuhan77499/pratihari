@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PratihariFamily;
 use App\Models\PratihariChildren;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Str;
 
 class PratihariFamilyController extends Controller
 {
@@ -18,34 +22,35 @@ public function pratihariFamily()
     return view('admin.pratihari-family-details', compact('familyDetails'));
 
 }
-
 public function saveFamily(Request $request)
 {
     try {
+        // Start transaction so Family + Children save atomically
+        \DB::beginTransaction();
 
         $pratihariId = $request->input('pratihari_id');
 
         // Save Family Data
         $family = new PratihariFamily();
-        $family->pratihari_id = $pratihariId;
-        $family->father_name = $request->father_name;
-        $family->mother_name = $request->mother_name;
+        $family->pratihari_id   = $pratihariId;
+        $family->father_name    = $request->father_name;
+        $family->mother_name    = $request->mother_name;
+
         // Father Name Handling
         if ($request->father_id === 'other') {
-        $family->father_name = $request->father_name;
+            $family->father_name = $request->father_name;
 
-        if ($request->hasFile('father_photo')) {
-            $fatherPhoto = $request->file('father_photo');
-            $fatherPhotoName = time() . '_father.' . $fatherPhoto->getClientOriginalExtension();
-            $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
-            $family->father_photo = asset('uploads/family/' . $fatherPhotoName); // Save full file path
+            if ($request->hasFile('father_photo')) {
+                $fatherPhoto = $request->file('father_photo');
+                $fatherPhotoName = time() . '_father.' . $fatherPhoto->getClientOriginalExtension();
+                $fatherPhoto->move(public_path('uploads/family'), $fatherPhotoName);
+                $family->father_photo = asset('uploads/family/' . $fatherPhotoName); // Save full file path
+            }
+        } else {
+            $selectedFather = PratihariFamily::find($request->father_id);
+            $family->father_name  = $selectedFather ? $selectedFather->father_name  : null;
+            $family->father_photo = $selectedFather ? $selectedFather->father_photo : null;
         }
-
-    } else {
-        $selectedFather = PratihariFamily::find($request->father_id);
-        $family->father_name = $selectedFather ? $selectedFather->father_name : null;
-        $family->father_photo = $selectedFather ? $selectedFather->father_photo : null;
-    }
 
         // Mother Name Handling
         if ($request->mother_id === 'other') {
@@ -59,14 +64,14 @@ public function saveFamily(Request $request)
             }
         } else {
             $selectedMother = PratihariFamily::find($request->mother_id);
-            $family->mother_name = $selectedMother ? $selectedMother->mother_name : null;
+            $family->mother_name  = $selectedMother ? $selectedMother->mother_name  : null;
             $family->mother_photo = $selectedMother ? $selectedMother->mother_photo : null;
         }
 
-        $family->maritial_status = $request->marital_status;
-        $family->spouse_name = $request->spouse_name;
-        $family->spouse_father_name = $request->spouse_father_name;
-        $family->spouse_mother_name = $request->spouse_mother_name;
+        $family->maritial_status      = $request->marital_status;
+        $family->spouse_name          = $request->spouse_name;
+        $family->spouse_father_name   = $request->spouse_father_name;
+        $family->spouse_mother_name   = $request->spouse_mother_name;
 
         if ($request->hasFile('spouse_photo')) {
             $spousePhoto = $request->file('spouse_photo');
@@ -88,34 +93,75 @@ public function saveFamily(Request $request)
             $spouseMotherPhoto->move(public_path('uploads/family'), $spouseMotherPhotoName);
             $family->spouse_mother_photo = asset('uploads/family/' . $spouseMotherPhotoName); // Save full file path
         }
-        
+
         $family->save();
 
         // Save Children Data
         if ($request->has('children')) {
             foreach ($request->children as $child) {
                 $childData = new PratihariChildren();
-                $childData->pratihari_id = $pratihariId;
-                $childData->children_name = $child['name'];
-                $childData->date_of_birth = $child['dob'];
-                $childData->gender = $child['gender'];
+                $childData->pratihari_id  = $pratihariId;
+                $childData->children_name = $child['name'] ?? null;
+                $childData->date_of_birth = $child['dob'] ?? null;
+                $childData->gender        = $child['gender'] ?? null;
 
-                if (isset($child['photo'])) {
+                if (isset($child['photo']) && $child['photo'] instanceof \Illuminate\Http\UploadedFile) {
                     $childPhoto = $child['photo'];
                     $childPhotoName = time() . '_child.' . $childPhoto->getClientOriginalExtension();
                     $childPhoto->move(public_path('uploads/children'), $childPhotoName);
                     $childData->photo = asset('uploads/children/' . $childPhotoName); // Save full file path
                 }
-                
+
                 $childData->save();
             }
         }
-        return redirect()->route('admin.pratihariIdcard', ['pratihari_id' => $family->pratihari_id])->with('success', 'Family data saved successfully');
+
+        \DB::commit();
+
+        return redirect()
+            ->route('admin.pratihariIdcard', ['pratihari_id' => $family->pratihari_id])
+            ->with('success', 'Family data saved successfully');
+
+    } catch (\Illuminate\Database\QueryException $e) {
+        \DB::rollBack();
+
+        // Default friendly message
+        $userMessage = 'Something went wrong while saving family details. Please try again.';
+
+        // MySQL duplicate entry error code = 1062
+        if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
+            $raw = $e->errorInfo[2] ?? $e->getMessage();
+
+            // You can refine these checks based on your unique keys
+            if (\Illuminate\Support\Str::contains($raw, 'pratihari_id')) {
+                $userMessage = 'Family details for this member already exist.';
+            } else {
+                $userMessage = 'Duplicate entry detected. Please check the values and try again.';
+            }
+        }
+
+        // Log full error (for developers) but DO NOT show technical details to the user
+        \Log::error('DB error in saveFamily: ' . $e->getMessage(), [
+            'exception' => $e,
+        ]);
+
+        return back()
+            ->withInput()
+            ->with('error', $userMessage);
 
     } catch (\Exception $e) {
-        return back()->with('error', 'Something went wrong: ' . $e->getMessage());
+        \DB::rollBack();
+
+        \Log::error('Error in saveFamily: ' . $e->getMessage(), [
+            'exception' => $e,
+        ]);
+
+        return back()
+            ->withInput()
+            ->with('error', 'Something went wrong while saving family details. Please try again.');
     }
 }
+
 
 public function edit($pratihari_id)
 {

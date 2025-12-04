@@ -13,6 +13,10 @@ use App\Models\PratihariBeddhaMaster;
 use App\Models\PratihariProfile;
 use App\Models\PratihariSebaMapping;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\QueryException;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 use App\Models\PratihariSebaAssignTransaction;
 use Illuminate\Support\Facades\Auth;
@@ -42,70 +46,123 @@ class PratihariSebaController extends Controller
         return response()->json($beddhas);
     }
 
-    public function saveSeba(Request $request)
-    {
-        try {
-            DB::beginTransaction(); // Start DB transaction
+ public function saveSeba(Request $request)
+{
+    try {
+        DB::beginTransaction(); // Start DB transaction
 
-            $sebaIds = $request->seba_id;
-            $beddhaIds = $request->beddha_id ?? [];
-            $pratihariId = $request->pratihari_id;
+        // (Optional) validation – extend as you like
+        $request->validate([
+            'pratihari_id' => 'required',
+            'seba_id'      => 'required|array',
+        ]);
 
-            // 🔁 Save all selected seba+beddha pairs
-            foreach ($sebaIds as $sebaId) {
-                $beddhaList = $beddhaIds[$sebaId] ?? [];
+        $sebaIds     = $request->seba_id ?? [];
+        $beddhaIds   = $request->beddha_id ?? [];
+        $pratihariId = $request->pratihari_id;
 
-                if (empty($beddhaList)) {
-                    continue;
-                }
+        // 🔁 Save all selected seba + beddha pairs
+        foreach ($sebaIds as $sebaId) {
+            $beddhaList = $beddhaIds[$sebaId] ?? [];
 
-                $beddhaIdsString = implode(',', $beddhaList);
-
-                PratihariSeba::create([
-                    'pratihari_id' => $pratihariId,
-                    'seba_id' => $sebaId,
-                    'beddha_id' => $beddhaIdsString,
-                ]);
+            if (empty($beddhaList)) {
+                continue;
             }
 
-            // 🔁 Prepare mapping data for pratihari__seba_mapping
-            $mappingData = ['pratihari_id' => $pratihariId];
+            $beddhaIdsString = implode(',', $beddhaList);
 
-            foreach ($sebaIds as $sebaId) {
-                $beddhaList = $beddhaIds[$sebaId] ?? [];
-
-                if (empty($beddhaList)) {
-                    continue;
-                }
-
-                $beddhaIdsString = implode(',', $beddhaList);
-
-                if (in_array((int)$sebaId, [1, 2, 3, 4, 5, 8])) {
-                    // ✅ Use correct column names like 'seba_1', 'seba_2', ...
-                    $mappingData["seba_$sebaId"] = $beddhaIdsString;
-                }
-            }
-
-            // ✅ Save or update PratihariSebaMapping
-            PratihariSebaMapping::updateOrCreate(
-                ['pratihari_id' => $pratihariId],
-                $mappingData
-            );
-
-            DB::commit();
-
-            return redirect()->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
-                            ->with('success', 'Pratihari Seba details saved successfully');
-                            
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            DB::rollBack();
-            return redirect()->back()->withErrors($e->validator)->withInput();
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
+            PratihariSeba::create([
+                'pratihari_id' => $pratihariId,
+                'seba_id'      => $sebaId,
+                'beddha_id'    => $beddhaIdsString,
+            ]);
         }
+
+        // 🔁 Prepare mapping data for pratihari__seba_mapping
+        $mappingData = ['pratihari_id' => $pratihariId];
+
+        foreach ($sebaIds as $sebaId) {
+            $beddhaList = $beddhaIds[$sebaId] ?? [];
+
+            if (empty($beddhaList)) {
+                continue;
+            }
+
+            $beddhaIdsString = implode(',', $beddhaList);
+
+            if (in_array((int) $sebaId, [1, 2, 3, 4, 5, 8])) {
+                // ✅ Use correct column names like 'seba_1', 'seba_2', ...
+                $mappingData["seba_$sebaId"] = $beddhaIdsString;
+            }
+        }
+
+        // ✅ Save or update PratihariSebaMapping
+        PratihariSebaMapping::updateOrCreate(
+            ['pratihari_id' => $pratihariId],
+            $mappingData
+        );
+
+        DB::commit();
+
+        return redirect()
+            ->route('admin.pratihariSocialMedia', ['pratihari_id' => $pratihariId])
+            ->with('success', 'Pratihari Seba details saved successfully');
     }
+
+    // Validation errors
+    catch (ValidationException $e) {
+        DB::rollBack();
+
+        return redirect()
+            ->back()
+            ->withErrors($e->errors())
+            ->withInput();
+    }
+
+    // DB / duplicate errors
+    catch (QueryException $e) {
+        DB::rollBack();
+
+        // Default friendly message
+        $userMessage = 'Something went wrong while saving seba details. Please try again.';
+
+        // MySQL duplicate entry error code = 1062
+        if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
+            $raw = $e->errorInfo[2] ?? $e->getMessage();
+
+            // Tune this based on your unique indexes (e.g. unique on pratihari_id + seba_id)
+            if (Str::contains($raw, 'pratihari_id')) {
+                $userMessage = 'Seba details for this member already exist.';
+            } else {
+                $userMessage = 'Duplicate entry detected. Please check your seba selections and try again.';
+            }
+        }
+
+        Log::error('DB error saving seba details: ' . $e->getMessage(), [
+            'exception' => $e,
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', $userMessage);
+    }
+
+    // Any other errors
+    catch (\Exception $e) {
+        DB::rollBack();
+
+        Log::error('Error saving seba details: ' . $e->getMessage(), [
+            'exception' => $e,
+        ]);
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', 'Failed to save seba details. Please try again.');
+    }
+}
+
 
     public function edit($pratihari_id)
     {
