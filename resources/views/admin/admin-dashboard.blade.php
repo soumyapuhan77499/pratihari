@@ -454,7 +454,7 @@
         </div>
 
         <div class="row g-3">
-           
+
             <!-- KPI GRID (unchanged counts) -->
             <div class="col-12 mt-4">
                 <div class="row g-3">
@@ -581,45 +581,17 @@
                         </a>
                     </div>
 
-                    <!-- Quick Actions -->
-                    <div class="col-12">
-                        <div class="panel mb-3">
-                            <div class="panel-head d-flex align-items-center justify-content-between">
-                                <div>
-                                    <div class="section-title">Quick Actions</div>
-                                    <div class="subtle">Frequently used filters & links.</div>
-                                </div>
-                            </div>
-                            <div class="p-3 d-grid gap-2">
-                                <a class="btn btn-outline-primary d-flex align-items-center justify-content-between"
-                                    href="{{ route('admin.pratihari.filterUsers', 'today') }}">
-                                    <span><i class="bi bi-funnel me-2"></i> Filter Today</span>
-                                    <i class="bi bi-arrow-right-short fs-5"></i>
-                                </a>
-                                <a class="btn btn-outline-success d-flex align-items-center justify-content-between"
-                                    href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
-                                    <span><i class="bi bi-check2-circle me-2"></i> View Approved</span>
-                                    <i class="bi bi-arrow-right-short fs-5"></i>
-                                </a>
-                                <a class="btn btn-outline-warning d-flex align-items-center justify-content-between"
-                                    href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
-                                    <span><i class="bi bi-hourglass-split me-2"></i> View Pending</span>
-                                    <i class="bi bi-arrow-right-short fs-5"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
                 </div><!-- /row -->
             </div>
 
-             <!-- LEFT: Pratihari & Nijoga -->
+            <!-- LEFT: Pratihari & Nijoga -->
             <div class="col-12 col-xl-8">
                 <div class="panel">
                     <div class="px-3 pt-3">
                         <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero" style="background:transparent;border-color:rgba(255,255,255,.35);">
+                                <span class="icon-hero"
+                                    style="background:transparent;border-color:rgba(255,255,255,.35);">
                                     <i class="bi bi-person-badge"></i>
                                 </span>
                                 <div class="flex-grow-1">
@@ -649,8 +621,9 @@
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill" data-bs-target="#nijoga-pane"
-                                    type="button" role="tab" aria-controls="nijoga-pane" aria-selected="false">
+                                <button class="nav-link" id="nijoga-tab" data-bs-toggle="pill"
+                                    data-bs-target="#nijoga-pane" type="button" role="tab"
+                                    aria-controls="nijoga-pane" aria-selected="false">
                                     <i class="bi bi-clipboard2-check me-1"></i> Nijoga Assigned
                                 </button>
                             </li>
@@ -880,7 +853,34 @@
                     </div>
                 </div>
             </div>
-
+            
+            <div class="col-12">
+                <div class="panel mb-3">
+                    <div class="panel-head d-flex align-items-center justify-content-between">
+                        <div>
+                            <div class="section-title">Quick Actions</div>
+                            <div class="subtle">Frequently used filters & links.</div>
+                        </div>
+                    </div>
+                    <div class="p-3 d-grid gap-2">
+                        <a class="btn btn-outline-primary d-flex align-items-center justify-content-between"
+                            href="{{ route('admin.pratihari.filterUsers', 'today') }}">
+                            <span><i class="bi bi-funnel me-2"></i> Filter Today</span>
+                            <i class="bi bi-arrow-right-short fs-5"></i>
+                        </a>
+                        <a class="btn btn-outline-success d-flex align-items-center justify-content-between"
+                            href="{{ route('admin.pratihari.filterUsers', 'approved') }}">
+                            <span><i class="bi bi-check2-circle me-2"></i> View Approved</span>
+                            <i class="bi bi-arrow-right-short fs-5"></i>
+                        </a>
+                        <a class="btn btn-outline-warning d-flex align-items-center justify-content-between"
+                            href="{{ route('admin.pratihari.filterUsers', 'pending') }}">
+                            <span><i class="bi bi-hourglass-split me-2"></i> View Pending</span>
+                            <i class="bi bi-arrow-right-short fs-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
