@@ -467,19 +467,19 @@
                                     <div class="fw-bold">Today’s Pratihari Seba</div>
                                     <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
                                 </div>
-                                {{-- <div class="d-flex align-items-center gap-2">
+                                <div class="d-flex align-items-center gap-2">
                                     <span
                                         class="badge bg-light text-dark border-0">{{ collect($pratihariEvents)->flatten(1)->count() }}
                                         Pratihari</span>
                                     <span
                                         class="badge bg-light text-dark border-0">{{ collect($nijogaAssign)->flatten(1)->count() }}
                                         Nijoga</span>
-                                </div> --}}
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {{-- <div class="p-3"
+                    <div class="p-3"
                         style="background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(6,182,212,.06));border-bottom-left-radius:18px;border-bottom-right-radius:18px;">
                         <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
                             <li class="nav-item" role="presentation">
@@ -585,140 +585,7 @@
                                 @endforelse
                             </div>
                         </div>
-                    </div> --}}
-                </div>
-            </div>
-
-            <!-- RIGHT: Gochhikar -->
-            <div class="col-12 col-xl-4">
-                <div class="panel">
-                    <div class="px-3 pt-3">
-                        <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="icon-hero"
-                                    style="background:transparent;border-color:rgba(255,255,255,.35);">
-                                    <i class="bi bi-people"></i>
-                                </span>
-                                @php
-                                    $gochhikarCount = collect($gochhikarEvents)->flatten(1)->count();
-                                    $nijogaCount = collect($nijogaGochhikarEvents)->flatten(1)->count();
-                                @endphp
-                                <div class="flex-grow-1">
-                                    <div class="fw-bold">Gochhikar Today</div>
-                                    <div class="small" style="opacity:.9;">Normal & Nijoga lists</div>
-                                </div>
-                                <span class="badge bg-light text-dark border-0">{{ $gochhikarCount + $nijogaCount }}
-                                    total</span>
-                            </div>
-                        </div>
                     </div>
-
-                    {{-- <div class="p-3">
-                        <ul class="nav nav-pills tabs gap-2 mb-3" id="gochhikarTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active d-flex align-items-center gap-2" id="gochhikar-tab"
-                                    data-bs-toggle="pill" data-bs-target="#gochhikar-pane" type="button" role="tab"
-                                    aria-controls="gochhikar-pane" aria-selected="true">
-                                    <i class="bi bi-check2-circle"></i><span>Gochhikar</span>
-                                    <span class="badge text-bg-light border ms-1">{{ $gochhikarCount }}</span>
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link d-flex align-items-center gap-2" id="nijoga-g-tab"
-                                    data-bs-toggle="pill" data-bs-target="#nijoga-g-pane" type="button" role="tab"
-                                    aria-controls="nijoga-g-pane" aria-selected="false">
-                                    <i class="bi bi-exclamation-circle"></i><span>Nijoga Assign</span>
-                                    <span class="badge text-bg-light border ms-1">{{ $nijogaCount }}</span>
-                                </button>
-                            </li>
-                        </ul>
-
-                        <div class="tab-content" id="gochhikarTabsContent">
-                            <!-- Normal -->
-                            <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel"
-                                aria-labelledby="gochhikar-tab">
-                                @forelse ($gochhikarEvents as $label => $users)
-                                    <div class="mb-3">
-                                        <div class=" d-flex align-items-center justify-content-between mb-2">
-                                            <div class="small fw-semibold">{{ $label }}</div>
-                                            <span
-                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
-                                        </div>
-                                        <div class="usergrid-wrap">
-                                            <div class="usergrid">
-                                                @foreach ($users as $u)
-                                                    @php
-                                                        $name = $fullName($u);
-                                                        $photo = $u->photo_url ?? null;
-                                                        $ini = $initials($u);
-                                                    @endphp
-                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
-                                                        class="usercard" title="{{ $name }}">
-                                                        <div class="photo-wrap">
-                                                            @if ($photo)
-                                                                <img src="{{ $photo }}"
-                                                                    alt="{{ $name }}">
-                                                            @else
-                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
-                                                                    alt="{{ $name }}">
-                                                            @endif
-                                                        </div>
-                                                        <div class="uname">{{ $name }}</div>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="alert alert-light border d-flex align-items-center">
-                                        <i class="bi bi-info-circle me-2"></i>No Gochhikar assigned (normal) for today.
-                                    </div>
-                                @endforelse
-                            </div>
-
-                            <!-- Nijoga -->
-                            <div class="tab-pane fade" id="nijoga-g-pane" role="tabpanel"
-                                aria-labelledby="nijoga-g-tab">
-                                @forelse ($nijogaGochhikarEvents as $label => $users)
-                                    <div class="mb-3">
-                                        <div class=" d-flex align-items-center justify-content-between mb-2">
-                                            <div class="small fw-semibold">{{ $label }}</div>
-                                            <span
-                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
-                                        </div>
-                                        <div class="usergrid-wrap">
-                                            <div class="usergrid">
-                                                @foreach ($users as $u)
-                                                    @php
-                                                        $name = $fullName($u);
-                                                        $photo = $u->photo_url ?? null;
-                                                        $ini = $initials($u);
-                                                    @endphp
-                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
-                                                        class="usercard" title="{{ $name }}">
-                                                        <div class="photo-wrap">
-                                                            @if ($photo)
-                                                                <img src="{{ $photo }}"
-                                                                    alt="{{ $name }}">
-                                                            @else
-                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
-                                                                    alt="{{ $name }}">
-                                                            @endif
-                                                        </div>
-                                                        <div class="uname">{{ $name }}</div>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    </div>
-                                @empty
-                                    <div class="alert alert-light border d-flex align-items-center">
-                                        <i class="bi bi-info-circle me-2"></i>No Nijoga Gochhikar for today.
-                                    </div>
-                                @endforelse
-                            </div>
-                        </div>
-                    </div> --}}
                 </div>
             </div>
 
@@ -878,6 +745,138 @@
                     </div>
 
                 </div><!-- /row -->
+            </div>
+
+             <div class="col-12 col-xl-4">
+                <div class="panel">
+                    <div class="px-3 pt-3">
+                        <div class="rounded-3 p-3 text-white" style="background:var(--g-brand);box-shadow:var(--shadow);">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="icon-hero"
+                                    style="background:transparent;border-color:rgba(255,255,255,.35);">
+                                    <i class="bi bi-people"></i>
+                                </span>
+                                @php
+                                    $gochhikarCount = collect($gochhikarEvents)->flatten(1)->count();
+                                    $nijogaCount = collect($nijogaGochhikarEvents)->flatten(1)->count();
+                                @endphp
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">Gochhikar Today</div>
+                                    <div class="small" style="opacity:.9;">Normal & Nijoga lists</div>
+                                </div>
+                                <span class="badge bg-light text-dark border-0">{{ $gochhikarCount + $nijogaCount }}
+                                    total</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-3">
+                        <ul class="nav nav-pills tabs gap-2 mb-3" id="gochhikarTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active d-flex align-items-center gap-2" id="gochhikar-tab"
+                                    data-bs-toggle="pill" data-bs-target="#gochhikar-pane" type="button" role="tab"
+                                    aria-controls="gochhikar-pane" aria-selected="true">
+                                    <i class="bi bi-check2-circle"></i><span>Gochhikar</span>
+                                    <span class="badge text-bg-light border ms-1">{{ $gochhikarCount }}</span>
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link d-flex align-items-center gap-2" id="nijoga-g-tab"
+                                    data-bs-toggle="pill" data-bs-target="#nijoga-g-pane" type="button" role="tab"
+                                    aria-controls="nijoga-g-pane" aria-selected="false">
+                                    <i class="bi bi-exclamation-circle"></i><span>Nijoga Assign</span>
+                                    <span class="badge text-bg-light border ms-1">{{ $nijogaCount }}</span>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="gochhikarTabsContent">
+                            <!-- Normal -->
+                            <div class="tab-pane fade show active" id="gochhikar-pane" role="tabpanel"
+                                aria-labelledby="gochhikar-tab">
+                                @forelse ($gochhikarEvents as $label => $users)
+                                    <div class="mb-3">
+                                        <div class=" d-flex align-items-center justify-content-between mb-2">
+                                            <div class="small fw-semibold">{{ $label }}</div>
+                                            <span
+                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                        </div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($users as $u)
+                                                    @php
+                                                        $name = $fullName($u);
+                                                        $photo = $u->photo_url ?? null;
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No Gochhikar assigned (normal) for today.
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <!-- Nijoga -->
+                            <div class="tab-pane fade" id="nijoga-g-pane" role="tabpanel"
+                                aria-labelledby="nijoga-g-tab">
+                                @forelse ($nijogaGochhikarEvents as $label => $users)
+                                    <div class="mb-3">
+                                        <div class=" d-flex align-items-center justify-content-between mb-2">
+                                            <div class="small fw-semibold">{{ $label }}</div>
+                                            <span
+                                                class="badge rounded-pill text-bg-light border">{{ count($users) }}</span>
+                                        </div>
+                                        <div class="usergrid-wrap">
+                                            <div class="usergrid">
+                                                @foreach ($users as $u)
+                                                    @php
+                                                        $name = $fullName($u);
+                                                        $photo = $u->photo_url ?? null;
+                                                        $ini = $initials($u);
+                                                    @endphp
+                                                    <a href="{{ route('admin.viewProfile', ['pratihari_id' => $u->pratihari_id]) }}"
+                                                        class="usercard" title="{{ $name }}">
+                                                        <div class="photo-wrap">
+                                                            @if ($photo)
+                                                                <img src="{{ $photo }}"
+                                                                    alt="{{ $name }}">
+                                                            @else
+                                                                <img src="https://placehold.co/160x160?text={{ urlencode($ini) }}"
+                                                                    alt="{{ $name }}">
+                                                            @endif
+                                                        </div>
+                                                        <div class="uname">{{ $name }}</div>
+                                                    </a>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="alert alert-light border d-flex align-items-center">
+                                        <i class="bi bi-info-circle me-2"></i>No Nijoga Gochhikar for today.
+                                    </div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
