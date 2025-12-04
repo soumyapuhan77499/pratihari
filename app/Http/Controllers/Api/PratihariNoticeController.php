@@ -11,15 +11,26 @@ class PratihariNoticeController extends Controller
     public function getNotice(Request $request)
     {
         try {
-            $notice = PratihariNotice::where('status', 'active')
+            $notices = PratihariNotice::where('status', 'active')
                 ->orderBy('created_at', 'desc')
-                ->get();
+                ->get()
+                ->map(function ($notice) {
+                    $baseUrl = rtrim(env('APP_PHOTO_URL', config('app.url')), '/');
+                    
+                    $photoUrl = $notice->notice_photo
+                        ? $baseUrl . '/storage/' . ltrim($notice->notice_photo, '/')
+                        : '';
 
-            // Each item now has: notice_photo_url
+                    // Add new field to response
+                    $notice->notice_photo_url = $photoUrl;
+
+                    return $notice;
+                });
+
             return response()->json([
                 'status'  => true,
                 'message' => 'Notice fetched successfully',
-                'data'    => $notice
+                'data'    => $notices
             ], 200);
 
         } catch (\Exception $e) {
