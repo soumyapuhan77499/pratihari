@@ -498,121 +498,172 @@ class AdminController extends Controller
 
         // Get unique pratihari_ids (only active if column exists)
         $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
-            ->when(Schema::hasColumn('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
+            ->when(
+                Schema::hasColumn('pratihari__seba_details', 'status'),
+                fn ($q) => $q->where('status', 'active')
+            )
             ->distinct()
             ->pluck('pratihari_id');
 
         $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
-            ->when(Schema::hasColumn('pratihari__seba_details', 'status'), fn($q) => $q->where('status', 'active'))
+            ->when(
+                Schema::hasColumn('pratihari__seba_details', 'status'),
+                fn ($q) => $q->where('status', 'active')
+            )
             ->distinct()
             ->pluck('pratihari_id');
 
-        // Fetch profile names (sorted)
+        // Fetch profile names (sorted & only approved)
         $profile_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
-            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->where('pratihari_status','approved')->get();
+            ->where('pratihari_status', 'approved')
+            ->orderBy('first_name')
+            ->orderBy('middle_name')
+            ->orderBy('last_name')
+            ->get();
 
         $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
-            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')->where('pratihari_status','approved')->get();
+            ->where('pratihari_status', 'approved')
+            ->orderBy('first_name')
+            ->orderBy('middle_name')
+            ->orderBy('last_name')
+            ->get();
 
         // Optional: normalize inverted date range in query
         $from = $request->query('from');
         $to   = $request->query('to');
         if ($from && $to && $from > $to) {
-            return redirect()->to($request->fullUrlWithQuery(['from' => $to, 'to' => $from]));
+            // swap and redirect
+            return redirect()->to(
+                $request->fullUrlWithQuery(['from' => $to, 'to' => $from])
+            );
         }
 
         return view('admin.seba-calendar', compact('profile_name', 'gochhikar_name'));
     }
 
-    public function sebaDate(Request $request)
-    {
-        $pratihariId   = $request->input('pratihari_id');
-        $gochhikarId   = $request->input('gochhikar_id');
 
-        // Date range (optional)
-        $from = $request->input('from'); // YYYY-MM-DD
-        $to   = $request->input('to');   // YYYY-MM-DD
+   public function sebaDate(Request $request)
+{
+    $pratihariId = $request->input('pratihari_id');
+    $gochhikarId = $request->input('gochhikar_id');
 
-        // Normalize & guard
-        $fromDate = $from ? Carbon::parse($from)->startOfDay() : null;
-        $toDate   = $to   ? Carbon::parse($to)->endOfDay()   : null;
+    // Date range (optional)
+    $from = $request->input('from'); // YYYY-MM-DD
+    $to   = $request->input('to');   // YYYY-MM-DD
 
-        if ($fromDate && $toDate && $fromDate->gt($toDate)) {
-            // swap if inverted
-            [$fromDate, $toDate] = [$toDate, $fromDate];
-        }
+    // Normalize & guard
+    $fromDate = $from ? Carbon::parse($from)->startOfDay() : null;
+    $toDate   = $to   ? Carbon::parse($to)->endOfDay()   : null;
 
-        // Require at least one identity filter (keeps behavior consistent with UI)
-        if (!$pratihariId && !$gochhikarId) {
-            return response()->json([]);
-        }
+    if ($fromDate && $toDate && $fromDate->gt($toDate)) {
+        // swap if inverted
+        [$fromDate, $toDate] = [$toDate, $fromDate];
+    }
 
-        // If both are provided, prioritize pratihari_id (you can change this rule if needed)
-        $activeId = $pratihariId ?: $gochhikarId;
+    // Build base query: always load sebaMaster + pratihari (for name)
+    $sebasQuery = PratihariSeba::with(['sebaMaster', 'pratihari']);
 
-        // Pull assignments with master to know seba type
-        $sebas = PratihariSeba::with('sebaMaster')
-            ->where('pratihari_id', $activeId)
-            ->get();
+    // Only active rows if status column exists
+    if (Schema::hasColumn('pratihari__seba_details', 'status')) {
+        $sebasQuery->where('status', 'active');
+    }
 
-        $events = [];
+    /**
+     * Filter by identity if provided
+     * - pratihari_id => only sebā whose master.type = 'pratihari'
+     * - gochhikar_id => only sebā whose master.type = 'gochhikar'
+     * If neither is provided => all sebā (for global date range search).
+     */
+    if ($pratihariId) {
+        $sebasQuery
+            ->where('pratihari_id', $pratihariId)
+            ->whereHas('sebaMaster', function ($q) {
+                $q->where('type', 'pratihari');
+            });
+    }
 
-        foreach ($sebas as $seba) {
-            $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
-            $sebaType = $seba->sebaMaster->type ?? null; // 'pratihari' | 'gochhikar'
-            $sebaId   = $seba->seba_id;
+    if ($gochhikarId) {
+        $sebasQuery
+            ->where('pratihari_id', $gochhikarId)
+            ->whereHas('sebaMaster', function ($q) {
+                $q->where('type', 'gochhikar');
+            });
+    }
 
-            // Accessor may already return array; if not, normalize
-            $beddhaIds = is_array($seba->beddha_id) ? $seba->beddha_id : explode(',', (string) $seba->beddha_id);
+    $sebas = $sebasQuery->get();
 
-            foreach ($beddhaIds as $rawBeddhaId) {
-                $beddhaId = (int) trim($rawBeddhaId);
-                if ($beddhaId < 1 || $beddhaId > 47) continue;
+    $events = [];
 
-                // Schedule seeds (your existing logic kept intact)
-                if ($sebaType === 'gochhikar') {
-                    $intervalDays = 16;
-                    $seedStart    = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
-                    $seedEnd      = Carbon::create(2055, 12, 31)->endOfDay();
-                } else {
-                    $intervalDays = 47;
-                    $seedStart    = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
-                    $seedEnd      = Carbon::create(2050, 12, 31)->endOfDay();
+    foreach ($sebas as $seba) {
+        $sebaName = $seba->sebaMaster->seba_name ?? 'Unknown Seba';
+        $sebaType = $seba->sebaMaster->type ?? null; // 'pratihari' | 'gochhikar'
+        $sebaId   = $seba->seba_id;
+
+        // Pratihari full name for modal
+        $profile  = $seba->pratihari;
+        $fullName = $profile
+            ? trim(($profile->first_name ?? '') . ' ' . ($profile->middle_name ?? '') . ' ' . ($profile->last_name ?? ''))
+            : '';
+
+        // Accessor already returns array; just normalize
+        $beddhaIds = is_array($seba->beddha_id)
+            ? $seba->beddha_id
+            : array_filter(array_map('trim', explode(',', (string) $seba->beddha_id)));
+
+        foreach ($beddhaIds as $rawBeddhaId) {
+            $beddhaId = (int) $rawBeddhaId;
+            if ($beddhaId < 1 || $beddhaId > 47) {
+                continue;
+            }
+
+            // ======= PATTERN LOGIC (unchanged, but now bounded by date range) =======
+
+            if ($sebaType === 'gochhikar') {
+                $intervalDays = 16;
+                $seedStart    = Carbon::create(2026, 1, 1)->addDays($beddhaId - 1);
+                $seedEnd      = Carbon::create(2055, 12, 31)->endOfDay();
+            } else { // default to 'pratihari' pattern
+                $intervalDays = 47;
+                $seedStart    = Carbon::create(2025, 5, 22)->addDays($beddhaId - 1);
+                $seedEnd      = Carbon::create(2050, 12, 31)->endOfDay();
+            }
+
+            // Cap end by global "to" (if provided)
+            $hardEnd = $toDate ? min($seedEnd, $toDate->copy()) : $seedEnd;
+
+            // If we have a fromDate after seedStart, jump forward to the first occurrence >= fromDate
+            if ($fromDate && $fromDate->gt($seedStart)) {
+                $daysDiff = $seedStart->diffInDays($fromDate, false); // negative if from < seedStart
+                $skip     = (int) ceil(max(0, $daysDiff) / $intervalDays);
+                $nextDate = $seedStart->copy()->addDays($skip * $intervalDays);
+            } else {
+                $nextDate = $seedStart->copy();
+            }
+
+            // Generate all occurrences within [fromDate..hardEnd]
+            while ($nextDate->lte($hardEnd)) {
+                // Respect lower bound if present
+                if (!$fromDate || $nextDate->gte($fromDate)) {
+                    $events[] = [
+                        'title' => ($fullName ? $fullName . ' - ' : '') . "{$sebaName} (Beddha {$beddhaId})",
+                        'start' => $nextDate->toDateString(),
+                        'allDay' => true,
+                        'extendedProps' => [
+                            'sebaName'      => $sebaName,
+                            'beddhaId'      => $beddhaId,
+                            'sebaId'        => $sebaId,
+                            'sebaType'      => $sebaType,
+                            'pratihariName' => $fullName,
+                        ],
+                    ];
                 }
 
-                // Apply global 'to' cap
-                $hardEnd = $toDate ? min($seedEnd, $toDate->copy()) : $seedEnd;
-
-                // If there’s a 'from', jump directly to the first occurrence >= fromDate
-                if ($fromDate && $fromDate->gt($seedStart)) {
-                    $daysDiff = $seedStart->diffInDays($fromDate, false); // negative if from < seedStart
-                    // How many intervals to skip forward?
-                    $skip = (int) ceil(max(0, $daysDiff) / $intervalDays);
-                    $nextDate = $seedStart->copy()->addDays($skip * $intervalDays);
-                } else {
-                    $nextDate = $seedStart->copy();
-                }
-
-                // Generate within [fromDate..hardEnd] inclusive
-                while ($nextDate->lte($hardEnd)) {
-                    // Respect lower bound if present
-                    if (!$fromDate || $nextDate->gte($fromDate)) {
-                        $events[] = [
-                            'title' => "{$sebaName} - Beddha {$beddhaId}",
-                            'start' => $nextDate->toDateString(),
-                            'extendedProps' => [
-                                'sebaName' => $sebaName,
-                                'beddhaId' => $beddhaId,
-                                'sebaId'   => $sebaId,
-                                'sebaType' => $sebaType,
-                            ],
-                        ];
-                    }
-                    $nextDate->addDays($intervalDays);
-                }
+                $nextDate->addDays($intervalDays);
             }
         }
-
-        return response()->json($events);
     }
+
+    return response()->json($events);
+}
+
 }

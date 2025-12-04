@@ -31,10 +31,15 @@
         }
         .page-header .title{font-weight:800;letter-spacing:.3px;}
 
-        .card.custom-card{ border:1px solid var(--border); border-radius:14px; box-shadow:0 8px 22px rgba(2,6,23,.06); }
+        .card.custom-card{
+            border:1px solid var(--border);
+            border-radius:14px;
+            box-shadow:0 8px 22px rgba(2,6,23,.06);
+        }
         .card-header{
             background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            color:#fff;font-weight:800;letter-spacing:.3px;border-radius:14px 14px 0 0;
+            color:#fff;font-weight:800;letter-spacing:.3px;
+            border-radius:14px 14px 0 0;
             display:flex;align-items:center;gap:.55rem;
         }
 
@@ -56,17 +61,28 @@
         .fc .fc-button{ background-color:#f8c66d; border:none; }
         .fc .fc-button:hover{ filter:brightness(.95); }
         .fc-event{
-            background-color:#e96a01 !important; border:none !important; border-radius:6px !important;
-            padding:2px 6px; font-size:.76rem;
+            background-color:#e96a01 !important;
+            border:none !important;
+            border-radius:6px !important;
+            padding:2px 6px;
+            font-size:.76rem;
         }
         .fc-daygrid-day{ background-color:#f8f9fa; }
 
         /* Select2 harmonize with BS5 */
         .select2-container .select2-selection--single{
-            height: 38px; padding:.35rem .5rem; border:1px solid #ced4da; border-radius:.375rem;
+            height: 38px;
+            padding:.35rem .5rem;
+            border:1px solid #ced4da;
+            border-radius:.375rem;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered{ line-height: 28px; }
-        .select2-container--default .select2-selection--single .select2-selection__arrow{ height: 36px; right: 6px; }
+        .select2-container--default .select2-selection--single .select2-selection__rendered{
+            line-height: 28px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow{
+            height: 36px;
+            right: 6px;
+        }
     </style>
 @endsection
 
@@ -77,8 +93,12 @@
     <div class="page-header mt-3 mb-3">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>
-                <div class="title h4 mb-1"><i class="fa-solid fa-calendar-days me-2"></i>Seba Calendar</div>
-                <div class="small opacity-75">Filter by Pratihari or Gochhikar to view assigned Seba dates.</div>
+                <div class="title h4 mb-1">
+                    <i class="fa-solid fa-calendar-days me-2"></i>Seba Calendar
+                </div>
+                <div class="small opacity-75">
+                    Filter by Pratihari / Gochhikar or only by date range to view assigned Seba dates.
+                </div>
             </div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
@@ -111,6 +131,7 @@
                                 @endforeach
                             </select>
                         </div>
+
                         {{-- keep other query params on submit --}}
                         @if(request('gochhikar_id'))
                             <input type="hidden" name="gochhikar_id" value="{{ request('gochhikar_id') }}">
@@ -146,6 +167,7 @@
                                 @endforeach
                             </select>
                         </div>
+
                         {{-- keep other query params on submit --}}
                         @if(request('pratihari_id'))
                             <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
@@ -213,10 +235,10 @@
                     <i class="fa-regular fa-calendar-check me-1"></i> Calendar
                 </div>
                 <div class="card-body">
-                    @if(!request('pratihari_id') && !request('gochhikar_id'))
+                    @if(!request('pratihari_id') && !request('gochhikar_id') && !request('from') && !request('to'))
                         <div class="alert alert-info d-flex align-items-center" role="alert">
                             <i class="fa-solid fa-circle-info me-2"></i>
-                            Select a Pratihari or Gochhikar, and optionally choose a date range.
+                            Select a Pratihari / Gochhikar, or choose a date range, then the calendar will show Seba.
                         </div>
                     @endif
                     <div id="custom-calendar"></div>
@@ -230,10 +252,13 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="eventModalLabel"><i class="fa-solid fa-clipboard-list me-2"></i>Seba Details</h5>
+                    <h5 class="modal-title" id="eventModalLabel">
+                        <i class="fa-solid fa-clipboard-list me-2"></i>Seba Details
+                    </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <p class="mb-1"><strong>Pratihari Name:</strong> <span id="modalPratihariName"></span></p>
                     <p class="mb-1"><strong>Seba Name:</strong> <span id="modalSebaName"></span></p>
                     <p class="mb-0"><strong>Beddha ID:</strong> <span id="modalBeddhaId"></span></p>
                 </div>
@@ -253,11 +278,15 @@
     <script src="{{ asset('assets/plugins/select2/js/select2.full.min.js') }}"></script>
 
     <!-- FullCalendar -->
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.js"></script>
 
     <script>
         $(function () {
-            $('.select2').select2({ placeholder: 'Select name', allowClear: true, width: '100%' });
+            $('.select2').select2({
+                placeholder: 'Select name',
+                allowClear: true,
+                width: '100%'
+            });
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -277,19 +306,19 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
                 events: function (fetchInfo, success, failure) {
-                    // Only load when at least one identity filter is present
-                    if (!pratihariId && !gochhikarId) {
+                    // Load events if ANY filter is present:
+                    // pratihari / gochhikar / date range
+                    if (!pratihariId && !gochhikarId && !fromDate && !toDate) {
                         success([]);
                         return;
                     }
 
                     const qs = new URLSearchParams();
+
                     if (pratihariId) qs.set('pratihari_id', pratihariId);
                     if (gochhikarId) qs.set('gochhikar_id', gochhikarId);
-
-                    // Pass date range if provided
-                    if (fromDate) qs.set('from', fromDate);
-                    if (toDate)   qs.set('to', toDate);
+                    if (fromDate)    qs.set('from', fromDate);
+                    if (toDate)      qs.set('to', toDate);
 
                     // Prevent caching
                     qs.set('_', Date.now());
@@ -303,8 +332,10 @@
                         });
                 },
                 eventClick: function (info) {
-                    document.getElementById('modalSebaName').innerText = info.event.extendedProps?.sebaName ?? '';
-                    document.getElementById('modalBeddhaId').innerText = info.event.extendedProps?.beddhaId ?? '';
+                    const ext = info.event.extendedProps || {};
+                    document.getElementById('modalPratihariName').innerText = ext.pratihariName || '';
+                    document.getElementById('modalSebaName').innerText      = ext.sebaName || '';
+                    document.getElementById('modalBeddhaId').innerText      = ext.beddhaId || '';
                     new bootstrap.Modal(document.getElementById('eventModal')).show();
                 }
             });
