@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Log;
 class PratihariProfileApiController extends Controller
 {
 
-   public function saveApplication(Request $request)
+public function saveApplication(Request $request)
 {
     try {
         $user = Auth::user();

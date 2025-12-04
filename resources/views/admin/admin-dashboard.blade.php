@@ -467,19 +467,19 @@
                                     <div class="fw-bold">Today’s Pratihari Seba</div>
                                     <div class="small" style="opacity:.9;">Assigned users (grid · scroll inside)</div>
                                 </div>
-                                <div class="d-flex align-items-center gap-2">
+                                {{-- <div class="d-flex align-items-center gap-2">
                                     <span
                                         class="badge bg-light text-dark border-0">{{ collect($pratihariEvents)->flatten(1)->count() }}
                                         Pratihari</span>
                                     <span
                                         class="badge bg-light text-dark border-0">{{ collect($nijogaAssign)->flatten(1)->count() }}
                                         Nijoga</span>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>
 
-                    <div class="p-3"
+                    {{-- <div class="p-3"
                         style="background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(6,182,212,.06));border-bottom-left-radius:18px;border-bottom-right-radius:18px;">
                         <ul class="nav nav-pills tabs gap-2 mb-3" id="sebaTabs" role="tablist">
                             <li class="nav-item" role="presentation">
@@ -585,7 +585,7 @@
                                 @endforelse
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -613,7 +613,7 @@
                         </div>
                     </div>
 
-                    <div class="p-3">
+                    {{-- <div class="p-3">
                         <ul class="nav nav-pills tabs gap-2 mb-3" id="gochhikarTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active d-flex align-items-center gap-2" id="gochhikar-tab"
@@ -718,7 +718,7 @@
                                 @endforelse
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
