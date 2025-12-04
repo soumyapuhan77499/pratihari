@@ -247,6 +247,52 @@
         </div>
     </div>
 
+    {{-- Seba list table (date-wise) --}}
+    @if(!empty($tableEvents))
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="card custom-card">
+                    <div class="card-header">
+                        <i class="fa-solid fa-list me-1"></i>
+                        Seba List ({{ request('from') }} to {{ request('to') }})
+                    </div>
+                    <div class="card-body table-responsive">
+                        <table class="table table-sm table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Pratihari Name</th>
+                                    <th>Seba Name</th>
+                                    <th>Beddha ID</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($tableEvents as $event)
+                                    <tr>
+                                        <td>{{ \Carbon\Carbon::parse($event['start'])->format('d-m-Y') }}</td>
+                                        <td>{{ $event['pratihariName'] ?? '-' }}</td>
+                                        <td>{{ $event['sebaName'] ?? '-' }}</td>
+                                        <td>{{ $event['beddhaId'] ?? '-' }}</td>
+                                        <td>{{ $event['sebaType'] ?? '-' }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @elseif(request('from') && request('to'))
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="alert alert-warning mb-0">
+                    No Seba found between {{ request('from') }} and {{ request('to') }} for the selected filters.
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Event details modal -->
     <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
         <div class="modal-dialog">
