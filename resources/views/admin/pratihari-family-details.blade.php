@@ -7,17 +7,15 @@
 
     <style>
         :root{
-            /* Brand palette (same as profile page) */
-            --brand-a:#7c3aed; /* violet */
-            --brand-b:#06b6d4; /* cyan   */
-            --brand-c:#22c55e; /* emerald */
+            --brand-a:#7c3aed;
+            --brand-b:#06b6d4;
+            --brand-c:#22c55e;
             --ink:#0b1220;
             --muted:#64748b;
             --border:rgba(2,6,23,.10);
             --ring:rgba(6,182,212,.28);
         }
 
-        /* Page header */
         .page-header{
             background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
             color:#fff;border-radius:1rem;padding:1.05rem 1.25rem;
@@ -25,7 +23,6 @@
         }
         .page-header .title{font-weight:800;letter-spacing:.3px;}
 
-        /* Tabbar (same look as profile) */
         .tabbar{background:#fff;border:1px solid var(--border);border-radius:14px;
             box-shadow:0 8px 22px rgba(2,6,23,.06);padding:.35rem;overflow:auto;scrollbar-width:thin;}
         .tabbar .nav{flex-wrap:nowrap;gap:.35rem;}
@@ -43,13 +40,11 @@
         .tabbar::-webkit-scrollbar-thumb{ background:#e2e8f0;border-radius:8px; }
         .tabbar::-webkit-scrollbar-track{ background:transparent; }
 
-        /* Card & sections */
         .card{border:1px solid var(--border);border-radius:1rem;}
         .section-title{font-weight:800;color:var(--ink);}
         .section-hint{color:var(--muted);font-size:.9rem;}
         .divider{height:1px;background:var(--border);margin:1rem 0;}
 
-        /* Underline inputs (rename to avoid Bootstrap .input-group) */
         .underline-group{
             display:flex;align-items:center;gap:.6rem;border-bottom:2px solid var(--border);
             padding-bottom:.25rem;background:transparent;transition:border-color .2s ease,box-shadow .2s ease;
@@ -64,7 +59,6 @@
         .form-select{padding-right:1.6rem;background-clip:padding-box;}
         .form-control:focus,.form-select:focus{outline:none;}
 
-        /* Brand chips */
         .chip{
             display:inline-flex;align-items:center;justify-content:center;
             width:40px;min-width:40px;height:40px;border-radius:10px;
@@ -74,11 +68,9 @@
         }
         .chip i{font-size:1rem;line-height:1;color:#fff !important;}
 
-        /* Layout */
         .row.g-3{--bs-gutter-x:1rem;--bs-gutter-y:1rem;}
         .tab-pane{padding:1rem .25rem;}
 
-        /* Button */
         .btn-brand{
             background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
             border:0;color:#fff;box-shadow:0 14px 30px rgba(124,58,237,.25);
@@ -86,14 +78,11 @@
         .btn-brand:hover{opacity:.96;}
         .btn-brand:disabled{opacity:.6;box-shadow:none;cursor:not-allowed;}
 
-        /* Image preview hover */
         .preview-image{transition:transform .25s ease, box-shadow .25s ease;border-radius:.5rem;}
         .preview-image:hover{transform:scale(2);box-shadow:0 8px 16px rgba(0,0,0,.3);}
 
-        /* Accessibility focus */
         :focus-visible{outline:2px solid transparent;box-shadow:0 0 0 3px var(--ring) !important;border-radius:10px;}
 
-        /* Small screens: tighten chip size */
         @media (max-width: 400px){
             .chip{width:34px;min-width:34px;height:34px;border-radius:8px;}
         }
@@ -106,7 +95,6 @@
 
 @section('content')
 <div class="container-fluid my-3">
-    <!-- Header -->
     <div class="page-header mb-3">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
             <div>
@@ -116,61 +104,70 @@
         </div>
     </div>
 
-    <!-- Tabs (button tabs, Family active) -->
     <div class="tabbar mb-3">
         <ul class="nav" id="profileTabs" role="tablist">
             <li class="nav-item">
-                <button class="nav-link" id="tab-profile" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab" aria-controls="pane-profile" aria-selected="false">
+                <button class="nav-link" id="tab-profile" data-bs-toggle="tab" data-bs-target="#pane-profile" type="button" role="tab">
                     <i class="fa-solid fa-user"></i> Profile
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link active" id="tab-family" data-bs-toggle="tab" data-bs-target="#pane-family" type="button" role="tab" aria-controls="pane-family" aria-selected="true">
+                <button class="nav-link active" id="tab-family" data-bs-toggle="tab" data-bs-target="#pane-family" type="button" role="tab">
                     <i class="fa-solid fa-users"></i> Family
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="tab-id" data-bs-toggle="tab" data-bs-target="#pane-id" type="button" role="tab" aria-controls="pane-id" aria-selected="false">
+                <button class="nav-link" id="tab-id" data-bs-toggle="tab" data-bs-target="#pane-id" type="button" role="tab">
                     <i class="fa-solid fa-id-card"></i> ID Card
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="tab-address" data-bs-toggle="tab" data-bs-target="#pane-address" type="button" role="tab" aria-controls="pane-address" aria-selected="false">
+                <button class="nav-link" id="tab-address" data-bs-toggle="tab" data-bs-target="#pane-address" type="button" role="tab">
                     <i class="fa-solid fa-location-dot"></i> Address
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="tab-occupation" data-bs-toggle="tab" data-bs-target="#pane-occupation" type="button" role="tab" aria-controls="pane-occupation" aria-selected="false">
+                <button class="nav-link" id="tab-occupation" data-bs-toggle="tab" data-bs-target="#pane-occupation" type="button" role="tab">
                     <i class="fa-solid fa-briefcase"></i> Occupation
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="tab-seba" data-bs-toggle="tab" data-bs-target="#pane-seba" type="button" role="tab" aria-controls="pane-seba" aria-selected="false">
+                <button class="nav-link" id="tab-seba" data-bs-toggle="tab" data-bs-target="#pane-seba" type="button" role="tab">
                     <i class="fa-solid fa-gears"></i> Seba
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="tab-social" data-bs-toggle="tab" data-bs-target="#pane-social" type="button" role="tab" aria-controls="pane-social" aria-selected="false">
+                <button class="nav-link" id="tab-social" data-bs-toggle="tab" data-bs-target="#pane-social" type="button" role="tab">
                     <i class="fa-solid fa-share-nodes"></i> Social Media
                 </button>
             </li>
         </ul>
     </div>
 
-    <!-- Form + Tab panes -->
     <div class="card shadow-sm">
         <div class="card-body">
-            <form action="{{ route('admin.pratihari-family.store') }}" method="POST" enctype="multipart/form-data" novalidate>
+
+            {{-- OPTIONAL: show validation errors --}}
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <div class="fw-semibold mb-1">Please fix the following:</div>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form id="familyForm" action="{{ route('admin.pratihari-family.store') }}" method="POST" enctype="multipart/form-data" novalidate>
                 @csrf
                 <input type="hidden" name="pratihari_id" value="{{ request('pratihari_id') }}">
 
                 <div class="tab-content" id="tabsContent">
-                    <!-- PROFILE (placeholder for consistency) -->
                     <div class="tab-pane fade" id="pane-profile" role="tabpanel" aria-labelledby="tab-profile">
                         <div class="text-muted">Profile section is managed on the Profile page.</div>
                     </div>
 
-                    <!-- FAMILY (active) -->
                     <div class="tab-pane fade show active" id="pane-family" role="tabpanel" aria-labelledby="tab-family">
                         <div class="mb-2">
                             <div class="section-title">Parents</div>
@@ -178,11 +175,9 @@
                         </div>
 
                         <div class="row g-3">
-                            <!-- Father block -->
                             <div class="col-12 col-lg-6">
                                 <div class="mb-2 fw-semibold text-uppercase small text-muted">Father Details</div>
 
-                                <!-- Select Father -->
                                 <label class="form-label" for="father_name_select">Father Name</label>
                                 <div class="underline-group">
                                     <span class="chip" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
@@ -197,7 +192,6 @@
                                     </select>
                                 </div>
 
-                                <!-- New Father Name -->
                                 <div class="mt-3" id="father_name_input_div" style="display:none;">
                                     <label class="form-label" for="father_name">Enter Father's Name</label>
                                     <div class="underline-group">
@@ -206,7 +200,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Father Photo Preview -->
                                 <div class="mt-3" id="father_photo_preview_div" style="display:none;">
                                     <label class="form-label">Father Photo</label>
                                     <div class="d-flex align-items-center gap-3">
@@ -217,7 +210,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Upload New Father Photo -->
                                 <div class="mt-3" id="father_photo_upload_div" style="display:none;">
                                     <label class="form-label">Upload Father Photo</label>
                                     <div class="underline-group">
@@ -227,11 +219,9 @@
                                 </div>
                             </div>
 
-                            <!-- Mother block -->
                             <div class="col-12 col-lg-6">
                                 <div class="mb-2 fw-semibold text-uppercase small text-muted">Mother Details</div>
 
-                                <!-- Select Mother -->
                                 <label class="form-label" for="mother_name_select">Mother Name</label>
                                 <div class="underline-group">
                                     <span class="chip" aria-hidden="true"><i class="fa-solid fa-person-dress"></i></span>
@@ -246,7 +236,6 @@
                                     </select>
                                 </div>
 
-                                <!-- New Mother Name -->
                                 <div class="mt-3" id="mother_name_input_div" style="display:none;">
                                     <label class="form-label" for="mother_name">Enter Mother's Name</label>
                                     <div class="underline-group">
@@ -255,7 +244,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Mother Photo Preview -->
                                 <div class="mt-3" id="mother_photo_preview_div" style="display:none;">
                                     <label class="form-label">Mother Photo</label>
                                     <div class="d-flex align-items-center gap-3">
@@ -266,7 +254,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Upload New Mother Photo -->
                                 <div class="mt-3" id="mother_photo_upload_div" style="display:none;">
                                     <label class="form-label">Upload Mother Photo</label>
                                     <div class="underline-group">
@@ -302,7 +289,6 @@
                             </div>
                         </div>
 
-                        <!-- Spouse details -->
                         <div class="row g-3 mt-1" id="spouseDetails" style="display:none;">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="spouse_name">Spouse Name</label>
@@ -348,10 +334,11 @@
                             </div>
                         </div>
 
-                        <!-- Children -->
                         <div class="col-12 mt-3" id="childrenBlock" style="display:none;">
                             <div class="d-flex align-items-center justify-content-between">
-                                <div class="h6 mb-0"><i class="fas fa-child me-2" style="color:var(--brand-c)"></i>Children Details</div>
+                                <div class="h6 mb-0">
+                                    <i class="fas fa-child me-2" style="color:var(--brand-c)"></i>Children Details
+                                </div>
                                 <button type="button" class="btn btn-sm btn-success" id="addChild">
                                     <i class="fa fa-plus-circle me-1"></i>Add Child
                                 </button>
@@ -364,9 +351,8 @@
                                 <i class="fa-regular fa-floppy-disk me-2"></i>Submit
                             </button>
                         </div>
-                    </div> <!-- /FAMILY -->
+                    </div>
 
-                    <!-- Other panes (placeholders to keep tab UI consistent) -->
                     <div class="tab-pane fade" id="pane-id" role="tabpanel" aria-labelledby="tab-id">
                         <div class="text-muted">ID Card section is available on the ID Card page.</div>
                     </div>
@@ -382,7 +368,7 @@
                     <div class="tab-pane fade" id="pane-social" role="tabpanel" aria-labelledby="tab-social">
                         <div class="text-muted">Social Media section is available on the Social page.</div>
                     </div>
-                </div> <!-- /tab-content -->
+                </div>
             </form>
         </div>
     </div>
@@ -390,7 +376,6 @@
 @endsection
 
 @section('scripts')
-    <!-- SweetAlert (flash) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if (session('success'))
     <script>
@@ -403,7 +388,6 @@
     </script>
     @endif
 
-    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
@@ -412,6 +396,7 @@
         function handleFamilySelection(type){
             const select = document.getElementById(`${type}_name_select`);
             if(!select) return;
+
             const selected = select.value;
             const option   = select.options[select.selectedIndex];
             const photoUrl = option?.getAttribute('data-photo') || '';
@@ -448,45 +433,65 @@
             if(el){ el.addEventListener('change', ()=>handleFamilySelection(t)); }
         });
 
-        // Marital status toggle (spouse + children)
+        const form      = document.getElementById('familyForm');
         const married   = document.getElementById('married');
         const unmarried = document.getElementById('unmarried');
         const spouse    = document.getElementById('spouseDetails');
         const kids      = document.getElementById('childrenBlock');
 
+        const addBtn     = document.getElementById('addChild');
+        const container  = document.getElementById('childrenContainer');
+
+        function setChildrenRequired(isRequired){
+            container.querySelectorAll('input[name$="[dob]"]').forEach(el => el.required = isRequired);
+            container.querySelectorAll('input[name$="[photo]"]').forEach(el => el.required = isRequired);
+        }
+
         function refreshMaritalUI(){
-            const isMarried = married?.checked;
+            const isMarried = !!married?.checked;
+
             spouse.style.display = isMarried ? 'flex' : 'none';
             spouse.style.flexWrap = isMarried ? 'wrap' : '';
             kids.style.display   = isMarried ? 'block' : 'none';
+
+            // IMPORTANT: only enforce required when Married (avoid hidden required blocking submit)
+            setChildrenRequired(isMarried);
         }
+
         if(married)   married.addEventListener('change', refreshMaritalUI);
         if(unmarried) unmarried.addEventListener('change', refreshMaritalUI);
 
-        // Children add/remove
-        const addBtn = document.getElementById('addChild');
-        const container = document.getElementById('childrenContainer');
         function addChildRow(){
             const idx = container.querySelectorAll('.child-row').length + 1;
+
             const node = document.createElement('div');
             node.className = 'row g-3 child-row mt-2 p-3 rounded border';
+
             node.innerHTML = `
                 <div class="col-12 col-md-4">
-                    <label class="form-label"><i class="fa fa-user me-1" style="color:var(--brand-a)"></i>Child Name</label>
+                    <label class="form-label">
+                        <i class="fa fa-user me-1" style="color:var(--brand-a)"></i>Child Name
+                    </label>
                     <div class="underline-group">
                         <span class="chip" aria-hidden="true"><i class="fa-solid fa-child"></i></span>
                         <input type="text" class="form-control" name="children[${idx}][name]" placeholder="Enter Child's Name" autocomplete="off">
                     </div>
                 </div>
+
                 <div class="col-12 col-md-3">
-                    <label class="form-label"><i class="fa fa-calendar me-1" style="color:var(--brand-a)"></i>Date of Birth</label>
+                    <label class="form-label">
+                        <i class="fa fa-calendar me-1" style="color:var(--brand-a)"></i>Date of Birth <span class="text-danger">*</span>
+                    </label>
                     <div class="underline-group">
                         <span class="chip" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span>
-                        <input type="date" class="form-control" name="children[${idx}][dob]">
+                        <input type="date" class="form-control" name="children[${idx}][dob]" required>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-2">
-                    <label class="form-label"><i class="fa fa-venus-mars me-1" style="color:var(--brand-a)"></i>Gender</label>
+                    <label class="form-label">
+                        <i class="fa fa-venus-mars me-1" style="color:var(--brand-a)"></i>Gender
+                    </label>
                     <div class="underline-group">
                         <span class="chip" aria-hidden="true"><i class="fa-solid fa-venus-mars"></i></span>
                         <select class="form-select" name="children[${idx}][gender]">
@@ -495,26 +500,78 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-2">
-                    <label class="form-label"><i class="fa fa-camera me-1" style="color:var(--brand-a)"></i>Photo</label>
+                    <label class="form-label">
+                        <i class="fa fa-camera me-1" style="color:var(--brand-a)"></i>Photo <span class="text-danger">*</span>
+                    </label>
                     <div class="underline-group">
                         <span class="chip" aria-hidden="true"><i class="fa-solid fa-camera"></i></span>
-                        <input type="file" class="form-control" name="children[${idx}][photo]" accept="image/*">
+                        <input type="file" class="form-control" name="children[${idx}][photo]" accept="image/*" required>
                     </div>
                 </div>
+
                 <div class="col-12 col-md-1 d-flex align-items-end">
-                    <button type="button" class="btn btn-outline-danger w-100 removeChild"><i class="fa fa-trash"></i></button>
+                    <button type="button" class="btn btn-outline-danger w-100 removeChild">
+                        <i class="fa fa-trash"></i>
+                    </button>
                 </div>
             `;
+
             container.appendChild(node);
 
-            node.querySelector('.removeChild')?.addEventListener('click', ()=> node.remove());
+            node.querySelector('.removeChild')?.addEventListener('click', ()=>{
+                node.remove();
+                refreshMaritalUI();
+            });
+
+            refreshMaritalUI();
         }
+
         if(addBtn){ addBtn.addEventListener('click', addChildRow); }
 
-        // Initialize on load
+        // Submit validation: if Married, every child row must have DOB + Photo
+        if(form){
+            form.addEventListener('submit', function(e){
+                const isMarried = !!married?.checked;
+                if(!isMarried) return;
+
+                const rows = container.querySelectorAll('.child-row');
+                if(rows.length === 0){
+                    // If you want "at least 1 child required", uncomment:
+                    // e.preventDefault();
+                    // Swal.fire({icon:'error', title:'Missing Children', text:'Please add at least one child.', confirmButtonColor:'#ef4444'});
+                    // return;
+                    return;
+                }
+
+                let invalid = false;
+
+                rows.forEach((row) => {
+                    const dobInput   = row.querySelector('input[name$="[dob]"]');
+                    const photoInput = row.querySelector('input[name$="[photo]"]');
+
+                    const dobOk   = dobInput && dobInput.value;
+                    const photoOk = photoInput && photoInput.files && photoInput.files.length > 0;
+
+                    if(!dobOk || !photoOk){
+                        invalid = true;
+                    }
+                });
+
+                if(invalid){
+                    e.preventDefault();
+                    Swal.fire({
+                        icon:'error',
+                        title:'Required Fields Missing',
+                        text:'For each child, Date of Birth and Photo are required.',
+                        confirmButtonColor:'#ef4444'
+                    });
+                }
+            });
+        }
+
         refreshMaritalUI();
     })();
     </script>
 @endsection
-

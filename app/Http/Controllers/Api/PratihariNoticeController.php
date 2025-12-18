@@ -8,7 +8,8 @@ use App\Models\PratihariNotice;
 
 class PratihariNoticeController extends Controller
 {
-    public function getNotice(Request $request)
+    
+public function getNotice(Request $request)
 {
     try {
         $notices = PratihariNotice::where('status', 'active')
