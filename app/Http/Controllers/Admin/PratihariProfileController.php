@@ -472,53 +472,114 @@ class PratihariProfileController extends Controller
 
     public function filterUsers($filter)
     {
-        if ($filter === 'approved' || $filter === 'rejected' || $filter === 'updated' || $filter === 'pending') {
+        if (in_array($filter, ['approved', 'rejected', 'updated', 'pending'], true)) {
+
             $profiles = PratihariProfile::where('pratihari_status', $filter)->get();
+
         } elseif ($filter === 'todayrejected') {
-            $profiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'rejected')->get();
-         } elseif ($filter === 'todayapproved') {
-            $profiles = PratihariProfile::whereDate('updated_at', Carbon::today())->where('pratihari_status', 'approved')->get();
+
+            $profiles = PratihariProfile::whereDate('updated_at', Carbon::today())
+                ->where('pratihari_status', 'rejected')
+                ->get();
+
+        } elseif ($filter === 'todayapproved') {
+
+            $profiles = PratihariProfile::whereDate('updated_at', Carbon::today())
+                ->where('pratihari_status', 'approved')
+                ->get();
+
         } elseif ($filter === 'today') {
+
             $profiles = PratihariProfile::whereDate('created_at', Carbon::today())->get();
+
         } elseif ($filter === 'incomplete') {
-            $profiles = PratihariProfile::where('pratihari_status',['pending','rejected'])->where(function ($query) {
-                $query->whereNull('email')
-                    ->orWhereNull('phone_no')
-                    ->orWhereNull('blood_group');
-            })
-            // OR profiles with missing family info
-            ->orWhereDoesntHave('family', function ($query) {
-                $query->whereNotNull('father_name')
-                    ->whereNotNull('mother_name')
-                    ->whereNotNull('maritial_status'); // add more checks if needed
-            })
-            // OR profiles with no children records
-            ->orWhereDoesntHave('children')
-            // OR profiles with missing id card details
-            ->orWhereDoesntHave('idcard', function ($query) {
-                $query->whereNotNull('id_type')
-                    ->whereNotNull('id_number')
-                    ->whereNotNull('id_photo');
-            })
-            // OR profiles with missing occupation details
-            ->orWhereDoesntHave('occupation', function ($query) {
-                $query->where(function ($q) {
-                    $q->whereNotNull('occupation_type')
-                    ->orWhereNotNull('extra_activity');
-                });
-            })
-            // OR profiles with missing address
-            ->orWhereDoesntHave('address')
-            // OR profiles with missing seba details
-            ->orWhereDoesntHave('seba')
-            // OR profiles with missing social media
-            ->orWhereDoesntHave('socialMedia')
-            ->get();
+
+            // IMPORTANT: same logic as dashboard KPI (no whereDoesntHave chain)
+            $profiles = $this->getIncompleteProfiles();
+
         } else {
             abort(404);
         }
 
         return view('admin.pratihari-filter-user', compact('profiles', 'filter'));
+    }
+
+    private function getIncompleteProfiles()
+    {
+        $candidateProfiles = PratihariProfile::with([
+                'family',
+                'children',
+                'idcard',
+                'occupation',
+                'address',
+                'seba',
+                'socialMedia',
+            ])
+            ->whereIn('pratihari_status', ['pending', 'rejected'])
+            ->get();
+
+        return $candidateProfiles->filter(function ($p) {
+
+            // Basic fields
+            if (empty($p->email) || empty($p->phone_no) || empty($p->blood_group)) {
+                return true;
+            }
+
+            // Family
+            $family = $p->family;
+            if (
+                !$family ||
+                empty($family->father_name) ||
+                empty($family->mother_name) ||
+                empty($family->maritial_status)
+            ) {
+                return true;
+            }
+
+            // Children
+            if (!$p->children || $p->children->count() === 0) {
+                return true;
+            }
+
+            // ID card
+            $idcard = $p->idcard;
+            if (
+                !$idcard ||
+                empty($idcard->id_type) ||
+                empty($idcard->id_number) ||
+                empty($idcard->id_photo)
+            ) {
+                return true;
+            }
+
+            // Occupation (must exist AND at least one field filled)
+            $occupation = $p->occupation;
+            if (
+                !$occupation ||
+                (empty($occupation->occupation_type) && empty($occupation->extra_activity))
+            ) {
+                return true;
+            }
+
+            // Address
+            // NOTE: if address is hasOne -> check !$p->address
+            // if address is hasMany -> check count
+            if (!$p->address || (method_exists($p->address, 'count') && $p->address->count() === 0)) {
+                return true;
+            }
+
+            // Seba
+            if (!$p->seba || (method_exists($p->seba, 'count') && $p->seba->count() === 0)) {
+                return true;
+            }
+
+            // Social media
+            if (!$p->socialMedia || (method_exists($p->socialMedia, 'count') && $p->socialMedia->count() === 0)) {
+                return true;
+            }
+
+            return false;
+        })->values();
     }
 
     public function saveDesignation(Request $request)
