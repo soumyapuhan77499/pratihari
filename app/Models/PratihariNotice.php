@@ -10,25 +10,30 @@ class PratihariNotice extends Model
 {
     use HasFactory;
 
+    protected $table = 'pratihari__news_notice';
+
     protected $fillable = [
         'notice_name', 'notice_photo', 'from_date', 'to_date', 'description', 'status'
     ];
 
-    protected $table = 'pratihari__news_notice';
-
-    // This will make "notice_photo_url" automatically appear in JSON
     protected $appends = ['notice_photo_url'];
 
-    public function getNoticePhotoUrlAttribute()
+    public function getNoticePhotoUrlAttribute(): ?string
     {
-        if (!$this->notice_photo) {
-            return null;
+        if (!$this->notice_photo) return null;
+
+        // If you store "notices/xyz.jpg" already, just resolve it.
+        $path = ltrim($this->notice_photo, '/');
+
+        // If someone stored only filename, assume notices/
+        if (!str_starts_with($path, 'notices/')) {
+            $path = 'notices/' . $path;
         }
 
-        // Adjust the path as per your storage structure
-        // e.g. if file is stored at storage/app/public/notice_photos/xyz.jpg
-        return Storage::url('notice_photos/' . $this->notice_photo);
-        // or, if you directly store full path in notice_photo, just:
-        // return Storage::url($this->notice_photo);
+        // Return absolute URL if you want mobile apps to load it reliably
+        $relative = Storage::disk('public')->url($path); // "/storage/notices/xyz.jpg"
+        $baseUrl  = rtrim(env('APP_PHOTO_URL', config('app.url')), '/');
+
+        return $baseUrl . $relative;
     }
 }

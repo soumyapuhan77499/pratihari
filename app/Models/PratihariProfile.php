@@ -13,7 +13,7 @@ class PratihariProfile extends Model
     protected $table = 'pratihari__profile_details';
 
     protected $fillable = [
-        'pratihari_id','nijoga_id','first_name','middle_name','last_name','alias_name',
+        'pratihari_id','nijoga_id','first_name','middle_name','last_name','alias_name','category',
         'email','whatsapp_no','phone_no','alt_phone_no','blood_group','healthcard_no',
         'healthcard_photo','profile_photo','joining_date','joining_year','date_of_birth',
         'pratihari_status','reject_reason'

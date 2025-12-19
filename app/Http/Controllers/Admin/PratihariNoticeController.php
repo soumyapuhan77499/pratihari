@@ -5,50 +5,126 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PratihariNotice;
+use App\Models\PratihariProfile;
+use App\Models\PratihariDevice;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-
 
 class PratihariNoticeController extends Controller
 {
     public function showNoticeForm()
     {
-        return view('admin.add-notice');
+        // Load all Pratihari names for the form
+        $pratiharIs = PratihariProfile::select('pratihari_id', 'first_name', 'middle_name', 'last_name')
+            ->orderBy('first_name')
+            ->get()
+            ->map(function ($p) {
+                $p->full_name = trim(implode(' ', array_filter([$p->first_name, $p->middle_name, $p->last_name])));
+                return $p;
+            });
+
+        return view('admin.add-notice', compact('pratiharIs'));
     }
 
     public function saveNotice(Request $request)
     {
-        // Validate input data
         $validated = $request->validate([
             'notice_name'   => ['required', 'string', 'max:150'],
             'from_date'     => ['required', 'date'],
             'to_date'       => ['required', 'date', 'after_or_equal:from_date'],
             'description'   => ['nullable', 'string'],
-            'notice_photo'  => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'], // 2MB
+            'notice_photo'  => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+
+            // Notification controls
+            'send_notification' => ['nullable', 'boolean'],
+            'send_to_all'       => ['nullable', 'boolean'],
+            'platforms'         => ['nullable', 'array'],
+            'platforms.*'       => ['in:android,ios,web'],
+            'pratihari_ids'     => ['nullable', 'array'],
+            'pratihari_ids.*'   => ['string', 'exists:pratihari__profile_details,pratihari_id'],
         ]);
 
-        // Default: no photo
         $photoPath = null;
 
-        // If a file is uploaded, store it in /storage/app/public/notices
         if ($request->hasFile('notice_photo')) {
-            // Optional: give it a friendly filename
             $base = Str::slug($validated['notice_name'] ?? 'notice');
             $ext  = $request->file('notice_photo')->getClientOriginalExtension();
-            $filename = $base . '-' . now()->format('YmdHis') . '.' . $ext;
+            $filename  = $base . '-' . now()->format('YmdHis') . '.' . $ext;
 
             $photoPath = $request->file('notice_photo')->storeAs('notices', $filename, 'public');
-            // $photoPath will be something like "notices/notice-20251110xxxxxx.jpg"
+            // "notices/notice-YYYYmmddHHMMSS.jpg"
         }
 
-        // Save to database
-        PratihariNotice::create([
-            'notice_name'   => $validated['notice_name'],
-            'notice_photo'  => $photoPath,                // can be null
-            'from_date'     => $validated['from_date'],
-            'to_date'       => $validated['to_date'],
-            'description'   => $validated['description'] ?? null,
+        $notice = PratihariNotice::create([
+            'notice_name'  => $validated['notice_name'],
+            'notice_photo' => $photoPath,
+            'from_date'    => $validated['from_date'],
+            'to_date'      => $validated['to_date'],
+            'description'  => $validated['description'] ?? null,
+            'status'       => 'active',
         ]);
+
+        // -------------------------------
+        // Send notifications (device-wise)
+        // -------------------------------
+        if ($request->boolean('send_notification')) {
+            try {
+                $sendToAll  = $request->boolean('send_to_all');
+                $platforms  = $validated['platforms'] ?? [];
+
+                $targetPratihariIds = $sendToAll
+                    ? PratihariProfile::pluck('pratihari_id')->toArray()
+                    : ($validated['pratihari_ids'] ?? []);
+
+                if (empty($targetPratihariIds)) {
+                    return redirect()->back()->with('error', 'Notice saved, but no Pratihari selected for notification.');
+                }
+
+                // Get authorized device tokens for these users (optionally filtered by platform)
+                $tokensQuery = PratihariDevice::query()
+                    ->authorized()
+                    ->whereIn('pratihari_id', $targetPratihariIds);
+
+                if (!empty($platforms)) {
+                    $tokensQuery->platformIn($platforms);
+                }
+
+                // IMPORTANT: using device_id as token here
+                $deviceTokens = $tokensQuery->pluck('device_id')
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                if (empty($deviceTokens)) {
+                    return redirect()->back()->with('error', 'Notice saved, but no authorized devices found for selected Pratihari.');
+                }
+
+                $title = $notice->notice_name;
+
+                // Keep body short for notification display
+                $body = Str::limit(strip_tags((string) $notice->description), 120, '...');
+
+                $data = [
+                    'type'      => 'notice',
+                    'notice_id' => (string) $notice->id,
+                    'from_date' => (string) $notice->from_date,
+                    'to_date'   => (string) $notice->to_date,
+                ];
+
+                $notifier = new NotificationService('pratihari');
+                $notifier->sendBulkNotifications($deviceTokens, $title, $body, $data);
+
+            } catch (\Throwable $e) {
+                \Log::error('Notice notification failed', [
+                    'notice_id' => $notice->id ?? null,
+                    'error'     => $e->getMessage(),
+                ]);
+
+                return redirect()->back()->with('error', 'Notice saved, but notification failed. Check logs.');
+            }
+        }
 
         return redirect()->back()->with('success', 'Notice saved successfully!');
     }
@@ -71,17 +147,15 @@ class PratihariNoticeController extends Controller
             'from_date'    => ['required','date'],
             'to_date'      => ['required','date','after_or_equal:from_date'],
             'description'  => ['nullable','string'],
-            'notice_photo' => ['nullable','image','mimes:jpeg,jpg,png,webp','max:2048'], // 2MB
+            'notice_photo' => ['nullable','image','mimes:jpeg,jpg,png,webp','max:2048'],
             'remove_photo' => ['nullable','boolean'],
         ]);
 
-        // Text fields
         $notice->notice_name = $validated['notice_name'];
         $notice->from_date   = $validated['from_date'];
         $notice->to_date     = $validated['to_date'];
         $notice->description = $validated['description'] ?? null;
 
-        // Remove existing photo (if requested)
         if ($request->boolean('remove_photo') && $notice->notice_photo) {
             if (Storage::disk('public')->exists($notice->notice_photo)) {
                 Storage::disk('public')->delete($notice->notice_photo);
@@ -89,7 +163,6 @@ class PratihariNoticeController extends Controller
             $notice->notice_photo = null;
         }
 
-        // Upload/replace photo (if a new one is provided)
         if ($request->hasFile('notice_photo')) {
             if ($notice->notice_photo && Storage::disk('public')->exists($notice->notice_photo)) {
                 Storage::disk('public')->delete($notice->notice_photo);
@@ -100,7 +173,7 @@ class PratihariNoticeController extends Controller
             $filename = $base . '-' . now()->format('YmdHis') . '.' . $ext;
 
             $path = $request->file('notice_photo')->storeAs('notices', $filename, 'public');
-            $notice->notice_photo = $path; // e.g. notices/abc.jpg
+            $notice->notice_photo = $path;
         }
 
         $notice->save();
@@ -111,10 +184,9 @@ class PratihariNoticeController extends Controller
     public function deleteNotice($id)
     {
         $notice = PratihariNotice::findOrFail($id);
-        $notice->status = 'deleted'; // Soft delete
+        $notice->status = 'deleted';
         $notice->save();
 
         return redirect()->back()->with('success', 'Notice deleted successfully.');
     }
-
 }
