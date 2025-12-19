@@ -18,6 +18,7 @@ use App\Services\NotificationService;
 
 class PratihariNoticeController extends Controller
 {
+        
     private function sebaBasedRecipientIds(): array
     {
         // Get seba_ids by type
@@ -51,21 +52,31 @@ class PratihariNoticeController extends Controller
         $pratihari_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
             ->approved()
             ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')
-            ->get(['pratihari_id', 'first_name', 'middle_name', 'last_name', 'category']);
+            ->get(['pratihari_id', 'first_name', 'middle_name', 'last_name', 'bhagari', 'baristha_bhai_pua']);
 
         $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
             ->approved()
             ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')
-            ->get(['pratihari_id', 'first_name', 'middle_name', 'last_name', 'category']);
+            ->get(['pratihari_id', 'first_name', 'middle_name', 'last_name', 'bhagari', 'baristha_bhai_pua']);
 
-        $categories = [
+        $bhagariFilters = [
             'all' => 'All',
-            'a'   => 'A',
-            'b'   => 'B',
-            'c'   => 'C',
+            'yes' => 'Only Bhagari (Yes)',
+            'no'  => 'Only Bhagari (No)',
         ];
 
-        return view('admin.add-notice', compact('pratihari_name', 'gochhikar_name', 'categories'));
+        $baristhaFilters = [
+            'all' => 'All',
+            'yes' => 'Only Baristha Bhai Pua (Yes)',
+            'no'  => 'Only Baristha Bhai Pua (No)',
+        ];
+
+        return view('admin.add-notice', compact(
+            'pratihari_name',
+            'gochhikar_name',
+            'bhagariFilters',
+            'baristhaFilters'
+        ));
     }
 
     public function saveNotice(Request $request)
@@ -77,10 +88,14 @@ class PratihariNoticeController extends Controller
             'description'   => ['nullable', 'string'],
             'notice_photo'  => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 
-            // Notification controls (UPDATED)
+            // Notification controls
             'send_notification' => ['nullable', 'boolean'],
             'recipient_group'   => ['nullable', 'in:all,pratihari,gochhikar,selected'],
-            'category_filter'   => ['nullable', 'in:all,a,b,c'],
+
+            // ✅ NEW FILTERS
+            'bhagari_filter'    => ['nullable', 'in:all,yes,no'],
+            'baristha_filter'   => ['nullable', 'in:all,yes,no'],
+
             'pratihari_ids'     => ['nullable', 'array'],
             'pratihari_ids.*'   => ['string', 'exists:pratihari__profile_details,pratihari_id'],
         ]);
@@ -111,12 +126,13 @@ class PratihariNoticeController extends Controller
         // -------------------------------
         if ($request->boolean('send_notification')) {
             try {
-                $group    = $validated['recipient_group'] ?? 'all';
-                $category = $validated['category_filter'] ?? 'all';
+                $group          = $validated['recipient_group'] ?? 'all';
+                $bhagariFilter  = $validated['bhagari_filter'] ?? 'all';
+                $baristhaFilter = $validated['baristha_filter'] ?? 'all';
 
                 [$pratihariIds, $gochhikarIds] = $this->sebaBasedRecipientIds();
 
-                // Choose target IDs by group
+                // Choose base IDs by group
                 if ($group === 'pratihari') {
                     $baseIds = $pratihariIds->toArray();
                 } elseif ($group === 'gochhikar') {
@@ -134,23 +150,35 @@ class PratihariNoticeController extends Controller
                     return redirect()->back()->with('error', 'Notice saved, but no recipients found for notification.');
                 }
 
-                // Filter only approved + category
-                $profiles = PratihariProfile::approved()
-                    ->whereIn('pratihari_id', $baseIds)
-                    ->category($category)
-                    ->get(['pratihari_id', 'category']);
+                // ✅ Filter only approved + bhagari + baristha
+                $profilesQ = PratihariProfile::approved()
+                    ->whereIn('pratihari_id', $baseIds);
+
+                if ($bhagariFilter === 'yes') {
+                    $profilesQ->where('bhagari', 1);
+                } elseif ($bhagariFilter === 'no') {
+                    $profilesQ->where('bhagari', 0);
+                }
+
+                if ($baristhaFilter === 'yes') {
+                    $profilesQ->where('baristha_bhai_pua', 1);
+                } elseif ($baristhaFilter === 'no') {
+                    $profilesQ->where('baristha_bhai_pua', 0);
+                }
+
+                $profiles = $profilesQ->get(['pratihari_id', 'bhagari', 'baristha_bhai_pua']);
 
                 $finalIds = $profiles->pluck('pratihari_id')->unique()->values()->all();
 
                 if (empty($finalIds)) {
-                    return redirect()->back()->with('error', 'Notice saved, but no approved recipients match the selected category.');
+                    return redirect()->back()->with('error', 'Notice saved, but no approved recipients match the selected filters.');
                 }
 
                 // Device tokens (authorized only)
                 $deviceTokens = PratihariDevice::query()
                     ->authorized()
                     ->whereIn('pratihari_id', $finalIds)
-                    ->pluck('device_id')     // token stored here
+                    ->pluck('device_id')
                     ->filter()
                     ->unique()
                     ->values()
@@ -161,22 +189,29 @@ class PratihariNoticeController extends Controller
                 }
 
                 // Notification FORMAT (Title/Body/Data)
-                $groupLabel = strtoupper($group);
-                $catLabel   = strtoupper($category);
-
                 $title = $notice->notice_name;
 
-                // Example body: "[PRATIHARI][A] Description..."
-                $bodyPrefix = "[{$groupLabel}]" . ($category !== 'all' ? "[{$catLabel}]" : "");
+                $prefixParts = ['[' . strtoupper($group) . ']'];
+
+                if ($bhagariFilter !== 'all') {
+                    $prefixParts[] = '[BHAGARI:' . strtoupper($bhagariFilter) . ']';
+                }
+                if ($baristhaFilter !== 'all') {
+                    $prefixParts[] = '[BARISTHA:' . strtoupper($baristhaFilter) . ']';
+                }
+
+                $bodyPrefix = implode('', $prefixParts);
+
                 $body = $bodyPrefix . ' ' . Str::limit(strip_tags((string)$notice->description), 120, '...');
 
                 $data = [
-                    'type'            => 'notice',
-                    'notice_id'       => (string) $notice->id,
-                    'from_date'       => (string) $notice->from_date,
-                    'to_date'         => (string) $notice->to_date,
-                    'recipient_group' => (string) $group,
-                    'category'        => (string) $category,
+                    'type'               => 'notice',
+                    'notice_id'          => (string) $notice->id,
+                    'from_date'          => (string) $notice->from_date,
+                    'to_date'            => (string) $notice->to_date,
+                    'recipient_group'    => (string) $group,
+                    'bhagari_filter'     => (string) $bhagariFilter,
+                    'baristha_filter'    => (string) $baristhaFilter,
                 ];
 
                 $notifier = new NotificationService('pratihari');

@@ -6,84 +6,128 @@
     <link href="{{ asset('assets/plugins/select2/css/select2.min.css') }}" rel="stylesheet">
 
     <style>
-        :root{
-            --brand-a:#7c3aed;
-            --brand-b:#06b6d4;
-            --ink:#0b1220;
-            --muted:#64748b;
-            --border:rgba(2,6,23,.10);
-            --panel:rgba(2,6,23,.03);
+        :root {
+            --brand-a: #7c3aed;
+            --brand-b: #06b6d4;
+            --ink: #0b1220;
+            --muted: #64748b;
+            --border: rgba(2, 6, 23, .10);
+            --panel: rgba(2, 6, 23, .03);
         }
-        .page-header{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            color:#fff;
-            border-radius:1rem;
-            padding:1rem 1.25rem;
-            box-shadow:0 10px 24px rgba(6,182,212,.18);
-        }
-        .page-header .title{ font-weight:800; letter-spacing:.3px; }
-        .card{
-            border:1px solid var(--border);
-            border-radius:14px;
-            box-shadow:0 8px 22px rgba(2,6,23,.06);
-        }
-        .card-header{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            color:#fff;
-            font-weight:800;
-            letter-spacing:.3px;
-            text-transform:uppercase;
-            border-radius:14px 14px 0 0;
-            display:flex;
-            align-items:center;
-            gap:.6rem;
-            justify-content:center;
-        }
-        .input-group-text{ background:#fff; }
-        .form-label{ font-weight:700; color:var(--ink); }
-        .text-hint{ color:var(--muted); font-size:.9rem; }
-        .custom-gradient-btn{
-            background:linear-gradient(90deg,var(--brand-a),var(--brand-b));
-            border:0;
-            color:#fff;
-            font-weight:800;
-            border-radius:10px;
-            box-shadow:0 12px 24px rgba(124,58,237,.22);
-        }
-        .custom-gradient-btn:hover{ opacity:.96; }
 
-        .fade-out{ animation:fadeout .5s ease-in-out forwards; }
-        @keyframes fadeout{ to{ opacity:0; height:0; margin:0; padding:0; } }
+        .page-header {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color: #fff;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 10px 24px rgba(6, 182, 212, .18);
+        }
+
+        .page-header .title {
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: .3px;
+            text-transform: uppercase;
+            border-radius: 14px 14px 0 0;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            justify-content: center;
+        }
+
+        .input-group-text {
+            background: #fff;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .text-hint {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        .custom-gradient-btn {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            border: 0;
+            color: #fff;
+            font-weight: 800;
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(124, 58, 237, .22);
+        }
+
+        .custom-gradient-btn:hover {
+            opacity: .96;
+        }
+
+        .fade-out {
+            animation: fadeout .5s ease-in-out forwards;
+        }
+
+        @keyframes fadeout {
+            to { opacity: 0; height: 0; margin: 0; padding: 0; }
+        }
 
         /* Notification panel */
-        .section-title{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:.75rem;
-            margin:0;
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            margin: 0;
         }
-        .notify-panel{
-            border:1px solid var(--border);
-            background:var(--panel);
-            border-radius:14px;
-            padding:14px;
+
+        .notify-panel {
+            border: 1px solid var(--border);
+            background: var(--panel);
+            border-radius: 14px;
+            padding: 14px;
         }
-        .notify-panel .badge{
-            font-weight:800;
-            letter-spacing:.2px;
+
+        .notify-panel .badge {
+            font-weight: 800;
+            letter-spacing: .2px;
         }
 
         /* Select2 (better height alignment with Bootstrap) */
-        .select2-container .select2-selection--multiple{
+        .select2-container .select2-selection--multiple {
             min-height: 40px;
             border: 1px solid #dee2e6;
             border-radius: .375rem;
         }
-        .select2-container--default.select2-container--focus .select2-selection--multiple{
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
             border-color: #86b7fe;
-            box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
+            box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .25);
         }
+
+        /* Small badges in option labels (visual hint only; select2 may not render HTML in list by default) */
+        .pill {
+            display:inline-block;
+            padding:.15rem .45rem;
+            border-radius:999px;
+            font-size:.75rem;
+            font-weight:800;
+            margin-right:.35rem;
+            border:1px solid rgba(2,6,23,.10);
+            background:#fff;
+        }
+        .pill-ok { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.25); color:#14532d; }
+        .pill-no { background: rgba(100,116,139,.12); border-color: rgba(100,116,139,.25); color:#0b1220; }
     </style>
 @endsection
 
@@ -94,7 +138,9 @@
                 <div class="title h4 mb-0">
                     <i class="fa-solid fa-bullhorn me-2"></i>Add Notice
                 </div>
-                <div class="text-hint">Create a notice and optionally send notification (Pratihari / Gochhikar / category-wise).</div>
+                <div class="text-hint">
+                    Create a notice and optionally send notification (Pratihari / Gochhikar / Selected + Bhagari / Baristha filters).
+                </div>
             </div>
         </div>
     </div>
@@ -129,13 +175,12 @@
                                 <label for="notice_name" class="form-label">Notice Name</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-pen"></i></span>
-                                    <input type="text"
-                                           class="form-control @error('notice_name') is-invalid @enderror"
-                                           id="notice_name" name="notice_name"
-                                           value="{{ old('notice_name') }}"
-                                           placeholder="Enter Notice Name"
-                                           required maxlength="150">
-                                    @error('notice_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <input type="text" class="form-control @error('notice_name') is-invalid @enderror"
+                                        id="notice_name" name="notice_name" value="{{ old('notice_name') }}"
+                                        placeholder="Enter Notice Name" required maxlength="150">
+                                    @error('notice_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -143,13 +188,12 @@
                                 <label for="from_date" class="form-label">From Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar"></i></span>
-                                    <input type="date"
-                                           class="form-control @error('from_date') is-invalid @enderror"
-                                           id="from_date" name="from_date"
-                                           value="{{ old('from_date') }}"
-                                           min="{{ now()->format('Y-m-d') }}"
-                                           required>
-                                    @error('from_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <input type="date" class="form-control @error('from_date') is-invalid @enderror"
+                                        id="from_date" name="from_date" value="{{ old('from_date') }}"
+                                        min="{{ now()->format('Y-m-d') }}" required>
+                                    @error('from_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -157,13 +201,12 @@
                                 <label for="to_date" class="form-label">To Date</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-calendar-days"></i></span>
-                                    <input type="date"
-                                           class="form-control @error('to_date') is-invalid @enderror"
-                                           id="to_date" name="to_date"
-                                           value="{{ old('to_date') }}"
-                                           min="{{ now()->format('Y-m-d') }}"
-                                           required>
-                                    @error('to_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <input type="date" class="form-control @error('to_date') is-invalid @enderror"
+                                        id="to_date" name="to_date" value="{{ old('to_date') }}"
+                                        min="{{ now()->format('Y-m-d') }}" required>
+                                    @error('to_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -171,10 +214,11 @@
                                 <label for="notice_photo" class="form-label">Notice Photo <span class="text-hint">(optional)</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-image"></i></span>
-                                    <input type="file"
-                                           class="form-control @error('notice_photo') is-invalid @enderror"
-                                           id="notice_photo" name="notice_photo" accept="image/*">
-                                    @error('notice_photo') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <input type="file" class="form-control @error('notice_photo') is-invalid @enderror"
+                                        id="notice_photo" name="notice_photo" accept="image/*">
+                                    @error('notice_photo')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <small class="text-muted">Accepted: JPG, PNG, WebP; max 2MB.</small>
                             </div>
@@ -183,10 +227,11 @@
                                 <label for="description" class="form-label">Description <span class="text-hint">(optional)</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-align-left"></i></span>
-                                    <textarea class="form-control @error('description') is-invalid @enderror"
-                                              id="description" name="description"
-                                              rows="4" placeholder="Enter Description">{{ old('description') }}</textarea>
-                                    @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                    <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
+                                        rows="4" placeholder="Enter Description">{{ old('description') }}</textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -198,12 +243,13 @@
                                             <span class="badge text-bg-dark">
                                                 <i class="fa-solid fa-bell me-1"></i> Notification
                                             </span>
-                                            <span class="text-hint">Send notice to recipients (device-wise) after saving.</span>
+                                            <span class="text-hint">Send notice to recipients after saving.</span>
                                         </div>
 
                                         <div class="form-check form-switch m-0">
-                                            <input class="form-check-input" type="checkbox" value="1" id="send_notification"
-                                                   name="send_notification" {{ old('send_notification', 1) ? 'checked' : '' }}>
+                                            <input class="form-check-input" type="checkbox" value="1"
+                                                id="send_notification" name="send_notification"
+                                                {{ old('send_notification', 1) ? 'checked' : '' }}>
                                             <label class="form-check-label fw-bold" for="send_notification">Enable</label>
                                         </div>
                                     </div>
@@ -231,22 +277,37 @@
                                             <div class="text-hint mt-1">Choose who should receive this notice notification.</div>
                                         </div>
 
-                                        <div class="col-md-3">
-                                            <label class="form-label mb-1">Category Filter</label>
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1">Bhagari Filter</label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fa-solid fa-filter"></i></span>
-                                                <select class="form-control" name="category_filter" id="category_filter">
-                                                    @foreach($categories as $key => $label)
-                                                        <option value="{{ $key }}" {{ old('category_filter', 'all') === $key ? 'selected' : '' }}>
+                                                <span class="input-group-text"><i class="fa-solid fa-user-check"></i></span>
+                                                <select class="form-control" name="bhagari_filter" id="bhagari_filter">
+                                                    @foreach ($bhagariFilters as $key => $label)
+                                                        <option value="{{ $key }}" {{ old('bhagari_filter', 'all') === $key ? 'selected' : '' }}>
                                                             {{ $label }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="text-hint mt-1">Optional filter by category A / B / C.</div>
+                                            <div class="text-hint mt-1">Optional filter by Bhagari (Yes/No).</div>
                                         </div>
 
-                                        <div class="col-md-5">
+                                        <div class="col-md-4">
+                                            <label class="form-label mb-1">Baristha Bhai Pua Filter</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i class="fa-solid fa-user-tie"></i></span>
+                                                <select class="form-control" name="baristha_filter" id="baristha_filter">
+                                                    @foreach ($baristhaFilters as $key => $label)
+                                                        <option value="{{ $key }}" {{ old('baristha_filter', 'all') === $key ? 'selected' : '' }}>
+                                                            {{ $label }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="text-hint mt-1">Optional filter by Baristha Bhai Pua (Yes/No).</div>
+                                        </div>
+
+                                        <div class="col-12">
                                             <label class="form-label mb-1">
                                                 Select Individuals
                                                 <span class="text-hint">(only when Recipient Group = Selected)</span>
@@ -254,26 +315,46 @@
 
                                             <select class="form-control select2" id="pratihari_ids" name="pratihari_ids[]" multiple>
                                                 <optgroup label="Pratihari">
-                                                    @foreach($pratihari_name as $p)
+                                                    @foreach ($pratihari_name as $p)
+                                                        @php
+                                                            $bh = !empty($p->bhagari);
+                                                            $bb = !empty($p->baristha_bhai_pua);
+                                                            $flags = [];
+                                                            if ($bh) $flags[] = 'Bhagari';
+                                                            if ($bb) $flags[] = 'Baristha';
+                                                            $flagText = count($flags) ? ('[' . implode(', ', $flags) . '] ') : '';
+                                                        @endphp
                                                         <option value="{{ $p->pratihari_id }}"
                                                             {{ collect(old('pratihari_ids', []))->contains($p->pratihari_id) ? 'selected' : '' }}>
-                                                            {{ $p->full_name }} ({{ strtoupper($p->category ?? '-') }}) - {{ $p->pratihari_id }}
+                                                            {{ $flagText }}{{ $p->full_name }} - {{ $p->pratihari_id }}
                                                         </option>
                                                     @endforeach
                                                 </optgroup>
 
                                                 <optgroup label="Gochhikar">
-                                                    @foreach($gochhikar_name as $p)
+                                                    @foreach ($gochhikar_name as $p)
+                                                        @php
+                                                            $bh = !empty($p->bhagari);
+                                                            $bb = !empty($p->baristha_bhai_pua);
+                                                            $flags = [];
+                                                            if ($bh) $flags[] = 'Bhagari';
+                                                            if ($bb) $flags[] = 'Baristha';
+                                                            $flagText = count($flags) ? ('[' . implode(', ', $flags) . '] ') : '';
+                                                        @endphp
                                                         <option value="{{ $p->pratihari_id }}"
                                                             {{ collect(old('pratihari_ids', []))->contains($p->pratihari_id) ? 'selected' : '' }}>
-                                                            {{ $p->full_name }} ({{ strtoupper($p->category ?? '-') }}) - {{ $p->pratihari_id }}
+                                                            {{ $flagText }}{{ $p->full_name }} - {{ $p->pratihari_id }}
                                                         </option>
                                                     @endforeach
                                                 </optgroup>
                                             </select>
 
-                                            @error('pratihari_ids') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
-                                            @error('pratihari_ids.*') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                            @error('pratihari_ids')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
+                                            @error('pratihari_ids.*')
+                                                <div class="text-danger small mt-1">{{ $message }}</div>
+                                            @enderror
 
                                             <div class="text-hint mt-1">
                                                 Individuals list is segregated by Seba type (Pratihari / Gochhikar).
@@ -292,7 +373,6 @@
 
                         </div>
                     </form>
-
                 </div>{{-- card-body --}}
             </div>{{-- card --}}
         </div>
@@ -316,12 +396,12 @@
 
             // Date guard (from/to)
             const from = document.getElementById('from_date');
-            const to   = document.getElementById('to_date');
+            const to = document.getElementById('to_date');
             const today = new Date().toISOString().split('T')[0];
 
             if (from && to) {
                 from.min = today;
-                to.min   = today;
+                to.min = today;
 
                 if (!from.value || from.value < today) from.value = today;
                 if (!to.value || to.value < from.value) to.value = from.value;
