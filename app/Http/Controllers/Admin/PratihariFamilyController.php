@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\PratihariProfile;
 use App\Models\PratihariFamily;
 use App\Models\PratihariChildren;
 use Illuminate\Support\Facades\Log;
