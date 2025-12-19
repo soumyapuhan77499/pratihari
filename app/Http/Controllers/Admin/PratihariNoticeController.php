@@ -4,27 +4,68 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\PratihariNotice;
-use App\Models\PratihariProfile;
-use App\Models\PratihariDevice;
-use App\Services\NotificationService;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
+use App\Models\PratihariNotice;
+use App\Models\PratihariProfile;
+use App\Models\PratihariDevice;
+use App\Models\PratihariSeba;
+use App\Models\PratihariSebaMaster;
+
+use App\Services\NotificationService;
+
 class PratihariNoticeController extends Controller
 {
+    private function sebaBasedRecipientIds(): array
+    {
+        // Get seba_ids by type
+        $pratihariSebaIds = PratihariSebaMaster::where('type', 'pratihari')->pluck('id');
+        $gochhikarSebaIds = PratihariSebaMaster::where('type', 'gochhikar')->pluck('id');
+
+        // Get unique pratihari_ids (only active if column exists)
+        $pratihariIds = PratihariSeba::whereIn('seba_id', $pratihariSebaIds)
+            ->when(
+                Schema::hasColumn('pratihari__seba_details', 'status'),
+                fn ($q) => $q->where('status', 'active')
+            )
+            ->distinct()
+            ->pluck('pratihari_id');
+
+        $gochhikarIds = PratihariSeba::whereIn('seba_id', $gochhikarSebaIds)
+            ->when(
+                Schema::hasColumn('pratihari__seba_details', 'status'),
+                fn ($q) => $q->where('status', 'active')
+            )
+            ->distinct()
+            ->pluck('pratihari_id');
+
+        return [$pratihariIds, $gochhikarIds];
+    }
+
     public function showNoticeForm()
     {
-        // Load all Pratihari names for the form
-        $pratiharIs = PratihariProfile::select('pratihari_id', 'first_name', 'middle_name', 'last_name')
-            ->orderBy('first_name')
-            ->get()
-            ->map(function ($p) {
-                $p->full_name = trim(implode(' ', array_filter([$p->first_name, $p->middle_name, $p->last_name])));
-                return $p;
-            });
+        [$pratihariIds, $gochhikarIds] = $this->sebaBasedRecipientIds();
 
-        return view('admin.add-notice', compact('pratiharIs'));
+        $pratihari_name = PratihariProfile::whereIn('pratihari_id', $pratihariIds)
+            ->approved()
+            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')
+            ->get(['pratihari_id', 'first_name', 'middle_name', 'last_name', 'category']);
+
+        $gochhikar_name = PratihariProfile::whereIn('pratihari_id', $gochhikarIds)
+            ->approved()
+            ->orderBy('first_name')->orderBy('middle_name')->orderBy('last_name')
+            ->get(['pratihari_id', 'first_name', 'middle_name', 'last_name', 'category']);
+
+        $categories = [
+            'all' => 'All',
+            'a'   => 'A',
+            'b'   => 'B',
+            'c'   => 'C',
+        ];
+
+        return view('admin.add-notice', compact('pratihari_name', 'gochhikar_name', 'categories'));
     }
 
     public function saveNotice(Request $request)
@@ -36,24 +77,24 @@ class PratihariNoticeController extends Controller
             'description'   => ['nullable', 'string'],
             'notice_photo'  => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 
-            // Notification controls
+            // Notification controls (UPDATED)
             'send_notification' => ['nullable', 'boolean'],
-            'send_to_all'       => ['nullable', 'boolean'],
-            'platforms'         => ['nullable', 'array'],
-            'platforms.*'       => ['in:android,ios,web'],
+            'recipient_group'   => ['nullable', 'in:all,pratihari,gochhikar,selected'],
+            'category_filter'   => ['nullable', 'in:all,a,b,c'],
             'pratihari_ids'     => ['nullable', 'array'],
             'pratihari_ids.*'   => ['string', 'exists:pratihari__profile_details,pratihari_id'],
         ]);
 
+        // -------------------------------
+        // Save Notice
+        // -------------------------------
         $photoPath = null;
 
         if ($request->hasFile('notice_photo')) {
             $base = Str::slug($validated['notice_name'] ?? 'notice');
             $ext  = $request->file('notice_photo')->getClientOriginalExtension();
             $filename  = $base . '-' . now()->format('YmdHis') . '.' . $ext;
-
             $photoPath = $request->file('notice_photo')->storeAs('notices', $filename, 'public');
-            // "notices/notice-YYYYmmddHHMMSS.jpg"
         }
 
         $notice = PratihariNotice::create([
@@ -66,51 +107,76 @@ class PratihariNoticeController extends Controller
         ]);
 
         // -------------------------------
-        // Send notifications (device-wise)
+        // Send notifications (UPDATED)
         // -------------------------------
         if ($request->boolean('send_notification')) {
             try {
-                $sendToAll  = $request->boolean('send_to_all');
-                $platforms  = $validated['platforms'] ?? [];
+                $group    = $validated['recipient_group'] ?? 'all';
+                $category = $validated['category_filter'] ?? 'all';
 
-                $targetPratihariIds = $sendToAll
-                    ? PratihariProfile::pluck('pratihari_id')->toArray()
-                    : ($validated['pratihari_ids'] ?? []);
+                [$pratihariIds, $gochhikarIds] = $this->sebaBasedRecipientIds();
 
-                if (empty($targetPratihariIds)) {
-                    return redirect()->back()->with('error', 'Notice saved, but no Pratihari selected for notification.');
+                // Choose target IDs by group
+                if ($group === 'pratihari') {
+                    $baseIds = $pratihariIds->toArray();
+                } elseif ($group === 'gochhikar') {
+                    $baseIds = $gochhikarIds->toArray();
+                } elseif ($group === 'selected') {
+                    $baseIds = $validated['pratihari_ids'] ?? [];
+                } else { // all
+                    $baseIds = array_values(array_unique(array_merge(
+                        $pratihariIds->toArray(),
+                        $gochhikarIds->toArray()
+                    )));
                 }
 
-                // Get authorized device tokens for these users (optionally filtered by platform)
-                $tokensQuery = PratihariDevice::query()
+                if (empty($baseIds)) {
+                    return redirect()->back()->with('error', 'Notice saved, but no recipients found for notification.');
+                }
+
+                // Filter only approved + category
+                $profiles = PratihariProfile::approved()
+                    ->whereIn('pratihari_id', $baseIds)
+                    ->category($category)
+                    ->get(['pratihari_id', 'category']);
+
+                $finalIds = $profiles->pluck('pratihari_id')->unique()->values()->all();
+
+                if (empty($finalIds)) {
+                    return redirect()->back()->with('error', 'Notice saved, but no approved recipients match the selected category.');
+                }
+
+                // Device tokens (authorized only)
+                $deviceTokens = PratihariDevice::query()
                     ->authorized()
-                    ->whereIn('pratihari_id', $targetPratihariIds);
-
-                if (!empty($platforms)) {
-                    $tokensQuery->platformIn($platforms);
-                }
-
-                // IMPORTANT: using device_id as token here
-                $deviceTokens = $tokensQuery->pluck('device_id')
+                    ->whereIn('pratihari_id', $finalIds)
+                    ->pluck('device_id')     // token stored here
                     ->filter()
                     ->unique()
                     ->values()
                     ->all();
 
                 if (empty($deviceTokens)) {
-                    return redirect()->back()->with('error', 'Notice saved, but no authorized devices found for selected Pratihari.');
+                    return redirect()->back()->with('error', 'Notice saved, but no authorized devices found for selected recipients.');
                 }
+
+                // Notification FORMAT (Title/Body/Data)
+                $groupLabel = strtoupper($group);
+                $catLabel   = strtoupper($category);
 
                 $title = $notice->notice_name;
 
-                // Keep body short for notification display
-                $body = Str::limit(strip_tags((string) $notice->description), 120, '...');
+                // Example body: "[PRATIHARI][A] Description..."
+                $bodyPrefix = "[{$groupLabel}]" . ($category !== 'all' ? "[{$catLabel}]" : "");
+                $body = $bodyPrefix . ' ' . Str::limit(strip_tags((string)$notice->description), 120, '...');
 
                 $data = [
-                    'type'      => 'notice',
-                    'notice_id' => (string) $notice->id,
-                    'from_date' => (string) $notice->from_date,
-                    'to_date'   => (string) $notice->to_date,
+                    'type'            => 'notice',
+                    'notice_id'       => (string) $notice->id,
+                    'from_date'       => (string) $notice->from_date,
+                    'to_date'         => (string) $notice->to_date,
+                    'recipient_group' => (string) $group,
+                    'category'        => (string) $category,
                 ];
 
                 $notifier = new NotificationService('pratihari');

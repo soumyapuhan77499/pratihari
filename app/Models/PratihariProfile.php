@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-
 class PratihariProfile extends Model
 {
     use HasFactory;
 
     protected $table = 'pratihari__profile_details';
+
+    public const CATEGORY_A = 'a';
+    public const CATEGORY_B = 'b';
+    public const CATEGORY_C = 'c';
 
     protected $fillable = [
         'pratihari_id','nijoga_id','first_name','middle_name','last_name','alias_name','category',
@@ -19,8 +22,23 @@ class PratihariProfile extends Model
         'pratihari_status','reject_reason'
     ];
 
-    // Expose resolved photo URL to Blade
-    protected $appends = ['photo_url'];
+    protected $appends = ['photo_url', 'full_name'];
+
+    public function getFullNameAttribute(): string
+    {
+        return trim(implode(' ', array_filter([$this->first_name, $this->middle_name, $this->last_name])));
+    }
+
+    public function scopeApproved($q)
+    {
+        return $q->where('pratihari_status', 'approved');
+    }
+
+    public function scopeCategory($q, ?string $category)
+    {
+        if (!$category || $category === 'all') return $q;
+        return $q->where('category', strtolower($category));
+    }
 
     public function getPhotoUrlAttribute(): ?string
     {

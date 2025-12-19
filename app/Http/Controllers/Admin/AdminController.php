@@ -317,7 +317,6 @@ class AdminController extends Controller
         ));
     }
 
-
     public function pratihariManageProfile()
     {
 
