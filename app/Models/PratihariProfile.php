@@ -11,10 +11,6 @@ class PratihariProfile extends Model
 
     protected $table = 'pratihari__profile_details';
 
-    public const CATEGORY_A = 'a';
-    public const CATEGORY_B = 'b';
-    public const CATEGORY_C = 'c';
-
     protected $fillable = [
         'pratihari_id','nijoga_id','first_name','middle_name','last_name','alias_name','bhagari','baristha_bhai_pua',
         'email','whatsapp_no','phone_no','alt_phone_no','blood_group','healthcard_no',
@@ -100,4 +96,5 @@ class PratihariProfile extends Model
         }
         return ($filled / $totalFields) * 100;
     }
+
 }

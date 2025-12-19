@@ -17,6 +17,8 @@ class PratihariChildren extends Model
         'date_of_birth',
         'gender',
         'photo',
+        'marital_status',
+        'spouse_name',
     ];
 
     public function family()

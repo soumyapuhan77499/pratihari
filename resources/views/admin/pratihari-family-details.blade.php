@@ -147,7 +147,6 @@
     <div class="card shadow-sm">
         <div class="card-body">
 
-            {{-- OPTIONAL: show validation errors --}}
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <div class="fw-semibold mb-1">Please fix the following:</div>
@@ -289,14 +288,30 @@
                             </div>
                         </div>
 
+                        {{-- SPOUSE DETAILS (UPDATED: full name dropdown + manual) --}}
                         <div class="row g-3 mt-1" id="spouseDetails" style="display:none;">
                             <div class="col-12 col-md-6">
-                                <label class="form-label" for="spouse_name">Spouse Name</label>
+                                <label class="form-label" for="spouse_select">Spouse Name</label>
                                 <div class="underline-group">
                                     <span class="chip" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
-                                    <input type="text" class="form-control" id="spouse_name" name="spouse_name" placeholder="Enter Spouse's Name" autocomplete="off">
+                                    <select class="form-select" id="spouse_select" name="spouse_select">
+                                        <option value="">Select Spouse Name</option>
+                                        @foreach($pratiharis as $p)
+                                            <option value="{{ $p->id }}">{{ $p->full_name }}</option>
+                                        @endforeach
+                                        <option value="manual" class="text-danger">Not in list (Manual)</option>
+                                    </select>
+                                </div>
+
+                                <div class="mt-3" id="spouse_manual_div" style="display:none;">
+                                    <label class="form-label" for="spouse_name_manual">Spouse Name (Manual)</label>
+                                    <div class="underline-group">
+                                        <span class="chip" aria-hidden="true"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        <input type="text" class="form-control" id="spouse_name_manual" name="spouse_name_manual" placeholder="Enter Spouse Name" autocomplete="off">
+                                    </div>
                                 </div>
                             </div>
+
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="spouse_photo">Spouse Photo</label>
                                 <div class="underline-group">
@@ -304,6 +319,7 @@
                                     <input type="file" class="form-control" id="spouse_photo" name="spouse_photo" accept="image/*">
                                 </div>
                             </div>
+
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="spouse_father_name">Spouse Father's Name</label>
                                 <div class="underline-group">
@@ -311,6 +327,7 @@
                                     <input type="text" class="form-control" id="spouse_father_name" name="spouse_father_name" placeholder="Enter Father's Name" autocomplete="off">
                                 </div>
                             </div>
+
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="spouse_mother_name">Spouse Mother's Name</label>
                                 <div class="underline-group">
@@ -318,6 +335,7 @@
                                     <input type="text" class="form-control" id="spouse_mother_name" name="spouse_mother_name" placeholder="Enter Mother's Name" autocomplete="off">
                                 </div>
                             </div>
+
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Upload Spouse Father Photo</label>
                                 <div class="underline-group">
@@ -325,6 +343,7 @@
                                     <input type="file" class="form-control" name="spouse_father_photo" accept="image/*">
                                 </div>
                             </div>
+
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Upload Spouse Mother Photo</label>
                                 <div class="underline-group">
@@ -334,6 +353,7 @@
                             </div>
                         </div>
 
+                        {{-- CHILDREN --}}
                         <div class="col-12 mt-3" id="childrenBlock" style="display:none;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="h6 mb-0">
@@ -377,11 +397,13 @@
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @if (session('success'))
     <script>
         Swal.fire({ icon:'success', title:'Success!', text:@json(session('success')), confirmButtonColor:'#0ea5e9' });
     </script>
     @endif
+
     @if (session('error'))
     <script>
         Swal.fire({ icon:'error', title:'Error!', text:@json(session('error')), confirmButtonColor:'#ef4444' });
@@ -392,7 +414,38 @@
 
     <script>
     (function(){
-        // Father/Mother select handling (existing vs "other")
+        // ---------- helper ----------
+        function escapeHtml(str){
+            return String(str ?? '')
+                .replaceAll('&','&amp;')
+                .replaceAll('<','&lt;')
+                .replaceAll('>','&gt;')
+                .replaceAll('"','&quot;')
+                .replaceAll("'",'&#039;');
+        }
+
+        // Pratihari list for spouse dropdowns (main + child)
+        // Controller should send: select('id','first_name','middle_name','last_name')
+        const PRATIHARIS = @json($pratiharis ?? []);
+
+        function buildFullName(p){
+            return [p.first_name, p.middle_name, p.last_name]
+                .filter(Boolean)
+                .join(' ')
+                .trim();
+        }
+
+        function buildSpouseOptionsHtml(){
+            let h = `<option value="">Select Spouse Name</option>`;
+            PRATIHARIS.forEach(p => {
+                h += `<option value="${p.id}">${escapeHtml(buildFullName(p))}</option>`;
+            });
+            h += `<option value="manual" class="text-danger">Not in list (Manual)</option>`;
+            return h;
+        }
+        const spouseOptionsHtml = buildSpouseOptionsHtml();
+
+        // ---------- Father/Mother select handling ----------
         function handleFamilySelection(type){
             const select = document.getElementById(`${type}_name_select`);
             if(!select) return;
@@ -439,12 +492,31 @@
         const spouse    = document.getElementById('spouseDetails');
         const kids      = document.getElementById('childrenBlock');
 
+        const spouseSelectMain = document.getElementById('spouse_select');
+        const spouseManualDiv  = document.getElementById('spouse_manual_div');
+        const spouseManualInp  = document.getElementById('spouse_name_manual');
+
         const addBtn     = document.getElementById('addChild');
         const container  = document.getElementById('childrenContainer');
 
         function setChildrenRequired(isRequired){
             container.querySelectorAll('input[name$="[dob]"]').forEach(el => el.required = isRequired);
             container.querySelectorAll('input[name$="[photo]"]').forEach(el => el.required = isRequired);
+        }
+
+        function refreshMainSpouseManual(){
+            if(!spouseSelectMain || !spouseManualDiv) return;
+            if(spouseSelectMain.value === 'manual'){
+                spouseManualDiv.style.display = 'block';
+                spouseManualInp && (spouseManualInp.required = true);
+            }else{
+                spouseManualDiv.style.display = 'none';
+                if(spouseManualInp){ spouseManualInp.value = ''; spouseManualInp.required = false; }
+            }
+        }
+
+        if(spouseSelectMain){
+            spouseSelectMain.addEventListener('change', refreshMainSpouseManual);
         }
 
         function refreshMaritalUI(){
@@ -454,12 +526,49 @@
             spouse.style.flexWrap = isMarried ? 'wrap' : '';
             kids.style.display   = isMarried ? 'block' : 'none';
 
-            // IMPORTANT: only enforce required when Married (avoid hidden required blocking submit)
             setChildrenRequired(isMarried);
+
+            if(!isMarried){
+                if(spouseSelectMain) spouseSelectMain.value = '';
+                refreshMainSpouseManual();
+            }else{
+                refreshMainSpouseManual();
+            }
+
+            container.querySelectorAll('.child-row').forEach(row => toggleChildSpouse(row));
         }
 
         if(married)   married.addEventListener('change', refreshMaritalUI);
         if(unmarried) unmarried.addEventListener('change', refreshMaritalUI);
+
+        function toggleChildSpouse(row){
+            const ms = row.querySelector('.child-marital');
+            const spouseWrap = row.querySelector('.child-spouse-wrap');
+            const spouseSel  = row.querySelector('.child-spouse-select');
+            const manualWrap = row.querySelector('.child-spouse-manual-wrap');
+            const manualInp  = row.querySelector('.child-spouse-manual-input');
+
+            if(!ms || !spouseWrap) return;
+
+            const isChildMarried = (ms.value === 'married');
+            spouseWrap.style.display = isChildMarried ? '' : 'none';
+
+            if(!isChildMarried){
+                if(spouseSel) spouseSel.value = '';
+                if(manualInp){ manualInp.value = ''; manualInp.required = false; }
+                if(manualWrap) manualWrap.style.display = 'none';
+            }else{
+                if(spouseSel) spouseSel.required = true;
+
+                if(spouseSel && spouseSel.value === 'manual'){
+                    if(manualWrap) manualWrap.style.display = '';
+                    if(manualInp) manualInp.required = true;
+                }else{
+                    if(manualWrap) manualWrap.style.display = 'none';
+                    if(manualInp){ manualInp.value=''; manualInp.required = false; }
+                }
+            }
+        }
 
         function addChildRow(){
             const idx = container.querySelectorAll('.child-row').length + 1;
@@ -501,7 +610,43 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-md-2">
+                <div class="col-12 col-md-3">
+                    <label class="form-label">
+                        <i class="fa-solid fa-heart me-1" style="color:var(--brand-a)"></i>Marital Status
+                    </label>
+                    <div class="underline-group">
+                        <span class="chip" aria-hidden="true"><i class="fa-regular fa-heart"></i></span>
+                        <select class="form-select child-marital" name="children[${idx}][marital_status]">
+                            <option value="">Select</option>
+                            <option value="single">Single</option>
+                            <option value="married">Married</option>
+                            <option value="divorced">Divorced</option>
+                            <option value="widowed">Widowed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3 child-spouse-wrap" style="display:none;">
+                    <label class="form-label">
+                        <i class="fa-solid fa-user me-1" style="color:var(--brand-a)"></i>Spouse (Select)
+                    </label>
+                    <div class="underline-group">
+                        <span class="chip" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                        <select class="form-select child-spouse-select" name="children[${idx}][spouse_select]">
+                            ${spouseOptionsHtml}
+                        </select>
+                    </div>
+
+                    <div class="mt-3 child-spouse-manual-wrap" style="display:none;">
+                        <label class="form-label">Spouse Name (Manual)</label>
+                        <div class="underline-group">
+                            <span class="chip" aria-hidden="true"><i class="fa-solid fa-pen-to-square"></i></span>
+                            <input type="text" class="form-control child-spouse-manual-input" name="children[${idx}][spouse_name_manual]" placeholder="Enter spouse name">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-3">
                     <label class="form-label">
                         <i class="fa fa-camera me-1" style="color:var(--brand-a)"></i>Photo <span class="text-danger">*</span>
                     </label>
@@ -520,6 +665,12 @@
 
             container.appendChild(node);
 
+            const ms = node.querySelector('.child-marital');
+            const spSel = node.querySelector('.child-spouse-select');
+
+            ms && ms.addEventListener('change', () => toggleChildSpouse(node));
+            spSel && spSel.addEventListener('change', () => toggleChildSpouse(node));
+
             node.querySelector('.removeChild')?.addEventListener('click', ()=>{
                 node.remove();
                 refreshMaritalUI();
@@ -530,21 +681,12 @@
 
         if(addBtn){ addBtn.addEventListener('click', addChildRow); }
 
-        // Submit validation: if Married, every child row must have DOB + Photo
         if(form){
             form.addEventListener('submit', function(e){
                 const isMarried = !!married?.checked;
                 if(!isMarried) return;
 
                 const rows = container.querySelectorAll('.child-row');
-                if(rows.length === 0){
-                    // If you want "at least 1 child required", uncomment:
-                    // e.preventDefault();
-                    // Swal.fire({icon:'error', title:'Missing Children', text:'Please add at least one child.', confirmButtonColor:'#ef4444'});
-                    // return;
-                    return;
-                }
-
                 let invalid = false;
 
                 rows.forEach((row) => {
