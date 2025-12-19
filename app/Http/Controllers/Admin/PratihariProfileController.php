@@ -288,68 +288,111 @@ class PratihariProfileController extends Controller
         return response()->json($address);
     }
 
-    public function viewProfile($pratihari_id)
-    {
-        // Fetch Profile Details
-        $profile = PratihariProfile::with(['address.sahiDetail'])->where('pratihari_id', $pratihari_id)->first();
-    
-        // Fetch Family and Children Details
-        $family = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
+public function viewProfile($pratihari_id)
+{
+    // Fetch Profile Details
+    $profile = PratihariProfile::with(['address.sahiDetail'])
+        ->where('pratihari_id', $pratihari_id)
+        ->first();
 
-        $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get() ?? collect(); 
-    
-        // Fetch ID Card Details
-        $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get() ?? collect(); 
-    
-        // Fetch Other Details
-        $occupation = PratihariOccupation::where('pratihari_id', $pratihari_id)->get() ?? collect();
-
-        $sebaDetails = PratihariSeba::where('pratihari_id', $pratihari_id)->get() ?? collect(); 
-
-        $socialMedia = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->first();
-    
-        // Completion Percentages
-        $profileCompletion = $profile ? $profile->getCompletionPercentage() : 0;
-    
-        $familyCompletion = $family ? round((collect([
-            'father_name', 'father_photo', 'mother_name', 'mother_photo',
-            'maritial_status', 'spouse_name', 'spouse_photo'
-        ])->filter(fn($field) => !empty($family->$field))->count() / 7) * 100) : 0;
-    
-        $childrenCompletion = $children->count() > 0 ? 100 : 0;
-    
-        $idcardCompletion = $idcard->count() > 0 && isset($idcard[0]) ? round((collect([
-            'id_type', 'id_number', 'id_photo'
-        ])->filter(fn($field) => !empty($idcard[0]->$field))->count() / 3) * 100) : 0;
-    
-        $occupation_chat = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
-
-        $hasOccupationData = $occupation_chat->isNotEmpty() && 
-            $occupation_chat->first(function ($item) {
-                return !empty($item->occupation_type) || !empty($item->extra_activity);
-            });
-        
-        $occupationCompletion = $hasOccupationData ? 100 : 0;
-        
-        $addressCompletion = $profile && $profile->address ? 100 : 0;
-        
-        $sebaCompletion = $sebaDetails->count() > 0 ? 100 : 0;
-
-        $socialmediaCompletion = $socialMedia ? 100 : 0;
-    
-        return view('admin.view-pratihari-profile', compact(
-            'profile', 'family', 'children', 'idcard', 'occupation', 'sebaDetails', 'socialMedia'
-        ), [
-            'profileCompletion' => $profileCompletion ?? 0,
-            'familyCompletion' => $familyCompletion ?? 0,
-            'idcardCompletion' => $idcardCompletion ?? 0,
-            'childrenCompletion' => $childrenCompletion ?? 0,
-            'addressCompletion' => $addressCompletion ?? 0,
-            'occupationCompletion' => $occupationCompletion ?? 0,
-            'sebaCompletion' => $sebaCompletion ?? 0,
-            'socialmediaCompletion' => $socialmediaCompletion ?? 0,
-        ]);
+    // If profile not found (avoid errors in view)
+    if (!$profile) {
+        return redirect()->back()->with('error', 'Profile not found.');
     }
+
+    // Fetch Family and Children Details
+    $family   = PratihariFamily::where('pratihari_id', $pratihari_id)->first();
+    $children = PratihariChildren::where('pratihari_id', $pratihari_id)->get() ?? collect();
+
+    // Fetch ID Card Details
+    $idcard = PratihariIdcard::where('pratihari_id', $pratihari_id)->get() ?? collect();
+
+    // Fetch Other Details
+    $occupation   = PratihariOccupation::where('pratihari_id', $pratihari_id)->get() ?? collect();
+    $sebaDetails  = PratihariSeba::where('pratihari_id', $pratihari_id)->get() ?? collect();
+    $socialMedia  = PratihariSocialMedia::where('pratihari_id', $pratihari_id)->first();
+
+    // -------------------------
+    // ✅ NEW: Personal Details (for view)
+    // -------------------------
+
+    // Boolean to Yes/No
+    $bhagariText          = ($profile->bhagari ?? false) ? 'Yes' : 'No';
+    $baristhaBhaiPuaText  = ($profile->baristha_bhai_pua ?? false) ? 'Yes' : 'No';
+
+    // Joining date/year display (robust for either stored)
+    $joiningDateText = 'Not Available';
+    $joiningYearText = 'Not Available';
+
+    // If joining_year exists (preferred)
+    if (!empty($profile->joining_year)) {
+        $joiningYearText = $profile->joining_year;
+    }
+
+    // If joining_date exists
+    if (!empty($profile->joining_date)) {
+        // If someone stored just a 4-digit year in joining_date
+        if (preg_match('/^\d{4}$/', (string)$profile->joining_date)) {
+            $joiningYearText = $profile->joining_date;
+        } else {
+            // Try to format as date safely
+            try {
+                $joiningDateText = Carbon::parse($profile->joining_date)->format('d M Y');
+            } catch (\Exception $e) {
+                $joiningDateText = $profile->joining_date; // fallback raw
+            }
+        }
+    }
+
+    // Completion Percentages
+    $profileCompletion = $profile ? $profile->getCompletionPercentage() : 0;
+
+    $familyCompletion = $family ? round((collect([
+        'father_name', 'father_photo', 'mother_name', 'mother_photo',
+        'maritial_status', 'spouse_name', 'spouse_photo'
+    ])->filter(fn($field) => !empty($family->$field))->count() / 7) * 100) : 0;
+
+    $childrenCompletion = $children->count() > 0 ? 100 : 0;
+
+    $idcardCompletion = $idcard->count() > 0 && isset($idcard[0]) ? round((collect([
+        'id_type', 'id_number', 'id_photo'
+    ])->filter(fn($field) => !empty($idcard[0]->$field))->count() / 3) * 100) : 0;
+
+    $occupation_chat = PratihariOccupation::where('pratihari_id', $pratihari_id)->get();
+
+    $hasOccupationData = $occupation_chat->isNotEmpty() &&
+        $occupation_chat->first(function ($item) {
+            return !empty($item->occupation_type) || !empty($item->extra_activity);
+        });
+
+    $occupationCompletion = $hasOccupationData ? 100 : 0;
+
+    $addressCompletion = $profile && $profile->address ? 100 : 0;
+
+    $sebaCompletion = $sebaDetails->count() > 0 ? 100 : 0;
+
+    $socialmediaCompletion = $socialMedia ? 100 : 0;
+
+    return view('admin.view-pratihari-profile', compact(
+        'profile', 'family', 'children', 'idcard', 'occupation', 'sebaDetails', 'socialMedia'
+    ), [
+        'profileCompletion' => $profileCompletion ?? 0,
+        'familyCompletion' => $familyCompletion ?? 0,
+        'idcardCompletion' => $idcardCompletion ?? 0,
+        'childrenCompletion' => $childrenCompletion ?? 0,
+        'addressCompletion' => $addressCompletion ?? 0,
+        'occupationCompletion' => $occupationCompletion ?? 0,
+        'sebaCompletion' => $sebaCompletion ?? 0,
+        'socialmediaCompletion' => $socialmediaCompletion ?? 0,
+
+        // ✅ NEW: send to view
+        'bhagariText'         => $bhagariText,
+        'baristhaBhaiPuaText' => $baristhaBhaiPuaText,
+        'joiningDateText'     => $joiningDateText,
+        'joiningYearText'     => $joiningYearText,
+    ]);
+}
+
 
     public function edit($pratihari_id)
     {
