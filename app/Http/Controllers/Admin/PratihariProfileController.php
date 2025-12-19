@@ -29,14 +29,14 @@ class PratihariProfileController extends Controller
     {
         return view('admin.pratihari-profile-details');
     }
-        
+
     public function saveProfile(Request $request)
     {
-        // Basic validation
         $validator = Validator::make($request->all(), [
-            'first_name'  => 'required|string|max:255',
+            'first_name'          => 'required|string|max:255',
+            'bhagari'             => 'nullable|boolean',
+            'baristha_bhai_pua'   => 'nullable|boolean',
             // add more validation as needed
-            // 'phone_no' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -53,55 +53,60 @@ class PratihariProfileController extends Controller
 
             // Generate PRATIHARI ID
             $pratihariId = 'PRATIHARI' . rand(10000, 99999);
-            $pratihariProfile->pratihari_id   = $pratihariId;
-            $pratihariProfile->first_name     = $request->first_name;
-            $pratihariProfile->middle_name    = $request->middle_name;
-            $pratihariProfile->last_name      = $request->last_name;
-            $pratihariProfile->alias_name     = $request->alias_name;
-            $pratihariProfile->email          = $request->email;
-            $pratihariProfile->whatsapp_no    = $request->whatsapp_no;
-            $pratihariProfile->phone_no       = $request->phone_no;
-            $pratihariProfile->blood_group    = $request->blood_group;
-            $pratihariProfile->healthcard_no  = $request->healthcard_no;
+
+            $pratihariProfile->pratihari_id        = $pratihariId;
+            $pratihariProfile->first_name          = $request->first_name;
+            $pratihariProfile->middle_name         = $request->middle_name;
+            $pratihariProfile->last_name           = $request->last_name;
+            $pratihariProfile->alias_name          = $request->alias_name;
+
+            // ✅ NEW: Yes/No checkboxes (1/0)
+            $pratihariProfile->bhagari             = $request->boolean('bhagari');
+            $pratihariProfile->baristha_bhai_pua   = $request->boolean('baristha_bhai_pua');
+
+            $pratihariProfile->email               = $request->email;
+            $pratihariProfile->whatsapp_no         = $request->whatsapp_no;
+            $pratihariProfile->phone_no            = $request->phone_no;
+            $pratihariProfile->blood_group         = $request->blood_group;
+            $pratihariProfile->healthcard_no       = $request->healthcard_no;
 
             // ----------------- NIJOGA ID LOGIC -----------------
             $healthcard_no = $request->healthcard_no;
             $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
 
-            // --- FAMILY NUMBER (YYY) ---
-            // Only check for exact same healthcard_no
             $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
                 ->whereNotNull('nijoga_id')
                 ->get();
 
             if ($existingSameHealthcard->isEmpty()) {
-                $familyCount = 1; // Start at 001
+                $familyCount = 1;
             } else {
                 $lastFamily = $existingSameHealthcard->map(function ($member) {
-                    return (int) substr($member->nijoga_id, 5, 3); // Extract YYY
+                    return (int) substr($member->nijoga_id, 5, 3);
                 })->max();
 
                 $familyCount = $lastFamily + 1;
             }
 
-            // --- GLOBAL SERIAL NUMBER (ZZZZ) ---
             $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
                 ->orderByDesc('id')
                 ->get()
                 ->map(function ($member) {
-                    return (int) substr($member->nijoga_id, -4); // Extract ZZZZ
+                    return (int) substr($member->nijoga_id, -4);
                 })->max();
 
             $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
 
-            // --- FORMAT NIJOGA ID: XXXX-YYY-ZZZZ ---
             $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
             $pratihariProfile->nijoga_id = $nijoga_id;
             // --------------------------------------------------
 
-            // Upload healthcard photo
-            if ($request->hasFile('healthcard_photo')) {
-                $file = $request->file('healthcard_photo');
+            // ✅ FIX: accept both input names: healthcard_photo OR health_card_photo
+            $healthCardKey = $request->hasFile('healthcard_photo') ? 'healthcard_photo'
+                            : ($request->hasFile('health_card_photo') ? 'health_card_photo' : null);
+
+            if ($healthCardKey) {
+                $file = $request->file($healthCardKey);
                 $filename = 'healthcard_photo_' . time() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('uploads/healthcard_photo'), $filename);
                 $pratihariProfile->healthcard_photo = 'uploads/healthcard_photo/' . $filename;
@@ -117,10 +122,8 @@ class PratihariProfileController extends Controller
 
             // Handle joining date/year
             if ($request->filled('joining_date')) {
-                // exact date selected: format YYYY-MM-DD
                 $pratihariProfile->joining_date = $request->joining_date;
             } elseif ($request->filled('joining_year')) {
-                // only year selected: you can store as year or YYYY-01-01
                 $pratihariProfile->joining_date = $request->joining_year;
             } else {
                 $pratihariProfile->joining_date = null;
@@ -128,41 +131,27 @@ class PratihariProfileController extends Controller
 
             $pratihariProfile->date_of_birth = $request->date_of_birth;
 
-            // Save profile first
             $pratihariProfile->save();
 
             // ================== CREATE / UPDATE USER FOR LOGIN ==================
-            // Decide which mobile number to use for login (phone_no preferred, else whatsapp_no)
             $mobileNumber = $request->phone_no ?? $request->whatsapp_no;
 
-            // ===== NORMALIZE MOBILE WITH 91 PREFIX =====
             if (!empty($mobileNumber)) {
-                // keep only digits
                 $mobileNumber = preg_replace('/\D+/', '', $mobileNumber);
-
-                // if it doesn't already start with 91, prefix it
                 if (substr($mobileNumber, 0, 2) !== '91') {
                     $mobileNumber = '91' . $mobileNumber;
                 }
             }
-            // ===========================================
 
-            // Build full name
             $fullName = trim(
                 $request->first_name . ' ' .
                 ($request->middle_name ?? '') . ' ' .
                 ($request->last_name ?? '')
             );
 
-            // If user with same pratihari_id already exists, update it; else create new
             User::updateOrCreate(
-                [
-                    'pratihari_id' => $pratihariId,   // search condition
-                ],
-                [
-                    'name'          => $fullName,
-                    'mobile_number' => $mobileNumber,
-                ]
+                ['pratihari_id' => $pratihariId],
+                ['name' => $fullName, 'mobile_number' => $mobileNumber]
             );
             // =====================================================================
 
@@ -172,34 +161,26 @@ class PratihariProfileController extends Controller
                 ->route('admin.pratihariFamily', ['pratihari_id' => $pratihariProfile->pratihari_id])
                 ->with('success', 'User added successfully!');
         }
-
-        // --------- FRIENDLY ERROR HANDLING (short messages + field name) ---------
         catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
 
-            // default generic message
             $userMessage = 'Something went wrong while saving the profile. Please try again.';
 
-            // MySQL duplicate entry error code = 1062
             if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
                 $raw = $e->errorInfo[2] ?? $e->getMessage();
 
-                // Try to capture the key/index name from the message: "for key 'xxx'"
                 $indexName = null;
                 if (preg_match("/for key '([^']+)'/i", $raw, $matches)) {
                     $indexName = $matches[1];
                 }
 
-                // Map index/column to a friendly field label
                 $fieldMap = [
-                    // index names (adjust to your real ones)
                     'pratihari_profiles_healthcard_no_unique' => 'Health Card No',
                     'pratihari_profiles_pratihari_id_unique'  => 'Pratihari ID',
                     'pratihari_profiles_nijoga_id_unique'     => 'Nijoga ID',
                     'users_mobile_number_unique'              => 'Mobile No',
                     'users_pratihari_id_unique'               => 'Pratihari ID',
 
-                    // fallback: column names that might appear in message
                     'healthcard_no'                           => 'Health Card No',
                     'pratihari_id'                            => 'Pratihari ID',
                     'nijoga_id'                               => 'Nijoga ID',
@@ -209,11 +190,9 @@ class PratihariProfileController extends Controller
 
                 $fieldLabel = null;
 
-                // 1) Try direct match on index name
                 if ($indexName && isset($fieldMap[$indexName])) {
                     $fieldLabel = $fieldMap[$indexName];
                 } else {
-                    // 2) Fallback: search by substring of raw message
                     foreach ($fieldMap as $key => $label) {
                         if (\Illuminate\Support\Str::contains($raw, $key)) {
                             $fieldLabel = $label;
@@ -225,26 +204,21 @@ class PratihariProfileController extends Controller
                 if ($fieldLabel) {
                     $userMessage = "This {$fieldLabel} is already in use. Please enter a different {$fieldLabel}.";
                 } else {
-                    // final fallback
                     $userMessage = 'Duplicate entry found for one of the fields. Please change the value and try again.';
                 }
             }
 
-            // Log full error for debugging, but DO NOT show to user
-            \Log::error('DB error in Pratihari Profile Store: ' . $e->getMessage(), [
-                'exception' => $e,
-            ]);
+            \Log::error('DB error in Pratihari Profile Store: ' . $e->getMessage(), ['exception' => $e]);
 
             return redirect()
                 ->back()
                 ->withInput()
                 ->with('error', $userMessage);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
 
-            \Log::error('Error in Pratihari Profile Store: ' . $e->getMessage(), [
-                'exception' => $e,
-            ]);
+            \Log::error('Error in Pratihari Profile Store: ' . $e->getMessage(), ['exception' => $e]);
 
             return redirect()
                 ->back()

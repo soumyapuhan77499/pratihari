@@ -16,10 +16,15 @@ class PratihariProfile extends Model
     public const CATEGORY_C = 'c';
 
     protected $fillable = [
-        'pratihari_id','nijoga_id','first_name','middle_name','last_name','alias_name','category',
+        'pratihari_id','nijoga_id','first_name','middle_name','last_name','alias_name','bhagari','baristha_bhai_pua',
         'email','whatsapp_no','phone_no','alt_phone_no','blood_group','healthcard_no',
         'healthcard_photo','profile_photo','joining_date','joining_year','date_of_birth',
         'pratihari_status','reject_reason'
+    ];
+
+    protected $casts = [
+        'bhagari'            => 'boolean',
+        'baristha_bhai_pua'  => 'boolean',
     ];
 
     protected $appends = ['photo_url', 'full_name'];
