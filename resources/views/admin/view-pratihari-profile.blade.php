@@ -705,27 +705,18 @@
                             </div>
 
                             {{-- Health card photo: show default if missing --}}
-                            <div class="profile-item">
-                                <i class="fa-solid fa-image"></i>
-                                <div class="w-100">
-                                    <span class="key">Health Card Photo</span>
-                                    <div class="mt-1 d-flex align-items-center gap-2 flex-wrap">
-                                        <img
-                                            src="{{ $imgUrl($profile->healthcard_photo ?? null) }}"
-                                            alt="Health Card"
-                                            style="height:70px;width:110px;object-fit:cover;border-radius:10px;border:1px solid rgba(2,6,23,.10);"
-                                            onerror="{{ $imgOnError }}"
-                                        >
-                                        @if (!empty($profile->healthcard_photo))
-                                            <a href="{{ $imgUrl($profile->healthcard_photo) }}" target="_blank" class="btn btn-sm btn-ghost">
-                                                <i class="fa-solid fa-up-right-from-square me-1"></i>View Photo
-                                            </a>
-                                        @else
-                                            <span class="text-muted small">Not Available</span>
-                                        @endif
+                            @if (!empty($profile->healthcard_photo))
+                                <div class="profile-item">
+                                    <i class="fa-solid fa-image"></i>
+                                    <div>
+                                        <span class="key">Health Card Photo</span>
+                                        <a href="{{ asset($profile->healthcard_photo) }}" target="_blank"
+                                            class="btn btn-sm btn-ghost mt-1">
+                                            <i class="fa-solid fa-up-right-from-square me-1"></i>View Photo
+                                        </a>
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         </div>
                     </div>
                 </div>
