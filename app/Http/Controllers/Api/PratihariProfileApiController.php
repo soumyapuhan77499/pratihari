@@ -89,16 +89,19 @@ public function saveProfile(Request $request)
         ], 401);
     }
 
-    // ---------- VALIDATION (focus on image uploads) ----------
-    // Tune size/dimensions/mimes to your needs.
+    // ---------- VALIDATION (including new boolean fields) ----------
     $validator = Validator::make($request->all(), [
         // non-file fields you care about (optional)
-        'email'            => ['nullable','email'],
-        'healthcard_no'    => ['nullable','string','min:4'],
+        'email'              => ['nullable','email'],
+        'healthcard_no'      => ['nullable','string','min:4'],
+
+        // ✅ NEW: Yes/No fields (accepts 1/0, true/false, "on", etc.)
+        'bhagari'            => ['nullable','boolean'],
+        'baristha_bhai_pua'  => ['nullable','boolean'],
 
         // images
-        'healthcard_photo' => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
-        'original_photo'   => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
+        'healthcard_photo'   => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
+        'original_photo'     => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
     ], [
         'healthcard_photo.image'       => 'Health card photo must be an image.',
         'healthcard_photo.mimes'       => 'Health card photo must be a JPG, PNG, or WEBP.',
@@ -123,6 +126,7 @@ public function saveProfile(Request $request)
 
     try {
         return DB::transaction(function () use ($request, $pratihariId, &$newStoredPaths) {
+
             // Find or create
             $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihariId)->first();
             $isNew = false;
@@ -133,7 +137,7 @@ public function saveProfile(Request $request)
                 $pratihariProfile->pratihari_id = $pratihariId;
             }
 
-            // Assign basic fields (trim where sensible)
+            // Assign basic fields
             $pratihariProfile->first_name     = $request->input('first_name');
             $pratihariProfile->middle_name    = $request->input('middle_name');
             $pratihariProfile->last_name      = $request->input('last_name');
@@ -145,12 +149,15 @@ public function saveProfile(Request $request)
             $pratihariProfile->blood_group    = $request->input('blood_group');
             $pratihariProfile->healthcard_no  = $request->input('healthcard_no');
 
+            // ✅ NEW: save as 1/0 reliably
+            $pratihariProfile->bhagari           = $request->boolean('bhagari');
+            $pratihariProfile->baristha_bhai_pua = $request->boolean('baristha_bhai_pua');
+
             // --- Generate nijoga_id only for new users ---
             if ($isNew) {
                 $healthcard_no = (string) $request->input('healthcard_no', '');
                 $prefix = strtoupper(substr($healthcard_no, 0, 4));
 
-                // if healthcard_no is too short, fail nicely
                 if (strlen($prefix) < 4) {
                     return response()->json([
                         'status'  => 422,
@@ -177,8 +184,7 @@ public function saveProfile(Request $request)
                 $pratihariProfile->nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
             }
 
-            // --- File Uploads (with explicit error handling) ---
-            // Use Storage disk 'public'; files will be accessible at /storage/...
+            // --- File Uploads ---
             if ($request->hasFile('healthcard_photo')) {
                 $file = $request->file('healthcard_photo');
 
@@ -202,7 +208,7 @@ public function saveProfile(Request $request)
                 }
 
                 $path = 'storage/uploads/healthcard_photo/' . $safeName;
-                $newStoredPaths[] = $path; // track to cleanup on later failure
+                $newStoredPaths[] = $path;
                 $pratihariProfile->healthcard_photo = $path;
             }
 
@@ -258,9 +264,9 @@ public function saveProfile(Request $request)
             ], $isNew ? 201 : 200);
         });
     } catch (\Throwable $e) {
-        // Best-effort cleanup of any new files if something failed after storing them
+
+        // Cleanup newly stored files on failure
         foreach ($newStoredPaths as $publicPath) {
-            // convert "storage/..." to "public/..." for the disk
             $diskPath = preg_replace('#^storage/#', '', $publicPath);
             if ($diskPath) {
                 Storage::disk('public')->delete($diskPath);
