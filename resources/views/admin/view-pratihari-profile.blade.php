@@ -471,29 +471,12 @@
             box-shadow: 0 6px 14px rgba(124, 58, 237, .18)
         }
 
-        .grad-1 {
-            background: linear-gradient(120deg, #0ea5e9, #22c55e)
-        }
-
-        .grad-2 {
-            background: linear-gradient(120deg, #7c3aed, #f43f5e)
-        }
-
-        .grad-3 {
-            background: linear-gradient(120deg, #06b6d4, #3b82f6)
-        }
-
-        .grad-4 {
-            background: linear-gradient(120deg, #f59e0b, #ef4444)
-        }
-
-        .grad-5 {
-            background: linear-gradient(120deg, #10b981, #14b8a6)
-        }
-
-        .grad-6 {
-            background: linear-gradient(120deg, #ec4899, #8b5cf6)
-        }
+        .grad-1 { background: linear-gradient(120deg, #0ea5e9, #22c55e) }
+        .grad-2 { background: linear-gradient(120deg, #7c3aed, #f43f5e) }
+        .grad-3 { background: linear-gradient(120deg, #06b6d4, #3b82f6) }
+        .grad-4 { background: linear-gradient(120deg, #f59e0b, #ef4444) }
+        .grad-5 { background: linear-gradient(120deg, #10b981, #14b8a6) }
+        .grad-6 { background: linear-gradient(120deg, #ec4899, #8b5cf6) }
 
         /* Focus */
         :focus-visible {
@@ -503,21 +486,39 @@
         }
 
         @media (max-width:576px) {
-            .profile-hero {
-                align-items: flex-start
-            }
+            .profile-hero { align-items: flex-start }
         }
     </style>
 @endsection
 
 @section('content')
+    @php
+        // ✅ Default image (must exist): public/assets/img/1.jpeg
+        $defaultImg = asset('assets/img/1.jpeg');
+
+        // ✅ Convert stored path or URL to final image URL (fallback to default)
+        $imgUrl = function ($path) use ($defaultImg) {
+            if (empty($path)) return $defaultImg;
+            $path = trim($path);
+
+            // If already full URL
+            if (preg_match('~^https?://~i', $path)) return $path;
+
+            // Otherwise treat as public-relative path
+            return asset(ltrim($path, '/'));
+        };
+
+        // ✅ onerror fallback string (re-use everywhere)
+        $imgOnError = "this.onerror=null;this.src='{$defaultImg}';";
+    @endphp
+
     <div class="container-fluid my-3">
         <!-- Header -->
         <div class="page-header mb-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 <div class="profile-hero">
                     <span class="avatar">
-                        <img src="{{ asset($profile->profile_photo) }}" alt="Profile Photo">
+                        <img src="{{ $imgUrl($profile->profile_photo ?? null) }}" alt="Profile Photo" onerror="{{ $imgOnError }}">
                     </span>
                     <div>
                         <div class="title h4 mb-1">{{ $profile->first_name }} {{ $profile->last_name }}</div>
@@ -535,50 +536,50 @@
                 <div class="donut-card p-2 p-sm-3">
                     <div class="donut-rail">
                         <a class="donut text-decoration-none"
-                            href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit Personal">
+                           href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit Personal">
                             <canvas id="profileChart"></canvas>
                             <div class="label">Personal</div>
                             <div class="pct">{{ round($profileCompletion) }}%</div>
                         </a>
                         <a class="donut text-decoration-none"
-                            href="{{ route('family.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit Family">
+                           href="{{ route('family.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit Family">
                             <canvas id="familyChart"></canvas>
                             <div class="label">Family</div>
                             <div class="pct">{{ round($familyCompletion) }}%</div>
                         </a>
                         <a class="donut text-decoration-none"
-                            href="{{ route('idcard.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit ID Card">
+                           href="{{ route('idcard.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit ID Card">
                             <canvas id="idcardChart"></canvas>
                             <div class="label">ID Card</div>
                             <div class="pct">{{ round($idcardCompletion) }}%</div>
                         </a>
                         <a class="donut text-decoration-none"
-                            href="{{ route('address.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit Address">
+                           href="{{ route('address.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit Address">
                             <canvas id="addressChart"></canvas>
                             <div class="label">Address</div>
                             <div class="pct">{{ round($addressCompletion) }}%</div>
                         </a>
                         <a class="donut text-decoration-none"
-                            href="{{ route('occupation.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit Occupation">
+                           href="{{ route('occupation.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit Occupation">
                             <canvas id="occupationChart"></canvas>
                             <div class="label">Occupation</div>
                             <div class="pct">{{ round($occupationCompletion) }}%</div>
                         </a>
                         <a class="donut text-decoration-none"
-                            href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit Seba">
+                           href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit Seba">
                             <canvas id="sebaChart"></canvas>
                             <div class="label">Seba</div>
                             <div class="pct">{{ round($sebaCompletion) }}%</div>
                         </a>
                         <a class="donut text-decoration-none"
-                            href="{{ route('social.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            title="Edit Social">
+                           href="{{ route('social.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           title="Edit Social">
                             <canvas id="socialmediaChart"></canvas>
                             <div class="label">Social</div>
                             <div class="pct">{{ round($socialmediaCompletion) }}%</div>
@@ -618,7 +619,7 @@
                             <i class="fa-solid fa-user-circle me-2" style="color:var(--amber)"></i>Personal Details
                         </h6>
                         <a href="{{ route('profile.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            class="btn btn-sm btn-amber">
+                           class="btn btn-sm btn-amber">
                             <i class="fa-regular fa-pen-to-square me-1"></i>Edit
                         </a>
                     </div>
@@ -691,8 +692,7 @@
                                 <i class="fa-solid fa-calendar-check"></i>
                                 <div>
                                     <span class="key">Joining Date</span>
-                                    <span
-                                        class="val">{{ $joiningDateText ?? ($profile->joining_date ?? 'Not Available') }}</span>
+                                    <span class="val">{{ $joiningDateText ?? ($profile->joining_date ?? 'Not Available') }}</span>
                                 </div>
                             </div>
 
@@ -700,24 +700,32 @@
                                 <i class="fa-solid fa-calendar-days"></i>
                                 <div>
                                     <span class="key">Joining Year</span>
-                                    <span
-                                        class="val">{{ $joiningYearText ?? ($profile->joining_year ?? 'Not Available') }}</span>
+                                    <span class="val">{{ $joiningYearText ?? ($profile->joining_year ?? 'Not Available') }}</span>
                                 </div>
                             </div>
 
-                            {{-- ✅ FIX: use healthcard_photo (your controller stores healthcard_photo) --}}
-                            @if (!empty($profile->healthcard_photo))
-                                <div class="profile-item">
-                                    <i class="fa-solid fa-image"></i>
-                                    <div>
-                                        <span class="key">Health Card Photo</span>
-                                        <a href="{{ asset($profile->healthcard_photo) }}" target="_blank"
-                                            class="btn btn-sm btn-ghost mt-1">
-                                            <i class="fa-solid fa-up-right-from-square me-1"></i>View Photo
-                                        </a>
+                            {{-- Health card photo: show default if missing --}}
+                            <div class="profile-item">
+                                <i class="fa-solid fa-image"></i>
+                                <div class="w-100">
+                                    <span class="key">Health Card Photo</span>
+                                    <div class="mt-1 d-flex align-items-center gap-2 flex-wrap">
+                                        <img
+                                            src="{{ $imgUrl($profile->healthcard_photo ?? null) }}"
+                                            alt="Health Card"
+                                            style="height:70px;width:110px;object-fit:cover;border-radius:10px;border:1px solid rgba(2,6,23,.10);"
+                                            onerror="{{ $imgOnError }}"
+                                        >
+                                        @if (!empty($profile->healthcard_photo))
+                                            <a href="{{ $imgUrl($profile->healthcard_photo) }}" target="_blank" class="btn btn-sm btn-ghost">
+                                                <i class="fa-solid fa-up-right-from-square me-1"></i>View Photo
+                                            </a>
+                                        @else
+                                            <span class="text-muted small">Not Available</span>
+                                        @endif
                                     </div>
                                 </div>
-                            @endif
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -728,10 +736,9 @@
             <div class="tab-pane fade" id="family" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
-                        <h6 class="section-title"><i class="fa-solid fa-people-roof me-2"
-                                style="color:var(--amber)"></i>Family Details</h6>
+                        <h6 class="section-title"><i class="fa-solid fa-people-roof me-2" style="color:var(--amber)"></i>Family Details</h6>
                         <a href="{{ route('family.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                           class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
                     </div>
 
                     <div class="row g-3">
@@ -739,7 +746,7 @@
                             <div class="section-card p-3 h-100">
                                 <div class="text-center">
                                     <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
-                                        src="{{ asset($family->father_photo ?? '') }}" alt="Father">
+                                         src="{{ $imgUrl($family->father_photo ?? null) }}" alt="Father" onerror="{{ $imgOnError }}">
                                     <div class="fw-semibold">{{ $family->father_name ?? 'Not Available' }}</div>
                                     <div class="text-muted small">Father</div>
                                 </div>
@@ -749,7 +756,7 @@
                             <div class="section-card p-3 h-100">
                                 <div class="text-center">
                                     <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
-                                        src="{{ asset($family->mother_photo ?? '') }}" alt="Mother">
+                                         src="{{ $imgUrl($family->mother_photo ?? null) }}" alt="Mother" onerror="{{ $imgOnError }}">
                                     <div class="fw-semibold">{{ $family->mother_name ?? 'Not Available' }}</div>
                                     <div class="text-muted small">Mother</div>
                                 </div>
@@ -759,13 +766,12 @@
 
                     @if ($family && $family->maritial_status == 'married')
                         <hr class="my-4">
-                        <h6 class="fw-bold mb-2"><i class="fa-solid fa-heart me-2" style="color:var(--amber)"></i>Spouse
-                            & In-Laws</h6>
+                        <h6 class="fw-bold mb-2"><i class="fa-solid fa-heart me-2" style="color:var(--amber)"></i>Spouse & In-Laws</h6>
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <div class="section-card p-3 h-100 text-center">
                                     <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
-                                        src="{{ asset($family->spouse_photo ?? '') }}" alt="Spouse">
+                                         src="{{ $imgUrl($family->spouse_photo ?? null) }}" alt="Spouse" onerror="{{ $imgOnError }}">
                                     <div class="fw-semibold">{{ $family->spouse_name ?? 'Not Available' }}</div>
                                     <div class="text-muted small">Spouse</div>
                                 </div>
@@ -773,7 +779,7 @@
                             <div class="col-md-4">
                                 <div class="section-card p-3 h-100 text-center">
                                     <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
-                                        src="{{ asset($family->spouse_father_photo ?? '') }}" alt="Spouse Father">
+                                         src="{{ $imgUrl($family->spouse_father_photo ?? null) }}" alt="Spouse Father" onerror="{{ $imgOnError }}">
                                     <div class="fw-semibold">{{ $family->spouse_father_name ?? 'Not Available' }}</div>
                                     <div class="text-muted small">Spouse's Father</div>
                                 </div>
@@ -781,7 +787,7 @@
                             <div class="col-md-4">
                                 <div class="section-card p-3 h-100 text-center">
                                     <img class="rounded-circle mb-2" style="height:100px;width:100px;object-fit:cover;"
-                                        src="{{ asset($family->spouse_mother_photo ?? '') }}" alt="Spouse Mother">
+                                         src="{{ $imgUrl($family->spouse_mother_photo ?? null) }}" alt="Spouse Mother" onerror="{{ $imgOnError }}">
                                     <div class="fw-semibold">{{ $family->spouse_mother_name ?? 'Not Available' }}</div>
                                     <div class="text-muted small">Spouse's Mother</div>
                                 </div>
@@ -790,17 +796,17 @@
                     @endif
 
                     <hr class="my-4">
-                    <h6 class="fw-bold mb-2"><i class="fa-solid fa-child-reaching me-2"
-                            style="color:var(--amber)"></i>Children</h6>
+                    <h6 class="fw-bold mb-2"><i class="fa-solid fa-child-reaching me-2" style="color:var(--amber)"></i>Children</h6>
                     <div class="row g-3">
                         @forelse ($children as $child)
                             <div class="col-md-4">
                                 <div class="section-card p-3 h-100 text-center">
                                     <img class="rounded-circle mb-2" style="height:120px;width:120px;object-fit:cover;"
-                                        src="{{ asset($child->photo ?? '') }}" alt="Child">
+                                         src="{{ $imgUrl($child->photo ?? null) }}" alt="Child" onerror="{{ $imgOnError }}">
                                     <div class="fw-semibold">{{ $child->children_name }}</div>
-                                    <div class="text-muted small">{{ ucfirst($child->gender) }} • DOB:
-                                        {{ date('d M Y', strtotime($child->date_of_birth)) }}</div>
+                                    <div class="text-muted small">
+                                        {{ ucfirst($child->gender) }} • DOB: {{ !empty($child->date_of_birth) ? date('d M Y', strtotime($child->date_of_birth)) : 'Not Available' }}
+                                    </div>
                                 </div>
                             </div>
                         @empty
@@ -814,34 +820,45 @@
             <div class="tab-pane fade" id="idcard" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
-                        <h6 class="section-title"><i class="fa-solid fa-id-card me-2" style="color:var(--amber)"></i>ID
-                            Card Details</h6>
+                        <h6 class="section-title"><i class="fa-solid fa-id-card me-2" style="color:var(--amber)"></i>ID Card Details</h6>
                         <a href="{{ route('idcard.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                           class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
                     </div>
 
                     <div class="row g-3">
                         @foreach ($idcard as $index => $card)
+                            @php
+                                $idPhotoUrl = $imgUrl($card->id_photo ?? null);
+                            @endphp
+
                             <div class="col-md-4">
                                 <div class="section-card p-3 h-100">
                                     <div class="text-center border-bottom pb-2 mb-2">
                                         <div class="fw-bold text-uppercase">{{ $card->id_type ?? 'ID CARD' }}</div>
                                     </div>
                                     <div class="text-center">
-                                        <a href="{{ $card->id_photo }}" target="_blank">
-                                            <img src="{{ $card->id_photo }}" alt="ID Photo"
-                                                class="img-fluid rounded mb-2" style="height:160px;object-fit:cover;">
+                                        <a href="{{ $idPhotoUrl }}" target="_blank">
+                                            <img
+                                                src="{{ $idPhotoUrl }}"
+                                                alt="ID Photo"
+                                                class="img-fluid rounded mb-2"
+                                                style="height:160px;object-fit:cover;"
+                                                onerror="{{ $imgOnError }}"
+                                            >
                                         </a>
                                     </div>
                                     <div class="text-center small">
-                                        <div class="mb-1"><span class="text-muted">ID Type:</span> <span
-                                                class="fw-semibold">{{ $card->id_type ?? 'Not Available' }}</span></div>
-                                        <div><span class="text-muted">ID Number:</span> <span
-                                                class="fw-semibold">{{ $card->id_number ?? 'Not Available' }}</span></div>
+                                        <div class="mb-1"><span class="text-muted">ID Type:</span>
+                                            <span class="fw-semibold">{{ $card->id_type ?? 'Not Available' }}</span>
+                                        </div>
+                                        <div><span class="text-muted">ID Number:</span>
+                                            <span class="fw-semibold">{{ $card->id_number ?? 'Not Available' }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+
                         @if ($idcard->isEmpty())
                             <div class="col-12 text-center text-muted">No ID cards added.</div>
                         @endif
@@ -853,10 +870,9 @@
             <div class="tab-pane fade" id="address" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
-                        <h6 class="section-title"><i class="fa-solid fa-location-dot me-2"
-                                style="color:var(--amber)"></i>Address Details</h6>
+                        <h6 class="section-title"><i class="fa-solid fa-location-dot me-2" style="color:var(--amber)"></i>Address Details</h6>
                         <a href="{{ route('address.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            class="btn btn-sm btn-amber">
+                           class="btn btn-sm btn-amber">
                             <i class="fa-regular fa-pen-to-square me-1"></i>Edit
                         </a>
                     </div>
@@ -870,11 +886,7 @@
                             ['icon' => 'fa-thumbtack', 'label' => 'Landmark', 'value' => $addr->landmark ?? null],
                             ['icon' => 'fa-envelope', 'label' => 'Pincode', 'value' => $addr->pincode ?? null],
                             ['icon' => 'fa-mail-bulk', 'label' => 'Post', 'value' => $addr->post ?? null],
-                            [
-                                'icon' => 'fa-user-shield',
-                                'label' => 'Police Station',
-                                'value' => $addr->police_station ?? null,
-                            ],
+                            ['icon' => 'fa-user-shield', 'label' => 'Police Station', 'value' => $addr->police_station ?? null],
                             ['icon' => 'fa-city', 'label' => 'District', 'value' => $addr->district ?? null],
                             ['icon' => 'fa-map', 'label' => 'State', 'value' => $addr->state ?? null],
                             ['icon' => 'fa-flag', 'label' => 'Country', 'value' => $addr->country ?? null],
@@ -886,11 +898,7 @@
                             ['icon' => 'fa-thumbtack', 'label' => 'Landmark', 'value' => $addr->per_landmark ?? null],
                             ['icon' => 'fa-envelope', 'label' => 'Pincode', 'value' => $addr->per_pincode ?? null],
                             ['icon' => 'fa-mail-bulk', 'label' => 'Post', 'value' => $addr->per_post ?? null],
-                            [
-                                'icon' => 'fa-user-shield',
-                                'label' => 'Police Station',
-                                'value' => $addr->per_police_station ?? null,
-                            ],
+                            ['icon' => 'fa-user-shield', 'label' => 'Police Station', 'value' => $addr->per_police_station ?? null],
                             ['icon' => 'fa-city', 'label' => 'District', 'value' => $addr->per_district ?? null],
                             ['icon' => 'fa-map', 'label' => 'State', 'value' => $addr->per_state ?? null],
                             ['icon' => 'fa-flag', 'label' => 'Country', 'value' => $addr->per_country ?? null],
@@ -898,9 +906,7 @@
 
                         $isEmptyList = function ($list) {
                             foreach ($list as $x) {
-                                if (!empty($x['value'])) {
-                                    return false;
-                                }
+                                if (!empty($x['value'])) return false;
                             }
                             return true;
                         };
@@ -919,10 +925,8 @@
                                     @if ($isEmptyList($current))
                                         <div class="text-muted text-center py-3">Not Available</div>
                                     @else
-                                        <!-- Tagline -->
                                         <div class="mb-2">
-                                            <span class="tagline"><i class="fa-solid fa-location-crosshairs"></i> Where
-                                                you stay now</span>
+                                            <span class="tagline"><i class="fa-solid fa-location-crosshairs"></i> Where you stay now</span>
                                         </div>
                                         @foreach ($current as $row)
                                             <div class="addr-row">
@@ -961,8 +965,7 @@
                                         <div class="text-muted text-center py-3">Not Available</div>
                                     @else
                                         <div class="mb-2">
-                                            <span class="tagline"><i class="fa-solid fa-house"></i> Family / native
-                                                place</span>
+                                            <span class="tagline"><i class="fa-solid fa-house"></i> Family / native place</span>
                                         </div>
                                         @foreach ($permanent as $row)
                                             <div class="addr-row">
@@ -995,10 +998,9 @@
             <div class="tab-pane fade" id="occupation" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
-                        <h6 class="section-title"><i class="fa-solid fa-briefcase me-2"
-                                style="color:var(--amber)"></i>Occupation Details</h6>
+                        <h6 class="section-title"><i class="fa-solid fa-briefcase me-2" style="color:var(--amber)"></i>Occupation Details</h6>
                         <a href="{{ route('occupation.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                            class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                           class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
                     </div>
 
                     @if ($occupation->isNotEmpty())
@@ -1006,8 +1008,7 @@
                             <div class="col-lg-6 profile-section">
                                 <div class="profile-item"><i class="fa-solid fa-user-tie"></i>
                                     <div><span class="key">Occupation Type</span>
-                                        <span
-                                            class="val">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
+                                        <span class="val">{{ optional($occupation->first())->occupation_type ?? 'Not Available' }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1037,11 +1038,7 @@
             <div class="tab-pane fade" id="seba" role="tabpanel">
                 <div class="section-card p-3 p-md-4">
                     <div class="section-head">
-                        <h6 class="section-title"><i class="fa-solid fa-gears me-2" style="color:var(--amber)"></i>Seba
-                            Details</h6>
-                        {{-- <a href="{{ route('seba.update', ['pratihari_id' => $profile->pratihari_id]) }}" class="btn btn-sm btn-amber">
-                        <i class="fa-regular fa-pen-to-square me-1"></i>Edit
-                    </a> --}}
+                        <h6 class="section-title"><i class="fa-solid fa-gears me-2" style="color:var(--amber)"></i>Seba Details</h6>
                     </div>
 
                     @php $grads = ['grad-1','grad-2','grad-3','grad-4','grad-5','grad-6']; @endphp
@@ -1079,8 +1076,7 @@
                                             @if ($beddhas->isNotEmpty())
                                                 <div class="mt-1 d-flex flex-wrap gap-1">
                                                     @foreach ($beddhas as $beddha)
-                                                        <span class="seba-chip"><i
-                                                                class="fa-solid fa-user-tag"></i>{{ $beddha->beddha_name }}</span>
+                                                        <span class="seba-chip"><i class="fa-solid fa-user-tag"></i>{{ $beddha->beddha_name }}</span>
                                                     @endforeach
                                                 </div>
                                             @else
@@ -1102,57 +1098,56 @@
                         </div>
 
                         @if ($idx % 3 === 2 || $loop->last)
+                            </div>
+                        @endif
+                    @empty
+                        <p class="text-muted mb-0">No seba details available.</p>
+                    @endforelse
                 </div>
-                @endif
-            @empty
-                <p class="text-muted mb-0">No seba details available.</p>
-                @endforelse
             </div>
-        </div>
 
-        <!-- SOCIAL -->
-        <div class="tab-pane fade" id="social" role="tabpanel">
-            <div class="section-card p-3 p-md-4">
-                <div class="section-head">
-                    <h6 class="section-title"><i class="fa-solid fa-share-nodes me-2"
-                            style="color:var(--amber)"></i>Social Media</h6>
-                    <a href="{{ route('social.update', ['pratihari_id' => $profile->pratihari_id]) }}"
-                        class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
-                </div>
+            <!-- SOCIAL -->
+            <div class="tab-pane fade" id="social" role="tabpanel">
+                <div class="section-card p-3 p-md-4">
+                    <div class="section-head">
+                        <h6 class="section-title"><i class="fa-solid fa-share-nodes me-2" style="color:var(--amber)"></i>Social Media</h6>
+                        <a href="{{ route('social.update', ['pratihari_id' => $profile->pratihari_id]) }}"
+                           class="btn btn-sm btn-amber"><i class="fa-regular fa-pen-to-square me-1"></i>Edit</a>
+                    </div>
 
-                <div class="row g-3">
-                    @php
-                        $socialLinks = [
-                            ['fab fa-facebook-f', 'bg-primary', 'Facebook', $socialMedia->facebook_url ?? '#'],
-                            ['fab fa-instagram', 'bg-danger', 'Instagram', $socialMedia->instagram_url ?? '#'],
-                            ['fab fa-twitter', 'bg-info', 'Twitter', $socialMedia->twitter_url ?? '#'],
-                            ['fab fa-linkedin-in', 'bg-success', 'LinkedIn', $socialMedia->linkedin_url ?? '#'],
-                            ['fab fa-youtube', 'bg-danger', 'YouTube', $socialMedia->youtube_url ?? '#'],
-                        ];
-                    @endphp
+                    <div class="row g-3">
+                        @php
+                            $socialLinks = [
+                                ['fab fa-facebook-f', 'bg-primary', 'Facebook', $socialMedia->facebook_url ?? '#'],
+                                ['fab fa-instagram', 'bg-danger', 'Instagram', $socialMedia->instagram_url ?? '#'],
+                                ['fab fa-twitter', 'bg-info', 'Twitter', $socialMedia->twitter_url ?? '#'],
+                                ['fab fa-linkedin-in', 'bg-success', 'LinkedIn', $socialMedia->linkedin_url ?? '#'],
+                                ['fab fa-youtube', 'bg-danger', 'YouTube', $socialMedia->youtube_url ?? '#'],
+                            ];
+                        @endphp
 
-                    @foreach ($socialLinks as $s)
-                        <div class="col-md-6 col-lg-4">
-                            <div class="section-card p-3 d-flex align-items-center gap-3 h-100">
-                                <div class="rounded-circle text-white d-flex align-items-center justify-content-center {{ $s[1] }}"
-                                    style="width:44px;height:44px;">
-                                    <i class="{{ $s[0] }}"></i>
-                                </div>
-                                <div>
-                                    <div class="fw-semibold">{{ $s[2] }}</div>
-                                    <a href="{{ $s[3] ?: '#' }}" target="_blank"
-                                        class="text-muted small text-decoration-none">
-                                        {{ $s[3] ? (parse_url($s[3], PHP_URL_HOST) ?: $s[3]) : 'Not Available' }}
-                                    </a>
+                        @foreach ($socialLinks as $s)
+                            <div class="col-md-6 col-lg-4">
+                                <div class="section-card p-3 d-flex align-items-center gap-3 h-100">
+                                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center {{ $s[1] }}"
+                                        style="width:44px;height:44px;">
+                                        <i class="{{ $s[0] }}"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold">{{ $s[2] }}</div>
+                                        <a href="{{ $s[3] ?: '#' }}" target="_blank"
+                                           class="text-muted small text-decoration-none">
+                                            {{ $s[3] ? (parse_url($s[3], PHP_URL_HOST) ?: $s[3]) : 'Not Available' }}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
 
+                </div>
             </div>
         </div>
-    </div>
     </div>
 @endsection
 
@@ -1224,12 +1219,8 @@
                     cutout: '72%',
                     responsive: false,
                     plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            enabled: false
-                        }
+                        legend: { display: false },
+                        tooltip: { enabled: false }
                     }
                 }
             });
