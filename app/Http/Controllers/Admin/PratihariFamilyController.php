@@ -34,7 +34,7 @@ class PratihariFamilyController extends Controller
     public function saveFamily(Request $request)
     {
         $rules = [
-            'pratihari_id'    => ['required', 'integer'],
+            'pratihari_id'    => ['required'],
             'marital_status'  => ['required', 'in:married,unmarried'],
 
             'father_id'       => ['nullable'],
