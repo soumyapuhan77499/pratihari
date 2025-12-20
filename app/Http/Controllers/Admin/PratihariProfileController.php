@@ -70,36 +70,43 @@ class PratihariProfileController extends Controller
             $pratihariProfile->blood_group         = $request->blood_group;
             $pratihariProfile->healthcard_no       = $request->healthcard_no;
 
-            // ----------------- NIJOGA ID LOGIC -----------------
-            $healthcard_no = $request->healthcard_no;
-            $prefix = strtoupper(substr($healthcard_no, 0, 4)); // First 4 characters
+            // ----------------- NIJOGA ID LOGIC (FIXED) -----------------
+            $healthcard_no = (string) $request->healthcard_no;
 
-            $existingSameHealthcard = PratihariProfile::where('healthcard_no', $healthcard_no)
+            // Prefix = first 4 chars (uppercase). If shorter, pad with X (optional safety).
+            $rawPrefix = strtoupper(substr(preg_replace('/\s+/', '', $healthcard_no), 0, 4));
+            $prefix    = str_pad($rawPrefix, 4, 'X'); // ensures 4 chars even if input is short
+
+            /**
+             * FAMILY COUNT (middle 3 digits) = next number for same healthcard_no
+             * Extract middle segment from nijoga_id: XXXX-<FAMILY>-<SERIAL>
+             *
+             * Uses lockForUpdate() to prevent two concurrent inserts generating same familyCount.
+             */
+            $maxFamily = PratihariProfile::where('healthcard_no', $healthcard_no)
                 ->whereNotNull('nijoga_id')
-                ->get();
+                ->lockForUpdate()
+                ->selectRaw("MAX(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(nijoga_id, '-', 2), '-', -1) AS UNSIGNED)) AS max_family")
+                ->value('max_family');
 
-            if ($existingSameHealthcard->isEmpty()) {
-                $familyCount = 1;
-            } else {
-                $lastFamily = $existingSameHealthcard->map(function ($member) {
-                    return (int) substr($member->nijoga_id, 5, 3);
-                })->max();
+            $familyCount = ((int) $maxFamily) + 1; // first will become 1 => 001
 
-                $familyCount = $lastFamily + 1;
-            }
+            /**
+             * SERIAL (last 4 digits) = global increment starting at 0001
+             * Get maximum of last 4 digits from entire table, then +1.
+             *
+             * Uses lockForUpdate() to prevent duplicate serial under concurrency.
+             */
+            $maxSerial = PratihariProfile::whereNotNull('nijoga_id')
+                ->lockForUpdate()
+                ->selectRaw("MAX(CAST(RIGHT(nijoga_id, 4) AS UNSIGNED)) AS max_serial")
+                ->value('max_serial');
 
-            $lastSerial = PratihariProfile::whereNotNull('nijoga_id')
-                ->orderByDesc('id')
-                ->get()
-                ->map(function ($member) {
-                    return (int) substr($member->nijoga_id, -4);
-                })->max();
-
-            $serialNumber = $lastSerial ? $lastSerial + 1 : 1;
+            $serialNumber = ((int) $maxSerial) + 1; // first will become 1 => 0001
 
             $nijoga_id = sprintf('%s-%03d-%04d', $prefix, $familyCount, $serialNumber);
             $pratihariProfile->nijoga_id = $nijoga_id;
-            // --------------------------------------------------
+            // ----------------------------------------------------------
 
             // ✅ FIX: accept both input names: healthcard_photo OR health_card_photo
             $healthCardKey = $request->hasFile('healthcard_photo') ? 'healthcard_photo'
