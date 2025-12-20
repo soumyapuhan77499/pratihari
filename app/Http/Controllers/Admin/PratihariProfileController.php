@@ -36,7 +36,6 @@ class PratihariProfileController extends Controller
             'first_name'          => 'required|string|max:255',
             'bhagari'             => 'nullable|boolean',
             'baristha_bhai_pua'   => 'nullable|boolean',
-            // add more validation as needed
         ]);
 
         if ($validator->fails()) {
@@ -252,20 +251,38 @@ class PratihariProfileController extends Controller
         return view('admin.pratihari-manage-profile', compact('profiles', 'counts'));
     }
 
-    public function approve($id)
-    {
+
+public function approve($id)
+{
+    return DB::transaction(function () use ($id) {
+
         $profile = PratihariProfile::findOrFail($id);
 
-        // Generate `nijoga_id` using the first 4 digits of healthcard_no + 4 random digits
-        $nijogaId = substr($profile->healthcard_no, 0, 4) . rand(1000, 9999);
+        /**
+         * Get latest nijoga_id serial and increment.
+         * Works even if old nijoga_id values contain prefixes like "ABCD-001-0007"
+         * because it only looks at the last 4 characters as the serial.
+         */
+        $maxSerial = PratihariProfile::whereNotNull('nijoga_id')
+            ->lockForUpdate()
+            ->selectRaw("MAX(CAST(RIGHT(nijoga_id, 4) AS UNSIGNED)) AS max_serial")
+            ->value('max_serial');
+
+        $nextSerial = ((int) $maxSerial) + 1; // first time => 1
+        $nijogaId   = str_pad((string) $nextSerial, 4, '0', STR_PAD_LEFT); // 0001, 0002...
 
         $profile->update([
             'pratihari_status' => 'approved',
-            'nijoga_id' => $nijogaId
+            'nijoga_id'        => $nijogaId,
         ]);
 
-        return response()->json(['message' => 'Profile approved successfully!']);
-    }
+        return response()->json([
+            'message'   => 'Profile approved successfully!',
+            'nijoga_id' => $nijogaId,
+        ]);
+    });
+}
+
         
     public function reject(Request $request, $id)
     {
