@@ -3,6 +3,120 @@
 @section('styles')
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --brand-a: #7c3aed;
+            /* violet */
+            --brand-b: #06b6d4;
+            /* cyan   */
+            --accent: #f5c12e;
+            /* amber  */
+            --ink: #0b1220;
+            --muted: #64748b;
+            --border: rgba(2, 6, 23, .10);
+            --soft: #f8fafc;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(2, 6, 23, .06);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: .3px;
+            border-radius: 14px 14px 0 0;
+            text-transform: uppercase;
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            border: 0;
+            background: #fff;
+            border-radius: 12px;
+            padding: .4rem;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, .06);
+        }
+
+        .nav-tabs .nav-link {
+            border: 1px solid transparent;
+            background: var(--soft);
+            color: var(--muted);
+            border-radius: 10px;
+            font-weight: 700;
+            margin: .2rem;
+            padding: .6rem .9rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            white-space: nowrap;
+            transition: all .18s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #eef2ff;
+            color: var(--ink);
+            transform: translateY(-1px);
+            border-color: rgba(124, 58, 237, .25);
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #fff !important;
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            border-color: transparent;
+            box-shadow: 0 10px 18px rgba(124, 58, 237, .22);
+        }
+
+        /* Inputs with icons */
+        label {
+            font-weight: 600;
+            color: #1f2937
+        }
+
+        .input-group-text {
+            background: #fff;
+            border-right: 0;
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .input-group .form-control {
+            border-left: 0;
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        /* Buttons */
+        .btn-brand {
+            background: linear-gradient(90deg, var(--brand-a), var(--brand-b));
+            border: 0;
+            color: #fff;
+            font-weight: 800;
+            border-radius: 10px;
+            box-shadow: 0 12px 24px rgba(124, 58, 237, .22);
+        }
+
+        .btn-brand:hover {
+            opacity: .96
+        }
+
+        /* Section spacing */
+        .section-gap>[class^="col-"] {
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+
+
 @endsection
 
 @section('content')
