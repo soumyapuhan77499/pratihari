@@ -13,7 +13,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 
-
 class PratihariFamilyController extends Controller
 {
 
@@ -296,6 +295,7 @@ public function edit($pratihari_id)
 
     return view('admin.update-family-details', compact('family', 'pratiharis'));
 }
+
 public function updateFamily(Request $request, $pratihariId)
 {
     // ---- Validation rules (update) ----
