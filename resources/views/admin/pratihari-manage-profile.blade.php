@@ -272,7 +272,7 @@
                                     <td>
                                         <a href="{{ route('admin.viewProfile', $profile->pratihari_id) }}"
                                             class="btn btn-slim" style="background:var(--amber); color:#1f2937;">
-                                            <i class="fa-regular fa-eye me-1"></i> View
+                                            <i class="fa-regular fa-eye me-1"></i>
                                         </a>
                                     </td>
 
