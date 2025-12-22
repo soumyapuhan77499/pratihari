@@ -41,7 +41,7 @@ return [
         'wa_body_params' => (int) env('MSG91_WA_BODY_PARAMS', 1),
     ],
 
-      'firebase' => [
+    'firebase' => [
         'pratihari' => [
             'credentials' => env('FIREBASE_PRATIHARI_CREDENTIALS_PATH'),
         ],

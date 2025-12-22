@@ -290,4 +290,5 @@ class PratihariNoticeController extends Controller
 
         return redirect()->back()->with('success', 'Notice deleted successfully.');
     }
+    
 }

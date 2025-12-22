@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Str;
 use Kreait\Firebase\Factory;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification as FcmNotification;
@@ -10,14 +11,20 @@ class NotificationService
 {
     protected $messaging;
 
-    /**
-     * @param string $credentialKey  'pratihari' or 'user' (matches config/services.php)
-     */
     public function __construct(string $credentialKey = 'pratihari', ?string $credentialsPath = null)
     {
         $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
 
-        if (!$path || !file_exists($path)) {
+        if (!$path) {
+            throw new \InvalidArgumentException("Firebase credentials path is empty for key: {$credentialKey}");
+        }
+
+        // If relative path given (like storage/app/...), resolve from Laravel base path
+        if (!Str::startsWith($path, ['/','\\']) && !preg_match('/^[A-Za-z]:\\\\/', $path)) {
+            $path = base_path($path);
+        }
+
+        if (!file_exists($path)) {
             throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
         }
 
