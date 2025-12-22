@@ -430,51 +430,72 @@ public function viewProfile($pratihari_id)
     {
         // Validate incoming request
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
+            'first_name'         => 'required|string|max:255',
+
+            // ✅ NEW: boolean fields
+            'bhagari'            => 'nullable|boolean',
+            'baristha_bhai_pua'  => 'nullable|boolean',
+
+            // (optional but recommended basic validation)
+            'email'              => 'nullable|email|max:255',
+            'whatsapp_no'        => 'nullable|string|max:15',
+            'phone_no'           => 'nullable|string|max:15',
+            'blood_group'        => 'nullable|string|max:10',
+            'healthcard_no'      => 'nullable|string|max:255',
+            'joining_date'       => 'nullable|string|max:50', // can be year or date (as you use toggle)
+            'date_of_birth'      => 'nullable|date',
+            'health_card_photo'  => 'nullable|image|max:5120',
+            'profile_photo'      => 'nullable|image|max:5120',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        DB::beginTransaction();
+
         try {
-            // Find the existing profile by ID
+            // Find the existing profile by pratihari_id
             $pratihariProfile = PratihariProfile::where('pratihari_id', $pratihari_id)->firstOrFail();
 
-            // Update the profile data
-            $pratihariProfile->first_name = $request->first_name;
-            $pratihariProfile->middle_name = $request->middle_name;
-            $pratihariProfile->last_name = $request->last_name;
-            $pratihariProfile->alias_name = $request->alias_name;
-            $pratihariProfile->email = $request->email;
-            $pratihariProfile->whatsapp_no = $request->whatsapp_no;
-            $pratihariProfile->phone_no = $request->phone_no;
-            // $pratihariProfile->alt_phone_no = $request->alt_phone_no;
-            $pratihariProfile->blood_group = $request->blood_group;
-            $pratihariProfile->healthcard_no = $request->health_card_no;
-            $pratihariProfile->joining_date = $request->joining_date;
+            // Basic fields
+            $pratihariProfile->first_name   = $request->first_name;
+            $pratihariProfile->middle_name  = $request->middle_name;
+            $pratihariProfile->last_name    = $request->last_name;
+            $pratihariProfile->alias_name   = $request->alias_name;
+            $pratihariProfile->email        = $request->email;
+            $pratihariProfile->whatsapp_no  = $request->whatsapp_no;
+            $pratihariProfile->phone_no     = $request->phone_no;
+            // $pratihariProfile->alt_phone_no = $request->alt_phone_no; // if you want enable later
+            $pratihariProfile->blood_group  = $request->blood_group;
+
+            // ✅ FIX: form field name is "healthcard_no" (not health_card_no)
+            $pratihariProfile->healthcard_no = $request->healthcard_no;
+
+            $pratihariProfile->joining_date  = $request->joining_date;
             $pratihariProfile->date_of_birth = $request->date_of_birth;
 
+            // ✅ NEW: Bhagari + Baristha Bhai Pua
+            // Works with your blade approach (hidden 0 + checkbox 1) and also works if not sent.
+            $pratihariProfile->bhagari           = $request->boolean('bhagari');
+            $pratihariProfile->baristha_bhai_pua = $request->boolean('baristha_bhai_pua');
+
+            // Status update rule
             if ($pratihariProfile->pratihari_status === 'rejected') {
-              $pratihariProfile->pratihari_status = 'updated';
+                $pratihariProfile->pratihari_status = 'updated';
             }
-            
+
             // Handle health card photo upload if exists
             if ($request->hasFile('health_card_photo')) {
                 $healthCardPhoto = $request->file('health_card_photo');
 
-                // Check if the file is valid
                 if (!$healthCardPhoto->isValid()) {
                     throw new \Exception('Health card photo upload failed. Please try again.');
                 }
 
-                // Generate unique file name
                 $healthCardImageName = 'health_card_photo_' . time() . '.' . $healthCardPhoto->getClientOriginalExtension();
-
-                // Move file to public/uploads/health_card_photo
                 $healthCardPhoto->move(public_path('uploads/health_card_photo'), $healthCardImageName);
 
-                // Store relative path in database
                 $pratihariProfile->health_card_photo = 'uploads/health_card_photo/' . $healthCardImageName;
             }
 
@@ -482,32 +503,29 @@ public function viewProfile($pratihari_id)
             if ($request->hasFile('profile_photo')) {
                 $profilePhoto = $request->file('profile_photo');
 
-                // Check if the file is valid
                 if (!$profilePhoto->isValid()) {
                     throw new \Exception('Profile photo upload failed. Please try again.');
                 }
 
-                // Generate unique file name
-                $imageName = time() . '.' . $profilePhoto->getClientOriginalExtension();
-
-                // Move file to public/uploads/profile_photos
+                $imageName = 'profile_photo_' . time() . '.' . $profilePhoto->getClientOriginalExtension();
                 $profilePhoto->move(public_path('uploads/profile_photos'), $imageName);
 
-                // Store relative path in database
                 $pratihariProfile->profile_photo = 'uploads/profile_photos/' . $imageName;
             }
 
-            // Save the updated profile
             $pratihariProfile->save();
 
-            return redirect()->route('admin.viewProfile', ['pratihari_id' => $pratihari_id])->with('success', 'Profile updated successfully!');
+            DB::commit();
 
+            return redirect()
+                ->route('admin.viewProfile', ['pratihari_id' => $pratihari_id])
+                ->with('success', 'Profile updated successfully!');
         } catch (\Exception $e) {
-            // Log the exception and display the specific error message
-            \Log::error('Error in Pratihari Profile Update: ' . $e->getMessage());
+            DB::rollBack();
 
-            // Return a detailed error message
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+            Log::error('Error in Pratihari Profile Update: ' . $e->getMessage(), ['exception' => $e]);
+
+            return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
         }
     }
 

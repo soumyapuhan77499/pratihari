@@ -99,7 +99,6 @@ public function saveProfile(Request $request)
         'bhagari'            => ['nullable','boolean'],
         'baristha_bhai_pua'  => ['nullable','boolean'],
 
-        // images
         'healthcard_photo'   => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
         'original_photo'     => ['nullable','file','image','mimes:jpg,jpeg,png,webp','max:2048','dimensions:min_width=200,min_height=200'],
     ], [
