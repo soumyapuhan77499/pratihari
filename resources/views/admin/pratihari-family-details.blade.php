@@ -1,7 +1,8 @@
+{{-- Updated Blade: ONLY ONE Children section (dynamic via Add Child) --}}
 @extends('layouts.app')
 
 @section('styles')
-    <!-- Bootstrap 5 + Font Awesome 6 (match profile page) -->
+    <!-- Bootstrap 5 + Font Awesome 6 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -288,7 +289,7 @@
                             </div>
                         </div>
 
-                        {{-- SPOUSE DETAILS (UPDATED: full name dropdown + manual) --}}
+                        {{-- SPOUSE DETAILS --}}
                         <div class="row g-3 mt-1" id="spouseDetails" style="display:none;">
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="spouse_select">Spouse Name</label>
@@ -353,7 +354,7 @@
                             </div>
                         </div>
 
-                        {{-- CHILDREN --}}
+                        {{-- CHILDREN (ONLY ONE SECTION - DYNAMIC) --}}
                         <div class="col-12 mt-3" id="childrenBlock" style="display:none;">
                             <div class="d-flex align-items-center justify-content-between">
                                 <div class="h6 mb-0">
@@ -424,15 +425,13 @@
                 .replaceAll("'",'&#039;');
         }
 
-        // Pratihari list for spouse dropdowns (main + child)
-        // Controller should send: select('id','first_name','middle_name','last_name')
+        // Controller should send: $pratiharis as array/collection with first_name/middle_name/last_name (or already full_name)
         const PRATIHARIS = @json($pratiharis ?? []);
 
         function buildFullName(p){
-            return [p.first_name, p.middle_name, p.last_name]
-                .filter(Boolean)
-                .join(' ')
-                .trim();
+            // If controller already provides full_name, prefer it
+            if (p.full_name) return String(p.full_name).trim();
+            return [p.first_name, p.middle_name, p.last_name].filter(Boolean).join(' ').trim();
         }
 
         function buildSpouseOptionsHtml(){
@@ -508,38 +507,19 @@
             if(!spouseSelectMain || !spouseManualDiv) return;
             if(spouseSelectMain.value === 'manual'){
                 spouseManualDiv.style.display = 'block';
-                spouseManualInp && (spouseManualInp.required = true);
+                if (spouseManualInp) spouseManualInp.required = true;
             }else{
                 spouseManualDiv.style.display = 'none';
-                if(spouseManualInp){ spouseManualInp.value = ''; spouseManualInp.required = false; }
+                if(spouseManualInp){
+                    spouseManualInp.value = '';
+                    spouseManualInp.required = false;
+                }
             }
         }
 
         if(spouseSelectMain){
             spouseSelectMain.addEventListener('change', refreshMainSpouseManual);
         }
-
-        function refreshMaritalUI(){
-            const isMarried = !!married?.checked;
-
-            spouse.style.display = isMarried ? 'flex' : 'none';
-            spouse.style.flexWrap = isMarried ? 'wrap' : '';
-            kids.style.display   = isMarried ? 'block' : 'none';
-
-            setChildrenRequired(isMarried);
-
-            if(!isMarried){
-                if(spouseSelectMain) spouseSelectMain.value = '';
-                refreshMainSpouseManual();
-            }else{
-                refreshMainSpouseManual();
-            }
-
-            container.querySelectorAll('.child-row').forEach(row => toggleChildSpouse(row));
-        }
-
-        if(married)   married.addEventListener('change', refreshMaritalUI);
-        if(unmarried) unmarried.addEventListener('change', refreshMaritalUI);
 
         function toggleChildSpouse(row){
             const ms = row.querySelector('.child-marital');
@@ -569,6 +549,31 @@
                 }
             }
         }
+
+        function refreshMaritalUI(){
+            const isMarried = !!married?.checked;
+
+            spouse.style.display = isMarried ? 'flex' : 'none';
+            spouse.style.flexWrap = isMarried ? 'wrap' : '';
+            kids.style.display   = isMarried ? 'block' : 'none';
+
+            setChildrenRequired(isMarried);
+
+            if(!isMarried){
+                if(spouseSelectMain) spouseSelectMain.value = '';
+                refreshMainSpouseManual();
+
+                // If unmarried, remove all added children rows (optional). Comment if you want to keep.
+                // container.innerHTML = '';
+            }else{
+                refreshMainSpouseManual();
+            }
+
+            container.querySelectorAll('.child-row').forEach(row => toggleChildSpouse(row));
+        }
+
+        if(married)   married.addEventListener('change', refreshMaritalUI);
+        if(unmarried) unmarried.addEventListener('change', refreshMaritalUI);
 
         function addChildRow(){
             const idx = container.querySelectorAll('.child-row').length + 1;
