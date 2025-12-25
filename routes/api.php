@@ -115,29 +115,14 @@ Route::controller(PratihariSebaApiController::class)->group(function () {
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| Seba Routes (General)
-|--------------------------------------------------------------------------
-*/
 Route::controller(SebaApiController::class)->group(function () {
     Route::get('/seba-dates', 'sebaDate');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Notice Routes
-|--------------------------------------------------------------------------
-*/
 Route::controller(PratihariNoticeController::class)->group(function () {
     Route::get('/pratihari-notice', 'getNotice');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Status Routes (Authenticated)
-|--------------------------------------------------------------------------
-*/
 Route::middleware('auth:sanctum')
     ->controller(StatusController::class)
     ->group(function () {

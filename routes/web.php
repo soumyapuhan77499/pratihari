@@ -85,8 +85,6 @@ Route::prefix('admin')->group(function () {
         Route::post('/pratihari-address-save', 'saveAddress')->name('admin.pratihari-address.store');
         Route::get('/address-update/{pratihari_id}', 'edit')->name('address.update');
         Route::put('/pratihari-address-update/{pratihari_id}', 'updateAddress')->name('admin.pratihari-address.update');
-
-        // 🏘️ Sahi management
         Route::get('/add-sahi', 'addSahi')->name('addSahi');
         Route::get('/manage-sahi', 'manageSahi')->name('manageSahi');
         Route::post('/save-sahi', 'saveSahi')->name('saveSahi');
@@ -116,13 +114,10 @@ Route::prefix('admin')->group(function () {
     Route::controller(PratihariSebaController::class)->group(function () {
         Route::get('/pratihari-seba', 'pratihariSeba')->name('admin.pratihariSeba');
         Route::post('/pratihari-seba-save', 'saveSeba')->name('admin.pratihari-seba.store');
-
         Route::get('/get-seba/{nijoga_id}', 'getSebaByNijoga')->name('admin.getSebaByNijoga');
         Route::get('/get-beddha/{seba_id}', 'getBeddhaBySeba')->name('admin.getBeddhaBySeba');
-
         Route::get('/seba-edit/{pratihari_id}', 'edit')->name('seba.update');
         Route::put('/seba-update/{pratihari_id}', 'update')->name('admin.pratihari-seba.update');
-
         Route::get('/assign-pratihari-seba', 'PratihariSebaAssign')->name('admin.PratihariSebaAssign');
         Route::post('/save-pratihari-assign-seba', 'savePratihariAssignSeba')->name('admin.savePratihariAssignSeba');
     });

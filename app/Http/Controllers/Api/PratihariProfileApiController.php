@@ -390,6 +390,8 @@ public function getAllData(Request $request)
                 'gender' => $child->gender,
                 'photo' => $child->photo,
                 'photo_url' => !empty($child->photo) ? $photoBaseUrl . '/' . ltrim($child->photo, '/') : null,
+                'marital_status' => $child->marital_status,
+                'spouse_name' => $child->spouse_name ?? null,
             ];
         });
 
