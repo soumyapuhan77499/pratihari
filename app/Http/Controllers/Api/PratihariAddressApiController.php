@@ -47,19 +47,6 @@ public function saveAddress(Request $request)
         $address->same_as_permanent_address = $sameAddress ? 1 : 0;
 
         if ($sameAddress) {
-            // ✅ Checkbox TRUE: permanent address = same as present
-            $address->per_address        = $request->address;
-            $address->per_sahi           = $request->sahi;
-            $address->per_landmark       = $request->landmark;
-            $address->per_post           = $request->post;
-            $address->per_police_station = $request->police_station;
-            $address->per_pincode        = $request->pincode;
-            $address->per_district       = $request->district;
-            $address->per_state          = $request->state;
-            $address->per_country        = $request->country;
-        } else {
-            // ✅ Checkbox FALSE: use user-input permanent address fields
-            // (if user leaves them empty they’ll be null/blank, but we don’t force copy or clear)
             $address->per_address        = $request->per_address;
             $address->per_sahi           = $request->per_sahi;
             $address->per_landmark       = $request->per_landmark;
@@ -69,6 +56,16 @@ public function saveAddress(Request $request)
             $address->per_district       = $request->per_district;
             $address->per_state          = $request->per_state;
             $address->per_country        = $request->per_country;
+        } else {
+            $address->per_address        = $request->address;
+            $address->per_sahi           = $request->sahi;
+            $address->per_landmark       = $request->landmark;
+            $address->per_post           = $request->post;
+            $address->per_police_station = $request->police_station;
+            $address->per_pincode        = $request->pincode;
+            $address->per_district       = $request->district;
+            $address->per_state          = $request->state;
+            $address->per_country        = $request->country;
         }
 
         $address->save();
