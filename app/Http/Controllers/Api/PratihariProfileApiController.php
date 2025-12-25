@@ -147,7 +147,8 @@ public function saveProfile(Request $request)
             $pratihariProfile->alt_phone_no   = $request->input('alt_phone_no');
             $pratihariProfile->blood_group    = $request->input('blood_group');
             $pratihariProfile->healthcard_no  = $request->input('healthcard_no');
-
+            $pratihariProfile->joining_date = $request->input('joining_date');
+            $pratihariProfile->joining_year = $request->input('joining_year');
             // ✅ NEW: save as 1/0 reliably
             $pratihariProfile->bhagari           = $request->boolean('bhagari');
             $pratihariProfile->baristha_bhai_pua = $request->boolean('baristha_bhai_pua');
@@ -239,16 +240,16 @@ public function saveProfile(Request $request)
             }
 
             // --- Joining Date/Year ---
-            if ($request->filled('joining_date')) {
-                $pratihariProfile->joining_date = $request->input('joining_date');
-                $pratihariProfile->joining_year = null;
-            } elseif ($request->filled('joining_year')) {
-                $pratihariProfile->joining_year = $request->input('joining_year');
-                $pratihariProfile->joining_date = null;
-            } else {
-                $pratihariProfile->joining_date = null;
-                $pratihariProfile->joining_year = null;
-            }
+            // if ($request->filled('joining_date')) {
+            //     $pratihariProfile->joining_date = $request->input('joining_date');
+            //     $pratihariProfile->joining_year = null;
+            // } elseif ($request->filled('joining_year')) {
+            //     $pratihariProfile->joining_year = $request->input('joining_year');
+            //     $pratihariProfile->joining_date = null;
+            // } else {
+            //     $pratihariProfile->joining_date = null;
+            //     $pratihariProfile->joining_year = null;
+            // }
 
             // --- DOB ---
             $pratihariProfile->date_of_birth = $request->input('date_of_birth');
@@ -705,6 +706,7 @@ public function updateProfile(Request $request, $pratihari_id)
         $pratihariProfile->blood_group = $request->blood_group;
         $pratihariProfile->healthcard_no = $request->health_card_no;
         $pratihariProfile->joining_date = $request->joining_date;
+        $pratihariProfile->joining_year = $request->joining_year;
         $pratihariProfile->date_of_birth = $request->date_of_birth;
 
         if ($pratihariProfile->pratihari_status === 'rejected') {
