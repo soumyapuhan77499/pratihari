@@ -30,8 +30,34 @@ public function saveAddress(Request $request)
             $address = new PratihariAddress();
             $address->pratihari_id = $pratihariId;
         }
+            $address->per_address        = $request->per_address;
+            $address->per_sahi           = $request->per_sahi;
+            $address->per_landmark       = $request->per_landmark;
+            $address->per_post           = $request->per_post;
+            $address->per_police_station = $request->per_police_station;
+            $address->per_pincode        = $request->per_pincode;
+            $address->per_district       = $request->per_district;
+            $address->per_state          = $request->per_state;
+            $address->per_country        = $request->per_country;
 
-        // -------- Present address fields --------
+        // Checkbox: "permanent address same as present?"
+        $sameAddress = $request->boolean('same_as_permanent_address');
+        $address->same_as_permanent_address = $sameAddress ? 1 : 0;
+
+        if ($sameAddress) {
+             // -------- Present address fields --------
+        $address->sahi           = $request->per_sahi;
+        $address->landmark       = $request->per_landmark;
+        $address->post           = $request->per_post;
+        $address->police_station = $request->per_police_station;
+        $address->pincode        = $request->per_pincode;
+        $address->district       = $request->per_district;
+        $address->state          = $request->per_state;
+        $address->country        = $request->per_country;
+        $address->address        = $request->per_address;
+
+        } else {
+
         $address->sahi           = $request->sahi;
         $address->landmark       = $request->landmark;
         $address->post           = $request->post;
@@ -42,30 +68,6 @@ public function saveAddress(Request $request)
         $address->country        = $request->country;
         $address->address        = $request->address;
 
-        // Checkbox: "permanent address same as present?"
-        $sameAddress = $request->boolean('same_as_permanent_address');
-        $address->same_as_permanent_address = $sameAddress ? 1 : 0;
-
-        if ($sameAddress) {
-            $address->per_address        = $request->per_address;
-            $address->per_sahi           = $request->per_sahi;
-            $address->per_landmark       = $request->per_landmark;
-            $address->per_post           = $request->per_post;
-            $address->per_police_station = $request->per_police_station;
-            $address->per_pincode        = $request->per_pincode;
-            $address->per_district       = $request->per_district;
-            $address->per_state          = $request->per_state;
-            $address->per_country        = $request->per_country;
-        } else {
-            $address->per_address        = $request->address;
-            $address->per_sahi           = $request->sahi;
-            $address->per_landmark       = $request->landmark;
-            $address->per_post           = $request->post;
-            $address->per_police_station = $request->police_station;
-            $address->per_pincode        = $request->pincode;
-            $address->per_district       = $request->district;
-            $address->per_state          = $request->state;
-            $address->per_country        = $request->country;
         }
 
         $address->save();
