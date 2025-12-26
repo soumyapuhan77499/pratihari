@@ -264,7 +264,7 @@
 
                             <!-- Submit -->
                             <div class="col-12 text-center mt-2">
-                                <button type="submit" class="btn btn-brand w-50">
+                                <button type="submit" class="btn btn-brand w-50" style="color: white">
                                     <i class="fa fa-save me-1"></i> Update
                                 </button>
                             </div>

@@ -191,7 +191,7 @@
                         <button type="button" class="btn btn-amber mt-2" id="add-id-btn">
                             <i class="fas fa-plus me-1"></i> Add ID
                         </button>
-                        <button type="submit" class="btn btn-brand mt-2 w-50">
+                        <button type="submit" class="btn btn-brand mt-2 w-50"  style="color: white">
                             <i class="fa fa-save me-1"></i> Update
                         </button>
                     </div>

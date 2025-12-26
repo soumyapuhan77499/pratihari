@@ -212,7 +212,7 @@
                         </div>
 
                         <div class="text-center mt-5">
-                            <button type="submit" class="btn btn-lg px-5 btn-brand">
+                            <button type="submit" class="btn btn-lg px-5 btn-brand"  style="color: white">
                                 <i class="fa-regular fa-floppy-disk me-2"></i>Submit
                             </button>
                         </div>

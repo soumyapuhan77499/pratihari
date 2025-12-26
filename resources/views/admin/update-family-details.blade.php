@@ -501,7 +501,7 @@
                             </div>
 
                             <div class="col-12 text-center mt-4">
-                                <button type="submit" class="btn btn-lg btn-success px-5">
+                                <button type="submit" class="btn btn-lg btn-success px-5"  style="color: white">
                                     <i class="fa fa-save me-1"></i> Update
                                 </button>
                             </div>
