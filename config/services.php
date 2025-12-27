@@ -40,13 +40,19 @@ return [
         // how many variables your approved template’s BODY expects: 1 (OTP only) or 2 (OTP + token)
         'wa_body_params' => (int) env('MSG91_WA_BODY_PARAMS', 1),
     ],
+    
+  'firebase' => [
+        'default' => env('FIREBASE_DEFAULT_APP', 'pratihari'),
 
-    'firebase' => [
-        'pratihari' => [
-            'credentials' => env('FIREBASE_PRATIHARI_CREDENTIALS_PATH'),
-        ],
-        'user' => [
-            'credentials' => env('FIREBASE_USER_CREDENTIALS_PATH'),
+        'apps' => [
+            'pratihari' => [
+                'credentials' => env('FIREBASE_PRATIHARI_CREDENTIALS_PATH'),
+            ],
+
+            // If you add more projects later:
+            // 'gochhikar' => [
+            //     'credentials' => env('FIREBASE_GOCHHIKAR_CREDENTIALS_PATH'),
+            // ],
         ],
     ],
 
