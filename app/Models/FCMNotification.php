@@ -13,6 +13,7 @@ class FCMNotification extends Model
     protected $table = 'f_c_m_notifications';
 
     protected $fillable = [
+        'notice_id',
         'title',
         'description',
         'image',
