@@ -9,6 +9,9 @@ class PratihariDevice extends Model
 {
     use HasFactory;
 
+    protected $table = 'pratihari_devices';
+
+
     protected $fillable = ['pratihari_id', 'device_id', 'platform', 'device_model', 'version', 'last_login_time'];
 
     public function pratihari()
