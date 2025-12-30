@@ -12,20 +12,7 @@ class NotificationService
 {
     protected $messaging;
 
-    public function __construct(string $credentialKey = 'pratihari', ?string $credentialsPath = null)
-    {
-        $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
-
-        $path = $this->resolveFirebaseCredentialsPath($path);
-
-        if (!$path || !is_file($path)) {
-            throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
-        }
-
-        $factory = (new Factory)->withServiceAccount($path);
-        $this->messaging = $factory->createMessaging();
-    }
-
+   
     /**
      * Convert env/config path into an absolute filesystem path.
      *
@@ -34,30 +21,47 @@ class NotificationService
      * - relative: storage/app/firebase/pratihari.json
      * - relative: app/firebase/pratihari.json (will map to storage/app/...)
      */
-    private function resolveFirebaseCredentialsPath(?string $path): ?string
-    {
-        if (!$path) return null;
+   private function resolveFirebaseCredentialsPath(?string $path): ?string
+{
+    if (!$path) return null;
 
-        $path = trim($path);
+    $path = trim($path);
 
-        // Already absolute path (Linux)
-        if (str_starts_with($path, '/')) {
-            return $path;
-        }
-
-        // If user gives "storage/app/...." or "storage/...."
-        if (str_starts_with($path, 'storage/')) {
-            return base_path($path);
-        }
-
-        // If user gives "app/firebase/...." treat as storage/app/firebase/....
-        if (str_starts_with($path, 'app/')) {
-            return storage_path($path);
-        }
-
-        // If user gives just "firebase/pratihari.json" treat as storage/app/firebase/...
-        return storage_path('app/' . ltrim($path, '/'));
+    // Absolute path
+    if (str_starts_with($path, '/')) {
+        return $path;
     }
+
+    // "storage/..." -> /var/www/pratihari/storage/...
+    if (str_starts_with($path, 'storage/')) {
+        return base_path($path);
+    }
+
+    // "app/..." -> /var/www/pratihari/storage/app/...
+    if (str_starts_with($path, 'app/')) {
+        return storage_path($path);
+    }
+
+    // default: treat as relative to storage/app
+    return storage_path('app/' . ltrim($path, '/'));
+}
+
+public function __construct(string $credentialKey = 'pratihari', ?string $credentialsPath = null)
+{
+    $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
+    $path = $this->resolveFirebaseCredentialsPath($path);
+
+    if (!$path || !is_file($path)) {
+        throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
+    }
+    if (!is_readable($path)) {
+        throw new \InvalidArgumentException("Firebase credentials file exists but is not readable: {$path}");
+    }
+
+    $factory = (new \Kreait\Firebase\Factory)->withServiceAccount($path);
+    $this->messaging = $factory->createMessaging();
+}
+
 
     // Your existing methods below (unchanged)
     public function sendBulkNotifications(array $tokens, string $title, string $body, array $data = []): array
