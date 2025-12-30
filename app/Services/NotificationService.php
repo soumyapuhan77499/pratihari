@@ -16,7 +16,9 @@ class NotificationService
     {
         $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
 
-        if (!$path || !file_exists($path)) {
+        $path = $this->resolveFirebaseCredentialsPath($path);
+
+        if (!$path || !is_file($path)) {
             throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
         }
 
@@ -25,16 +27,44 @@ class NotificationService
     }
 
     /**
-     * Backward-compatible method (summary only).
+     * Convert env/config path into an absolute filesystem path.
+     *
+     * Supports:
+     * - absolute: /var/www/.../storage/app/firebase/pratihari.json
+     * - relative: storage/app/firebase/pratihari.json
+     * - relative: app/firebase/pratihari.json (will map to storage/app/...)
      */
+    private function resolveFirebaseCredentialsPath(?string $path): ?string
+    {
+        if (!$path) return null;
+
+        $path = trim($path);
+
+        // Already absolute path (Linux)
+        if (str_starts_with($path, '/')) {
+            return $path;
+        }
+
+        // If user gives "storage/app/...." or "storage/...."
+        if (str_starts_with($path, 'storage/')) {
+            return base_path($path);
+        }
+
+        // If user gives "app/firebase/...." treat as storage/app/firebase/....
+        if (str_starts_with($path, 'app/')) {
+            return storage_path($path);
+        }
+
+        // If user gives just "firebase/pratihari.json" treat as storage/app/firebase/...
+        return storage_path('app/' . ltrim($path, '/'));
+    }
+
+    // Your existing methods below (unchanged)
     public function sendBulkNotifications(array $tokens, string $title, string $body, array $data = []): array
     {
         return $this->sendBulkNotificationsDetailed($tokens, $title, $body, $data, null);
     }
 
-    /**
-     * Detailed multicast: returns per-token success/failure and errors.
-     */
     public function sendBulkNotificationsDetailed(
         array $tokens,
         string $title,
@@ -48,7 +78,7 @@ class NotificationService
             'success' => 0,
             'failure' => 0,
             'invalid_tokens' => [],
-            'results' => [], // each: token,status,error_code,error_message
+            'results' => [],
         ];
 
         if (empty($tokens)) {
@@ -57,7 +87,6 @@ class NotificationService
 
         $notif = FcmNotification::create($title, $body);
 
-        // If your installed Kreait supports image URL on notification
         if ($imageUrl && method_exists($notif, 'withImageUrl')) {
             $notif = $notif->withImageUrl($imageUrl);
         }
@@ -102,7 +131,6 @@ class NotificationService
                     }
                 }
             } catch (MessagingException|FirebaseException|\Throwable $e) {
-                // Whole chunk failed
                 foreach ($chunk as $token) {
                     $summary['failure']++;
                     $summary['results'][] = [

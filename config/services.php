@@ -41,20 +41,19 @@ return [
         'wa_body_params' => (int) env('MSG91_WA_BODY_PARAMS', 1),
     ],
     
-  'firebase' => [
-        'default' => env('FIREBASE_DEFAULT_APP', 'pratihari'),
+ 'firebase' => [
+        'default_app' => env('FIREBASE_DEFAULT_APP', 'pratihari'),
+        'dry_run'     => env('FCM_DRY_RUN', false),
 
-        'apps' => [
-            'pratihari' => [
-                'credentials' => env('FIREBASE_PRATIHARI_CREDENTIALS_PATH'),
-            ],
-
-            // If you add more projects later:
-            // 'gochhikar' => [
-            //     'credentials' => env('FIREBASE_GOCHHIKAR_CREDENTIALS_PATH'),
-            // ],
+        'pratihari' => [
+            // keep env value as relative; we will resolve it in service
+            'credentials' => env('FIREBASE_PRATIHARI_CREDENTIALS_PATH'),
         ],
-    ],
 
+        // If you have more apps later:
+        // 'user' => [
+        //     'credentials' => env('FIREBASE_USER_CREDENTIALS_PATH'),
+        // ],
+    ],
     
 ];
