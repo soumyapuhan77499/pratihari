@@ -16,7 +16,7 @@ class FCMNotificationLog extends Model
         'pratihari_id',
         'device_token',
         'platform',
-        'status',        // success|failure
+        'status',
         'error_code',
         'error_message',
     ];

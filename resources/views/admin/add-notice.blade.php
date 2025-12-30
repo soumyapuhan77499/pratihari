@@ -79,7 +79,12 @@
         }
 
         @keyframes fadeout {
-            to { opacity: 0; height: 0; margin: 0; padding: 0; }
+            to {
+                opacity: 0;
+                height: 0;
+                margin: 0;
+                padding: 0;
+            }
         }
 
         /* Notification panel */
@@ -117,17 +122,27 @@
 
         /* Small badges in option labels (visual hint only; select2 may not render HTML in list by default) */
         .pill {
-            display:inline-block;
-            padding:.15rem .45rem;
-            border-radius:999px;
-            font-size:.75rem;
-            font-weight:800;
-            margin-right:.35rem;
-            border:1px solid rgba(2,6,23,.10);
-            background:#fff;
+            display: inline-block;
+            padding: .15rem .45rem;
+            border-radius: 999px;
+            font-size: .75rem;
+            font-weight: 800;
+            margin-right: .35rem;
+            border: 1px solid rgba(2, 6, 23, .10);
+            background: #fff;
         }
-        .pill-ok { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.25); color:#14532d; }
-        .pill-no { background: rgba(100,116,139,.12); border-color: rgba(100,116,139,.25); color:#0b1220; }
+
+        .pill-ok {
+            background: rgba(34, 197, 94, .12);
+            border-color: rgba(34, 197, 94, .25);
+            color: #14532d;
+        }
+
+        .pill-no {
+            background: rgba(100, 116, 139, .12);
+            border-color: rgba(100, 116, 139, .25);
+            color: #0b1220;
+        }
     </style>
 @endsection
 
@@ -139,15 +154,21 @@
                     <i class="fa-solid fa-bullhorn me-2"></i>Add Notice
                 </div>
                 <div class="text-hint">
-                    Create a notice and optionally send notification (Pratihari / Gochhikar / Selected + Bhagari / Baristha filters).
+                    Create a notice and optionally send notification (Pratihari / Gochhikar / Selected + Bhagari / Baristha
+                    filters).
                 </div>
             </div>
         </div>
     </div>
-
     @if (session('success'))
         <div class="alert alert-success d-flex align-items-center gap-2" id="successMessage">
             <i class="fa-solid fa-circle-check"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('warning'))
+        <div class="alert alert-warning d-flex align-items-center gap-2" id="warningMessage">
+            <i class="fa-solid fa-triangle-exclamation"></i> {{ session('warning') }}
         </div>
     @endif
 
@@ -156,6 +177,14 @@
             <i class="fa-solid fa-triangle-exclamation"></i> {{ session('error') }}
         </div>
     @endif
+
+    @if (session('notify_error'))
+        <div class="alert alert-danger mt-2">
+            <div class="fw-bold mb-1">Notification Error:</div>
+            <div style="white-space: pre-wrap;">{{ session('notify_error') }}</div>
+        </div>
+    @endif
+
 
     <div class="row">
         <div class="col-12 mt-2">
@@ -211,7 +240,8 @@
                             </div>
 
                             <div class="col-md-3">
-                                <label for="notice_photo" class="form-label">Notice Photo <span class="text-hint">(optional)</span></label>
+                                <label for="notice_photo" class="form-label">Notice Photo <span
+                                        class="text-hint">(optional)</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-regular fa-image"></i></span>
                                     <input type="file" class="form-control @error('notice_photo') is-invalid @enderror"
@@ -224,7 +254,8 @@
                             </div>
 
                             <div class="col-12">
-                                <label for="description" class="form-label">Description <span class="text-hint">(optional)</span></label>
+                                <label for="description" class="form-label">Description <span
+                                        class="text-hint">(optional)</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fa-solid fa-align-left"></i></span>
                                     <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
@@ -260,30 +291,37 @@
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="fa-solid fa-users"></i></span>
                                                 <select class="form-control" id="recipient_group" name="recipient_group">
-                                                    <option value="all" {{ old('recipient_group', 'all') === 'all' ? 'selected' : '' }}>
+                                                    <option value="all"
+                                                        {{ old('recipient_group', 'all') === 'all' ? 'selected' : '' }}>
                                                         All (Pratihari + Gochhikar)
                                                     </option>
-                                                    <option value="pratihari" {{ old('recipient_group') === 'pratihari' ? 'selected' : '' }}>
+                                                    <option value="pratihari"
+                                                        {{ old('recipient_group') === 'pratihari' ? 'selected' : '' }}>
                                                         Only Pratihari
                                                     </option>
-                                                    <option value="gochhikar" {{ old('recipient_group') === 'gochhikar' ? 'selected' : '' }}>
+                                                    <option value="gochhikar"
+                                                        {{ old('recipient_group') === 'gochhikar' ? 'selected' : '' }}>
                                                         Only Gochhikar
                                                     </option>
-                                                    <option value="selected" {{ old('recipient_group') === 'selected' ? 'selected' : '' }}>
+                                                    <option value="selected"
+                                                        {{ old('recipient_group') === 'selected' ? 'selected' : '' }}>
                                                         Selected Individuals
                                                     </option>
                                                 </select>
                                             </div>
-                                            <div class="text-hint mt-1">Choose who should receive this notice notification.</div>
+                                            <div class="text-hint mt-1">Choose who should receive this notice notification.
+                                            </div>
                                         </div>
 
                                         <div class="col-md-4">
                                             <label class="form-label mb-1">Bhagari Filter</label>
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="fa-solid fa-user-check"></i></span>
+                                                <span class="input-group-text"><i
+                                                        class="fa-solid fa-user-check"></i></span>
                                                 <select class="form-control" name="bhagari_filter" id="bhagari_filter">
                                                     @foreach ($bhagariFilters as $key => $label)
-                                                        <option value="{{ $key }}" {{ old('bhagari_filter', 'all') === $key ? 'selected' : '' }}>
+                                                        <option value="{{ $key }}"
+                                                            {{ old('bhagari_filter', 'all') === $key ? 'selected' : '' }}>
                                                             {{ $label }}
                                                         </option>
                                                     @endforeach
@@ -298,13 +336,15 @@
                                                 <span class="input-group-text"><i class="fa-solid fa-user-tie"></i></span>
                                                 <select class="form-control" name="baristha_filter" id="baristha_filter">
                                                     @foreach ($baristhaFilters as $key => $label)
-                                                        <option value="{{ $key }}" {{ old('baristha_filter', 'all') === $key ? 'selected' : '' }}>
+                                                        <option value="{{ $key }}"
+                                                            {{ old('baristha_filter', 'all') === $key ? 'selected' : '' }}>
                                                             {{ $label }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="text-hint mt-1">Optional filter by Baristha Bhai Pua (Yes/No).</div>
+                                            <div class="text-hint mt-1">Optional filter by Baristha Bhai Pua (Yes/No).
+                                            </div>
                                         </div>
 
                                         <div class="col-12">
@@ -313,20 +353,28 @@
                                                 <span class="text-hint">(only when Recipient Group = Selected)</span>
                                             </label>
 
-                                            <select class="form-control select2" id="pratihari_ids" name="pratihari_ids[]" multiple>
+                                            <select class="form-control select2" id="pratihari_ids"
+                                                name="pratihari_ids[]" multiple>
                                                 <optgroup label="Pratihari">
                                                     @foreach ($pratihari_name as $p)
                                                         @php
                                                             $bh = !empty($p->bhagari);
                                                             $bb = !empty($p->baristha_bhai_pua);
                                                             $flags = [];
-                                                            if ($bh) $flags[] = 'Bhagari';
-                                                            if ($bb) $flags[] = 'Baristha';
-                                                            $flagText = count($flags) ? ('[' . implode(', ', $flags) . '] ') : '';
+                                                            if ($bh) {
+                                                                $flags[] = 'Bhagari';
+                                                            }
+                                                            if ($bb) {
+                                                                $flags[] = 'Baristha';
+                                                            }
+                                                            $flagText = count($flags)
+                                                                ? '[' . implode(', ', $flags) . '] '
+                                                                : '';
                                                         @endphp
                                                         <option value="{{ $p->pratihari_id }}"
                                                             {{ collect(old('pratihari_ids', []))->contains($p->pratihari_id) ? 'selected' : '' }}>
-                                                            {{ $flagText }}{{ $p->full_name }} - {{ $p->pratihari_id }}
+                                                            {{ $flagText }}{{ $p->full_name }} -
+                                                            {{ $p->pratihari_id }}
                                                         </option>
                                                     @endforeach
                                                 </optgroup>
@@ -337,13 +385,20 @@
                                                             $bh = !empty($p->bhagari);
                                                             $bb = !empty($p->baristha_bhai_pua);
                                                             $flags = [];
-                                                            if ($bh) $flags[] = 'Bhagari';
-                                                            if ($bb) $flags[] = 'Baristha';
-                                                            $flagText = count($flags) ? ('[' . implode(', ', $flags) . '] ') : '';
+                                                            if ($bh) {
+                                                                $flags[] = 'Bhagari';
+                                                            }
+                                                            if ($bb) {
+                                                                $flags[] = 'Baristha';
+                                                            }
+                                                            $flagText = count($flags)
+                                                                ? '[' . implode(', ', $flags) . '] '
+                                                                : '';
                                                         @endphp
                                                         <option value="{{ $p->pratihari_id }}"
                                                             {{ collect(old('pratihari_ids', []))->contains($p->pratihari_id) ? 'selected' : '' }}>
-                                                            {{ $flagText }}{{ $p->full_name }} - {{ $p->pratihari_id }}
+                                                            {{ $flagText }}{{ $p->full_name }} -
+                                                            {{ $p->pratihari_id }}
                                                         </option>
                                                     @endforeach
                                                 </optgroup>
@@ -392,7 +447,9 @@
             setTimeout(() => document.getElementById("errorMessage")?.classList.add("fade-out"), 3000);
 
             // Select2 init
-            $('.select2').select2({ width: '100%' });
+            $('.select2').select2({
+                width: '100%'
+            });
 
             // Date guard (from/to)
             const from = document.getElementById('from_date');
