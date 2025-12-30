@@ -9,18 +9,24 @@ class PratihariDevice extends Model
 {
     use HasFactory;
 
-    protected $table = 'pratihari_devices';
+    // If you create pratihari_devices table, you can OMIT this line.
+    // protected $table = 'pratihari_devices';
 
-
-    protected $fillable = ['pratihari_id', 'device_id', 'platform', 'device_model', 'version', 'last_login_time'];
+    protected $fillable = [
+        'pratihari_id',
+        'device_id',
+        'platform',
+        'device_model',
+        'version',
+        'last_login_time',
+    ];
 
     public function pratihari()
     {
-        // Your users table seems to use "userid" as the logical key
         return $this->belongsTo(PratihariProfile::class, 'pratihari_id', 'pratihari_id');
     }
 
-    // Scope: only authorized devices
+    // Only authorized devices (blocked tokens kept in user_unauthorised_devices)
     public function scopeAuthorized($query)
     {
         return $query->whereNotIn('device_id', function ($q) {
@@ -28,9 +34,8 @@ class PratihariDevice extends Model
         });
     }
 
-    // Scope: by platform(s)
     public function scopePlatformIn($query, array $platforms)
     {
-        return $query->when(!empty($platforms), fn($q) => $q->whereIn('platform', $platforms));
+        return $query->when(!empty($platforms), fn ($q) => $q->whereIn('platform', $platforms));
     }
 }
