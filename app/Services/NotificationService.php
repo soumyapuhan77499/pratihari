@@ -12,63 +12,43 @@ class NotificationService
 {
     protected $messaging;
 
-   
-    /**
-     * Convert env/config path into an absolute filesystem path.
-     *
-     * Supports:
-     * - absolute: /var/www/.../storage/app/firebase/pratihari.json
-     * - relative: storage/app/firebase/pratihari.json
-     * - relative: app/firebase/pratihari.json (will map to storage/app/...)
-     */
-   private function resolveFirebaseCredentialsPath(?string $path): ?string
-{
-    if (!$path) return null;
-
-    $path = trim($path);
-
-    // Absolute path
-    if (str_starts_with($path, '/')) {
-        return $path;
-    }
-
-    // "storage/..." -> /var/www/pratihari/storage/...
-    if (str_starts_with($path, 'storage/')) {
-        return base_path($path);
-    }
-
-    // "app/..." -> /var/www/pratihari/storage/app/...
-    if (str_starts_with($path, 'app/')) {
-        return storage_path($path);
-    }
-
-    // default: treat as relative to storage/app
-    return storage_path('app/' . ltrim($path, '/'));
-}
-
-public function __construct(string $credentialKey = 'pratihari', ?string $credentialsPath = null)
-{
-    $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
-    $path = $this->resolveFirebaseCredentialsPath($path);
-
-    if (!$path || !is_file($path)) {
-        throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
-    }
-    if (!is_readable($path)) {
-        throw new \InvalidArgumentException("Firebase credentials file exists but is not readable: {$path}");
-    }
-
-    $factory = (new \Kreait\Firebase\Factory)->withServiceAccount($path);
-    $this->messaging = $factory->createMessaging();
-}
-
-
-    // Your existing methods below (unchanged)
-    public function sendBulkNotifications(array $tokens, string $title, string $body, array $data = []): array
+    public function __construct(string $credentialKey = 'pratihari', ?string $credentialsPath = null)
     {
-        return $this->sendBulkNotificationsDetailed($tokens, $title, $body, $data, null);
+        $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
+        $path = $this->resolveFirebaseCredentialsPath($path);
+
+        if (!$path || !is_file($path)) {
+            throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
+        }
+        if (!is_readable($path)) {
+            throw new \InvalidArgumentException("Firebase credentials file exists but is not readable: {$path}");
+        }
+
+        $factory = (new Factory)->withServiceAccount($path);
+        $this->messaging = $factory->createMessaging();
     }
 
+    private function resolveFirebaseCredentialsPath(?string $path): ?string
+    {
+        if (!$path) return null;
+        $path = trim($path);
+
+        if (str_starts_with($path, '/')) {
+            return $path;
+        }
+        if (str_starts_with($path, 'storage/')) {
+            return base_path($path);
+        }
+        if (str_starts_with($path, 'app/')) {
+            return storage_path($path);
+        }
+        return storage_path('app/' . ltrim($path, '/'));
+    }
+
+    /**
+     * Reliable, token-wise sending (best for device-wise logs).
+     * Works on all Kreait versions and avoids MulticastSendReport::responses() entirely.
+     */
     public function sendBulkNotificationsDetailed(
         array $tokens,
         string $title,
@@ -82,67 +62,53 @@ public function __construct(string $credentialKey = 'pratihari', ?string $creden
             'success' => 0,
             'failure' => 0,
             'invalid_tokens' => [],
-            'results' => [],
+            'results' => [], // each: token,status,error_code,error_message
         ];
 
         if (empty($tokens)) {
             return $summary;
         }
 
-        $notif = FcmNotification::create($title, $body);
+        $notification = FcmNotification::create($title, $body);
 
-        if ($imageUrl && method_exists($notif, 'withImageUrl')) {
-            $notif = $notif->withImageUrl($imageUrl);
+        // Some Kreait versions support image in Notification via withImageUrl()
+        if ($imageUrl && method_exists($notification, 'withImageUrl')) {
+            $notification = $notification->withImageUrl($imageUrl);
         }
 
-        $message = CloudMessage::new()
-            ->withNotification($notif)
+        $baseMessage = CloudMessage::new()
+            ->withNotification($notification)
             ->withData($this->stringifyData($data));
 
-        foreach (array_chunk($tokens, 500) as $chunk) {
-            try {
-                $report = $this->messaging->sendMulticast($message, $chunk);
+        // Chunk to avoid very long runtimes; 200 is a safe operational chunk
+        foreach (array_chunk($tokens, 200) as $chunk) {
+            foreach ($chunk as $token) {
+                try {
+                    $msg = $baseMessage->withChangedTarget('token', $token);
+                    $this->messaging->send($msg);
 
-                foreach ($report->responses() as $i => $sendReport) {
-                    $token = $chunk[$i] ?? null;
-                    if (!$token) continue;
-
-                    if ($sendReport->isSuccess()) {
-                        $summary['success']++;
-                        $summary['results'][] = [
-                            'token' => $token,
-                            'status' => 'success',
-                            'error_code' => null,
-                            'error_message' => null,
-                        ];
-                    } else {
-                        $summary['failure']++;
-
-                        $e = $sendReport->error();
-                        $errorMessage = $e ? (string) $e->getMessage() : 'Unknown failure';
-                        $errorCode = $e ? (string) get_class($e) : null;
-
-                        if ($this->looksLikeInvalidToken($errorMessage)) {
-                            $summary['invalid_tokens'][] = $token;
-                        }
-
-                        $summary['results'][] = [
-                            'token' => $token,
-                            'status' => 'failure',
-                            'error_code' => $errorCode,
-                            'error_message' => $errorMessage,
-                        ];
-                    }
-                }
-            } catch (MessagingException|FirebaseException|\Throwable $e) {
-                foreach ($chunk as $token) {
+                    $summary['success']++;
+                    $summary['results'][] = [
+                        'token' => $token,
+                        'status' => 'success',
+                        'error_code' => null,
+                        'error_message' => null,
+                    ];
+                } catch (MessagingException|FirebaseException|\Throwable $e) {
                     $summary['failure']++;
+
+                    $message = (string) $e->getMessage();
                     $summary['results'][] = [
                         'token' => $token,
                         'status' => 'failure',
                         'error_code' => get_class($e),
-                        'error_message' => $e->getMessage(),
+                        'error_message' => $message,
                     ];
+
+                    // Common “invalid/expired/unregistered” token signals
+                    if ($this->looksLikeInvalidToken($message)) {
+                        $summary['invalid_tokens'][] = $token;
+                    }
                 }
             }
         }
@@ -158,7 +124,7 @@ public function __construct(string $credentialKey = 'pratihari', ?string $creden
             if (is_bool($v)) {
                 $out[$k] = $v ? '1' : '0';
             } elseif (is_scalar($v) || $v === null) {
-                $out[$k] = (string) ($v ?? '');
+                $out[$k] = (string)($v ?? '');
             } else {
                 $out[$k] = json_encode($v, JSON_UNESCAPED_UNICODE);
             }
@@ -169,6 +135,7 @@ public function __construct(string $credentialKey = 'pratihari', ?string $creden
     private function looksLikeInvalidToken(string $message): bool
     {
         $m = strtolower($message);
+
         return str_contains($m, 'registration token') ||
                str_contains($m, 'not a valid') ||
                str_contains($m, 'invalid argument') ||
