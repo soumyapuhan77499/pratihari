@@ -348,17 +348,40 @@ class PratihariNoticeController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Collect all recipient pratihari_ids from latest FCM rows
+        // Helper: normalize pratihari_ids to array no matter how stored
+        $normalizeIds = function ($value): array {
+            if (is_array($value)) return array_values(array_filter($value));
+
+            if (is_string($value) && trim($value) !== '') {
+                $str = trim($value);
+
+                // Try JSON first
+                $decoded = json_decode($str, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    return array_values(array_filter($decoded));
+                }
+
+                // Fallback: comma-separated
+                if (str_contains($str, ',')) {
+                    return array_values(array_filter(array_map('trim', explode(',', $str))));
+                }
+
+                // Single ID string
+                return [$str];
+            }
+
+            return [];
+        };
+
+        // Collect all recipient IDs from latest FCM rows
         $allRecipientIds = [];
         foreach ($notices as $n) {
-            $ids = $n->latestFcmNotification?->pratihari_ids ?? [];
-            if (is_array($ids)) {
-                $allRecipientIds = array_merge($allRecipientIds, $ids);
-            }
+            $ids = $normalizeIds($n->latestFcmNotification?->pratihari_ids);
+            $allRecipientIds = array_merge($allRecipientIds, $ids);
         }
         $allRecipientIds = array_values(array_unique(array_filter($allRecipientIds)));
 
-        // Map pratihari_id => full name
+        // Build ID -> Name map
         $nameMap = [];
         if (!empty($allRecipientIds)) {
             $profiles = PratihariProfile::whereIn('pratihari_id', $allRecipientIds)
@@ -367,22 +390,25 @@ class PratihariNoticeController extends Controller
 
             foreach ($profiles as $p) {
                 $nameMap[$p->pratihari_id] = trim(implode(' ', array_filter([
-                    $p->first_name, $p->middle_name, $p->last_name
+                    $p->first_name,
+                    $p->middle_name,
+                    $p->last_name,
                 ])));
             }
         }
 
-        // Attach computed fields for blade (no DB write)
+        // Attach computed fields for Blade
         foreach ($notices as $n) {
             $fcm = $n->latestFcmNotification;
-            $ids = $fcm?->pratihari_ids ?? [];
-            $ids = is_array($ids) ? $ids : [];
 
+            $ids = $normalizeIds($fcm?->pratihari_ids);
             $names = [];
+
             foreach ($ids as $id) {
-                $names[] = $nameMap[$id] ?? $id; // fallback to id if name missing
+                $names[] = ($nameMap[$id] ?? null) ?: $id; // fallback to id if no profile found
             }
 
+            $n->fcm_recipient_ids   = $ids;
             $n->fcm_recipient_count = count($ids);
             $n->fcm_recipient_names = $names;
         }

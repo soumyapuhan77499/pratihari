@@ -181,7 +181,7 @@
                             <th>To</th>
                             <th>Description</th>
 
-                            <!-- NEW: FCM details -->
+                            <!-- FCM details -->
                             <th>Audience</th>
                             <th>FCM Status</th>
                             <th>Success</th>
@@ -201,8 +201,12 @@
                                 $status = $fcm?->status;
                                 $succ = $fcm?->success_count ?? null;
                                 $fail = $fcm?->failure_count ?? null;
+
                                 $recCount = $notice->fcm_recipient_count ?? 0;
                                 $recNames = $notice->fcm_recipient_names ?? [];
+
+                                $preview = array_slice($recNames, 0, 2);
+                                $more = max(0, $recCount - count($preview));
 
                                 $statusBadge = 'secondary';
                                 if ($status === 'sent') {
@@ -250,7 +254,6 @@
                                     {{ $notice->description }}
                                 </td>
 
-                                <!-- NEW: Audience -->
                                 <td>
                                     @if ($audience)
                                         <span class="badge badge-soft">{{ strtoupper($audience) }}</span>
@@ -259,7 +262,6 @@
                                     @endif
                                 </td>
 
-                                <!-- NEW: Status -->
                                 <td>
                                     @if ($status)
                                         <span class="badge bg-{{ $statusBadge }}">{{ strtoupper($status) }}</span>
@@ -268,7 +270,6 @@
                                     @endif
                                 </td>
 
-                                <!-- NEW: Success -->
                                 <td>
                                     @if (!is_null($succ))
                                         <span class="badge bg-success">{{ $succ }}</span>
@@ -277,7 +278,6 @@
                                     @endif
                                 </td>
 
-                                <!-- NEW: Failure -->
                                 <td>
                                     @if (!is_null($fail))
                                         <span class="badge bg-danger">{{ $fail }}</span>
@@ -286,28 +286,37 @@
                                     @endif
                                 </td>
 
-                                <!-- NEW: Recipients -->
                                 <td>
                                     @if ($fcm)
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-primary">{{ $recCount }}</span>
+                                        <div class="d-flex flex-column gap-1">
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-primary">{{ $recCount }}</span>
 
-                                            <button type="button" class="btn btn-sm btn-outline-primary"
-                                                data-bs-toggle="modal" data-bs-target="#recipientsModal"
-                                                data-title="{{ $notice->notice_name }}"
-                                                data-audience="{{ strtoupper($audience ?? '-') }}"
-                                                data-status="{{ strtoupper($status ?? '-') }}"
-                                                data-success="{{ $succ ?? 0 }}" data-failure="{{ $fail ?? 0 }}"
-                                                data-recipients="{{ e(json_encode($recNames)) }}">
-                                                <i class="fa-solid fa-users"></i>
-                                            </button>
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                    data-bs-toggle="modal" data-bs-target="#recipientsModal"
+                                                    data-title="{{ $notice->notice_name }}"
+                                                    data-audience="{{ strtoupper($audience ?? '-') }}"
+                                                    data-status="{{ strtoupper($status ?? '-') }}"
+                                                    data-success="{{ $succ ?? 0 }}" data-failure="{{ $fail ?? 0 }}"
+                                                    data-recipients='@json($recNames)'>
+                                                    <i class="fa-solid fa-users"></i>
+                                                </button>
+                                            </div>
+
+                                            @if ($recCount > 0)
+                                                <div class="small text-muted text-truncate" style="max-width: 220px;">
+                                                    {{ implode(', ', $preview) }}
+                                                    @if ($more > 0)
+                                                        <span class="fw-bold"> +{{ $more }} more</span>
+                                                    @endif
+                                                </div>
+                                            @endif
                                         </div>
                                     @else
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
 
-                                <!-- Actions -->
                                 <td>
                                     <div class="d-flex gap-2">
                                         <button class="btn btn-sm btn-success" data-bs-toggle="modal"
@@ -335,7 +344,7 @@
                     </tbody>
                 </table>
 
-                <!-- Edit Modal (your existing modal unchanged) -->
+                <!-- Edit Notice Modal -->
                 <div class="modal fade" id="editNoticeModal" tabindex="-1" aria-labelledby="editNoticeModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -439,7 +448,7 @@
                     </div>
                 </div>
 
-                <!-- NEW: Recipients Modal -->
+                <!-- Recipients Modal -->
                 <div class="modal fade" id="recipientsModal" tabindex="-1" aria-labelledby="recipientsModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -473,7 +482,6 @@
                     </div>
                 </div>
                 <!-- /Recipients Modal -->
-
             </div>
         </div>
     </div>
@@ -619,7 +627,7 @@
                 document.getElementById('photoPreviewImg').removeAttribute('src');
             });
 
-            // NEW: Recipients modal
+            // Recipients modal (JSON-safe)
             const recModal = document.getElementById('recipientsModal');
             recModal.addEventListener('show.bs.modal', function(event) {
                 const btn = event.relatedTarget;
@@ -629,7 +637,6 @@
                 const status = btn.getAttribute('data-status') || '-';
                 const success = btn.getAttribute('data-success') || '0';
                 const failure = btn.getAttribute('data-failure') || '0';
-                const recipientsJson = btn.getAttribute('data-recipients') || '[]';
 
                 document.getElementById('recNoticeTitle').textContent = title;
                 document.getElementById('recAudience').textContent = audience;
@@ -639,7 +646,9 @@
 
                 let recipients = [];
                 try {
-                    recipients = JSON.parse(recipientsJson);
+                    const raw = btn.getAttribute('data-recipients') || '[]';
+                    recipients = JSON.parse(raw);
+                    if (!Array.isArray(recipients)) recipients = [];
                 } catch (e) {
                     recipients = [];
                 }
