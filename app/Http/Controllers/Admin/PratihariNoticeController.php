@@ -18,7 +18,7 @@ use App\Services\NotificationService;
 
 class PratihariNoticeController extends Controller
 {
-        
+
     private function sebaBasedRecipientIds(): array
     {
         // Get seba_ids by type
@@ -78,181 +78,246 @@ class PratihariNoticeController extends Controller
             'baristhaFilters'
         ));
     }
+public function saveNotice(Request $request)
+{
+    $validated = $request->validate([
+        'notice_name'   => ['required', 'string', 'max:150'],
+        'from_date'     => ['required', 'date'],
+        'to_date'       => ['required', 'date', 'after_or_equal:from_date'],
+        'description'   => ['nullable', 'string'],
+        'notice_photo'  => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
 
-    public function saveNotice(Request $request)
-    {
-        $validated = $request->validate([
-            'notice_name'   => ['required', 'string', 'max:150'],
-            'from_date'     => ['required', 'date'],
-            'to_date'       => ['required', 'date', 'after_or_equal:from_date'],
-            'description'   => ['nullable', 'string'],
-            'notice_photo'  => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+        'send_notification' => ['nullable', 'boolean'],
+        'recipient_group'   => ['nullable', 'in:all,pratihari,gochhikar,selected'],
 
-            'send_notification' => ['nullable', 'boolean'],
-            'recipient_group'   => ['nullable', 'in:all,pratihari,gochhikar,selected'],
+        'bhagari_filter'    => ['nullable', 'in:all,yes,no'],
+        'baristha_filter'   => ['nullable', 'in:all,yes,no'],
 
-            'bhagari_filter'    => ['nullable', 'in:all,yes,no'],
-            'baristha_filter'   => ['nullable', 'in:all,yes,no'],
+        'pratihari_ids'     => ['nullable', 'array'],
+        'pratihari_ids.*'   => ['string', 'exists:pratihari__profile_details,pratihari_id'],
+    ]);
 
-            'pratihari_ids'     => ['nullable', 'array'],
-            'pratihari_ids.*'   => ['string', 'exists:pratihari__profile_details,pratihari_id'],
-        ]);
+    // -------------------------------
+    // Save Notice
+    // -------------------------------
+    $photoPath = null;
 
-        // -------------------------------
-        // Save Notice
-        // -------------------------------
-        $photoPath = null;
-
-        if ($request->hasFile('notice_photo')) {
-            $base = \Illuminate\Support\Str::slug($validated['notice_name'] ?? 'notice');
-            $ext  = $request->file('notice_photo')->getClientOriginalExtension();
-            $filename  = $base . '-' . now()->format('YmdHis') . '.' . $ext;
-            $photoPath = $request->file('notice_photo')->storeAs('notices', $filename, 'public');
-        }
-
-        $notice = PratihariNotice::create([
-            'notice_name'  => $validated['notice_name'],
-            'notice_photo' => $photoPath,
-            'from_date'    => $validated['from_date'],
-            'to_date'      => $validated['to_date'],
-            'description'  => $validated['description'] ?? null,
-            'status'       => 'active',
-        ]);
-
-        // -------------------------------
-        // Send notifications (UPDATED)
-        // - Does NOT block notice save success
-        // - Adds structured logs + summary
-        // -------------------------------
-        $flashWarning = null;
-
-        if ($request->boolean('send_notification')) {
-            try {
-                $group          = $validated['recipient_group'] ?? 'all';
-                $bhagariFilter  = $validated['bhagari_filter'] ?? 'all';
-                $baristhaFilter = $validated['baristha_filter'] ?? 'all';
-
-                [$pratihariIds, $gochhikarIds] = $this->sebaBasedRecipientIds();
-
-                // Choose base IDs by group
-                if ($group === 'pratihari') {
-                    $baseIds = $pratihariIds->toArray();
-                } elseif ($group === 'gochhikar') {
-                    $baseIds = $gochhikarIds->toArray();
-                } elseif ($group === 'selected') {
-                    $baseIds = $validated['pratihari_ids'] ?? [];
-                } else { // all
-                    $baseIds = array_values(array_unique(array_merge(
-                        $pratihariIds->toArray(),
-                        $gochhikarIds->toArray()
-                    )));
-                }
-
-                if (empty($baseIds)) {
-                    $flashWarning = 'Notice saved, but no recipients found for notification.';
-                    goto done_notifications;
-                }
-
-                // Filter: approved + bhagari + baristha
-                $profilesQ = PratihariProfile::approved()->whereIn('pratihari_id', $baseIds);
-
-                if ($bhagariFilter === 'yes') {
-                    $profilesQ->where('bhagari', 1);
-                } elseif ($bhagariFilter === 'no') {
-                    $profilesQ->where('bhagari', 0);
-                }
-
-                if ($baristhaFilter === 'yes') {
-                    $profilesQ->where('baristha_bhai_pua', 1);
-                } elseif ($baristhaFilter === 'no') {
-                    $profilesQ->where('baristha_bhai_pua', 0);
-                }
-
-                $finalIds = $profilesQ->pluck('pratihari_id')->unique()->values()->all();
-
-                if (empty($finalIds)) {
-                    $flashWarning = 'Notice saved, but no approved recipients match the selected filters.';
-                    goto done_notifications;
-                }
-
-                // Device tokens (authorized only)
-                $deviceTokens = PratihariDevice::query()
-                    ->authorized()
-                    ->whereIn('pratihari_id', $finalIds)
-                    ->pluck('device_id')
-                    ->filter()
-                    ->unique()
-                    ->values()
-                    ->all();
-
-                if (empty($deviceTokens)) {
-                    $flashWarning = 'Notice saved, but no authorized devices found for selected recipients.';
-                    goto done_notifications;
-                }
-
-                // Title/Body/Data
-                $title = (string) $notice->notice_name;
-
-                $prefixParts = ['[' . strtoupper($group) . ']'];
-                if ($bhagariFilter !== 'all')  $prefixParts[] = '[BHAGARI:' . strtoupper($bhagariFilter) . ']';
-                if ($baristhaFilter !== 'all') $prefixParts[] = '[BARISTHA:' . strtoupper($baristhaFilter) . ']';
-
-                $bodyPrefix = implode('', $prefixParts);
-
-                $body = $bodyPrefix . ' ' . \Illuminate\Support\Str::limit(
-                    strip_tags((string) ($notice->description ?? '')),
-                    120,
-                    '...'
-                );
-
-                $data = [
-                    'type'            => 'notice',
-                    'notice_id'       => (string) $notice->id,
-                    'from_date'       => (string) $notice->from_date,
-                    'to_date'         => (string) $notice->to_date,
-                    'recipient_group' => (string) $group,
-                    'bhagari_filter'  => (string) $bhagariFilter,
-                    'baristha_filter' => (string) $baristhaFilter,
-                ];
-
-                $notifier = new \App\Services\NotificationService('pratihari');
-                $summary = $notifier->sendBulkNotifications($deviceTokens, $title, $body, $data);
-
-                \Illuminate\Support\Facades\Log::info('Notice notification summary', [
-                    'notice_id' => $notice->id,
-                    'success' => $summary['success'] ?? null,
-                    'failure' => $summary['failure'] ?? null,
-                    'invalid_tokens_count' => isset($summary['invalid_tokens']) ? count($summary['invalid_tokens']) : null,
-                    'errors' => $summary['errors'] ?? null,
-                ]);
-
-                // OPTIONAL: remove invalid tokens from DB (only if device_id stores the FCM token)
-                // if (!empty($summary['invalid_tokens'])) {
-                //     PratihariDevice::whereIn('device_id', $summary['invalid_tokens'])->delete();
-                // }
-
-                if (($summary['failure'] ?? 0) > 0) {
-                    $flashWarning = 'Notice saved. Notification sent with some failures. Check logs.';
-                }
-
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Notice notification failed', [
-                    'notice_id' => $notice->id ?? null,
-                    'error' => $e->getMessage(),
-                ]);
-
-                $flashWarning = 'Notice saved, but notification failed. Check logs.';
-            }
-        }
-
-        done_notifications:
-
-        if ($flashWarning) {
-            return redirect()->back()->with('warning', $flashWarning)->with('success', 'Notice saved successfully!');
-        }
-
-        return redirect()->back()->with('success', 'Notice saved successfully!');
+    if ($request->hasFile('notice_photo')) {
+        $base = \Illuminate\Support\Str::slug($validated['notice_name'] ?? 'notice');
+        $ext  = $request->file('notice_photo')->getClientOriginalExtension();
+        $filename  = $base . '-' . now()->format('YmdHis') . '.' . $ext;
+        $photoPath = $request->file('notice_photo')->storeAs('notices', $filename, 'public');
     }
+
+    $notice = PratihariNotice::create([
+        'notice_name'  => $validated['notice_name'],
+        'notice_photo' => $photoPath,
+        'from_date'    => $validated['from_date'],
+        'to_date'      => $validated['to_date'],
+        'description'  => $validated['description'] ?? null,
+        'status'       => 'active',
+    ]);
+
+    // -------------------------------
+    // Send Notifications (device-wise)
+    // - Notice save is NOT blocked
+    // - Saves success/failure to f_c_m_notifications
+    // - Saves per-device logs to f_c_m_notification_logs
+    // -------------------------------
+    $flashWarning = null;
+
+    if ($request->boolean('send_notification')) {
+        try {
+            $group          = $validated['recipient_group'] ?? 'all';
+            $bhagariFilter  = $validated['bhagari_filter'] ?? 'all';
+            $baristhaFilter = $validated['baristha_filter'] ?? 'all';
+
+            [$pratihariIds, $gochhikarIds] = $this->sebaBasedRecipientIds();
+
+            // Choose base IDs by group
+            if ($group === 'pratihari') {
+                $baseIds = $pratihariIds->toArray();
+            } elseif ($group === 'gochhikar') {
+                $baseIds = $gochhikarIds->toArray();
+            } elseif ($group === 'selected') {
+                $baseIds = $validated['pratihari_ids'] ?? [];
+            } else { // all
+                $baseIds = array_values(array_unique(array_merge(
+                    $pratihariIds->toArray(),
+                    $gochhikarIds->toArray()
+                )));
+            }
+
+            if (empty($baseIds)) {
+                $flashWarning = 'Notice saved, but no recipients found for notification.';
+                goto done_notifications;
+            }
+
+            // Filter: approved + bhagari + baristha
+            $profilesQ = PratihariProfile::approved()->whereIn('pratihari_id', $baseIds);
+
+            if ($bhagariFilter === 'yes') {
+                $profilesQ->where('bhagari', 1);
+            } elseif ($bhagariFilter === 'no') {
+                $profilesQ->where('bhagari', 0);
+            }
+
+            if ($baristhaFilter === 'yes') {
+                $profilesQ->where('baristha_bhai_pua', 1);
+            } elseif ($baristhaFilter === 'no') {
+                $profilesQ->where('baristha_bhai_pua', 0);
+            }
+
+            $finalIds = $profilesQ->pluck('pratihari_id')->unique()->values()->all();
+
+            if (empty($finalIds)) {
+                $flashWarning = 'Notice saved, but no approved recipients match the selected filters.';
+                goto done_notifications;
+            }
+
+            // Device tokens (authorized only)
+            $deviceTokens = PratihariDevice::query()
+                ->authorized()
+                ->whereIn('pratihari_id', $finalIds)
+                ->pluck('device_id')     // must store actual FCM token
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            if (empty($deviceTokens)) {
+                $flashWarning = 'Notice saved, but no authorized devices found for selected recipients.';
+                goto done_notifications;
+            }
+
+            // Title/Body/Data
+            $title = (string) $notice->notice_name;
+
+            $prefixParts = ['[' . strtoupper($group) . ']'];
+            if ($bhagariFilter !== 'all')   $prefixParts[] = '[BHAGARI:' . strtoupper($bhagariFilter) . ']';
+            if ($baristhaFilter !== 'all')  $prefixParts[] = '[BARISTHA:' . strtoupper($baristhaFilter) . ']';
+
+            $bodyPrefix = implode('', $prefixParts);
+
+            $body = $bodyPrefix . ' ' . \Illuminate\Support\Str::limit(
+                strip_tags((string) ($notice->description ?? '')),
+                120,
+                '...'
+            );
+
+            $data = [
+                'type'            => 'notice',
+                'notice_id'       => (string) $notice->id,
+                'from_date'       => (string) $notice->from_date,
+                'to_date'         => (string) $notice->to_date,
+                'recipient_group' => (string) $group,
+                'bhagari_filter'  => (string) $bhagariFilter,
+                'baristha_filter' => (string) $baristhaFilter,
+            ];
+
+            // Build image URL for FCM display (optional)
+            $imageUrl = null;
+            if (!empty($notice->notice_photo)) {
+                $imageUrl = \Storage::disk('public')->url($notice->notice_photo);
+            }
+
+            // 1) Create DB row for tracking
+            $fcmRow = \App\Models\FCMNotification::create([
+                'title'         => $title,
+                'description'   => $body,
+                'image'         => $notice->notice_photo ?? null, // stored path; accessor provides image_url
+                'audience'      => $group,
+                'pratihari_ids' => $finalIds,
+                'platforms'     => null, // set if you store per-platform devices
+                'status'        => 'sending',
+                'success_count' => 0,
+                'failure_count' => 0,
+            ]);
+
+            // 2) Send with detailed results
+            $notifier = new \App\Services\NotificationService('pratihari');
+            $summary = $notifier->sendBulkNotificationsDetailed($deviceTokens, $title, $body, $data, $imageUrl);
+
+            $success = (int)($summary['success'] ?? 0);
+            $failure = (int)($summary['failure'] ?? 0);
+
+            $status = 'sent';
+            if ($success > 0 && $failure > 0) $status = 'partial';
+            if ($success === 0 && $failure > 0) $status = 'failed';
+
+            // 3) Save counts into f_c_m_notifications
+            $fcmRow->update([
+                'status'        => $status,
+                'success_count' => $success,
+                'failure_count' => $failure,
+            ]);
+
+            // 4) Device-wise logs
+            $tokenToUser = PratihariDevice::query()
+                ->authorized()
+                ->whereIn('device_id', $deviceTokens)
+                ->pluck('pratihari_id', 'device_id') // key=token, value=pratihari_id
+                ->toArray();
+
+            $logRows = [];
+            foreach (($summary['results'] ?? []) as $r) {
+                $token = $r['token'] ?? null;
+                if (!$token) continue;
+
+                $logRows[] = [
+                    'fcm_notification_id' => $fcmRow->id,
+                    'pratihari_id'        => $tokenToUser[$token] ?? null,
+                    'device_token'        => $token,
+                    'platform'            => null, // set if you have column like device_type
+                    'status'              => $r['status'] ?? 'failure',
+                    'error_code'          => $r['error_code'] ?? null,
+                    'error_message'       => $r['error_message'] ?? null,
+                    'created_at'          => now(),
+                    'updated_at'          => now(),
+                ];
+            }
+
+            if (!empty($logRows)) {
+                foreach (array_chunk($logRows, 1000) as $chunk) {
+                    \App\Models\FCMNotificationLog::insert($chunk);
+                }
+            }
+
+            // 5) Optional: remove invalid tokens from DB (ONLY if device_id stores actual FCM token)
+            // if (!empty($summary['invalid_tokens'])) {
+            //     PratihariDevice::whereIn('device_id', $summary['invalid_tokens'])->delete();
+            // }
+
+            \Log::info('Notice notification saved to DB', [
+                'notice_id' => $notice->id,
+                'fcm_notification_id' => $fcmRow->id,
+                'success' => $success,
+                'failure' => $failure,
+                'status'  => $status,
+            ]);
+
+            if ($failure > 0) {
+                $flashWarning = 'Notice saved. Notification sent with some failures. Check notification logs.';
+            }
+
+        } catch (\Throwable $e) {
+            \Log::error('Notice notification failed', [
+                'notice_id' => $notice->id ?? null,
+                'error' => $e->getMessage(),
+            ]);
+
+            $flashWarning = 'Notice saved, but notification failed. Check logs.';
+        }
+    }
+
+    done_notifications:
+
+    if ($flashWarning) {
+        return redirect()->back()->with('warning', $flashWarning)->with('success', 'Notice saved successfully!');
+    }
+
+    return redirect()->back()->with('success', 'Notice saved successfully!');
+}
 
     public function manageNotice()
     {
@@ -314,5 +379,5 @@ class PratihariNoticeController extends Controller
 
         return redirect()->back()->with('success', 'Notice deleted successfully.');
     }
-    
+
 }

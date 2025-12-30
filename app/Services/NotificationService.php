@@ -2,141 +2,145 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Kreait\Firebase\Factory;
-use Kreait\Firebase\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\Notification as FcmNotification;
+use Kreait\Firebase\Exception\MessagingException;
+use Kreait\Firebase\Exception\FirebaseException;
 
 class NotificationService
 {
-    private Messaging $messaging;
-    private bool $dryRun;
+    protected $messaging;
 
-    /**
-     * @param string $appKey The firebase app key under config('services.firebase.apps.*')
-     * @param string|null $credentialsPath Optional override path
-     */
-    public function __construct(string $appKey = null, ?string $credentialsPath = null)
+    public function __construct(string $credentialKey = 'pratihari', ?string $credentialsPath = null)
     {
-        $appKey = $appKey ?: config('services.firebase.default', 'pratihari');
+        $path = $credentialsPath ?: config("services.firebase.{$credentialKey}.credentials");
 
-        $path = $credentialsPath ?: config("services.firebase.apps.{$appKey}.credentials");
-
-        if (!$path) {
-            throw new \InvalidArgumentException("Firebase credentials path is empty for app key: {$appKey}");
-        }
-
-        // Resolve relative paths from Laravel base path
-        if (!Str::startsWith($path, ['/','\\']) && !preg_match('/^[A-Za-z]:\\\\/', $path)) {
-            $path = base_path($path);
-        }
-
-        if (!file_exists($path)) {
+        if (!$path || !file_exists($path)) {
             throw new \InvalidArgumentException("Firebase credentials file not found at: {$path}");
         }
 
-        $factory = (new Factory())->withServiceAccount($path);
+        $factory = (new Factory)->withServiceAccount($path);
         $this->messaging = $factory->createMessaging();
-
-        $this->dryRun = filter_var(env('FCM_DRY_RUN', false), FILTER_VALIDATE_BOOL);
     }
 
     /**
-     * Send a single device token notification.
+     * Backward-compatible method (summary only).
      */
-    public function sendNotification(string $deviceToken, string $title, string $body, array $data = []): string
+    public function sendBulkNotifications(array $tokens, string $title, string $body, array $data = []): array
     {
-        $message = CloudMessage::withTarget('token', $deviceToken)
-            ->withNotification(FcmNotification::create($title, $body))
-            ->withData($this->stringifyValues($data));
-
-        // dryRun=false sends; dryRun=true validates only
-        return $this->messaging->send($message, $this->dryRun);
+        return $this->sendBulkNotificationsDetailed($tokens, $title, $body, $data, null);
     }
 
     /**
-     * Send to multiple tokens safely (chunks of 500), log/report failures.
-     * Returns summary array for your logs/UI.
+     * Detailed multicast: returns per-token success/failure and errors.
      */
-    public function sendBulkNotifications(array $deviceTokens, string $title, string $body, array $data = []): array
-    {
-        $deviceTokens = array_values(array_unique(array_filter($deviceTokens, fn($t) => is_string($t) && trim($t) !== '')));
+    public function sendBulkNotificationsDetailed(
+        array $tokens,
+        string $title,
+        string $body,
+        array $data = [],
+        ?string $imageUrl = null
+    ): array {
+        $tokens = array_values(array_unique(array_filter($tokens)));
 
-        if (empty($deviceTokens)) {
-            return [
-                'success' => 0,
-                'failure' => 0,
-                'invalid_tokens' => [],
-                'errors' => ['No valid device tokens provided.'],
-            ];
+        $summary = [
+            'success' => 0,
+            'failure' => 0,
+            'invalid_tokens' => [],
+            'results' => [], // each: token,status,error_code,error_message
+        ];
+
+        if (empty($tokens)) {
+            return $summary;
         }
 
-        $messages = array_map(function (string $token) use ($title, $body, $data) {
-            return CloudMessage::withTarget('token', $token)
-                ->withNotification(FcmNotification::create($title, $body))
-                ->withData($this->stringifyValues($data));
-        }, $deviceTokens);
+        $notif = FcmNotification::create($title, $body);
 
-        $success = 0;
-        $failure = 0;
-        $invalidTokens = [];
-        $errors = [];
+        // If your installed Kreait supports image URL on notification
+        if ($imageUrl && method_exists($notif, 'withImageUrl')) {
+            $notif = $notif->withImageUrl($imageUrl);
+        }
 
-        // Firebase multicast limit is typically 500 per request; keep chunking safe.
-        foreach (array_chunk($messages, 500) as $chunkIndex => $chunk) {
+        $message = CloudMessage::new()
+            ->withNotification($notif)
+            ->withData($this->stringifyData($data));
+
+        foreach (array_chunk($tokens, 500) as $chunk) {
             try {
-                $report = $this->messaging->sendAll($chunk, $this->dryRun);
+                $report = $this->messaging->sendMulticast($message, $chunk);
 
-                $success += $report->successes()->count();
-                $failure += $report->failures()->count();
+                foreach ($report->responses() as $i => $sendReport) {
+                    $token = $chunk[$i] ?? null;
+                    if (!$token) continue;
 
-                foreach ($report->failures()->getItems() as $failureItem) {
-                    $target = $failureItem->target(); // token target object
-                    $token = method_exists($target, 'value') ? $target->value() : null;
+                    if ($sendReport->isSuccess()) {
+                        $summary['success']++;
+                        $summary['results'][] = [
+                            'token' => $token,
+                            'status' => 'success',
+                            'error_code' => null,
+                            'error_message' => null,
+                        ];
+                    } else {
+                        $summary['failure']++;
 
-                    $e = $failureItem->error();
-                    $msg = $e ? $e->getMessage() : 'Unknown error';
+                        $e = $sendReport->error();
+                        $errorMessage = $e ? (string) $e->getMessage() : 'Unknown failure';
+                        $errorCode = $e ? (string) get_class($e) : null;
 
-                    // Many invalid-token scenarios surface as "registration token is not valid"
-                    if ($token) {
-                        $invalidTokens[] = $token;
+                        if ($this->looksLikeInvalidToken($errorMessage)) {
+                            $summary['invalid_tokens'][] = $token;
+                        }
+
+                        $summary['results'][] = [
+                            'token' => $token,
+                            'status' => 'failure',
+                            'error_code' => $errorCode,
+                            'error_message' => $errorMessage,
+                        ];
                     }
-
-                    $errors[] = $msg;
                 }
-            } catch (\Throwable $e) {
-                Log::error('FCM sendAll failed for chunk', [
-                    'chunk_index' => $chunkIndex,
-                    'error' => $e->getMessage(),
-                ]);
-                $errors[] = $e->getMessage();
+            } catch (MessagingException|FirebaseException|\Throwable $e) {
+                // Whole chunk failed
+                foreach ($chunk as $token) {
+                    $summary['failure']++;
+                    $summary['results'][] = [
+                        'token' => $token,
+                        'status' => 'failure',
+                        'error_code' => get_class($e),
+                        'error_message' => $e->getMessage(),
+                    ];
+                }
             }
         }
 
-        $invalidTokens = array_values(array_unique(array_filter($invalidTokens)));
-
-        return [
-            'success' => $success,
-            'failure' => $failure,
-            'invalid_tokens' => $invalidTokens,
-            'errors' => array_values(array_unique($errors)),
-        ];
+        $summary['invalid_tokens'] = array_values(array_unique($summary['invalid_tokens']));
+        return $summary;
     }
 
-    private function stringifyValues(array $data): array
+    private function stringifyData(array $data): array
     {
         $out = [];
         foreach ($data as $k => $v) {
-            if (is_null($v)) {
-                $out[$k] = '';
-            } elseif (is_scalar($v)) {
-                $out[$k] = (string) $v;
+            if (is_bool($v)) {
+                $out[$k] = $v ? '1' : '0';
+            } elseif (is_scalar($v) || $v === null) {
+                $out[$k] = (string) ($v ?? '');
             } else {
-                $out[$k] = json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $out[$k] = json_encode($v, JSON_UNESCAPED_UNICODE);
             }
         }
         return $out;
+    }
+
+    private function looksLikeInvalidToken(string $message): bool
+    {
+        $m = strtolower($message);
+        return str_contains($m, 'registration token') ||
+               str_contains($m, 'not a valid') ||
+               str_contains($m, 'invalid argument') ||
+               str_contains($m, 'requested entity was not found') ||
+               str_contains($m, 'unregistered');
     }
 }

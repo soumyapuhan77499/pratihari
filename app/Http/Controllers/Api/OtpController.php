@@ -14,9 +14,7 @@ use Carbon\Carbon;
 
 class OtpController extends Controller
 {
-    /**
-     * Normalize a phone number to MSG91-style E.164 digits **without plus**.
-     */
+    
     private function normalizeMsisdn(?string $raw, string $defaultCountryCode = '91'): string
     {
         $digits = preg_replace('/\D+/', '', (string) $raw);
@@ -31,14 +29,6 @@ class OtpController extends Controller
         return $digits;
     }
 
-    /**
-     * Compute the parameter value for a dynamic URL button ({{1}}) in the WhatsApp template.
-     * Modes (set in .env):
-     *  - otp    : the OTP itself
-     *  - mobile : the normalized msisdn
-     *  - both   : "<msisdn>-<otp>"
-     *  - custom : use MSG91_WA_BUTTON_PARAM_CUSTOM value
-     */
     private function makeButtonParam(string $msisdn, string $otp): string
     {
         $mode = strtolower((string) env('MSG91_WA_BUTTON_PARAM_MODE', 'otp'));
@@ -50,21 +40,12 @@ class OtpController extends Controller
         };
     }
 
-    /**
-     * (Optional) Build a full verify URL for your own use (e.g., show in body text or logs).
-     * Not used by MSG91 unless your template has a text variable to place it.
-     */
     private function makeVerifyUrl(string $msisdn, string $otp): string
     {
         $base = rtrim((string) env('APP_URL', 'https://example.com'), '/');
         return $base.'/verify-otp?m='.$msisdn.'&otp='.$otp;
     }
 
-    /**
-     * Build MSG91 WhatsApp Template payload.
-     * If MSG91_WA_URL_BUTTON=on, includes `button_1` with the required `value` param.
-     * Your approved template must have a dynamic URL button (e.g., https://.../{{1}}) to use this.
-     */
     private function buildMsg91Payload(string $toMsisdn, string $otp): array
     {
         $integrated = preg_replace('/\D+/', '', (string) env('MSG91_WA_NUMBER', '')); // digits only
@@ -194,12 +175,10 @@ class OtpController extends Controller
         $request->merge([
             'mobile_number' => $request->input('mobile_number') ?? $request->input('mobile'),
         ]);
-        
+
         $v = Validator::make($request->all(), [
         'mobile_number'    => 'required|string',
         'otp'              => 'required|string',
-
-        // device fields (optional)
         'device_id'        => 'nullable|string|max:255',
         'platform'         => 'nullable|string|max:50',
         'device_model'     => 'nullable|string|max:100',
@@ -211,75 +190,75 @@ class OtpController extends Controller
             return response()->json(['message' => 'Invalid input', 'errors' => $v->errors()], 422);
         }
 
-    $msisdn = $this->normalizeMsisdn($request->input('mobile_number'), '91');
-    if ($msisdn === '' || strlen($msisdn) < 12) {
-        return response()->json(['message' => 'Invalid mobile number'], 422);
-    }
-
-    $user = User::where('mobile_number', $msisdn)->first();
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
-    }
-
-    if (!$user->otp || !$user->expiry) {
-        return response()->json(['message' => 'No OTP pending verification'], 400);
-    }
-
-    if (Carbon::now()->greaterThan($user->expiry)) {
-        return response()->json(['message' => 'OTP expired'], 400);
-    }
-
-    if (trim($request->input('otp')) !== (string) $user->otp) {
-        return response()->json(['message' => 'Invalid OTP'], 400);
-    }
-
-    // OTP OK — clear it, login, and optionally bind/update device
-    $user->otp = null;
-    $user->expiry = null;
-    $user->save();
-
-    $token = $user->createToken('mobile-login')->plainTextToken;
-
-    // Update device info if device_id provided
-    if ($request->filled('device_id')) {
-        try {
-            $lastLogin = $request->filled('last_login_time')
-                ? Carbon::parse($request->input('last_login_time'))
-                : Carbon::now();
-
-            // Only update fields if the client actually sent them
-            $updateData = [
-                'last_login_time' => $lastLogin,
-            ];
-
-            if ($request->filled('platform')) {
-                $updateData['platform'] = $request->input('platform');
-            }
-            if ($request->filled('device_model')) {
-                $updateData['device_model'] = $request->input('device_model');
-            }
-            if ($request->filled('version')) {
-                $updateData['version'] = $request->input('version');
-            }
-
-            UserDevice::updateOrCreate(
-                [
-                    'pratihari_id' => $user->pratihari_id,
-                    'device_id'    => $request->input('device_id'),
-                ],
-                $updateData
-            );
-        } catch (\Throwable $e) {
-            Log::warning('verifyOtp: device save failed: ' . $e->getMessage());
+        $msisdn = $this->normalizeMsisdn($request->input('mobile_number'), '91');
+        if ($msisdn === '' || strlen($msisdn) < 12) {
+            return response()->json(['message' => 'Invalid mobile number'], 422);
         }
-    }
 
-    return response()->json([
-        'message'       => 'OTP verified successfully',
-        'token'         => $token,
-        'pratihari_id'  => $user->pratihari_id,
-        'mobile_number' => $msisdn,
-    ], 200);
-}
+        $user = User::where('mobile_number', $msisdn)->first();
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        if (!$user->otp || !$user->expiry) {
+            return response()->json(['message' => 'No OTP pending verification'], 400);
+        }
+
+        if (Carbon::now()->greaterThan($user->expiry)) {
+            return response()->json(['message' => 'OTP expired'], 400);
+        }
+
+        if (trim($request->input('otp')) !== (string) $user->otp) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        // OTP OK — clear it, login, and optionally bind/update device
+        $user->otp = null;
+        $user->expiry = null;
+        $user->save();
+
+        $token = $user->createToken('mobile-login')->plainTextToken;
+
+        // Update device info if device_id provided
+        if ($request->filled('device_id')) {
+            try {
+                $lastLogin = $request->filled('last_login_time')
+                    ? Carbon::parse($request->input('last_login_time'))
+                    : Carbon::now();
+
+                // Only update fields if the client actually sent them
+                $updateData = [
+                    'last_login_time' => $lastLogin,
+                ];
+
+                if ($request->filled('platform')) {
+                    $updateData['platform'] = $request->input('platform');
+                }
+                if ($request->filled('device_model')) {
+                    $updateData['device_model'] = $request->input('device_model');
+                }
+                if ($request->filled('version')) {
+                    $updateData['version'] = $request->input('version');
+                }
+
+                UserDevice::updateOrCreate(
+                    [
+                        'pratihari_id' => $user->pratihari_id,
+                        'device_id'    => $request->input('device_id'),
+                    ],
+                    $updateData
+                );
+            } catch (\Throwable $e) {
+                Log::warning('verifyOtp: device save failed: ' . $e->getMessage());
+            }
+        }
+
+        return response()->json([
+            'message'       => 'OTP verified successfully',
+            'token'         => $token,
+            'pratihari_id'  => $user->pratihari_id,
+            'mobile_number' => $msisdn,
+        ], 200);
+    }
 
 }
