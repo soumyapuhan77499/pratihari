@@ -234,6 +234,7 @@ class PratihariNoticeController extends Controller
                 // Create FCM row FIRST (so it always saves)
                 // -------------------------------
                 $fcmRow = FCMNotification::create([
+                    'notice_id' => $notice->id,
                     'title'         => $title,
                     'description'   => $dbDescription,           // ✅ FIX: clean DB value
                     'image'         => $notice->notice_photo ?? null,
@@ -343,8 +344,48 @@ class PratihariNoticeController extends Controller
     public function manageNotice()
     {
         $notices = PratihariNotice::where('status', 'active')
+            ->with(['latestFcmNotification'])
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // Collect all recipient pratihari_ids from latest FCM rows
+        $allRecipientIds = [];
+        foreach ($notices as $n) {
+            $ids = $n->latestFcmNotification?->pratihari_ids ?? [];
+            if (is_array($ids)) {
+                $allRecipientIds = array_merge($allRecipientIds, $ids);
+            }
+        }
+        $allRecipientIds = array_values(array_unique(array_filter($allRecipientIds)));
+
+        // Map pratihari_id => full name
+        $nameMap = [];
+        if (!empty($allRecipientIds)) {
+            $profiles = PratihariProfile::whereIn('pratihari_id', $allRecipientIds)
+                ->select('pratihari_id', 'first_name', 'middle_name', 'last_name')
+                ->get();
+
+            foreach ($profiles as $p) {
+                $nameMap[$p->pratihari_id] = trim(implode(' ', array_filter([
+                    $p->first_name, $p->middle_name, $p->last_name
+                ])));
+            }
+        }
+
+        // Attach computed fields for blade (no DB write)
+        foreach ($notices as $n) {
+            $fcm = $n->latestFcmNotification;
+            $ids = $fcm?->pratihari_ids ?? [];
+            $ids = is_array($ids) ? $ids : [];
+
+            $names = [];
+            foreach ($ids as $id) {
+                $names[] = $nameMap[$id] ?? $id; // fallback to id if name missing
+            }
+
+            $n->fcm_recipient_count = count($ids);
+            $n->fcm_recipient_names = $names;
+        }
 
         return view('admin.manage-notice', compact('notices'));
     }

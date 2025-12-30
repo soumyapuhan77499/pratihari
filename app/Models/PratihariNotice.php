@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+// App\Models\PratihariNotice.php
+
+use App\Models\FCMNotification;
 
 class PratihariNotice extends Model
 {
@@ -36,4 +39,15 @@ class PratihariNotice extends Model
 
         return $baseUrl . $relative;
     }
+
+    public function fcmNotifications()
+    {
+        return $this->hasMany(FCMNotification::class, 'notice_id');
+    }
+
+    public function latestFcmNotification()
+    {
+        return $this->hasOne(FCMNotification::class, 'notice_id')->latestOfMany();
+    }
+
 }
